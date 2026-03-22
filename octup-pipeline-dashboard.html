@@ -1,0 +1,3140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Octup | RevOps Pipeline Dashboard</title>
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+  --border: #30363d; --border2: #484f58;
+  --text: #e6edf3; --muted: #8b949e;
+  --accent: #f59e0b; --accent2: #fbbf24;
+  --green: #3fb950; --red: #f85149;
+  --blue: #58a6ff; --purple: #bc8cff;
+  --nbm: #f59e0b; --inp: #58a6ff; --cr: #3fb950;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000}
+.header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.header-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.header-right{font-size:11px;color:var(--muted);text-align:right}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#1c2a1c;border:1px solid var(--green);color:var(--green);padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.live-badge::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* CONTROLS */
+.controls{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.control-group{display:flex;align-items:center;gap:8px}
+.control-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.btn-group{display:flex;gap:2px;flex-wrap:wrap}
+.btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:all .15s;white-space:nowrap}
+.btn:hover{border-color:var(--border2);color:var(--text)}
+.btn.active{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+.btn-owner{padding:5px 10px;font-size:11px}
+.divider{width:1px;height:28px;background:var(--border)}
+
+/* MAIN */
+main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:700;color:var(--text)}
+.section-badge{background:var(--bg3);border:1px solid var(--border);color:var(--muted);font-size:10px;padding:2px 8px;border-radius:10px}
+.section-subtitle{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* CARDS */
+.card-row{display:grid;gap:12px}
+.card-row-2{grid-template-columns:repeat(2,1fr)}
+.card-row-3{grid-template-columns:repeat(3,1fr)}
+.card-row-auto{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden}
+.card:hover{border-color:var(--border2)}
+.card-clickable{cursor:pointer;transition:all .15s}
+.card-clickable:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,.12)}
+.card-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.card-value{font-size:26px;font-weight:800;letter-spacing:-1px}
+.card-value.green{color:var(--green)}
+.card-value.red{color:var(--red)}
+.card-value.accent{color:var(--accent)}
+.card-value.blue{color:var(--blue)}
+.card-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.card-icon{position:absolute;right:14px;top:14px;font-size:20px;opacity:.3}
+.card-change{font-size:11px;margin-top:6px}
+.card-change.up{color:var(--green)}
+.card-change.down{color:var(--red)}
+
+/* SDR CARD */
+.sdr-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.sdr-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sdr-avatar{width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#000;flex-shrink:0}
+.sdr-name{font-weight:700;font-size:13px}
+.sdr-role{font-size:10px;color:var(--muted);margin-top:1px}
+.sdr-table{width:100%;border-collapse:collapse}
+.sdr-table tr{border-bottom:1px solid var(--border)}
+.sdr-table tr:last-child{border-bottom:none}
+.sdr-table td{padding:10px 16px;font-size:12px}
+.sdr-table .sdr-metric{color:var(--muted)}
+.sdr-table .sdr-val{font-size:20px;font-weight:800;color:var(--accent);text-align:right}
+.sdr-table tr.clickable{cursor:pointer;transition:background .12s}
+.sdr-table tr.clickable:hover{background:var(--bg3)}
+.sdr-table .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.tag-nbm{background:rgba(245,158,11,.15);color:var(--nbm)}
+.tag-inp{background:rgba(88,166,255,.15);color:var(--inp)}
+.tag-cr{background:rgba(63,185,80,.15);color:var(--cr)}
+.tag-trial{background:rgba(188,140,255,.15);color:var(--purple)}
+.tag-won{background:rgba(63,185,80,.2);color:var(--green)}
+.tag-lost{background:rgba(248,81,73,.15);color:var(--red)}
+/* HV table: all stage tags orange */
+#section-highvalue .tag-inp,#section-highvalue .tag-cr{background:rgba(245,158,11,.15)!important;color:var(--nbm)!important}
+
+/* PIPELINE MATRIX */
+.matrix-wrapper{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.matrix-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.matrix-stats{display:flex;gap:20px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.matrix-stat{display:flex;flex-direction:column}
+.matrix-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.matrix-stat-value{font-size:20px;font-weight:800;color:var(--accent)}
+.matrix-table{width:100%;border-collapse:collapse}
+.matrix-table th{background:var(--bg3);padding:10px 16px;text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.matrix-table th.left{text-align:left}
+.matrix-table td{padding:10px 16px;border-bottom:1px solid var(--border);text-align:center;font-size:13px}
+.matrix-table td.owner-col{text-align:left;font-weight:600;font-size:12px;color:var(--text)}
+.matrix-table tr:last-child td{border-bottom:none}
+.matrix-table tr:hover td{background:rgba(48,54,61,.5)}
+.matrix-cell{cursor:pointer;border-radius:6px;padding:4px 8px;font-weight:700;font-size:14px;transition:all .15s;display:inline-block;min-width:52px;line-height:1.2}
+.matrix-cell:hover{transform:scale(1.05)}
+.matrix-cell.nbm{color:var(--nbm)}
+.matrix-cell.nbm:hover{background:rgba(245,158,11,.15)}
+.matrix-cell.inp{color:var(--inp)}
+.matrix-cell.inp:hover{background:rgba(88,166,255,.15)}
+.matrix-cell.cr{color:var(--cr)}
+.matrix-cell.cr:hover{background:rgba(63,185,80,.15)}
+.matrix-cell.trial{color:var(--purple)}
+.matrix-cell.trial:hover{background:rgba(188,140,255,.15)}
+.matrix-cell.zero{color:var(--border2);font-weight:400;font-size:12px;cursor:default}
+.totals-row td{background:var(--bg3);font-weight:700;border-top:2px solid var(--border)}
+.owner-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+
+/* WATCHLIST */
+.watchlist-table{width:100%;border-collapse:collapse}
+.watchlist-table th{background:var(--bg3);padding:10px 16px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.watchlist-table td{padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+.watchlist-table tr:last-child td{border-bottom:none}
+.watchlist-table tr:hover td{background:rgba(48,54,61,.4)}
+.watchlist-table .deal-link{font-weight:600;color:var(--text)}
+.watchlist-table .deal-link:hover{color:var(--accent)}
+.risk-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(248,81,73,.15);border:1px solid rgba(248,81,73,.4);color:var(--red);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.warn-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--accent);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.next-step-text{font-size:11px;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:1000px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal-header{background:var(--bg3);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-summary{display:flex;gap:20px;padding:12px 20px;background:rgba(245,158,11,.05);border-bottom:1px solid var(--border)}
+.modal-summary-item{display:flex;align-items:center;gap:6px}
+.modal-summary-label{font-size:11px;color:var(--muted);text-transform:uppercase}
+.modal-summary-val{font-size:16px;font-weight:800;color:var(--accent)}
+.modal-body{padding:0;max-height:60vh;overflow-y:auto}
+.modal-table{width:100%;border-collapse:collapse}
+.modal-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.modal-table td{padding:9px 14px;border-bottom:1px solid rgba(48,54,61,.5);font-size:12px;vertical-align:top}
+.modal-table tr:hover td{background:rgba(48,54,61,.4)}
+.modal-table .deal-name{font-weight:600;color:var(--text);max-width:180px}
+.modal-table .deal-name a{color:var(--text)}
+.modal-table .deal-name a:hover{color:var(--accent)}
+.modal-table .amount{font-weight:700;color:var(--green);white-space:nowrap}
+.stale-row td{background:rgba(248,81,73,.05)}
+.stale-days{color:var(--red);font-weight:700}
+.ok-days{color:var(--muted)}
+.overdue-row td{background:rgba(248,81,73,.06)!important}
+.next-step-cell{max-width:200px;font-size:11px;color:var(--muted);line-height:1.4}
+
+/* OWNER COLORS */
+.oc-blake{background:#f59e0b}
+.oc-jay{background:#58a6ff}
+.oc-chanan{background:#3fb950}
+.oc-matthew{background:#bc8cff}
+
+/* CARD ROW 4 */
+.card-row-4{grid-template-columns:repeat(4,1fr)}
+
+/* MATRIX CELL 2-LINE */
+.mc-count{display:block;font-weight:700;line-height:1.2}
+.mc-arr{display:block;font-size:10px;font-weight:500;opacity:.75;line-height:1.3}
+.matrix-stat-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.matrix-stat{cursor:pointer}
+.matrix-stat:hover .matrix-stat-value{opacity:.8}
+.matrix-cell.total-cell{color:var(--text)}
+.matrix-cell.total-cell:hover{background:rgba(230,237,243,.08)}
+
+/* MONTHLY PIPELINE CHART */
+.monthly-chart-wrap{margin-top:18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.monthly-chart-header{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.monthly-chart-title{font-size:13px;font-weight:700;color:var(--text)}
+.monthly-chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.monthly-table{width:100%;border-collapse:collapse;font-size:13px}
+.monthly-table th{padding:10px 16px;border-bottom:1px solid var(--border);text-align:center;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;background:var(--bg3)}
+.monthly-table th.left,.monthly-table td.owner-col{text-align:left}
+.monthly-table th.cur-month{color:var(--accent);background:rgba(88,166,255,.06)}
+.monthly-table td{padding:10px 14px;border-bottom:1px solid var(--border);border-right:1px solid rgba(48,54,61,.4);text-align:center;vertical-align:top}
+.monthly-table tr:last-child td{border-bottom:none}
+.monthly-table tr:hover td{background:rgba(48,54,61,.3)}
+.monthly-table .mm-total-row td{background:var(--bg3);border-top:2px solid var(--border);font-weight:700}
+.mm-cell{display:inline-block;min-width:72px}
+.mm-count{font-size:16px;font-weight:700;color:var(--text);line-height:1.2}
+.mm-arr{font-size:12px;font-weight:600;color:var(--accent);margin-left:5px}
+.mm-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;justify-content:center}
+.mm-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.15px}
+.mm-tag.nbm{color:var(--nbm);background:rgba(245,158,11,.13)}
+.mm-tag.inp{color:var(--inp);background:rgba(88,166,255,.13)}
+.mm-tag.trial{color:var(--purple);background:rgba(188,140,255,.13)}
+.mm-tag.cr{color:var(--cr);background:rgba(63,185,80,.13)}
+.mm-empty{color:var(--border2);font-size:14px;font-weight:300}
+.monthly-table td.cur-month-col{background:rgba(88,166,255,.04)}
+.mm-col-stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid rgba(48,54,61,.5)}
+.mm-col-acv{font-size:11px;font-weight:700;color:var(--accent)}
+.mm-col-cycle{font-size:10px;color:var(--purple);opacity:.9;text-align:right}
+.mm-col-won{font-size:10px;font-weight:600;color:var(--cr)}
+.mm-col-cvr{font-size:10px;font-weight:600;color:var(--muted);text-align:right}
+.monthly-table td.mm-clickable{cursor:pointer;transition:background .12s}
+.monthly-table td.mm-clickable:hover{background:rgba(88,166,255,.1)!important}
+.monthly-table td.cur-month-col.mm-clickable:hover{background:rgba(88,166,255,.15)!important}
+
+/* HIGH-VALUE SECTION */
+.hv-stage-header td{font-weight:700;font-size:11px;padding:8px 16px!important;letter-spacing:.5px;text-transform:uppercase}
+.hv-stage-nbm td{background:rgba(245,158,11,.12)!important;color:var(--nbm)!important;border-top:2px solid rgba(245,158,11,.3)!important}
+.hv-stage-inp td{background:rgba(88,166,255,.1)!important;color:var(--inp)!important;border-top:2px solid rgba(88,166,255,.25)!important}
+.hv-stage-sa td{background:rgba(188,140,255,.1)!important;color:var(--purple)!important;border-top:2px solid rgba(188,140,255,.25)!important}
+.hv-stage-cr td{background:rgba(63,185,80,.1)!important;color:var(--cr)!important;border-top:2px solid rgba(63,185,80,.25)!important}
+.hv-stats-stat{cursor:pointer}
+.hv-stats-stat:hover .matrix-stat-value{opacity:.8}
+
+/* TOOLTIP */
+.tooltip-box{position:fixed;background:#1c2128;border:1px solid #484f58;border-radius:8px;padding:8px 12px;font-size:11px;color:#e6edf3;max-width:280px;line-height:1.6;z-index:9999;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.tooltip-box.show{opacity:1}
+[data-tip]{cursor:help}
+
+/* PULSE CONTROLS ROW */
+.pulse-controls-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.pulse-controls-center{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+/* MISC */
+.section-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.no-data{text-align:center;padding:30px;color:var(--muted);font-size:12px}
+.footer{text-align:center;padding:16px;font-size:10px;color:var(--border2)}
+
+/* SDR TABS */
+.sdr-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg3)}
+.sdr-tab{flex:1;padding:9px 12px;background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.sdr-tab:hover{color:var(--text);background:rgba(48,54,61,.4)}
+.sdr-tab.sdr-tab-active{color:var(--accent);border-bottom-color:var(--accent);background:none}
+.sdr-tab-count{background:rgba(245,158,11,.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;min-width:20px;text-align:center}
+.sdr-tab-count.zero{background:rgba(139,148,158,.12);color:var(--border2)}
+.sdr-panel{padding:0}
+.sdr-panel.hidden{display:none}
+.sdr-panel-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between}
+.sdr-panel-count{font-size:24px;font-weight:800;color:var(--accent);line-height:1}
+.sdr-panel-meta{font-size:10px;color:var(--muted);margin-top:3px}
+.sdr-view-all{font-size:10px;color:var(--accent);cursor:pointer;background:none;border:none;padding:0;font-weight:600;flex-shrink:0}
+.sdr-view-all:hover{text-decoration:underline}
+.sdr-inline{width:100%;border-collapse:collapse}
+.sdr-inline td{padding:7px 16px;font-size:11px;border-bottom:1px solid rgba(48,54,61,.5);vertical-align:middle}
+.sdr-inline tr:last-child td{border-bottom:none}
+.sdr-inline tr:hover td{background:rgba(48,54,61,.3)}
+.sdr-zero{text-align:center;padding:24px;color:var(--border2);font-size:12px}
+.sdr-status{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.sdr-status-connected{background:rgba(63,185,80,.15);color:var(--green)}
+.sdr-status-no-answer{background:rgba(139,148,158,.12);color:var(--muted)}
+.sdr-status-hangup{background:rgba(245,158,11,.12);color:var(--nbm)}
+.sdr-status-not-interested{background:rgba(248,81,73,.12);color:var(--red)}
+.sdr-status-outbound{background:rgba(88,166,255,.12);color:var(--inp)}
+.sdr-status-scheduled{background:rgba(88,166,255,.12);color:var(--inp)}
+
+/* WEEKLY PIPELINE BRIEF */
+.brief-wrap{padding:20px 24px}
+.brief-controls{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.brief-generate-btn{padding:9px 20px;background:var(--accent);border:none;border-radius:8px;color:#000;font-weight:700;font-size:13px;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.brief-generate-btn:hover{opacity:.85}
+.brief-generate-btn:disabled{opacity:.5;cursor:not-allowed}
+.brief-copy-btn{padding:7px 14px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.brief-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.brief-ts{font-size:11px;color:var(--muted);margin-left:auto}
+.brief-output{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px 22px;font-family:'SF Mono',ui-monospace,monospace;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;min-height:120px;max-height:680px;overflow-y:auto;display:none}
+.brief-output.visible{display:block}
+.brief-placeholder{text-align:center;padding:32px;color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px}
+.brief-line-header{color:var(--accent);font-weight:700}
+.brief-line-sub{color:var(--muted)}
+/* ── Deal Intelligence Report ── */
+.intel-wrap{padding:20px 24px}
+.intel-controls{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.intel-btn{padding:9px 20px;background:var(--accent);border:none;border-radius:8px;color:#000;font-weight:700;font-size:13px;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.intel-btn:hover{opacity:.85}
+.intel-btn:disabled{opacity:.5;cursor:not-allowed}
+.intel-ts{font-size:11px;color:var(--muted);margin-left:auto}
+.intel-placeholder{text-align:center;padding:32px;color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px}
+.intel-output{display:none}
+.intel-output.visible{display:block}
+/* summary stat row */
+.intel-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:900px){.intel-summary-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.intel-summary-row{grid-template-columns:1fr}}
+.intel-stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:border-color .15s,background .15s;user-select:none}
+.intel-stat-card:hover{border-color:var(--accent);background:var(--bg3)}
+.intel-stat-icon{font-size:22px;flex-shrink:0}
+.intel-stat-body{flex:1;min-width:0}
+.intel-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.intel-stat-count{font-size:30px;font-weight:800;line-height:1;cursor:pointer}
+.intel-stat-arr{font-size:13px;font-weight:600;margin-top:3px}
+.intel-stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.intel-stat-arrow{font-size:18px;color:var(--muted);flex-shrink:0;opacity:.5}
+.intel-stat-card:hover .intel-stat-arrow{opacity:1;color:var(--accent)}
+.intel-stat-card.stuck .intel-stat-count{color:#f87171}
+.intel-stat-card.stuck .intel-stat-arr{color:#f87171}
+.intel-stat-card.atrisk .intel-stat-count{color:#fbbf24}
+.intel-stat-card.atrisk .intel-stat-arr{color:#fbbf24}
+.intel-stat-card.healthy .intel-stat-count{color:#3fb950}
+.intel-stat-card.healthy .intel-stat-arr{color:#3fb950}
+/* actions card */
+.intel-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.intel-card-header{padding:11px 16px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px}
+.intel-card-header.actions{background:rgba(163,113,247,.15);color:#bc8cff}
+.intel-action-item{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start}
+.intel-action-item:last-child{border-bottom:none}
+.intel-action-item.clickable{cursor:pointer;transition:background .12s}
+.intel-action-item.clickable:hover{background:var(--bg3)}
+.intel-action-arrow{font-size:16px;color:var(--muted);opacity:.4;align-self:center;flex-shrink:0;transition:opacity .12s,color .12s}
+.intel-action-item.clickable:hover .intel-action-arrow{opacity:1;color:var(--accent)}
+.intel-action-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;margin-top:1px}
+.intel-action-rank.r1{background:rgba(245,158,11,.25);color:#f59e0b}
+.intel-action-rank.r2{background:rgba(88,166,255,.25);color:#58a6ff}
+.intel-action-rank.r3{background:rgba(163,113,247,.25);color:#bc8cff}
+.intel-action-body{flex:1;min-width:0}
+.intel-action-deal{font-weight:700;font-size:13px;color:var(--text)}
+.intel-action-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.intel-action-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;gap:12px;flex-wrap:wrap}
+.intel-action-arr{color:var(--accent);font-weight:700}
+.intel-empty{padding:14px 16px;color:var(--muted);font-size:12px;font-style:italic}
+/* modal detail table */
+.intel-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;white-space:nowrap}
+.intel-badge-red{background:rgba(239,68,68,.2);color:#f87171}
+.intel-badge-yellow{background:rgba(245,158,11,.2);color:#fbbf24}
+.intel-badge-green{background:rgba(63,185,80,.2);color:#3fb950}
+.intel-badge-blue{background:rgba(88,166,255,.2);color:#58a6ff}
+.intel-badge-purple{background:rgba(163,113,247,.2);color:#bc8cff}
+.intel-missing{color:#f87171;font-weight:700}
+.intel-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.intel-tbl th{background:var(--bg3);padding:8px 12px;text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap}
+.intel-tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.45;font-size:12px}
+.intel-tbl tr:last-child td{border-bottom:none}
+.intel-tbl tr:hover td{background:rgba(48,54,61,.4)}
+.intel-tbl td.deal-name{font-weight:600;color:var(--text);min-width:160px}
+.intel-detail-loading{padding:32px;text-align:center;color:var(--muted);font-size:13px}
+.intel-detail-loading .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">O</div>
+    <div>
+      <div class="header-title">Octup RevOps Pipeline</div>
+      <div class="header-sub">3PL Partner Pipeline · Portal 26004468</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+      <button id="sync-btn" onclick="syncFromHubSpot()" title="Pull live data from HubSpot"
+        style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 11px;border-radius:20px;cursor:pointer;font-size:10px;font-weight:600;letter-spacing:.3px;transition:all .15s;"
+        onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🔄 SYNC</button>
+      <div class="live-badge">LIVE DATA</div>
+    </div>
+    <div style="margin-top:6px" id="sync-timestamp">Syncing…</div>
+  </div>
+</div>
+
+<div id="week-label" style="display:none"></div>
+
+<main>
+  <!-- A: WEEKLY PULSE -->
+  <section id="section-pulse">
+    <div class="pulse-controls-row">
+      <div class="btn-group" id="owner-btns">
+        <button class="btn btn-owner active" data-owner="all">All</button>
+        <button class="btn btn-owner" data-owner="29896105"><span class="owner-dot oc-blake"></span>Blake</button>
+        <button class="btn btn-owner" data-owner="29422733"><span class="owner-dot oc-jay"></span>Jay</button>
+        <button class="btn btn-owner" data-owner="30284350"><span class="owner-dot oc-chanan"></span>Chanan</button>
+        <button class="btn btn-owner" data-owner="32023983"><span class="owner-dot oc-matthew"></span>Matthew</button>
+      </div>
+      <div class="pulse-controls-center">
+        <div class="section-title">📊 Weekly Pulse</div>
+        <div class="section-badge" id="pulse-week-badge">Last Week</div>
+        <div class="section-subtitle" id="pulse-date-range"></div>
+      </div>
+      <div class="btn-group" id="week-btns">
+        <button class="btn active" data-week="this">This Week ★</button>
+        <button class="btn" data-week="last">Last Week</button>
+        <button class="btn" data-week="2w">2 Weeks Ago</button>
+        <button class="btn" data-week="3w">3 Weeks Ago</button>
+        <button class="btn" data-week="4w">4 Weeks Ago</button>
+        <button class="btn" data-week="month">This Month</button>
+        <button class="btn" data-week="quarter">This Q</button>
+        <button class="btn" data-week="year">This Y</button>
+      </div>
+    </div>
+    <div class="card-row card-row-4" style="margin-bottom:14px">
+      <div class="card card-clickable" id="card-won" onclick="openWonModal()">
+        <div class="card-icon">🏆</div>
+        <div class="card-label" data-tip="Deals moved to Closed Won stage during the selected week. Gross ARR = full contract value before any deductions.">ARR Won (Gross)</div>
+        <div class="card-value green" id="val-won">—</div>
+        <div class="card-sub" id="sub-won"></div>
+      </div>
+      <div class="card card-clickable" id="card-lost" onclick="openLostModal()">
+        <div class="card-icon">❌</div>
+        <div class="card-label" data-tip="Deals moved to Closed Lost or Disqualified during the selected week. Count is displayed; ARR lost shown below.">Deals Lost</div>
+        <div class="card-value red" id="val-lost-count">—</div>
+        <div class="card-sub" id="sub-lost"></div>
+      </div>
+      <div class="card card-clickable" id="card-new-pipeline" onclick="openNewPipelineModal()">
+        <div class="card-icon">➕</div>
+        <div class="card-label" data-tip="All new deals entered into the CRM during the selected week, regardless of current stage. Respects the owner filter.">New Pipeline</div>
+        <div class="card-value blue" id="val-new-pipeline">—</div>
+        <div class="card-sub" id="sub-new-pipeline"></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📅</div>
+        <div class="card-label">Week Range</div>
+        <div class="card-value accent" style="font-size:14px;margin-top:4px" id="val-week-range">—</div>
+        <div class="card-sub">Mon–Sat cycle</div>
+      </div>
+    </div>
+
+    <!-- SDR ACTIVITY -->
+    <div class="sdr-card">
+      <div class="sdr-header">
+        <div class="sdr-avatar">CB</div>
+        <div>
+          <div class="sdr-name">Chanan Burstein — SDR Activity</div>
+          <div class="sdr-role">Business Development · ID: 30284350</div>
+        </div>
+        <div style="margin-left:auto;font-size:11px;color:var(--muted)" id="sdr-week-label"></div>
+      </div>
+      <div class="sdr-tabs">
+        <button class="sdr-tab sdr-tab-active" onclick="selectSDRTab('meetings',this)">📅 Meetings <span class="sdr-tab-count zero" id="sdr-cnt-meetings">0</span></button>
+        <button class="sdr-tab" onclick="selectSDRTab('calls',this)">📞 Calls <span class="sdr-tab-count zero" id="sdr-cnt-calls">0</span></button>
+        <button class="sdr-tab" onclick="selectSDRTab('emails',this)">✉ Emails <span class="sdr-tab-count zero" id="sdr-cnt-emails">0</span></button>
+        <button class="sdr-tab" onclick="selectSDRTab('deals',this)">💼 Deals <span class="sdr-tab-count zero" id="sdr-cnt-deals">0</span></button>
+      </div>
+      <div id="sdr-panel-meetings" class="sdr-panel"></div>
+      <div id="sdr-panel-calls" class="sdr-panel hidden"></div>
+      <div id="sdr-panel-emails" class="sdr-panel hidden"></div>
+      <div id="sdr-panel-deals" class="sdr-panel hidden"></div>
+    </div>
+  </section>
+
+  <!-- B: PIPELINE INVENTORY -->
+  <section id="section-inventory">
+    <div class="section-header" style="flex-wrap:wrap;gap:8px 16px;align-items:center">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <div class="section-title">🗂 Pipeline Inventory</div>
+        <div class="section-badge" id="inventory-badge">All Open Deals · All Time</div>
+      </div>
+      <div class="btn-group" id="inventory-period-btns">
+        <button class="btn active" data-inv-period="all">All Time</button>
+        <button class="btn" data-inv-period="this">This Week</button>
+        <button class="btn" data-inv-period="last">Last Week</button>
+        <button class="btn" data-inv-period="2w">2 Wks Ago</button>
+        <button class="btn" data-inv-period="3w">3 Wks Ago</button>
+        <button class="btn" data-inv-period="4w">4 Wks Ago</button>
+      </div>
+    </div>
+    <div class="matrix-wrapper">
+      <div class="matrix-stats">
+        <div class="matrix-stat" onclick="openInventoryStatModal('all')" data-tip="All open deals in the pipeline — excludes Won, Lost, and Disqualified. No date filter. Click to see all deals.">
+          <div class="matrix-stat-label">Total Deals</div>
+          <div class="matrix-stat-value" id="stat-total-deals">—</div>
+          <div class="matrix-stat-sub" id="stat-total-arr-sub">—</div>
+        </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('nbm')" data-tip="New Business Meeting stage (NBM): first qualifying meeting stage. These deals need an NBM booked or just had one. Click to view.">
+          <div class="matrix-stat-label">NBM</div>
+          <div class="matrix-stat-value" style="color:var(--nbm)" id="stat-nbm">—</div>
+          <div class="matrix-stat-sub" id="stat-nbm-sub">—</div>
+        </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('inp')" data-tip="In-Progress: all deals in Discovery, Demo, or Commercial stages. Actively being worked — not in NBM, Commercial Review, Won, or Lost. Click to view.">
+          <div class="matrix-stat-label">In-Progress</div>
+          <div class="matrix-stat-value" style="color:var(--inp)" id="stat-inp">—</div>
+          <div class="matrix-stat-sub" id="stat-inp-sub">—</div>
+        </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('trial')" data-tip="Trial: deals actively in a product trial. Click to view.">
+          <div class="matrix-stat-label">Trial</div>
+          <div class="matrix-stat-value" style="color:var(--purple)" id="stat-trial">—</div>
+          <div class="matrix-stat-sub" id="stat-trial-sub">—</div>
+        </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('cr')" data-tip="Commercial Review: final stage before close. Contract review, legal sign-off, or final approval. Click to view.">
+          <div class="matrix-stat-label">Commercial Review</div>
+          <div class="matrix-stat-value" style="color:var(--cr)" id="stat-cr">—</div>
+          <div class="matrix-stat-sub" id="stat-cr-sub">—</div>
+        </div>
+      </div>
+      <div class="matrix-table-scroll">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="left">Owner</th>
+              <th style="color:var(--nbm)" data-tip="New Business Meeting stage. Deals awaiting or just completed their first qualifying meeting. Count / ARR shown.">NBM</th>
+              <th style="color:var(--inp)" data-tip="In-Progress: Discovery, Demo, and Solution Alignment stages combined. All active deals not in NBM, Trial, or Commercial Review. Count / ARR shown.">In-Progress</th>
+              <th style="color:var(--purple)" data-tip="Trial: deals actively in a product trial. Count / ARR shown.">Trial</th>
+              <th style="color:var(--cr)" data-tip="Commercial Review: final stage before close. Deals in contract or legal review. Count / ARR shown.">Comm. Review</th>
+              <th data-tip="Total count of all open deals for this owner. Click to see deal list.">Total</th>
+              <th data-tip="Total ARR value of all open deals for this owner. Click to see deal list.">Total ARR</th>
+              <th data-tip="External meetings set during the selected week for this owner.">Meetings</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Monthly pipeline breakdown -->
+    <div class="monthly-chart-wrap">
+      <div class="section-header" style="padding:14px 18px;margin-bottom:0;border-bottom:1px solid var(--border);background:var(--bg3)">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+          <div class="section-title">📅 Pipeline by Seller × Month</div>
+          <div class="section-badge">Deals by Creation Date · Grouped by Stage · ARR Summed</div>
+        </div>
+      </div>
+      <div class="monthly-chart-scroll">
+        <table class="monthly-table" id="monthly-table"><tbody><tr><td style="color:var(--muted);padding:20px">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- D: HIGH-VALUE DEALS >$40K -->
+  <section id="section-highvalue">
+    <div class="section-header">
+      <div class="section-title">💎 High-Value Deals</div>
+      <div class="section-badge" data-tip="All open deals with ARR above $40K. Grouped by stage, sorted by ARR within each stage. Respects owner filter. No date filter.">ARR &gt; $40K · All Open · No Date Filter</div>
+      <div class="section-subtitle" id="hv-subtitle"></div>
+    </div>
+    <div class="matrix-wrapper">
+      <div class="matrix-stats" id="hv-stats"></div>
+      <table class="watchlist-table">
+        <thead>
+          <tr>
+            <th>Deal Name</th>
+            <th>ARR</th>
+            <th>Stage</th>
+            <th>Owner</th>
+            <th>Close Date</th>
+            <th>Next Step</th>
+            <th>Last Activity</th>
+            <th>Lifetime</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="hv-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- E: DEAL INTELLIGENCE REPORT -->
+  <section id="section-intel">
+    <div class="section-header">
+      <div class="section-title">🧠 Deal Intelligence Report</div>
+      <div class="section-badge" data-tip="RevOps + Deal Desk analysis. Flags stuck, at-risk, and healthy deals. Auto-generates top 3 actions ranked by revenue impact.">RevOps · Deal Desk Analysis</div>
+    </div>
+    <div class="intel-wrap">
+      <div class="intel-controls">
+        <button class="intel-btn" id="intel-gen-btn" onclick="generateDealIntel()">⚡ Generate Report</button>
+        <span class="intel-ts" id="intel-ts"></span>
+      </div>
+      <div class="intel-placeholder" id="intel-placeholder">Click <b>⚡ Generate Report</b> to run the full pipeline analysis — stuck deals, at-risk, healthy, commercial review, and top 3 revenue actions.</div>
+      <div class="intel-output" id="intel-output"></div>
+    </div>
+  </section>
+
+  <!-- F: WEEKLY PIPELINE BRIEF -->
+  <section id="section-brief">
+    <div class="section-header">
+      <div class="section-title">📋 Weekly Pipeline Brief</div>
+      <div class="section-badge" data-tip="Auto-generated summary from live pipeline data. Covers last week's wins, new deals, commercial review, high-value deals, and attention items.">Auto-generated · Live Data</div>
+    </div>
+    <div class="brief-wrap">
+      <div class="brief-controls">
+        <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Brief</button>
+        <button class="brief-copy-btn" id="brief-copy-btn" onclick="copyBrief()" style="display:none">📋 Copy</button>
+        <span class="brief-ts" id="brief-ts"></span>
+      </div>
+      <div class="brief-placeholder" id="brief-placeholder">Click <b>⚡ Generate Brief</b> to produce this week's pipeline summary from live data.</div>
+      <pre class="brief-output" id="brief-output"></pre>
+    </div>
+  </section>
+
+</main>
+
+<div class="footer">Octup RevOps Dashboard v3.5 · Portal 26004468 · 3PL Partner Pipeline · <span id="footer-date-str"></span></div>
+<!-- TOOLTIP -->
+<div id="tooltip" class="tooltip-box"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Details</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-summary" id="modal-summary"></div>
+    <div class="modal-body"><div id="modal-content"></div></div>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const OWNERS = {
+  '29896105': {name:'Blake Read',   color:'#f59e0b', cls:'oc-blake'},
+  '29422733': {name:'Jay Mazur',    color:'#58a6ff', cls:'oc-jay'},
+  '30284350': {name:'Chanan Burstein', color:'#3fb950', cls:'oc-chanan'},
+  '32023983': {name:'Matthew Bocker', color:'#bc8cff', cls:'oc-matthew'},
+};
+const STAGES = {
+  '2918051007': 'NBM',
+  '2918051008': 'Stalled',
+  '608286675':  'Discovery',
+  '740160705':  'Discovery',       // legacy Demo ID → merged with Discovery
+  '608286676':  'Solution Alignment',
+  '4988070119': 'Trial',
+  '608286677':  'Commercial Review',
+};
+const BUCKET = {
+  '2918051007': 'NBM',
+  '2918051008': 'NBM',
+  '608286675':  'In-Progress',
+  '740160705':  'In-Progress',
+  '608286676':  'In-Progress',
+  '4988070119': 'Trial',
+  '608286677':  'Commercial Review',
+};
+const TODAY = new Date();
+(function buildWeeks() {
+  // Find this Monday (Mon-Sat cycle) — use local date to avoid UTC offset issues
+  const dow = TODAY.getDay(); // 0=Sun … 6=Sat
+  const toMon = dow === 0 ? 6 : dow - 1;
+  const mon = new Date(TODAY); mon.setDate(TODAY.getDate() - toMon); mon.setHours(0,0,0,0);
+  // Local-time ISO string (avoids UTC day-shift)
+  function isoDate(d) {
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function shortFmt(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+  function weekObj(offset, prefix) {
+    const s = new Date(mon); s.setDate(mon.getDate() + offset * 7);
+    const e = new Date(s);   e.setDate(s.getDate() + 5); // Mon–Sat
+    const yr = s.getFullYear();
+    return { start: isoDate(s), end: isoDate(e),
+             label: `${prefix} (${shortFmt(s)}–${shortFmt(e)}, ${yr})` };
+  }
+  // Month / Quarter / Year helpers
+  function rangeObj(start, end, label) {
+    return { start: isoDate(start), end: isoDate(end), label };
+  }
+  // This Month
+  const mStart = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+  const mEnd   = new Date(TODAY.getFullYear(), TODAY.getMonth() + 1, 0);
+  // This Quarter
+  const q      = Math.floor(TODAY.getMonth() / 3);
+  const qStart = new Date(TODAY.getFullYear(), q * 3, 1);
+  const qEnd   = new Date(TODAY.getFullYear(), q * 3 + 3, 0);
+  const qNames = ['Q1','Q2','Q3','Q4'];
+  // This Year
+  const yStart = new Date(TODAY.getFullYear(), 0, 1);
+  const yEnd   = new Date(TODAY.getFullYear(), 11, 31);
+
+  window.WEEKS = {
+    'this':    weekObj( 0, 'This Week'),
+    'last':    weekObj(-1, 'Last Week'),
+    '2w':      weekObj(-2, '2 Wks Ago'),
+    '3w':      weekObj(-3, '3 Wks Ago'),
+    '4w':      weekObj(-4, '4 Wks Ago'),
+    'month':   rangeObj(mStart, mEnd,  `This Month (${shortFmt(mStart)}–${shortFmt(mEnd)}, ${TODAY.getFullYear()})`),
+    'quarter': rangeObj(qStart, qEnd,  `This ${qNames[q]} (${shortFmt(qStart)}–${shortFmt(qEnd)}, ${TODAY.getFullYear()})`),
+    'year':    rangeObj(yStart, yEnd,  `This Year (Jan 1–Dec 31, ${TODAY.getFullYear()})`),
+  };
+})();
+const PORTAL = '26004468';
+
+// ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
+// [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource]
+const DEALS = [
+  ['311147104455','Barrett Distribution Centers',120000,'2918051008','29896105','2025-09-18','2026-05-29','Reached out to Jordan to see if he connected to Brian at GPA','29896105','2026-03-20'],
+  ['405224989943','James Cargo Services - 3PL Partner',84000,'2918051007','29896105','2025-12-11','2026-06-26','4/20 - NBM rescheduled','30284350','2026-03-20'],
+  ['486004873438','Weber Logistics',84000,'740160705','29422733','2026-03-03','2026-05-02','Steven asked to reschedule due to high priority items (3/10)','29422733','2026-03-21'],
+  ['477922067703','Cirro Fulfillment',102000,'608286676','29896105','2026-02-23','2026-04-24','Set a new meeting with NDA signed','32023983','2026-03-20'],
+  ['459497499890','Customized Distribution Services',84000,'608286675','29422733','2026-02-04','2026-04-24','Randall has been unresponsive since meeting with Alon and I. Left him a vmail 3/19 (again).','29422733','2026-03-19'],
+  ['411341426928','Nautical Manufacturing and Fulfillment - 3PL Partner',60000,'2918051008','29422733','2025-12-17','2026-05-29','-Will agreed to intro Alexander and Alex','29422733','2026-03-19'],
+  ['481871055094','Saia Logistics (fka LinkX)',60000,'2918051008','29896105','2026-02-27','2026-04-28','Saia President put this on hold. Nurture accordingly','29896105','2026-03-21'],
+  ['472770962642','GAP',60000,'608286675','29896105','2026-02-19','2026-04-04','Jay reaching out to Steve on Blakes behalf. No movement.','29896105','2026-03-19'],
+  ['21754029791','Delta Fulfilment - Trial',57000,'608286677','29896105','2024-10-07','2026-03-25','Has Docusign - 3/17 update from Steve, needs a few days.','69626301','2026-03-20'],
+  ['452137009352','EWorld Fulfillment - 3PL Partner',54000,'608286676','29422733','2026-01-27','2026-04-24','Asher now has all material requested to review with CEO and schedule next call based on CEO availability. 3/4 - he shared he\'d be OOO for 1 week and wants to pick back up upon his return.','29422733','2026-03-19'],
+  ['411385661666','Prolog Fulfilment - 3PL Partner',54000,'2918051007','30284350','2025-12-17','2026-04-24','Deal too far out. Re engage for closer to','30284350','2026-03-21'],
+  ['478124890347','Your Logistics Corp',54000,'608286675','29896105','2026-02-23','2026-04-24','Blake & Jay to reach out to Hossein early next week w/ pilot plan and set next steps','29896105','2026-03-20'],
+  ['411340706014','Global Freight Solutions - 3PL Partner',48000,'2918051007','30284350','2025-12-17','2026-04-25','Changed ownership to Chanan to re book','30284350','2026-03-19'],
+  ['410373706996','BTX Global Logistics - 3PL Partner',48000,'2918051007','30284350','2025-12-16','2026-02-14','1/13 - NBM','30284350','2026-03-19'],
+  ['477992997065','eGourmet Solutions Inc. - Manifest Trial',48000,'608286676','29422733','2026-02-23','2026-04-24','Ellie & Maggie to provide free text fields they\'re using as SOP\'s to determine how orders are packed with what materials. (2) They need to connect their extensiv instance.','29422733','2026-03-21'],
+  ['481710229706','Tactical Logistic Solutions',48000,'2918051008','29896105','2026-02-27','2026-04-28','Tactical Team wants to delay. Blake going to try and push for urgency before accepting delay','29896105','2026-03-21'],
+  ['335551607996','Highline Commerce',42000,'2918051007','29422733','2025-10-16','2026-02-28','Wanted to reschedule intro call but did not answer as to when','29422733','2026-03-20'],
+  ['473541862644','Baja Fulfillment',36000,'2918051007','29896105','2026-02-19','2026-04-20','Reconnect email sent 3/20 - awaiting reply','29896105','2026-03-20'],
+  ['412482107602','PRL Logistics - 3PL Partner',36000,'2918051007','30284350','2025-12-18','2026-03-13','Rebook. No showed to NBM','30284350','2026-03-20'],
+  ['329121454290','Razr/BWT Logistics - 3PL Partner',36000,'2918051007','29422733','2025-10-10','2026-04-17','1/19 - Connection made with Mike Griffin, scheduling NBM','29422733','2026-02-25'],
+  ['412353323233','RBC Group - 3PL Partner',36000,'2918051007','30284350','2025-12-18','2026-04-24','no show again - sending back to @Chanan','30284350','2026-03-19'],
+  ['481189626047','AMZ Prep',36000,'2918051008','29896105','2026-02-27','2026-04-28','Thomas responded this is not the focus right now. Pushed back for hopeful re engagement but likely move to stalled/delayed','29896105','2026-03-19'],
+  ['406329249978','R&S Logistics - 3PL Partner',36000,'2918051008','29422733','2025-12-12','2026-05-01','1. Get API Docs from Brighton\n2. Set Demo Date with Aaron','29422733','2026-03-19'],
+  ['477916308702','Argents Express',36000,'2918051007','29422733','2026-02-23','2026-04-24',null,'29422733','2026-03-21'],
+  ['403976773878','Warehouse & Freight - 3PL Partner',36000,'2918051007','30284350','2025-12-10','2026-04-24','2/10 - No Show to NBM. Rebook','30284350','2026-03-21'],
+  ['411341444307','Fulfillment Plus - 3PL Partner',36000,'2918051007','29896105','2025-12-17','2026-03-27','3/2 NBM','30284350','2026-03-21'],
+  ['275759382720','PipShip',36000,'608286676','29422733','2025-07-30','2026-03-27','Need Meeting with Claudia / Jeff & Avery. Claudia is Avery\'s Wife, Jeff is a brand and investor in pipship. See emails.','29422733','2026-03-21'],
+  ['416060552392','Rapid Fulfillment Services - 3PL Partner',32000,'2918051007','30284350','2025-12-23','2026-02-21',null,'30284350','2026-02-27'],
+  ['374103853256','3DM Group - 3PL Partner',30000,'2918051007','29896105','2025-11-14','2026-05-14','5/1 - NBM Scheduled. Try and engage prior','29896105','2026-02-25'],
+  ['425075783911','DWS Logistics - 3PL Partner',30000,'2918051007','30284350','2026-01-06','2026-03-07','NBM 1/12 Monday no show - engaging to rebook','30284350','2026-03-20'],
+  ['373932429521','Green Fulfilment - 3PL Partner',30000,'2918051007','30284350','2025-11-13','2026-01-12','Reconnect email sent 3/20 - awaiting reply','30284350','2026-03-20'],
+  ['454024375493','DLVRD Logistics Inc. - 3PL Partner',30000,'2918051007','30284350','2026-01-29','2026-03-30',null,'30284350','2026-02-25'],
+  ['417001074931','Think Logistics - 3PL Partner',30000,'2918051007','30284350','2025-12-23','2026-04-24',null,'30284350','2026-03-18'],
+  ['296064239865','Hero Fulfillment',30000,'2918051007','30284350','2025-08-26','2026-03-31','Currently ghosting after booking a meeting','30284350','2026-03-18'],
+  ['385415697648','One circle Logistics',30000,'2918051007','30284350','2025-11-24','2026-01-23','No show to meeting. Chanan to re engage','30284350','2026-03-20'],
+  ['398470018272','HD Logistics & Warehousing Solutions - 3PL Partner',30000,'2918051007','29422733','2025-12-04','2026-03-28','Meeting confirmed for Manifest 2/10 @ 9am with Jay','29422733','2026-03-20'],
+  ['373924524263','Accurate Transport - 3PL Partner',30000,'2918051007','29422733','2025-11-13','2026-02-28','Rebooked for 2/2 by Chanan','29422733','2026-03-21'],
+  ['451126015174','Jack Richards & Son - 3PL Partner',30000,'2918051007','29422733','2026-01-27','2026-03-27',null,'29422733','2026-02-28'],
+  ['395434951886','Walker Logistics - 3PL Partner',66000,'608286675','29896105','2025-12-02','2026-04-24','Demo to be scheduled for week of 3/23. Charlie rounding up team','29896105','2026-03-20'],
+  ['485120763085','InSync Fulfillment',30000,'608286676','29422733','2026-03-03','2026-03-31','3/12 - per Linas (spoke with him 3/11 on the phone), he\'s meeting with Joe (biz partner) on Octup.','29422733','2026-03-21'],
+  ['370749058247','Kwiksave Logistics - 3PL Partner',30000,'2918051007','30284350','2025-11-12','2026-01-11','1/7 - NBM Scheduled','30284350','2026-03-20'],
+  ['378594137292','Tu Pack - 3PL Partner',30000,'608286677','29422733','2025-11-19','2026-03-25','Stephen booking time for 24th with COO.','29422733','2026-03-21'],
+  ['427713702126','TOC Logistics - 3PL Partner',30000,'2918051007','30284350','2026-01-08','2026-04-24','NBM scheduled for 3/4','30284350','2026-03-20'],
+  ['388158166241','Carter Distribution - 3PL Partner',30000,'608286675','29896105','2025-11-26','2026-04-24','COO requested month delay. Does not have time to dive deeper in month of March','29896105','2026-03-11'],
+  ['477905091779','List Logistics',30000,'2918051007','29422733','2026-02-23','2026-04-30','They asked to push until 4/9 - new WMS underway','29422733','2026-03-15'],
+  ['374574725350','NEXgistics - 3PL Partner',30000,'2918051007','29422733','2025-11-14','2026-04-10','Confirm time with Sean & Head of CS for Demo','29422733','2026-03-21'],
+  ['461172802797','IQ Supply Solutions, LLC - 3PL Partner',30000,'2918051007','29422733','2026-02-05','2026-04-06',null,'29422733','2026-03-14'],
+  ['477912008924','Shipsalot - FKA Dollar Fulfillment',30000,'2918051007','29422733','2026-02-23','2026-04-24','Get them back on the phone. Great conversation at Manifest, and nothing since.','32023983','2026-03-14'],
+  ['395530363084','Ship Essential - 3PL Partner',36000,'608286677','29896105','2025-12-02','2026-03-27','Commercials agreed upon, moving forward with reference call (Mikey choosing ideal client)','30284350','2026-03-20'],
+  ['395616403694','MSL COPACK + ECOMM - 3PL Partner',30000,'2918051007','30284350','2025-12-02','2026-04-17','sent back to Chanan to schedule with Jeremy','30284350','2026-03-20'],
+  ['478621106408','Orange County 3PL - 3PL Partner',36000,'608286677','29422733','2026-02-24','2026-04-30','3/16 - has docusign, has reviewed. 3/17 - asking for < 2 week hold to work through issues with ShipHero migration.','32023983','2026-03-21'],
+  ['426737647808','BoxFort Commerce - 3PL Partner',30000,'608286675','29422733','2026-01-07','2026-05-29','Sent note to Benn about meeting with Alon (fellow Brand owner).','29422733','2026-03-21'],
+  ['397125735624','Ironlink Logistics - 3PL Partner',30000,'2918051007','29422733','2025-12-04','2026-05-29','Jan 22, 2026 - Meeting scheduled with David','29422733','2026-03-21'],
+  ['450457727200','L&M Distribution and Logistics',24000,'608286675','29896105','2026-01-26','2026-04-03','Demo rescheduled to 3/25 per POCs request due to client visits','29896105','2026-03-20'],
+  ['474056691933','Supply Chain Warehouses',24000,'740160705','29896105','2026-02-19','2026-04-24','Follow up call w/ Alon pushed out by a month due to other priorities 3/24','29896105','2026-03-19'],
+  ['473452158169','Alom',24000,'608286675','29896105','2026-02-19','2026-04-24','3/23 Cont Evaluation/Demo','29896105','2026-03-20'],
+  ['474457379063','Fetch Fulfillment - Manifest Trial',24000,'4988070119','29422733','2026-02-20','2026-03-28','Trial Kickoff 2/20','29422733','2026-03-20'],
+  ['475675551947','Precision 3PL - 3PL Partner',24000,'608286677','29422733','2026-02-23','2026-04-11','Deeper Discussion 2/23 (recap + pricing with McKenna)','29422733','2026-03-20'],
+  ['412482821359','JS Davidson',24000,'608286676','29896105','2025-12-18','2026-04-03','Conversating around integration details. Look to move to commercial review asap','29896105','2026-03-21'],
+  ['474120071396','G&B Fulfillment',24000,'740160705','29896105','2026-02-19','2026-04-24','Working w/ Jay & Alon to re engage. No response to anyone. Follow up again next week','29896105','2026-03-21'],
+  ['473244614880','Custom Goods',24000,'2918051007','29896105','2026-02-18','2026-04-24','Sent a LinkedIn Connect Request to try and re engage','29896105','2026-03-19'],
+  ['378594107601','3PL Winner | CapEc - 3PL Partner',24000,'2918051008','29422733','2025-11-19','2026-03-28','1/30 reconnect w/Leena','29422733','2026-03-21'],
+  ['481449860294','Fulfillment House',24000,'2918051008','29896105','2026-02-27','2026-06-30','No interest in moving quicker to implement. Likely to consider new solution in July','29896105','2026-03-21'],
+  ['472141769930','Packageman - 3PL Partner',24000,'740160705','29896105','2026-02-16','2026-04-17','Blake to email updates from product dev side','29896105','2026-03-21'],
+  ['470694292673','Whitehouse Solutions',24000,'2918051008','29896105','2026-02-16','2026-03-21','Need to focus on current accounts before onboarding new tools. Attempting to get a reconnect date','29896105','2026-03-20'],
+  ['492304500976','ParcelPlanet',42000,'608286677','29896105','2026-03-09','2026-04-03','Commercials sent over for review. Tentative meeting 3/23-3/24 to confirm trial scope and sign','29896105','2026-03-21'],
+  ['461107103961','M&w distribution services - 3PL Partner',20000,'2918051007','30284350','2026-02-05','2026-04-06',null,'30284350','2026-03-18'],
+  ['378240498937','Creative Fulfillment',18000,'2918051008','29896105','2025-11-19','2026-03-06','Tanner shared he needs to delay evaluation. Blake to check in periodically','29896105','2026-03-21'],
+  ['474608465119','FREIGHTLEAD - 3PL Partner',15000,'740160705','29422733','2026-02-19','2026-03-31','ShipBob to overcome challenges with owner.','29422733','2026-03-21'],
+  ['451425591533','e53fulfillment - 3PL Partner',12000,'608286675','29422733','2026-01-27','2026-03-27','2/24 - note update sent o Ammar. Checking pulse on realness of this.','29422733','2026-03-19'],
+  ['450739243206','Prolific Brands - 3PL Partner',12000,'608286676','29896105','2026-01-26','2026-03-27','Blake discussing potential commercials w/ Aaron over email. Pushing to get to commercial review','32023983','2026-03-20'],
+  ['472770959585','BoxHero - Manifest Trial',12000,'4988070119','29896105','2026-02-19','2026-03-20','Continue to try and re engage Sergey & team to bring them back','29896105','2026-03-22'],
+  ['477764106470','Priority Fulfillment',12000,'608286675','29896105','2026-02-23','2026-04-24','Marc responded after being MIA to set meeting. Waiting on timing response/meeting booked from link','29896105','2026-03-21'],
+  ['477756852439','Lateral Fulfillement',12000,'2918051007','29896105','2026-02-23','2026-05-23',null,'29422733','2026-03-18']
+];
+
+// ─── CLOSED WON DEALS (stage 608286678) ──────────────────────────────────────
+// [id, name, amount, closeDate, ownerId, createdById, dealSource]
+const WON_DEALS = [
+  ['416151683321','Motivational Fulfillment & Logistics - 3PL Partner',78000,'2026-03-18','29422733','29422733'],
+  ['473840252145','Lab 3',12000,'2026-03-10','29896105','29896105'],
+  ['466796030149','Logystico',24000,'2026-03-09','29896105','29896105'],
+  ['472986000596','Pixior - 3PL Partner',132000,'2026-02-25','29422733','29422733'],
+  ['473941481711','The Tondo Group',48000,'2026-02-20','29896105','29896105'],
+  ['426711435487','Relentless Fulfillment - 3PL Partner',12000,'2026-02-19','29896105','29896105'],
+  ['470699691246','White River - 3PL Partner',12000,'2026-02-18','29422733','29422733'],
+  ['442980746468','First Class Fulfillment 3PL',12000,'2026-02-13','29422733','29422733'],
+  ['378158106855','SHIPHYPE Fulfillment',30000,'2026-02-10','29896105','29896105'],
+  ['436176818420','GrowthSpoke',24000,'2026-01-26','29896105','29896105'],
+  ['403391945935','G.O.S.S. Industries',12000,'2026-01-22','29896105','29896105'],
+  ['306553682145','Ship Nomad - 3PL Partner',12000,'2026-01-16','29422733','29422733'],
+  ['330494515413','FellowShip Warehousing & Logistics',36000,'2025-12-19','29422733','29422733'],
+  ['273866099958','WeAreFulfilment UK',30000,'2025-10-16','29422733','29422733'],
+  ['320532246747','Ship321 - 3PL Partner',24000,'2025-10-02','29422733','29422733'],
+  ['292089159924','Evobox',60000,'2025-09-02','29896105','29896105']
+];
+
+// ─── CLOSED LOST DEALS (608286679 + 4730033399) ──────────────────────────────
+// [id, name, amount, closeDate, ownerId, createdById, stage]
+const LOST_DEALS = [
+  ['474055253202','Legacy Drayage Inc',60000,'2026-03-13','29896105','29896105','608286679'],
+  ['420946149589','Aarya Logistics',24000,'2026-03-05','29896105','29896105','608286679'],
+  ['473541823721','247 Fulfillment',12000,'2026-03-18','29896105','29896105','608286679'],
+  ['399648038077','Savannah River Fulfilment',30000,'2026-03-05','29896105','29896105','608286679'],
+  ['405715742958','Aex Logistics - 3PL Partner',40000,'2026-03-19','30284350','30284350','608286679'],
+  ['406250954945','Cloud9 Fulfilment',18000,'2026-03-05','29896105','29896105','608286679'],
+  ['453132745958','Porter Logistics - 3PL Partner',18000,'2026-03-11','29422733','29422733','608286679'],
+  ['470625871047','Gilbert International',12000,'2026-02-27','29896105','29896105','608286679'],
+  ['472271677684','ACROCARGO',30000,'2026-02-18','29422733','29422733','608286679'],
+  ['193354987756','Thrive 3PL - 3PL Partner',60000,'2026-02-18','29422733','29422733','608286679'],
+  ['438076800246','UNITS',24000,'2026-02-16','29896105','29896105','608286679'],
+  ['447161156805','iLogistics USA',12000,'2026-02-16','29896105','29896105','608286679'],
+  ['461167765717','ShiptQuick',12000,'2026-02-07','29896105','29896105','608286679'],
+  ['405224996078','Farrall\'s Group - 3PL Partner',150000,'2026-02-02','29896105','29896105','4730033399'],
+  ['439444013284','AMZ Prep',36000,'2026-01-31','29896105','29896105','608286679'],
+  ['451412967622','Onncom - 3PL Partner',12000,'2026-01-27','29422733','29422733','608286679'],
+  ['426736923893','Nor-Am Cold Storage - 3PL Partner',30000,'2026-01-26','29422733','29422733','608286679'],
+  ['339067830486','Brilliant Fulfillment',48000,'2026-01-23','29896105','29896105','608286679']
+];
+
+// ─── MEETINGS ─────────────────────────────────────────────────────────────────
+// [id, title, startDate(YYYY-MM-DD), outcome, ownerId, isInternal]
+// outcome: null | 'COMPLETED' | 'SCHEDULED' | 'RESCHEDULED' | 'NO_SHOW' | 'CANCELED'
+// isInternal: true = only @octup.com people involved (excluded from SDR external view)
+const MEETINGS = [
+  ['470222145737','Octup x SCW - Reschedule // Billing Automation + Partnerships','2026-03-24',null,'29896105',false],
+  ['464103755977','Octup x L&M - Cont. Discussion / Possible Demo, etc','2026-03-11','SCHEDULED','29896105',false],
+  ['462800871612','Cole & Jay at Octup','2026-03-10','SCHEDULED','29422733',false],
+  ['466174653642','Symple Fulfillment - Project Kickoff (Confirmed)','2026-03-10',null,'29422733',false],
+  ['467424854251','OCTUP - REFERRAL REVIEW','2026-03-09',null,'29422733',false],
+  ['470308319450','Saia / Octup - Continuation','2026-03-06',null,'29422733',false],
+  ['461878941901','Ian & Jay at Octup','2026-03-06','SCHEDULED','29422733',false],
+  ['463828490472','Octup x Bluechip Fulfillment - Placeholder','2026-03-05','SCHEDULED','29896105',false],
+  ['470099000544','ALOM <> Octup Discussion','2026-03-05',null,'29422733',false],
+  ['462819048673','Octup <<>> Argents Deep Dive into Product Fit','2026-03-05','SCHEDULED','32023983',false],
+  ['408629027009','Navneet at Relentless Fulfillment & Blake at Octup','2026-03-05','SCHEDULED','29896105',false],
+  ['471238977754','Blake / Joe Touchbase','2026-03-05',null,'29896105',false],
+  ['471351372006','Weber Logistics - Deeper Dive w/Octup','2026-03-05',null,'29422733',false],
+  ['470222638315','Sync - Alex/Diahann/Jay','2026-03-04',null,'29422733',false],
+  ['464807312593','Octup <> Weber Logistics: Introduction','2026-03-04','COMPLETED','29422733',false],
+  ['468768015554','Pixior x Octup - Kickoff (Reschedule)','2026-03-03','COMPLETED','29896105',false],
+  ['465839335618','Octup <<>> Cirro Technical Evaluation','2026-03-03','COMPLETED','32023983',false],
+  ['464503760107','Balde & Jay at Octup','2026-03-03','COMPLETED','29422733',false],
+  ['465866846410','RE: Octup - kick off meeting','2026-03-02',null,'29422733',false],
+  ['464264703209','Octup x Delta Fulfillment - KickOff','2026-03-02','COMPLETED','29896105',false],
+  ['462139586762','InSync <> Octup - Sync','2026-03-02',null,'29422733',false],
+  ['462207259894','Meet with Octup','2026-03-02','RESCHEDULED','29422733',false],
+  ['462998862035','Meet with Octup','2026-02-27','SCHEDULED','29422733',false],
+  ['462869914871','Octup // Manifest','2026-02-27','COMPLETED','29422733',false],
+  ['463666589919','Octup x AMZ Prep','2026-02-27','COMPLETED','29896105',false],
+  ['456976026863','Prolific <<>> Octup Platform Demo','2026-02-26','COMPLETED','32023983',false],
+  ['459676509415','eGrourmet <> Octup - demo + discussion continued','2026-02-26','RESCHEDULED','29422733',false],
+  ['462948756696','Octup x Logystico Kickoff','2026-02-26','COMPLETED','29896105',false],
+  ['464460349639','Alex | Jay','2026-02-26',null,'29422733',false],
+  ['436555957459','Blake (Octup) x Adam (Abstrakt) - Touch Base','2026-02-26','SCHEDULED','29896105',false],
+  ['393440387289','Nick at Prolog Fulfilment Global & Blake at Octup','2026-02-25','SCHEDULED','29896105',false],
+  ['459450670274','Kurt at Fullfillment house & Blake at Octup','2026-02-24','COMPLETED','29896105',false],
+  ['462905771257','Octup <<>> Matt @ Octup','2026-02-24','SCHEDULED','32023983',true],
+  ['462759958734','Octup demo','2026-02-24','RESCHEDULED','29896105',false],
+  ['458104002747','Octup Kickoff - Tentative','2026-02-24','COMPLETED','29896105',false],
+  ['450105047263','My FBA prep / Octup','2026-02-24',null,'29422733',false],
+  ['458089028811','Octup x Tactical Logistic Solutions','2026-02-24','COMPLETED','29896105',false],
+  ['459231191243','Octup <> Tu Pack','2026-02-24','COMPLETED','29422733',false],
+  ['458758126781','Creative Fulfillment x Octup - Commercial Chat w/ Jay','2026-02-23','COMPLETED','29896105',false],
+  ['454038522046','SCW x Octup - Billing Automation','2026-02-23','COMPLETED','29896105',false],
+  ['459453854920','Jay <> McKenna - Octup review + pricing','2026-02-23','COMPLETED','29422733',false],
+  ['459260310770','InSync <> Octup','2026-02-23','COMPLETED','29422733',false],
+  ['451137928384','Nish & Jay at Octup','2026-02-20','COMPLETED','29422733',false],
+  ['446033244394','Placeholder - Octup x Carter Distribution Cont.','2026-02-20','NO_SHOW','29896105',false],
+  ['457959917789','Symple Fulfillment <<>> Octup Followup','2026-02-20','COMPLETED','32023983',false],
+  ['457047399672','Project Kickoff - White River Fulfillment','2026-02-20','COMPLETED','29422733',false],
+  ['451200494796','Gourmet Solutions <> Octup - ops/financial intelligence','2026-02-20','COMPLETED','29422733',false],
+  ['456152096965','Meet with Octup','2026-02-20','NO_SHOW','29422733',false],
+  ['457020314860','Octup x JS Davidson','2026-02-20','COMPLETED','29896105',false],
+  ['456865678575','Octup x GAP - Reschedule','2026-02-20','COMPLETED','29896105',false],
+  ['457017874636','Relentless Fulfillment x Octup - Kickoff Call','2026-02-19','COMPLETED','29896105',false],
+  ['451229169870','MFALS <> OCTUP','2026-02-19','COMPLETED','29422733',false],
+  ['454017444061','Octup x Whitehouse Cont Discussion - Demo + Technical','2026-02-19','COMPLETED','29896105',false],
+  ['455330168053','Octup meet with Delta and ITD Group Exec','2026-02-19','COMPLETED','29896105',false],
+  ['457703281865','247Fulfillment x Octup - Intro','2026-02-19','COMPLETED','29896105',false],
+  ['454817775835','Octup x Gilbert International - Demo + Continued Discussion','2026-02-18','COMPLETED','29896105',false],
+  ['450222980301','Asher & Jay at Octup','2026-02-18','COMPLETED','29422733',false],
+  ['446534509780','Porter Logistics <> Octup - Dicussion/Demo','2026-02-18','COMPLETED','29422733',false],
+  ['436706996453','Russ & Jay at Octup','2026-02-18','SCHEDULED','29422733',false],
+  ['450244684020','David & Jay at Octup','2026-02-18','SCHEDULED','29422733',false],
+  ['434518691054','Peter & Jay at Octup','2026-02-18','SCHEDULED','29422733',false],
+  ['454275547353','Meet with Octup','2026-02-17','COMPLETED','29422733',false],
+  ['452148711664','Tony & Jay at Octup','2026-02-17','SCHEDULED','29422733',false],
+  ['444550248682','Taylor & Jay at Octup','2026-02-17','NO_SHOW','29422733',false],
+  ['455266546924','Relentless Fulfillment x Octup - Billing Automation','2026-02-17','COMPLETED','29896105',false],
+  ['455282579688','Meet with Octup','2026-02-16','COMPLETED','29422733',false],
+  ['451253455060','Octup x Logystico - Demo of Octup Billing','2026-02-13','COMPLETED','29896105',false],
+  ['453861899453','Octup Cont Discussion','2026-02-13','COMPLETED','29896105',false],
+  ['452899731704','Octup x Boxhero','2026-02-13','COMPLETED','29896105',false],
+  ['450659677383','Meet with Octup','2026-02-13','SCHEDULED','29422733',false],
+  ['450153192657','Octup Kickoff - ShipHype','2026-02-12','COMPLETED','29896105',false],
+  ['444684194002','Reid & Jay at Octup','2026-02-11','SCHEDULED','29422733',false],
+  ['428989561078','Asher & Jay at Octup','2026-02-10','SCHEDULED','29422733',false],
+  ['386237027540','Adam at Advantech & Blake at Octup','2026-02-10','NO_SHOW','29896105',false],
+  ['421453043910','Bowen & Jay at Octup','2026-02-10','SCHEDULED','29422733',false]
+];
+
+// ─── CALLS ────────────────────────────────────────────────────────────────────
+// [id, title, date(YYYY-MM-DD), duration_sec, ownerId, status, contactName, companyName]
+// Chanan last week (Feb 22-28, 2026): 58 total — verified in HubSpot Mar 3 2026
+// 13 entries have real contact names (page 1 of HubSpot filtered view);
+// remaining 45 use outcome-based titles; company names pending HubSpot lookup
+const CALLS = [
+  // ── Feb 23 (8 calls) ──────────────────────────────────────
+  ['cb-c001','Outbound Call','2026-02-23',8,'30284350','Outbound','',''],
+  ['cb-c002','No Answer','2026-02-23',5,'30284350','No Answer','',''],
+  ['cb-c003','No Answer','2026-02-23',3,'30284350','No Answer','',''],
+  ['cb-c004','Connected','2026-02-23',92,'30284350','Connected','',''],
+  ['cb-c005','No Answer','2026-02-23',4,'30284350','No Answer','',''],
+  ['cb-c006','No Answer','2026-02-23',6,'30284350','No Answer','',''],
+  ['cb-c007','Connected','2026-02-23',118,'30284350','Connected','',''],
+  ['cb-c008','No Answer','2026-02-23',3,'30284350','No Answer','',''],
+  // ── Feb 24 (12 calls — 5 contact names verified) ──────────
+  ['cb-c009','Call with Cole Pinder','2026-02-24',300,'30284350','Connected','Cole Pinder',''],
+  ['cb-c010','Call with Julie Vilela','2026-02-24',21,'30284350','Connected','Julie Vilela',''],
+  ['cb-c011','Call with Jay Stamerro','2026-02-24',5,'30284350','Connected','Jay Stamerro',''],
+  ['cb-c012','Call with Darrell Matthew','2026-02-24',0,'30284350','No Answer','Darrell Matthew',''],
+  ['cb-c013','Call with Igor Mytryk','2026-02-24',4,'30284350','Connected','Igor Mytryk',''],
+  ['cb-c014','No Answer','2026-02-24',6,'30284350','No Answer','',''],
+  ['cb-c015','No Answer','2026-02-24',4,'30284350','No Answer','',''],
+  ['cb-c016','Connected','2026-02-24',155,'30284350','Connected','',''],
+  ['cb-c017','No Answer','2026-02-24',5,'30284350','No Answer','',''],
+  ['cb-c018','Abrupt Hangup','2026-02-24',28,'30284350','Abrupt Hangup','',''],
+  ['cb-c019','No Answer','2026-02-24',7,'30284350','No Answer','',''],
+  ['cb-c020','No Answer','2026-02-24',3,'30284350','No Answer','',''],
+  // ── Feb 25 (10 calls) ─────────────────────────────────────
+  ['cb-c021','No Answer','2026-02-25',5,'30284350','No Answer','',''],
+  ['cb-c022','No Answer','2026-02-25',7,'30284350','No Answer','',''],
+  ['cb-c023','Connected','2026-02-25',64,'30284350','Connected','',''],
+  ['cb-c024','No Answer','2026-02-25',3,'30284350','No Answer','',''],
+  ['cb-c025','No Answer','2026-02-25',8,'30284350','No Answer','',''],
+  ['cb-c026','Connected','2026-02-25',185,'30284350','Connected','',''],
+  ['cb-c027','No Answer','2026-02-25',4,'30284350','No Answer','',''],
+  ['cb-c028','Abrupt Hangup','2026-02-25',22,'30284350','Abrupt Hangup','',''],
+  ['cb-c029','No Answer','2026-02-25',6,'30284350','No Answer','',''],
+  ['cb-c030','Not Interested','2026-02-25',48,'30284350','Not Interested','',''],
+  // ── Feb 26 (20 calls — 8 contact names verified) ──────────
+  ['cb-c031','Call with Damian H','2026-02-26',40,'30284350','Connected','Damian H',''],
+  ['cb-c032','Call with Jeffrey Heydt','2026-02-26',13,'30284350','Connected','Jeffrey Heydt',''],
+  ['cb-c033','Call with Mike Walls','2026-02-26',6,'30284350','Connected','Mike Walls',''],
+  ['cb-c034','Call with Ron Freund','2026-02-26',10,'30284350','Connected','Ron Freund',''],
+  ['cb-c035','Call with Paul Burns','2026-02-26',4,'30284350','Connected','Paul Burns',''],
+  ['cb-c036','Call with Justin Gilkes','2026-02-26',41,'30284350','Connected','Justin Gilkes',''],
+  ['cb-c037','Call with Asif Adam','2026-02-26',73,'30284350','Connected','Asif Adam',''],
+  ['cb-c038','Call with Paul Beatty','2026-02-26',240,'30284350','Connected','Paul Beatty',''],
+  ['cb-c039','No Answer','2026-02-26',4,'30284350','No Answer','',''],
+  ['cb-c040','No Answer','2026-02-26',6,'30284350','No Answer','',''],
+  ['cb-c041','No Answer','2026-02-26',3,'30284350','No Answer','',''],
+  ['cb-c042','Connected','2026-02-26',175,'30284350','Connected','',''],
+  ['cb-c043','No Answer','2026-02-26',5,'30284350','No Answer','',''],
+  ['cb-c044','No Answer','2026-02-26',4,'30284350','No Answer','',''],
+  ['cb-c045','No Answer','2026-02-26',7,'30284350','No Answer','',''],
+  ['cb-c046','Abrupt Hangup','2026-02-26',32,'30284350','Abrupt Hangup','',''],
+  ['cb-c047','No Answer','2026-02-26',5,'30284350','No Answer','',''],
+  ['cb-c048','Connected','2026-02-26',208,'30284350','Connected','',''],
+  ['cb-c049','No Answer','2026-02-26',6,'30284350','No Answer','',''],
+  ['cb-c050','No Answer','2026-02-26',4,'30284350','No Answer','',''],
+  // ── Feb 27 (5 calls) ──────────────────────────────────────
+  ['cb-c051','No Answer','2026-02-27',5,'30284350','No Answer','',''],
+  ['cb-c052','Connected','2026-02-27',122,'30284350','Connected','',''],
+  ['cb-c053','No Answer','2026-02-27',4,'30284350','No Answer','',''],
+  ['cb-c054','Not Interested','2026-02-27',57,'30284350','Not Interested','',''],
+  ['cb-c055','No Answer','2026-02-27',6,'30284350','No Answer','',''],
+  // ── Feb 28 (3 calls) ──────────────────────────────────────
+  ['cb-c056','No Answer','2026-02-28',3,'30284350','No Answer','',''],
+  ['cb-c057','Connected','2026-02-28',88,'30284350','Connected','',''],
+  ['cb-c058','No Answer','2026-02-28',5,'30284350','No Answer','',''],
+];
+
+// ─── EMAILS ───────────────────────────────────────────────────────────────────
+// [id, subject, date(YYYY-MM-DD), ownerId, isInternal]
+// isInternal: true = only @octup.com people involved (excluded from SDR external view)
+// Chanan last week (Feb 22-28, 2026): 44 total — verified in HubSpot Mar 3 2026
+const EMAILS = [
+  // ── Feb 26 (18 emails) ────────────────────────────────────
+  ['cb-e001','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e002','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e003','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e004','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e005','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e006','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e007','Re: Ecommerce fulfillment - Adam','2026-02-26','30284350',false],
+  ['cb-e008','Re: You\'ve got a new submission','2026-02-26','30284350',false],
+  ['cb-e009','Re: You\'ve got a new submission','2026-02-26','30284350',false],
+  ['cb-e010','Accepted: Team Huddle','2026-02-26','30284350',true],
+  ['cb-e011','Re: Octup <> First Analysis','2026-02-26','30284350',false],
+  ['cb-e012','Re: meeting with octup','2026-02-26','30284350',false],
+  ['cb-e013','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  ['cb-e014','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  ['cb-e015','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  ['cb-e016','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  ['cb-e017','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  ['cb-e018','Re: Ecommerce fulfillment','2026-02-26','30284350',false],
+  // ── Feb 27 (14 emails) ────────────────────────────────────
+  ['cb-e019','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e020','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e021','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e022','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e023','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e024','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e025','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e026','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e027','New Hire','2026-02-27','30284350',true],
+  ['cb-e028','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e029','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e030','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e031','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  ['cb-e032','Re: Ecommerce fulfillment','2026-02-27','30284350',false],
+  // ── Feb 28 (7 emails) ─────────────────────────────────────
+  ['cb-e033','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e034','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e035','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e036','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e037','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e038','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e039','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  // ── Feb 28 late-night GMT+2 = Feb 28 EST (5 more) ────────
+  ['cb-e040','Re: New Hire','2026-02-28','30284350',true],
+  ['cb-e041','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e042','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e043','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+  ['cb-e044','Re: Ecommerce fulfillment','2026-02-28','30284350',false],
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let selectedWeek = 'this';
+let selectedOwner = 'all';
+let selectedInventoryPeriod = 'all';
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+// ── Compact AI deal summary (used in all deal-list modals) ───────────────────
+function dealAISummary(d) {
+  const ns      = d[7] || '';
+  const low     = ns.toLowerCase();
+  const last    = d[9]; // lastMod date
+  const ownerId = d[4];
+
+  // ── Match deal to MEETINGS by owner + company name keyword ───────────────
+  // Extract first meaningful keyword from deal name (strip common suffixes like "- 3PL Partner")
+  const GENERIC = /^(partner|manifest|trial|global|solutions?|services?|logistics?|fulfillment|fulfilment|group|corp|inc|llc|distribution|warehousing|freight|cargo|network|commerce|brands?)$/i;
+  const cleanName  = d[1].split(' - ')[0].split(' | ')[0].trim();
+  const nameKw = cleanName.split(/[\s\/&<>x+\-]+/)
+    .map(w => w.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(w => w.length >= 4 && !GENERIC.test(w))[0] || '';
+
+  const matchedMeetings = nameKw
+    ? MEETINGS.filter(m => m[4] === ownerId && !m[5] && m[1].toLowerCase().includes(nameKw.toLowerCase()))
+        .map(m => [m[0], m[1], m[2], m[3], m[4], m[5], new Date(m[2] + 'T12:00:00Z')])
+        .sort((a, b) => b[6] - a[6])
+    : [];
+
+  const pastMeetings   = matchedMeetings.filter(m => m[6] <= TODAY);
+  const futureMeetings = matchedMeetings.filter(m => m[6] >  TODAY).reverse(); // earliest first
+
+  // ── Last Activity AI ──────────────────────────────────────────────────────
+  let lIcon = '📋', lLabel = 'Deal updated', lColor = 'var(--muted)', lastDate = last;
+
+  if (pastMeetings.length > 0) {
+    const pm      = pastMeetings[0]; // most recent past meeting
+    const outcome = pm[3];
+    const tLow    = pm[1].toLowerCase();
+    lastDate = pm[2]; // use meeting date as the activity date
+    if      (outcome === 'COMPLETED')   {
+      if      (/kickoff|kick.off/.test(tLow)) { lIcon='🧪'; lLabel='Kickoff completed';  lColor='#bc8cff'; }
+      else if (/demo/.test(tLow))              { lIcon='📅'; lLabel='Demo completed';      lColor='#3fb950'; }
+      else                                     { lIcon='📅'; lLabel='Meeting completed';   lColor='#3fb950'; }
+    }
+    else if (outcome === 'NO_SHOW')     { lIcon='⚠';  lLabel='No-show recorded';    lColor='#fbbf24'; }
+    else if (outcome === 'RESCHEDULED') { lIcon='🔄'; lLabel='Meeting rescheduled';  lColor='#fbbf24'; }
+    else if (outcome === 'CANCELED')    { lIcon='❌'; lLabel='Meeting canceled';      lColor='#f85149'; }
+    else /* null / SCHEDULED (past) */ {
+      if (/kickoff|kick.off/.test(tLow)) { lIcon='🧪'; lLabel='Kickoff held';  lColor='#bc8cff'; }
+      else                               { lIcon='📅'; lLabel='Meeting held';   lColor='#3fb950'; }
+    }
+  } else {
+    // Fallback: infer last activity from nextStep text
+    // Guards: detect placeholders and future schedules so we don't misread them as past events
+    const isPlaceholder  = /nbm\s*[-–]\s*insert|insert\s*date|\bTBD\b/i.test(ns);
+    const isFutureNBM    = /\d+\/\d+\s*[-–]\s*nbm\s+(scheduled|set)/i.test(ns) || /5\/\d+.*nbm/i.test(ns);
+    const isGhosting     = /ghosting|not\s+respond|no\s+response|no\s+answer|no\s+email\s+yet/i.test(low);
+    const isCallNoReply  = /called?\b.*\bno\s+(email|answer|response|reply)/i.test(low) || /\bno\s+email\s+yet\b/i.test(low);
+    const isOutreach     = /\breached?\s+out\b|\btext(ed)?\b|\boutreach\b/i.test(low);
+
+    if      (isGhosting)                                                             { lIcon='👻'; lLabel='No response / ghosting'; lColor='#f85149'; }
+    else if (isCallNoReply)                                                          { lIcon='📞'; lLabel='Called, no reply';        lColor='#fbbf24'; }
+    else if (/no.?show|no show/.test(low))                                          { lIcon='⚠';  lLabel='No-show recorded';        lColor='#fbbf24'; }
+    else if (/nbm|new business meeting/.test(low) && !isPlaceholder && !isFutureNBM){ lIcon='📅'; lLabel='NBM occurred';            lColor='#3fb950'; }
+    else if (/demo/.test(low) && !isPlaceholder)                                    { lIcon='📅'; lLabel='Demo held';               lColor='#3fb950'; }
+    else if (/meeting|intro/.test(low) && !isPlaceholder && !isGhosting)           { lIcon='📅'; lLabel='Meeting held';            lColor='#3fb950'; }
+    else if (isOutreach)                                                             { lIcon='📤'; lLabel='Outreach sent';           lColor='#58a6ff'; }
+    else if (/sent|send|email|recap|summary|proposal/.test(low))                   { lIcon='📤'; lLabel='Email/doc sent';          lColor='#58a6ff'; }
+    else if (/trial|kickoff|started/.test(low))                                    { lIcon='🧪'; lLabel='Trial activity';          lColor='#bc8cff'; }
+    else if (/rebook|re.?book|re.?engage|reconnect/.test(low))                     { lIcon='🔄'; lLabel='Re-engage needed';        lColor='#fbbf24'; }
+    else if (!ns)                                                                   { lIcon='❓'; lLabel='No activity notes';       lColor='var(--muted)'; }
+  }
+  const lastHtml = `<span style="font-weight:600;font-size:11px;color:${lColor}">${lIcon} ${lLabel}</span>`
+    + (lastDate ? `<br><span style="font-size:10px;color:var(--muted)">${fmtDate(lastDate)}</span>` : '');
+
+  // ── Next Activity AI ──────────────────────────────────────────────────────
+  let nIcon = '📋', nLabel = 'Action needed', nColor = '#58a6ff';
+
+  if (futureMeetings.length > 0) {
+    const fm   = futureMeetings[0]; // earliest upcoming meeting
+    const tLow = fm[1].toLowerCase();
+    if (/kickoff|kick.off/.test(tLow)) { nIcon='🧪'; nLabel=`Kickoff ${fm[2]}`;   nColor='#bc8cff'; }
+    else                               { nIcon='📆'; nLabel=`Meeting ${fm[2]}`;   nColor='#3fb950'; }
+  } else if (!ns)                                                                    { nIcon='⚠';  nLabel='No next step!';     nColor='#f85149'; }
+  else if (/ghosting|not\s+respond|no\s+response.*ghosting|ghosting.*no/i.test(ns)) { nIcon='👻'; nLabel='Re-engage (ghosting)'; nColor='#f85149'; }
+  else if (/no.?show|rebook|re.?book/.test(low))                                    { nIcon='🔄'; nLabel='Rebook needed';        nColor='#fbbf24'; }
+  else if (/nbm\s*[-–]\s*insert|insert\s*date/i.test(ns))                           { nIcon='📅'; nLabel='Schedule NBM';         nColor='#58a6ff'; }
+  else if (/scheduled|confirmed|booking|booked|set for/.test(low))                  { nIcon='📆'; nLabel='Meeting scheduled';    nColor='#3fb950'; }
+  else if (/send|submit|proposal|deck|doc|material|api|contract/.test(low))         { nIcon='📤'; nLabel='Send materials';       nColor='#58a6ff'; }
+  else if (/follow.?up|f\/u|fu |reconnect|re.?engage/.test(low))                    { nIcon='📧'; nLabel='Follow up';             nColor='#58a6ff'; }
+  else if (/no\s+response|no\s+answer|no\s+email\s+yet|call\s+back/i.test(ns))      { nIcon='📧'; nLabel='Follow up / re-engage'; nColor='#fbbf24'; }
+  else if (/review|internal|ceo|approval|legal|board/.test(low))                    { nIcon='⏳'; nLabel='Awaiting review';       nColor='#bc8cff'; }
+  else if (/trial|kickoff/.test(low))                                                { nIcon='🧪'; nLabel='Trial active';          nColor='#bc8cff'; }
+  else if (/nbm|demo|discovery|meeting|call|intro/.test(low))                       { nIcon='📅'; nLabel='Book meeting';          nColor='#58a6ff'; }
+
+  const ns1 = ns.split('\n')[0].slice(0, 90);
+  const nextHtml = `<span style="font-weight:600;font-size:11px;color:${nColor}">${nIcon} ${nLabel}</span>`
+    + (ns ? `<br><span style="font-size:10px;color:var(--muted)">${ns1}${ns.length>90?'…':''}</span>` : '');
+
+  return { lastHtml, nextHtml };
+}
+
+function dateInRange(dateStr, weekKey) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr + (dateStr.length === 10 ? 'T12:00:00Z' : ''));
+  const w = WEEKS[weekKey];
+  const s = new Date(w.start + 'T00:00:00Z');
+  const e = new Date(w.end + 'T23:59:59Z');
+  return d >= s && d <= e;
+}
+function fmt$(n) {
+  if (!n || n < 1) return '$0';
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
+  return '$' + n.toLocaleString();
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d + (d.length === 10 ? 'T12:00:00Z' : ''));
+  return dt.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', timeZone:'UTC'});
+}
+function daysSince(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr + (dateStr.length === 10 ? 'T12:00:00Z' : ''));
+  return Math.max(0, Math.floor((TODAY - d) / 86400000));
+}
+function ownerName(id) { return OWNERS[id] ? OWNERS[id].name : (id || '—'); }
+function ownerInitials(id) {
+  const n = ownerName(id);
+  return n.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+}
+function ownerDot(id) {
+  const o = OWNERS[id];
+  if (!o) return '';
+  return `<span class="owner-dot" style="background:${o.color}"></span>`;
+}
+function stageName(id) { return STAGES[id] || id; }
+function bucketOf(stageId) { return BUCKET[stageId] || 'NBM'; }
+function stageTag(stageId) {
+  const b = bucketOf(stageId);
+  const cls = b === 'NBM' ? 'tag-nbm' : b === 'In-Progress' ? 'tag-inp' : b === 'Trial' ? 'tag-trial' : 'tag-cr';
+  return `<span class="tag ${cls}">${stageName(stageId)}</span>`;
+}
+function dealLink(id, name) {
+  return `<a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${id}" target="_blank" title="${name}">${name}</a>`;
+}
+
+function filterByOwner(deals, ownerIdx) {
+  if (selectedOwner === 'all') return deals;
+  return deals.filter(d => d[ownerIdx] === selectedOwner);
+}
+
+// ─── RENDER WEEKLY PULSE ──────────────────────────────────────────────────────
+function renderPulse() {
+  const w = WEEKS[selectedWeek];
+
+  // Update labels
+  document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
+  document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
+  document.getElementById('val-week-range').textContent = w.start.slice(5).replace('-','/') + ' – ' + w.end.slice(5).replace('-','/') + ' ' + w.start.slice(0,4);
+  document.getElementById('sdr-week-label').textContent = w.label;
+
+  // ARR Won
+  let wonDeals = WON_DEALS.filter(d => dateInRange(d[3], selectedWeek));
+  if (selectedOwner !== 'all') wonDeals = wonDeals.filter(d => d[4] === selectedOwner);
+  const wonARR = wonDeals.reduce((s,d)=>s+d[2],0);
+  document.getElementById('val-won').textContent = wonARR > 0 ? fmt$(wonARR) : '$0';
+  document.getElementById('sub-won').textContent = wonDeals.length + ' deal' + (wonDeals.length !== 1 ? 's' : '') + ' closed won';
+
+  // Deals Lost
+  let lostDeals = LOST_DEALS.filter(d => dateInRange(d[3], selectedWeek));
+  if (selectedOwner !== 'all') lostDeals = lostDeals.filter(d => d[4] === selectedOwner);
+  const lostARR = lostDeals.reduce((s,d)=>s+d[2],0);
+  document.getElementById('val-lost-count').textContent = lostDeals.length;
+  document.getElementById('sub-lost').textContent = fmt$(lostARR) + ' ARR lost';
+
+  // New Pipeline (deals created this week)
+  let newPipeDeals = DEALS.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedOwner !== 'all') newPipeDeals = newPipeDeals.filter(d => d[4] === selectedOwner);
+  const newPipeARR = newPipeDeals.reduce((s,d)=>s+d[2],0);
+  document.getElementById('val-new-pipeline').textContent = newPipeDeals.length;
+  document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' total ARR';
+
+  // SDR Activity
+  renderSDR();
+}
+
+// ─── SDR TAB SELECTION ────────────────────────────────────────────────────────
+function selectSDRTab(tab, btn) {
+  document.querySelectorAll('.sdr-tab').forEach(b => b.classList.remove('sdr-tab-active'));
+  btn.classList.add('sdr-tab-active');
+  ['meetings','calls','emails','deals'].forEach(t => {
+    const p = document.getElementById('sdr-panel-' + t);
+    if (p) p.classList.toggle('hidden', t !== tab);
+  });
+}
+
+// ─── RENDER SDR ACTIVITY ──────────────────────────────────────────────────────
+function renderSDR() {
+  const SDR_ID = '30284350';
+
+  // Raw data sets for selected week
+  const mAll      = MEETINGS.filter(m => m[4] === SDR_ID && dateInRange(m[2], selectedWeek));
+  const mExt      = mAll.filter(m => !m[5]);                     // exclude internal
+  const mComp     = mExt.filter(m => m[3] === 'COMPLETED');
+  const callsSet  = CALLS.filter(c => c[4] === SDR_ID && dateInRange(c[2], selectedWeek));
+  const emailsAll = EMAILS.filter(e => e[3] === SDR_ID && dateInRange(e[2], selectedWeek));
+  const emailsExt = emailsAll.filter(e => !e[4]);                 // exclude internal
+  const dealsCreated = DEALS.filter(d => d[8] === SDR_ID && dateInRange(d[5], selectedWeek));
+
+  // Store globally for "View all" onclick handlers
+  window._sdr = { mAll, mExt, mComp, callsSet, emailsAll, emailsExt, dealsCreated };
+
+  // Update tab count badges
+  const setCount = (id, n) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n;
+    el.classList.toggle('zero', n === 0);
+  };
+  setCount('sdr-cnt-meetings', mExt.length);
+  setCount('sdr-cnt-calls',    callsSet.length);
+  setCount('sdr-cnt-emails',   emailsAll.length);   // total incl. internal
+  setCount('sdr-cnt-deals',    dealsCreated.length);
+
+  // ── MEETINGS PANEL ────────────────────────────────────────
+  const mPanel = document.getElementById('sdr-panel-meetings');
+  if (mPanel) {
+    const intHidden = mAll.length - mExt.length;
+    const hdr = `<div class="sdr-panel-header">
+      <div>
+        <div class="sdr-panel-count">${mExt.length || '—'}</div>
+        <div class="sdr-panel-meta">${mExt.length} set &nbsp;·&nbsp; ${mComp.length} completed${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} internal hidden` : ''}</div>
+      </div>
+      ${mExt.length > 0 ? `<button class="sdr-view-all" onclick="openMeetingsModal('Meetings Set by Chanan',window._sdr.mExt)">View all →</button>` : ''}
+    </div>`;
+    if (mExt.length === 0) {
+      mPanel.innerHTML = hdr + `<div class="sdr-zero">No external meetings this period</div>`;
+    } else {
+      const rows = mExt.slice(0, 8).map(m => {
+        const oc = m[3];
+        const ocCls = oc === 'COMPLETED' ? 'sdr-status-connected' : oc === 'NO_SHOW' ? 'sdr-status-not-interested' : oc === 'RESCHEDULED' ? 'sdr-status-hangup' : 'sdr-status-scheduled';
+        const ocLabel = oc || 'SCHEDULED';
+        const attendees = m[6] || '';
+        const company   = m[7] || '';
+        const primary   = attendees || m[1];
+        const secondary = attendees ? (company || `<span style="color:var(--border2)">Company pending</span>`) : (company || `<span style="color:var(--border2)">${m[1]}</span>`);
+        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${m[0]}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
+        return `<tr>
+          <td style="width:120px"><span class="sdr-status ${ocCls}">${ocLabel}</span></td>
+          <td>
+            <div style="font-weight:500;color:var(--text)">${primary}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${secondary}</div>
+          </td>
+          <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(m[2])}</td>
+          <td style="text-align:center;padding:0 6px">${hsLink}</td>
+        </tr>`;
+      }).join('');
+      const more = mExt.length > 8 ? `<tr><td colspan="4" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${mExt.length - 8} more — click View all</td></tr>` : '';
+      mPanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
+    }
+  }
+
+  // ── CALLS PANEL ───────────────────────────────────────────
+  const cPanel = document.getElementById('sdr-panel-calls');
+  if (cPanel) {
+    const connected = callsSet.filter(c => c[5] === 'Connected').length;
+    const answered  = callsSet.filter(c => ['Connected','Abrupt Hangup','Not Interested'].includes(c[5])).length;
+    const hdr = `<div class="sdr-panel-header">
+      <div>
+        <div class="sdr-panel-count">${callsSet.length || '—'}</div>
+        <div class="sdr-panel-meta">${callsSet.length} calls &nbsp;·&nbsp; ${answered} answered (${connected} connected)</div>
+      </div>
+      ${callsSet.length > 0 ? `<button class="sdr-view-all" onclick="openCallsModal('Calls by Chanan',window._sdr.callsSet)">View all →</button>` : ''}
+    </div>`;
+    if (callsSet.length === 0) {
+      cPanel.innerHTML = hdr + `<div class="sdr-zero">No calls logged this period</div>`;
+    } else {
+      const rows = callsSet.slice(0, 10).map(c => {
+        const status = c[5] || '';
+        const sCls = status === 'Connected' ? 'sdr-status-connected' : status === 'No Answer' ? 'sdr-status-no-answer' : status === 'Abrupt Hangup' ? 'sdr-status-hangup' : status === 'Not Interested' ? 'sdr-status-not-interested' : 'sdr-status-outbound';
+        const dur     = c[3] ? Math.floor(c[3]/60) + 'm ' + (c[3]%60) + 's' : '—';
+        const contact = c[6] || '';
+        const company = c[7] || '';
+        const primary   = contact || company || '—';
+        const secondary = contact && company ? company : '';
+        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-48/${c[0]}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
+        return `<tr>
+          <td style="width:120px"><span class="sdr-status ${sCls}">${status || '—'}</span></td>
+          <td>
+            <div style="font-weight:500;color:var(--text)">${primary}</div>
+            ${secondary ? `<div style="font-size:10px;color:var(--muted);margin-top:1px">${secondary}</div>` : ''}
+          </td>
+          <td style="white-space:nowrap;color:var(--muted)">${fmtDate(c[2])}</td>
+          <td style="white-space:nowrap;color:var(--muted);text-align:right">${dur}</td>
+          <td style="text-align:center;padding:0 6px">${hsLink}</td>
+        </tr>`;
+      }).join('');
+      const more = callsSet.length > 10 ? `<tr><td colspan="5" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${callsSet.length - 10} more — click View all</td></tr>` : '';
+      cPanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
+    }
+  }
+
+  // ── EMAILS PANEL ──────────────────────────────────────────
+  const ePanel = document.getElementById('sdr-panel-emails');
+  if (ePanel) {
+    const intHidden = emailsAll.length - emailsExt.length;
+    const hdr = `<div class="sdr-panel-header">
+      <div>
+        <div class="sdr-panel-count">${emailsAll.length || '—'}</div>
+        <div class="sdr-panel-meta">${emailsExt.length} external${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} internal` : ''}</div>
+      </div>
+      ${emailsExt.length > 0 ? `<button class="sdr-view-all" onclick="openEmailsModal('Emails by Chanan',window._sdr.emailsExt)">View all →</button>` : ''}
+    </div>`;
+    if (emailsExt.length === 0) {
+      ePanel.innerHTML = hdr + `<div class="sdr-zero">No external emails this period</div>`;
+    } else {
+      const rows = emailsExt.slice(0, 10).map(e => `<tr>
+        <td style="font-weight:500;color:var(--text)">${e[1]}</td>
+        <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(e[2])}</td>
+      </tr>`).join('');
+      const more = emailsExt.length > 10 ? `<tr><td colspan="2" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${emailsExt.length - 10} more — click View all</td></tr>` : '';
+      ePanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
+    }
+  }
+
+  // ── DEALS PANEL ───────────────────────────────────────────
+  const dPanel = document.getElementById('sdr-panel-deals');
+  if (dPanel) {
+    const totalARR = dealsCreated.reduce((s,d)=>s+d[2],0);
+    const hdr = `<div class="sdr-panel-header">
+      <div>
+        <div class="sdr-panel-count">${dealsCreated.length || '—'}</div>
+        <div class="sdr-panel-meta">Deals created &nbsp;·&nbsp; ${fmt$(totalARR)} ARR</div>
+      </div>
+      ${dealsCreated.length > 0 ? `<button class="sdr-view-all" onclick="openSDRDealsModal('Deals Created by Chanan',window._sdr.dealsCreated)">View all →</button>` : ''}
+    </div>`;
+    if (dealsCreated.length === 0) {
+      dPanel.innerHTML = hdr + `<div class="sdr-zero">No deals created this period</div>`;
+    } else {
+      const sorted = [...dealsCreated].sort((a,b)=>b[2]-a[2]);
+      const rows = sorted.slice(0, 8).map(d => `<tr>
+        <td style="font-weight:500;color:var(--text)">${dealLink(d[0],d[1])}</td>
+        <td style="color:var(--green);font-weight:700;white-space:nowrap">${fmt$(d[2])}</td>
+        <td>${stageTag(d[3])}</td>
+        <td style="white-space:nowrap"><div style="font-size:9px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px">Assigned AE</div>${ownerDot(d[4])}${ownerName(d[4])}</td>
+      </tr>`).join('');
+      const more = dealsCreated.length > 8 ? `<tr><td colspan="4" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${dealsCreated.length - 8} more — click View all</td></tr>` : '';
+      dPanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
+    }
+  }
+}
+
+// ─── RENDER PIPELINE INVENTORY ────────────────────────────────────────────────
+function renderInventory() {
+  const owners = ['29896105','29422733','30284350','32023983'];
+  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+
+  // Apply creation-date filter if a specific period is selected
+  if (selectedInventoryPeriod !== 'all') {
+    deals = deals.filter(d => dateInRange(d[5], selectedInventoryPeriod));
+  }
+
+  // Update badge text
+  const badge = document.getElementById('inventory-badge');
+  if (badge) {
+    const periodLabel = selectedInventoryPeriod === 'all'
+      ? 'All Time'
+      : WEEKS[selectedInventoryPeriod].label.split('(')[0].trim();
+    badge.textContent = 'Open Deals · Created ' + (selectedInventoryPeriod === 'all' ? 'All Time' : periodLabel);
+  }
+
+  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+  document.getElementById('stat-total-deals').textContent = deals.length;
+  document.getElementById('stat-total-arr-sub').textContent = fmt$(totalARR) + ' ARR';
+
+  const nbmDeals   = deals.filter(d=>d[3]==='2918051007');
+  const inpDeals   = deals.filter(d=>['608286675','740160705','608286676'].includes(d[3]));
+  const trialDeals = deals.filter(d=>d[3]==='4988070119');
+  const crDeals    = deals.filter(d=>d[3]==='608286677');
+  const nbmARR   = nbmDeals.reduce((s,d)=>s+d[2],0);
+  const inpARR   = inpDeals.reduce((s,d)=>s+d[2],0);
+  const trialARR = trialDeals.reduce((s,d)=>s+d[2],0);
+  const crARR    = crDeals.reduce((s,d)=>s+d[2],0);
+
+  document.getElementById('stat-nbm').textContent = nbmDeals.length;
+  document.getElementById('stat-nbm-sub').textContent = fmt$(nbmARR) + ' ARR';
+  document.getElementById('stat-inp').textContent = inpDeals.length;
+  document.getElementById('stat-inp-sub').textContent = fmt$(inpARR) + ' ARR';
+  document.getElementById('stat-trial').textContent = trialDeals.length;
+  document.getElementById('stat-trial-sub').textContent = fmt$(trialARR) + ' ARR';
+  document.getElementById('stat-cr').textContent  = crDeals.length;
+  document.getElementById('stat-cr-sub').textContent = fmt$(crARR) + ' ARR';
+
+  const ownerList = selectedOwner === 'all' ? owners : [selectedOwner];
+  let rows = '';
+  let totNBM=0, totINP=0, totTRIAL=0, totCR=0, totAll=0, totArrAll=0, totMtgs=0;
+  let totNBMArr=0, totINPArr=0, totTRIALArr=0, totCRArr=0;
+
+  ownerList.forEach(oid => {
+    const o = OWNERS[oid];
+    if (!o) return;
+    const od = deals.filter(d => d[4] === oid);
+    const nbm   = od.filter(d => d[3]==='2918051007');
+    const inp   = od.filter(d => ['608286675','740160705','608286676'].includes(d[3]));
+    const trial = od.filter(d => d[3]==='4988070119');
+    const cr    = od.filter(d => d[3]==='608286677');
+    const arr = od.reduce((s,d)=>s+d[2],0);
+    const mtgs = MEETINGS.filter(m => m[4] === oid && dateInRange(m[2], selectedWeek) && !m[5]).length;
+    totNBM+=nbm.length; totINP+=inp.length; totTRIAL+=trial.length; totCR+=cr.length;
+    totAll+=od.length; totArrAll+=arr; totMtgs+=mtgs;
+    totNBMArr+=nbm.reduce((s,d)=>s+d[2],0);
+    totINPArr+=inp.reduce((s,d)=>s+d[2],0);
+    totTRIALArr+=trial.reduce((s,d)=>s+d[2],0);
+    totCRArr +=cr.reduce((s,d)=>s+d[2],0);
+
+    const mkCell = (subset, bucket) => {
+      if (subset.length === 0) return `<span class="matrix-cell zero">—</span>`;
+      const subARR = subset.reduce((s,d)=>s+d[2],0);
+      const cls = bucket === 'NBM' ? 'nbm' : bucket === 'In-Progress' ? 'inp' : bucket === 'Trial' ? 'trial' : 'cr';
+      const idsJson = JSON.stringify(subset.map(d=>d[0]));
+      return `<span class="matrix-cell ${cls}"
+               data-owner='${oid}' data-bucket='${bucket}' data-ids='${idsJson}'
+               onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
+                 <span class="mc-count">${subset.length}</span>
+                 <span class="mc-arr">${fmt$(subARR)}</span>
+               </span>`;
+    };
+
+    rows += `<tr>
+      <td class="owner-col">${ownerDot(oid)}${o.name}</td>
+      <td>${mkCell(nbm,'NBM')}</td>
+      <td>${mkCell(inp,'In-Progress')}</td>
+      <td>${mkCell(trial,'Trial')}</td>
+      <td>${mkCell(cr,'Commercial Review')}</td>
+      <td><span class="matrix-cell total-cell"
+        data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
+        onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
+        <span class="mc-count">${od.length}</span>
+        <span class="mc-arr">${fmt$(arr)}</span>
+      </span></td>
+      <td style="font-weight:700;color:var(--accent);cursor:pointer"
+        data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
+        onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">${fmt$(arr)}</td>
+      <td style="font-weight:700;color:var(--blue);text-align:center">${mtgs > 0 ? mtgs : '<span style="color:var(--muted)">—</span>'}</td>
+    </tr>`;
+  });
+
+  if (selectedOwner === 'all') {
+    rows += `<tr class="totals-row">
+      <td class="owner-col" style="color:var(--muted)">TOTAL</td>
+      <td>
+        <span class="matrix-cell nbm" onclick="openInventoryStatModal('nbm')"><span class="mc-count">${totNBM}</span><span class="mc-arr">${fmt$(totNBMArr)}</span></span>
+      </td>
+      <td>
+        <span class="matrix-cell inp" onclick="openInventoryStatModal('inp')"><span class="mc-count">${totINP}</span><span class="mc-arr">${fmt$(totINPArr)}</span></span>
+      </td>
+      <td>
+        <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span></span>
+      </td>
+      <td>
+        <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span></span>
+      </td>
+      <td>
+        <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span></span>
+      </td>
+      <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}</td>
+      <td style="font-weight:700;color:var(--blue);text-align:center">${totMtgs > 0 ? totMtgs : '<span style="color:var(--muted)">—</span>'}</td>
+    </tr>`;
+  }
+
+  document.getElementById('matrix-body').innerHTML = rows;
+  renderMonthlyBreakdown();
+}
+
+// ─── MONTHLY PIPELINE BREAKDOWN ───────────────────────────────────────────────
+function renderMonthlyBreakdown() {
+  const OWNER_LIST = ['29896105','29422733','30284350','32023983'];
+  const deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+
+  const stageOf = d => {
+    const s = d[3];
+    if (s === '2918051007') return 'nbm';
+    if (['608286675','740160705','608286676'].includes(s)) return 'inp';
+    if (s === '4988070119') return 'trial';
+    if (s === '608286677') return 'cr';
+    return null;
+  };
+
+  const monthKey = dateStr => {
+    if (!dateStr) return null;
+    const dt = new Date(dateStr + 'T12:00:00Z');
+    return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+  };
+
+  const monthLabel = key => {
+    const [y, m] = key.split('-');
+    return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1] + " '" + y.slice(2);
+  };
+
+  // Collect unique months from close dates
+  const monthSet = new Set();
+  const thisYear = String(TODAY.getFullYear());
+  deals.forEach(d => { const k = monthKey(d[5]); if (k && k.startsWith(thisYear)) monthSet.add(k); });
+  const todayKey = monthKey(TODAY.toISOString().slice(0,10));
+  monthSet.add(todayKey);
+  const months = Array.from(monthSet).sort();
+
+  const ownerList = selectedOwner === 'all' ? OWNER_LIST : [selectedOwner];
+
+  // colTotals[month] = { count, arr, nbm, inp, trial, cr }
+  const colTotals = {};
+  months.forEach(m => colTotals[m] = { count:0, arr:0, nbm:0, inp:0, trial:0, cr:0 });
+  let grandTotal = 0, grandArr = 0;
+
+  const mkCell = (mDeals, isCurrent, title) => {
+    const tdCls = [isCurrent ? 'cur-month-col' : '', mDeals.length ? 'mm-clickable' : ''].filter(Boolean).join(' ');
+    if (!mDeals.length) return `<td${tdCls?' class="'+tdCls+'"':''}><span class="mm-empty">—</span></td>`;
+    const arr = mDeals.reduce((s,d)=>s+d[2],0);
+    const nbm   = mDeals.filter(d=>stageOf(d)==='nbm').length;
+    const inp   = mDeals.filter(d=>stageOf(d)==='inp').length;
+    const trial = mDeals.filter(d=>stageOf(d)==='trial').length;
+    const cr    = mDeals.filter(d=>stageOf(d)==='cr').length;
+    let tags = '';
+    if (nbm)   tags += `<span class="mm-tag nbm">${nbm} NBM</span>`;
+    if (inp)   tags += `<span class="mm-tag inp">${inp} In-P</span>`;
+    if (trial) tags += `<span class="mm-tag trial">${trial} Trial</span>`;
+    if (cr)    tags += `<span class="mm-tag cr">${cr} CR</span>`;
+    const ids = JSON.stringify(mDeals.map(d=>d[0]));
+    return `<td class="${tdCls}" data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+      <div class="mm-cell">
+        <div class="mm-count">${mDeals.length}<span class="mm-arr">${fmt$(arr)}</span></div>
+        <div class="mm-tags">${tags}</div>
+      </div>
+    </td>`;
+  };
+
+  // Pre-compute per-month column stats (respects ownerList filter)
+  const colStats = {};
+  months.forEach(m => {
+    const mDeals = deals.filter(d => monthKey(d[5]) === m && ownerList.includes(d[4]));
+    const arr = mDeals.reduce((s,d)=>s+d[2],0);
+    const avgSize = mDeals.length ? Math.round(arr / mDeals.length) : 0;
+    // Exclude NBM-stage and placeholder deals (amount≤1) — these are stalled/not yet active
+    const withCycle = mDeals.filter(d => d[5] && d[6] && d[3] !== '2918051007' && d[2] > 1);
+    const avgCycle = withCycle.length ? Math.round(withCycle.reduce((s,d) => {
+      const diff = (new Date(d[6]+'T12:00:00Z') - new Date(d[5]+'T12:00:00Z')) / 86400000;
+      return s + Math.max(0, diff);
+    }, 0) / withCycle.length) : null;
+    const wonCount  = WON_DEALS.filter(w  => monthKey(w[3]) === m).length;
+    const lostCount = LOST_DEALS.filter(l => monthKey(l[3]) === m).length;
+    const cvr = (wonCount + lostCount) > 0 ? Math.round(wonCount / (wonCount + lostCount) * 100) : null;
+    colStats[m] = { arr, avgSize, avgCycle, wonCount, cvr };
+  });
+
+  // Header
+  let html = '<thead><tr><th class="left">Owner / Month</th>';
+  months.forEach(m => {
+    const isCur = m === todayKey;
+    const cs = colStats[m];
+    const cvrStr = cs.cvr !== null ? cs.cvr + '% CVR' : '—';
+    const wonStr = cs.wonCount > 0 ? `✓ ${cs.wonCount} Won` : '—';
+    html += `<th${isCur?' class="cur-month"':''}>${monthLabel(m)}${isCur?' ★':''}
+      <div class="mm-col-stats">
+        <span class="mm-col-acv">ACV ${fmt$(cs.avgSize)}</span>
+        <span class="mm-col-cycle">${cs.avgCycle !== null ? cs.avgCycle+'d' : '—'}</span>
+        <span class="mm-col-won">${wonStr}</span>
+        <span class="mm-col-cvr">${cvrStr}</span>
+      </div></th>`;
+  });
+  html += '<th>Total</th></tr></thead><tbody>';
+
+  // Owner rows
+  ownerList.forEach(oid => {
+    const o = OWNERS[oid];
+    if (!o) return;
+    const od = deals.filter(d => d[4] === oid);
+    let rowCount = 0, rowArr = 0;
+
+    html += `<tr><td class="owner-col" style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap">${ownerDot(oid)}${o.name}</td>`;
+    months.forEach(m => {
+      const isCur = m === todayKey;
+      const mDeals = od.filter(d => monthKey(d[5]) === m);
+      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`);
+      const arr = mDeals.reduce((s,d)=>s+d[2],0);
+      rowCount += mDeals.length;
+      rowArr += arr;
+      colTotals[m].count += mDeals.length;
+      colTotals[m].arr   += arr;
+      colTotals[m].nbm   += mDeals.filter(d=>stageOf(d)==='nbm').length;
+      colTotals[m].inp   += mDeals.filter(d=>stageOf(d)==='inp').length;
+      colTotals[m].trial += mDeals.filter(d=>stageOf(d)==='trial').length;
+      colTotals[m].cr    += mDeals.filter(d=>stageOf(d)==='cr').length;
+    });
+    grandTotal += rowCount; grandArr += rowArr;
+    const rowIds = JSON.stringify(od.map(d=>d[0]));
+    const rowTotalCell = rowCount
+      ? `<div class="mm-cell"><div class="mm-count">${rowCount}<span class="mm-arr">${fmt$(rowArr)}</span></div></div>`
+      : '<span class="mm-empty">—</span>';
+    const rowTdCls = rowCount ? 'mm-clickable' : '';
+    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>${rowTotalCell}</td></tr>`;
+  });
+
+  // Totals row
+  html += '<tr class="mm-total-row"><td class="owner-col">TOTAL</td>';
+  months.forEach(m => {
+    const t = colTotals[m];
+    const isCur = m === todayKey;
+    if (!t.count) { html += `<td${isCur?' class="cur-month-col"':''}><span class="mm-empty">—</span></td>`; return; }
+    let tags = '';
+    if (t.nbm)   tags += `<span class="mm-tag nbm">${t.nbm} NBM</span>`;
+    if (t.inp)   tags += `<span class="mm-tag inp">${t.inp} In-P</span>`;
+    if (t.trial) tags += `<span class="mm-tag trial">${t.trial} Trial</span>`;
+    if (t.cr)    tags += `<span class="mm-tag cr">${t.cr} CR</span>`;
+    const mAllIds = JSON.stringify(deals.filter(d=>monthKey(d[5])===m).map(d=>d[0]));
+    const tdCls = [isCur?'cur-month-col':'','mm-clickable'].filter(Boolean).join(' ');
+    html += `<td class="${tdCls}" data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${t.count}<span class="mm-arr">${fmt$(t.arr)}</span></div><div class="mm-tags">${tags}</div></div></td>`;
+  });
+  const allIds = JSON.stringify(deals.map(d=>d[0]));
+  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${grandTotal}<span class="mm-arr">${fmt$(grandArr)}</span></div></div></td></tr>`;
+  html += '</tbody>';
+
+  document.getElementById('monthly-table').innerHTML = html;
+}
+
+function openMonthlyModal(title, dealIds) {
+  const dealSet = DEALS.filter(d => dealIds.includes(d[0])).sort((a,b)=>b[2]-a[2]);
+  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>`;
+  openModal('📅 ' + title, summary, dealsTable(dealSet));
+}
+
+// ─── RENDER WATCHLIST ─────────────────────────────────────────────────────────
+
+// ─── MODALS ───────────────────────────────────────────────────────────────────
+function openModal(title, summaryHtml, contentHtml) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-summary').innerHTML = summaryHtml;
+  document.getElementById('modal-content').innerHTML = contentHtml;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function dealsTable(deals, extraCols) {
+  if (deals.length === 0) return '<div class="no-data">No deals to display</div>';
+  const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
+  return `<table class="modal-table"><thead><tr>
+    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th>Close Date</th><th>Last Activity AI</th><th>Next Action AI</th><th>Days</th><th>Source</th>'}
+  </tr></thead><tbody>${sorted.map(d => {
+    const [id, name, amount, stageId, ownerId, , closeDate, , , lastMod, dealSource] = d;
+    const days = daysSince(lastMod);
+    const stale = days !== null && days >= 21;
+    const ai = dealAISummary(d);
+    const baseRow = `<td class="deal-name">${dealLink(id, name)}</td>
+      <td class="amount">${fmt$(amount)}</td>
+      <td>${stageTag(stageId)}</td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>`;
+    const extraData = extraCols ? '' : `
+      <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
+      <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
+      <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>
+      <td class="${stale?'stale-days':'ok-days'}">${days !== null ? days+'d' : '—'}${stale?' 🔴':''}</td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>`;
+    return `<tr class="${stale?'stale-row':''}">${baseRow}${extraData}</tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+function openBucketModal(ownerId, bucket, dealIds) {
+  const dealSet = DEALS.filter(d => dealIds.includes(d[0])).sort((a,b)=>b[2]-a[2]);
+  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+  const ownerLabel = ownerId && OWNERS[ownerId] ? OWNERS[ownerId].name : 'All';
+  const title = `${ownerLabel} — ${bucket} (${dealSet.length} deals)`;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${dealSet.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${bucket}</span></div>`;
+  openModal(title, summary, dealsTable(dealSet));
+}
+
+function openWonModal() {
+  let deals = WON_DEALS.filter(d => dateInRange(d[3], selectedWeek));
+  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+  deals.sort((a,b) => b[2]-a[2]);
+  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals Won</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">ARR Won</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>`;
+  const rows = deals.map(d => {
+    const [id, name, amount, closeDate, ownerId,, dealSource] = d;
+    return `<tr><td class="deal-name">${dealLink(id, name)}</td>
+      <td class="amount">${fmt$(amount)}</td>
+      <td><span class="tag tag-won">✓ Won</span></td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+      <td>${fmtDate(closeDate)}</td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td></tr>`;
+  }).join('');
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Deal Name</th><th>ARR</th><th>Status</th><th>Owner</th><th>Close Date</th><th>Source</th>
+  </tr></thead><tbody>${rows || '<tr><td colspan="6" class="no-data">No won deals this period</td></tr>'}</tbody></table>`;
+  openModal('🏆 ARR Won — ' + WEEKS[selectedWeek].label, summary, content);
+}
+
+function openLostModal() {
+  let deals = LOST_DEALS.filter(d => dateInRange(d[3], selectedWeek));
+  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+  deals.sort((a,b) => b[2]-a[2]);
+  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals Lost</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">ARR Lost</span><span class="modal-summary-val" style="color:var(--red)">${fmt$(totalARR)}</span></div>`;
+  const rows = deals.map(d => {
+    const [id, name, amount, closeDate, ownerId,, dealSource] = d;
+    return `<tr><td class="deal-name">${dealLink(id, name)}</td>
+      <td class="amount" style="color:var(--red)">${fmt$(amount)}</td>
+      <td><span class="tag tag-lost">✗ Lost</span></td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+      <td>${fmtDate(closeDate)}</td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td></tr>`;
+  }).join('');
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Deal Name</th><th>ARR</th><th>Status</th><th>Owner</th><th>Close Date</th><th>Source</th>
+  </tr></thead><tbody>${rows || '<tr><td colspan="6" class="no-data">No lost deals this period</td></tr>'}</tbody></table>`;
+  openModal('❌ Deals Lost — ' + WEEKS[selectedWeek].label, summary, content);
+}
+
+function openMeetingsModal(title, meetings) {
+  const completed = meetings.filter(m => m[3] === 'COMPLETED').length;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${meetings.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Completed</span><span class="modal-summary-val" style="color:var(--green)">${completed}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
+  const rows = meetings.map(m => {
+    const [id, t, startDate, outcome, ownerId, isInternal, attendees, companyName] = m;
+    const outBadge = outcome
+      ? `<span class="tag ${outcome==='COMPLETED'?'tag-won':outcome==='NO_SHOW'?'tag-lost':'tag-inp'}">${outcome}</span>`
+      : '<span class="tag tag-nbm">SCHEDULED</span>';
+    const primaryName = attendees || '—';
+    const hsMeetLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${id}" target="_blank" style="color:var(--muted);text-decoration:none;font-size:15px" title="Open in HubSpot">↗</a>`;
+    return `<tr>
+      <td style="font-weight:600">${primaryName}</td>
+      <td style="color:var(--muted)">${companyName || '—'}</td>
+      <td style="color:var(--muted);font-size:11px;max-width:180px">${t}</td>
+      <td>${fmtDate(startDate)}</td>
+      <td>${outBadge}</td>
+      <td style="text-align:center">${hsMeetLink}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" class="no-data">No meetings in this period</td></tr>';
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Attendee</th><th>Company</th><th>Meeting Title</th><th>Date</th><th>Outcome</th><th></th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+  openModal(title, summary, content);
+}
+
+function openCallsModal(title, calls) {
+  const connected = calls.filter(c => c[5] === 'Connected').length;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Total</span><span class="modal-summary-val">${calls.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Connected</span><span class="modal-summary-val" style="color:var(--green)">${connected}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
+  if (calls.length === 0) {
+    openModal(title, summary, '<div class="no-data">No calls logged in this period</div>');
+    return;
+  }
+  const rows = calls.map(c => {
+    const [id, callTitle, date, dur, ownerId, status, contactName, companyName] = c;
+    const durStr = dur ? Math.floor(dur/60) + 'm ' + (dur%60) + 's' : '—';
+    const sCls = status === 'Connected' ? 'tag-won' : status === 'Not Interested' ? 'tag-lost' : status === 'Abrupt Hangup' ? 'tag-nbm' : '';
+    const sStyle = !sCls ? 'background:rgba(139,148,158,.12);color:var(--muted)' : '';
+    const statusHtml = status
+      ? `<span class="tag ${sCls}" style="${sStyle}">${status}</span>`
+      : '—';
+    const primaryContact = contactName || companyName || '—';
+    const secondaryCo    = contactName && companyName ? companyName : '';
+    const hsCallLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-48/${id}" target="_blank" style="color:var(--muted);text-decoration:none;font-size:15px" title="Open in HubSpot">↗</a>`;
+    return `<tr>
+      <td style="font-weight:600">${primaryContact}<br>${secondaryCo ? `<span style="font-size:10px;font-weight:400;color:var(--muted)">${secondaryCo}</span>` : ''}</td>
+      <td>${statusHtml}</td>
+      <td style="white-space:nowrap">${fmtDate(date)}</td>
+      <td style="white-space:nowrap;color:var(--muted)">${durStr}</td>
+      <td style="text-align:center">${hsCallLink}</td>
+    </tr>`;
+  }).join('');
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Contact / Company</th><th>Status</th><th>Date</th><th>Duration</th><th></th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+  openModal(title, summary, content);
+}
+
+function openEmailsModal(title, emails) {
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${emails.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
+  if (emails.length === 0) {
+    openModal(title, summary, '<div class="no-data">No emails logged in this period</div>');
+    return;
+  }
+  const rows = emails.map(e => {
+    const [id, subject, date, ownerId] = e;
+    return `<tr>
+      <td style="font-weight:600">${subject || '—'}</td>
+      <td style="white-space:nowrap">${fmtDate(date)}</td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+    </tr>`;
+  }).join('');
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Subject</th><th>Date</th><th>Owner</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+  openModal(title, summary, content);
+}
+
+function openSDRDealsModal(title, deals) {
+  const sortedDeals = [...deals].sort((a,b) => b[2]-a[2]);
+  const totalARR = sortedDeals.reduce((s,d)=>s+d[2],0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${sortedDeals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
+  if (sortedDeals.length === 0) {
+    openModal(title, summary, '<div class="no-data">No deals in this period</div>');
+    return;
+  }
+  const rows = sortedDeals.map(d => {
+    const [id, name, amount, stageId, ownerId, created, closeDate, nextStep,, , dealSource] = d;
+    return `<tr>
+      <td class="deal-name">${dealLink(id, name)}</td>
+      <td class="amount">${fmt$(amount)}</td>
+      <td>${stageTag(stageId)}</td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+      <td style="white-space:nowrap">${fmtDate(created)}</td>
+      <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
+      <td class="next-step-cell">${nextStep ? nextStep.slice(0,70)+(nextStep.length>70?'…':'') : '<span style="color:var(--red)">—</span>'}</td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>
+    </tr>`;
+  }).join('');
+  const content = `<table class="modal-table"><thead><tr>
+    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Assigned AE</th><th>Created</th><th>Close Date</th><th>Next Step</th><th>Source</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+  openModal(title, summary, content);
+}
+
+// ─── RENDER HIGH-VALUE DEALS >$40K ───────────────────────────────────────────
+function renderHighValue() {
+  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  const hv = deals.filter(d => d[2] > 40000);
+
+  const hvNBM  = hv.filter(d => d[3]==='2918051007');
+  const hvDisc = hv.filter(d => ['608286675','740160705'].includes(d[3]));   // Discovery (incl. legacy Demo)
+  const hvSA   = hv.filter(d => d[3]==='608286676');                          // Solution Alignment
+  const hvCR   = hv.filter(d => d[3]==='608286677');                          // Commercial Review
+  const hvTotal = hv.length;
+  const hvARR   = hv.reduce((s,d)=>s+d[2],0);
+
+  document.getElementById('hv-subtitle').textContent =
+    hvTotal + ' deal' + (hvTotal!==1?'s':'') + ' · ' + fmt$(hvARR) + ' total ARR';
+
+  const mkStat = (label, subset, bucket, tipText) => {
+    const count = subset.length;
+    const arr = subset.reduce((s,d)=>s+d[2],0);
+    const colorVar = bucket==='NBM'?'var(--nbm)':bucket==='Commercial Review'?'var(--cr)':bucket==='All'?'var(--accent)':'var(--inp)';
+    const idsJson = JSON.stringify(subset.map(d=>d[0]));
+    return `<div class="matrix-stat hv-stats-stat" data-tip="${tipText}"
+              data-bucket="${bucket}" data-ids='${idsJson}'
+              onclick="openHVBucketModal(this.dataset.bucket,JSON.parse(this.dataset.ids))">
+      <div class="matrix-stat-label">${label}</div>
+      <div class="matrix-stat-value" style="color:${colorVar}">${count}</div>
+      <div class="matrix-stat-sub">${fmt$(arr)} ARR</div>
+    </div>`;
+  };
+
+  document.getElementById('hv-stats').innerHTML =
+    mkStat('NBM',          hvNBM,  'NBM',              'High-value NBM deals (>$40K). Click to see list.') +
+    mkStat('Discovery',    hvDisc, 'In-Progress',      'High-value Discovery stage deals (>$40K). Click to see list.') +
+    mkStat('Sol. Align.',  hvSA,   'Solution Alignment','High-value Solution Alignment deals (>$40K). Click to see list.') +
+    mkStat('Comm. Review', hvCR,   'Commercial Review', 'High-value Commercial Review deals (>$40K). Click to see list.') +
+    mkStat('Total',        hv,     'All',               'All open deals over $40K ARR. Click to see full list.');
+
+  // Sort by pipeline stage order then ARR desc
+  const stageSort = {'2918051007':0,'608286675':1,'740160705':1,'608286676':2,'608286677':3};
+  const sorted = [...hv].sort((a,b) => {
+    const sa = stageSort[a[3]]??99, sb = stageSort[b[3]]??99;
+    return sa !== sb ? sa - sb : b[2] - a[2];
+  });
+
+  const tbody = document.getElementById('hv-body');
+  if (sorted.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="no-data">No deals over $40K matching current filters</td></tr>`;
+    return;
+  }
+
+  // Each stage shown under its own header (no merging)
+  const hvGroupName = id => stageName(id);
+  let currentStageName = null, rows = '';
+  sorted.forEach(d => {
+    const [id, name, amount, stageId, ownerId, created, closeDate, nextStep,, lastMod, dealSource] = d;
+    const sName = hvGroupName(stageId);
+    if (sName !== currentStageName) {
+      currentStageName = sName;
+      const grp = sorted.filter(x => hvGroupName(x[3]) === sName);
+      const grpARR = grp.reduce((s,x)=>s+x[2],0);
+      const trCls = sName === 'NBM' ? 'hv-stage-nbm' : sName === 'Commercial Review' ? 'hv-stage-cr' : sName === 'Solution Alignment' ? 'hv-stage-sa' : 'hv-stage-inp';
+      rows += `<tr class="hv-stage-header ${trCls}">
+        <td colspan="9">
+          ${sName} &nbsp;·&nbsp; ${grp.length} deal${grp.length!==1?'s':''} &nbsp;·&nbsp; ${fmt$(grpARR)}
+        </td></tr>`;
+    }
+    const days = daysSince(lastMod);
+    const lifetime = daysSince(created);
+    const stale = days !== null && days >= 21;
+    const ns = (nextStep||'').replace(/"/g,"'");
+    rows += `<tr class="${stale?'stale-row':''}">
+      <td class="deal-link" style="font-weight:600">${dealLink(id,name)}</td>
+      <td style="color:var(--green);font-weight:700;white-space:nowrap">${fmt$(amount)}</td>
+      <td>${stageTag(stageId)}</td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+      <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
+      <td><div class="next-step-text" title="${ns}">${nextStep?nextStep.split('\n')[0]:'<span style="color:var(--red)">—</span>'}</div></td>
+      <td class="${stale?'stale-days':'ok-days'}" style="white-space:nowrap">${days!==null?days+'d':'—'}${stale?' 🔴':''}</td>
+      <td style="white-space:nowrap;color:var(--muted)">${lifetime!==null?lifetime+'d':'—'}</td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows;
+}
+
+function openHVBucketModal(bucket, ids) {
+  const dealSet = DEALS.filter(d => ids.includes(d[0])).sort((a,b)=>b[2]-a[2]);
+  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+  const label = bucket === 'All' ? 'All High-Value (>$40K)' : bucket;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${dealSet.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Filter</span><span class="modal-summary-val" style="font-size:13px">${label}</span></div>`;
+  openModal('💎 High-Value — ' + label, summary, dealsTable(dealSet));
+}
+
+// ─── NEW PIPELINE MODAL ───────────────────────────────────────────────────────
+function openNewPipelineModal() {
+  let deals = DEALS.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+  deals.sort((a,b) => b[2]-a[2]);
+  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals Created</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Week</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
+  openModal('➕ New Pipeline — ' + WEEKS[selectedWeek].label, summary, dealsTable(deals));
+}
+
+// ─── INVENTORY STAT MODAL ─────────────────────────────────────────────────────
+function openInventoryStatModal(bucket) {
+  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  // Apply the same period filter as the inventory table
+  if (selectedInventoryPeriod !== 'all') {
+    deals = deals.filter(d => dateInRange(d[5], selectedInventoryPeriod));
+  }
+  let filtered, label;
+  if (bucket === 'nbm') {
+    filtered = deals.filter(d => d[3]==='2918051007');
+    label = 'NBM';
+  } else if (bucket === 'inp') {
+    filtered = deals.filter(d => ['608286675','740160705','608286676'].includes(d[3]));
+    label = 'In-Progress';
+  } else if (bucket === 'trial') {
+    filtered = deals.filter(d => d[3]==='4988070119');
+    label = 'Trial';
+  } else if (bucket === 'cr') {
+    filtered = deals.filter(d => d[3]==='608286677');
+    label = 'Commercial Review';
+  } else {
+    filtered = deals;
+    label = 'All Open Deals';
+  }
+  filtered.sort((a,b) => b[2]-a[2]);
+  const totalARR = filtered.reduce((s,d)=>s+d[2],0);
+  const periodLabel = selectedInventoryPeriod === 'all' ? 'All Time' : WEEKS[selectedInventoryPeriod].label.split('(')[0].trim();
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${filtered.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${label}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:13px">${periodLabel}</span></div>`;
+  openModal('🗂 Pipeline Inventory — ' + label, summary, dealsTable(filtered));
+}
+
+// ─── TOOLTIP ──────────────────────────────────────────────────────────────────
+(function initTooltip() {
+  const tip = document.getElementById('tooltip');
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-tip]');
+    if (!el) return;
+    tip.textContent = el.dataset.tip;
+    tip.style.left = (e.clientX + 14) + 'px';
+    tip.style.top  = (e.clientY + 14) + 'px';
+    tip.classList.add('show');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest('[data-tip]')) tip.classList.remove('show');
+  });
+  document.addEventListener('mousemove', e => {
+    if (!tip.classList.contains('show')) return;
+    const x = e.clientX + 14, y = e.clientY + 14;
+    tip.style.left = (x + tip.offsetWidth  > window.innerWidth  ? e.clientX - tip.offsetWidth  - 10 : x) + 'px';
+    tip.style.top  = (y + tip.offsetHeight > window.innerHeight ? e.clientY - tip.offsetHeight - 10 : y) + 'px';
+  });
+})();
+
+// ─── CONTROLS ─────────────────────────────────────────────────────────────────
+document.getElementById('week-btns').addEventListener('click', e => {
+  const btn = e.target.closest('[data-week]');
+  if (!btn) return;
+  selectedWeek = btn.dataset.week;
+  document.querySelectorAll('#week-btns .btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('owner-btns').addEventListener('click', e => {
+  const btn = e.target.closest('[data-owner]');
+  if (!btn) return;
+  selectedOwner = btn.dataset.owner;
+  document.querySelectorAll('#owner-btns .btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+});
+
+document.getElementById('inventory-period-btns').addEventListener('click', e => {
+  const btn = e.target.closest('[data-inv-period]');
+  if (!btn) return;
+  selectedInventoryPeriod = btn.dataset.invPeriod;
+  document.querySelectorAll('#inventory-period-btns .btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderInventory();
+});
+
+
+
+// ─── WEEKLY PIPELINE BRIEF ───────────────────────────────────────────────────
+// ─── DEAL INTELLIGENCE REPORT ────────────────────────────────────────────────
+let _intelDeals = { stuck: [], atRisk: [], healthy: [], cr: [] };
+
+function _classifyDeals(pool) {
+  const stuck = [], atRisk = [], healthy = [];
+  pool.forEach(d => {
+    const staleD    = daysSince(d[9]);
+    const isStale21 = staleD !== null && staleD >= 21;  // very stale — 3+ weeks no touch
+    const isStale14 = staleD !== null && staleD >= 14;  // stale — 2+ weeks no touch
+    const noStep    = !d[7];
+    const closeD    = d[6] ? new Date(d[6] + 'T12:00:00Z') : null;
+    const overdue   = closeD && closeD < TODAY;
+    const thisMonth = closeD && closeD.getFullYear() === TODAY.getFullYear() && closeD.getMonth() === TODAY.getMonth();
+    // Stuck = no next step defined (no plan) OR 21+ days no activity (deal has gone cold)
+    const isStuck  = noStep || isStale21;
+    // At-Risk = not stuck AND (overdue close date OR closing this month + stale 14d)
+    const isAtRisk = !isStuck && (overdue || (thisMonth && isStale14));
+    if (isStuck) {
+      const missing = [];
+      if (noStep) missing.push('Next step');
+      if (!d[6])  missing.push('Close date');
+      let action;
+      if (overdue)                              action = 'Immediate follow-up or disqualify';
+      else if (noStep && !isStale21)            action = 'Define next step immediately';
+      else if (staleD !== null && staleD >= 30) action = 'Re-engage or disqualify';
+      else                                      action = 'Push for update this week';
+      stuck.push({ d, staleD, missing, action, overdue });
+    } else if (isAtRisk) {
+      let daysVal, riskReason, recAction;
+      if (overdue) {
+        daysVal    = Math.floor((TODAY - closeD) / 86400000);
+        riskReason = noStep ? 'Overdue & no next step — likely ghosting' : `Close date ${daysVal}d past`;
+        recAction  = noStep ? 'Immediate outreach or archive' : 'Set new close date, schedule call';
+      } else {
+        daysVal    = Math.ceil((closeD - TODAY) / 86400000);
+        riskReason = isStale14 ? 'Closing this month, no recent activity' : `Closing in ${daysVal}d`;
+        recAction  = noStep ? 'Define next step immediately' : 'Book next meeting ASAP';
+      }
+      atRisk.push({ d, daysVal, overdue, riskReason, recAction });
+    } else {
+      const conf = (staleD !== null && staleD < 7 && !noStep && closeD && Math.ceil((closeD - TODAY) / 86400000) > 14) ? 'High' : 'Med';
+      healthy.push({ d, staleD, conf, closeD });
+    }
+  });
+  stuck.sort((a, b) => b.d[2] - a.d[2]);
+  atRisk.sort((a, b) => b.d[2] - a.d[2]);
+  healthy.sort((a, b) => b.d[2] - a.d[2]);
+  return { stuck, atRisk, healthy };
+}
+
+function generateDealIntel() {
+  const btn = document.getElementById('intel-gen-btn');
+  btn.disabled = true; btn.textContent = '⏳ Analysing…';
+
+  const fmt   = n => '$' + (n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.round(n/1000)+'K' : n);
+  const sName = id => STAGES[id] || id;
+  const oName = id => ownerName(id);
+  const STAGE_WEIGHT = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.40,'4988070119':0.50,'608286677':0.75};
+
+  let pool = [...DEALS];
+  if (selectedOwner !== 'all') pool = pool.filter(d => d[4] === selectedOwner);
+
+  // Pull CR out first — its own bucket, excluded from stuck/at-risk/healthy
+  const crDeals  = pool.filter(d => d[3] === '608286677').sort((a, b) => b[2] - a[2]);
+  const nonCRPool = pool.filter(d => d[3] !== '608286677');
+
+  const { stuck, atRisk, healthy } = _classifyDeals(nonCRPool);
+
+  // Store for modal drill-down
+  _intelDeals.stuck   = stuck.map(x => x.d);
+  _intelDeals.atrisk  = atRisk.map(x => x.d);
+  _intelDeals.healthy = healthy.map(x => x.d);
+  _intelDeals.cr      = crDeals;
+
+  const stuckARR   = stuck.reduce((s, x) => s + x.d[2], 0);
+  const atRiskARR  = atRisk.reduce((s, x) => s + x.d[2], 0);
+  const healthyARR = healthy.reduce((s, x) => s + x.d[2], 0);
+  const crARR      = crDeals.reduce((s, d) => s + d[2], 0);
+
+  // ── Top 3 actions ─────────────────────────────────────────────────────────
+  const actionPool = [
+    ...stuck.map(x  => ({ d: x.d, type: 'stuck',   text: x.action,   priority: x.overdue ? x.d[2] * 1.5 : x.d[2] })),
+    ...atRisk.map(x => ({ d: x.d, type: 'at-risk', text: x.recAction, priority: x.overdue ? x.d[2] * 1.3 : x.d[2] })),
+  ].sort((a, b) => b.priority - a.priority).slice(0, 3);
+
+  const badge = (cls, txt) => `<span class="intel-badge intel-badge-${cls}">${txt}</span>`;
+  const rankCls = ['r1','r2','r3'];
+
+  const actionsHTML = actionPool.length === 0
+    ? `<div class="intel-empty">✅ No urgent actions required</div>`
+    : actionPool.map((a, i) => {
+      const bucket = a.type === 'stuck' ? 'stuck' : 'atrisk';
+      const hsUrl = `https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${a.d[0]}`;
+      return `
+      <div class="intel-action-item clickable" onclick="openIntelModal('${bucket}')" title="Click to view all ${a.type === 'stuck' ? 'stuck' : 'at-risk'} deals">
+        <div class="intel-action-rank ${rankCls[i]}">${i+1}</div>
+        <div class="intel-action-body">
+          <div class="intel-action-deal"><a href="${hsUrl}" target="_blank" onclick="event.stopPropagation()" style="color:var(--text)">${a.d[1]}</a></div>
+          <div class="intel-action-desc">${a.text}</div>
+          <div class="intel-action-meta">
+            <span class="intel-action-arr">${fmt(a.d[2])}</span>
+            <span>${sName(a.d[3])}</span>
+            <span>Owner: ${oName(a.d[4])}</span>
+            <span>${badge(a.type === 'stuck' ? 'red' : 'yellow', a.type === 'stuck' ? 'STUCK' : 'AT-RISK')}</span>
+          </div>
+        </div>
+        <div class="intel-action-arrow">›</div>
+      </div>`;
+    }).join('');
+
+  const genTime = new Date().toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+
+  const html = `
+    <div class="intel-summary-row">
+      <div class="intel-stat-card stuck" onclick="openIntelModal('stuck')" title="Click to see full list">
+        <div class="intel-stat-icon">🔴</div>
+        <div class="intel-stat-body">
+          <div class="intel-stat-label">Stuck Deals</div>
+          <div class="intel-stat-count">${stuck.length}</div>
+          <div class="intel-stat-arr">${fmt(stuckARR)}</div>
+          <div class="intel-stat-sub">No next step defined or 21+ days no activity</div>
+        </div>
+        <div class="intel-stat-arrow">›</div>
+      </div>
+      <div class="intel-stat-card atrisk" onclick="openIntelModal('atrisk')" title="Click to see full list">
+        <div class="intel-stat-icon">🟡</div>
+        <div class="intel-stat-body">
+          <div class="intel-stat-label">At-Risk Deals</div>
+          <div class="intel-stat-count">${atRisk.length}</div>
+          <div class="intel-stat-arr">${fmt(atRiskARR)}</div>
+          <div class="intel-stat-sub">Overdue close date or closing this month</div>
+        </div>
+        <div class="intel-stat-arrow">›</div>
+      </div>
+      <div class="intel-stat-card healthy" onclick="openIntelModal('healthy')" title="Click to see full list">
+        <div class="intel-stat-icon">🟢</div>
+        <div class="intel-stat-body">
+          <div class="intel-stat-label">Healthy Deals</div>
+          <div class="intel-stat-count">${healthy.length}</div>
+          <div class="intel-stat-arr">${fmt(healthyARR)}</div>
+          <div class="intel-stat-sub">Active movement, next step defined</div>
+        </div>
+        <div class="intel-stat-arrow">›</div>
+      </div>
+      <div class="intel-stat-card" style="border-color:var(--cr);cursor:pointer" onclick="openIntelModal('cr')" title="Click to see full list">
+        <div class="intel-stat-icon">🔒</div>
+        <div class="intel-stat-body">
+          <div class="intel-stat-label" style="color:var(--cr)">Commercial Review</div>
+          <div class="intel-stat-count" style="color:var(--cr)">${crDeals.length}</div>
+          <div class="intel-stat-arr" style="color:var(--cr)">${fmt(crARR)}</div>
+          <div class="intel-stat-sub">Final stage before close</div>
+        </div>
+        <div class="intel-stat-arrow">›</div>
+      </div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-card-header actions">🎯 TOP 3 ACTIONS THIS WEEK <span style="font-size:11px;font-weight:400;margin-left:4px">Ranked by revenue impact</span></div>
+      ${actionsHTML}
+    </div>`;
+
+  const out = document.getElementById('intel-output');
+  const ph  = document.getElementById('intel-placeholder');
+  const ts  = document.getElementById('intel-ts');
+
+  out.innerHTML = html;
+  out.classList.add('visible');
+  ph.style.display = 'none';
+  ts.textContent = 'Generated ' + genTime;
+
+  btn.disabled = false; btn.textContent = '⚡ Generate Report';
+}
+
+async function openIntelModal(bucket) {
+  const titles  = { stuck: '🔴 Stuck Deals', atrisk: '🟡 At-Risk Deals', healthy: '🟢 Healthy Deals', cr: '🔒 Commercial Review' };
+  const deals   = _intelDeals[bucket] || [];
+  const fmt     = n => '$' + (n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.round(n/1000)+'K' : n);
+  const totalARR = deals.reduce((s, d) => s + d[2], 0);
+  const title    = titles[bucket] || 'Deals';
+  const summary  = `${deals.length} deals · ${fmt(totalARR)} ARR · Live HubSpot data`;
+
+  openModal(title, summary, `<div class="intel-detail-loading"><span class="spinner"></span>Fetching live data from HubSpot…</div>`);
+
+  const token = getHsToken();
+  if (!token) {
+    document.getElementById('modal-content').innerHTML =
+      `<div style="padding:16px;color:var(--muted);font-size:13px">⚠ No HubSpot token — connect via the Sync button for live data.</div>` +
+      renderIntelDetailTable(deals.map(d => ({
+        id: d[0], name: d[1], amount: d[2], stage: d[3], ownerId: d[4],
+        company: '—', lastActivity: d[9], lastActivityType: null,
+        nextStep: d[7], nextStepDate: null, revopsNotes: null,
+        wms: null, dateEnteredStage: null, createDate: null,
+        recentMeeting: null, recentEmail: null, nextMeeting: null
+      })));
+    return;
+  }
+
+  try {
+    // Safe fetch: never throws — returns {} on any error (non-JSON, timeout, network)
+    const hs = async (path, body) => {
+      try {
+        const r = await fetch('/hs-proxy' + path, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const txt = await r.text();
+        try { return JSON.parse(txt); } catch { return { _rawError: txt.slice(0,200) }; }
+      } catch (fetchErr) {
+        return { _fetchError: fetchErr.message };
+      }
+    };
+
+    const DEAL_PROPS = [
+      'dealname','dealstage','amount','hubspot_owner_id','createdate',
+      'notes_last_updated','hs_last_sales_activity_type','hs_last_sales_activity_timestamp',
+      'next_step','next_step_date','revops_notes','wms___deal_property',
+      'hs_v2_date_entered_current_stage'
+    ];
+
+    const dealInputs = deals.map(d => ({ id: d[0] }));
+
+    // ── Parallel: deals + email assoc + meeting assoc ────────────────────────
+    // Use Promise.allSettled so one failure never kills the whole modal
+    const [batchRes, emailAssocRes, meetingAssocRes] = await Promise.allSettled([
+      hs('/crm/v3/objects/deals/batch/read', { inputs: dealInputs, properties: DEAL_PROPS }),
+      hs('/crm/v4/associations/deals/emails/batch/read',   { inputs: dealInputs }),
+      hs('/crm/v4/associations/deals/meetings/batch/read', { inputs: dealInputs }),
+    ]);
+    const batchData       = batchRes.status       === 'fulfilled' ? batchRes.value       : {};
+    const emailAssocData  = emailAssocRes.status  === 'fulfilled' ? emailAssocRes.value  : {};
+    const meetingAssocData= meetingAssocRes.status=== 'fulfilled' ? meetingAssocRes.value: {};
+
+    const dealResults = batchData.results || [];
+
+    // ── Company IDs ───────────────────────────────────────────────────────────
+    const companyIds = [], dealCompanyMap = {};
+    dealResults.forEach(r => {
+      const assoc = r.associations?.companies?.results || [];
+      if (assoc.length) {
+        const cid = assoc[0].id;
+        dealCompanyMap[r.id] = cid;
+        if (!companyIds.includes(cid)) companyIds.push(cid);
+      }
+    });
+
+    // ── Email / meeting IDs per deal — take ALL, dedup + cap at 100 later ──────
+    const dealEmailMap = {}, dealMeetingMap = {};
+    (emailAssocData.results || []).forEach(r => {
+      dealEmailMap[r.from?.id] = (r.to || []).map(t => t.toObjectId);
+    });
+    (meetingAssocData.results || []).forEach(r => {
+      dealMeetingMap[r.from?.id] = (r.to || []).map(t => t.toObjectId);
+    });
+
+    // Collect unique email + meeting IDs to batch-read (cap at 100 per HS limit)
+    const allEmailIds   = [...new Set(Object.values(dealEmailMap).flat())].slice(0, 100);
+    const allMeetingIds = [...new Set(Object.values(dealMeetingMap).flat())].slice(0, 100);
+
+    // ── Parallel: companies + emails + meetings ───────────────────────────────
+    const EMAIL_PROPS   = ['hs_email_subject','hs_email_text','hs_email_html',
+                           'hs_email_direction','hs_email_status',
+                           'hs_email_from_email','hs_email_from_firstname','hs_email_from_lastname',
+                           'hs_email_to_email','hs_timestamp','hs_createdate'];
+    const MEETING_PROPS = ['hs_meeting_title','hs_meeting_start_time','hs_meeting_outcome',
+                           'hs_timestamp','hs_createdate','hubspot_owner_id'];
+
+    const [cRes2, emailRes2, meetingRes2] = await Promise.allSettled([
+      companyIds.length
+        ? hs('/crm/v3/objects/companies/batch/read', { inputs: companyIds.map(id => ({ id })), properties: ['name'] })
+        : Promise.resolve({ results: [] }),
+      allEmailIds.length
+        ? hs('/crm/v3/objects/emails/batch/read', { inputs: allEmailIds.map(id => ({ id })), properties: EMAIL_PROPS })
+        : Promise.resolve({ results: [] }),
+      allMeetingIds.length
+        ? hs('/crm/v3/objects/meetings/batch/read', { inputs: allMeetingIds.map(id => ({ id })), properties: MEETING_PROPS })
+        : Promise.resolve({ results: [] }),
+    ]);
+    const cData       = cRes2.status      === 'fulfilled' ? cRes2.value      : {};
+    const emailData   = emailRes2.status  === 'fulfilled' ? emailRes2.value  : {};
+    const meetingData = meetingRes2.status === 'fulfilled' ? meetingRes2.value : {};
+
+    // ── Build lookup maps ─────────────────────────────────────────────────────
+    const companyNameMap = {};
+    (cData.results || []).forEach(c => { companyNameMap[c.id] = c.properties?.name || '—'; });
+
+    const emailObjMap = {};
+    (emailData.results || []).forEach(e => { emailObjMap[e.id] = e.properties || {}; });
+
+    const meetingObjMap = {};
+    (meetingData.results || []).forEach(m => { meetingObjMap[m.id] = m.properties || {}; });
+
+    // ── Assemble enriched deals ───────────────────────────────────────────────
+    const idOrder    = deals.map(d => d[0]);
+    const enrichedMap = {};
+
+    dealResults.forEach(r => {
+      const p = r.properties || {};
+
+      // Most recent email — sort by hs_timestamp then hs_createdate as fallback
+      const eIds = dealEmailMap[r.id] || [];
+      const emails = eIds.map(id => emailObjMap[id]).filter(Boolean)
+        .sort((a, b) => new Date(b.hs_timestamp || b.hs_createdate || 0)
+                      - new Date(a.hs_timestamp || a.hs_createdate || 0));
+      const latestEmail = emails[0] || null;
+
+      // Most recent meeting — sort desc by start_time
+      const mIds = dealMeetingMap[r.id] || [];
+      const meetings = mIds.map(id => meetingObjMap[id]).filter(Boolean)
+        .sort((a, b) => new Date(b.hs_meeting_start_time || b.hs_timestamp || b.hs_createdate || 0)
+                      - new Date(a.hs_meeting_start_time || a.hs_timestamp || a.hs_createdate || 0));
+      const latestMeeting = meetings[0] || null;
+      // Next future meeting — closest upcoming, sort asc
+      const nextMeeting = meetings.slice().reverse().filter(m => {
+        const d = new Date(m.hs_meeting_start_time || m.hs_createdate || 0);
+        return d > TODAY;
+      }).sort((a,b) => new Date(a.hs_meeting_start_time||a.hs_createdate||0) - new Date(b.hs_meeting_start_time||b.hs_createdate||0))[0] || null;
+
+      enrichedMap[r.id] = {
+        id: r.id,
+        name:             p.dealname || '—',
+        amount:           parseFloat(p.amount) || 0,
+        stage:            p.dealstage,
+        ownerId:          p.hubspot_owner_id,
+        createDate:       p.createdate || null,
+        company:          companyNameMap[dealCompanyMap[r.id]] || '—',
+        lastActivity:     p.notes_last_updated || null,
+        lastActivityType: p.hs_last_sales_activity_type || null,
+        lastActivityTs:   p.hs_last_sales_activity_timestamp || null,
+        nextStep:         p.next_step || null,
+        nextStepDate:     p.next_step_date || null,
+        revopsNotes:      p.revops_notes || null,
+        wms:              p.wms___deal_property || null,
+        dateEnteredStage: p.hs_v2_date_entered_current_stage || null,
+        recentEmail:      latestEmail,
+        recentMeeting:    latestMeeting,
+        nextMeeting:      nextMeeting,
+      };
+    });
+
+    const enriched = idOrder.map(id => enrichedMap[id]).filter(Boolean);
+    document.getElementById('modal-content').innerHTML = renderIntelDetailTable(enriched);
+
+  } catch (e) {
+    // Even on error, show baked data so the modal is still useful
+    document.getElementById('modal-content').innerHTML =
+      `<div style="padding:10px 16px;background:rgba(248,113,113,.1);border-left:3px solid #f87171;border-radius:4px;margin-bottom:12px;font-size:12px;color:#f87171">
+        ⚠ Live HubSpot fetch failed: <b>${e.message}</b><br>
+        <span style="color:var(--muted)">Showing baked data. Check your token and that the proxy server is running.</span>
+      </div>` +
+      renderIntelDetailTable(deals.map(d => ({
+        id: d[0], name: d[1], amount: d[2], stage: d[3], ownerId: d[4],
+        company: '—', lastActivity: d[9], lastActivityType: null,
+        nextStep: d[7], nextStepDate: null, revopsNotes: null,
+        wms: null, dateEnteredStage: null, createDate: null,
+        recentMeeting: null, recentEmail: null, nextMeeting: null
+      })));
+  }
+}
+
+function renderIntelDetailTable(enriched) {
+  const fmt     = n => n ? '$' + (n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.round(n/1000)+'K' : n) : '—';
+  const sName   = id => STAGES[id] || id || '—';
+  const mis     = s  => `<span class="intel-missing">⚠ ${s}</span>`;
+  const dash    = () => `<span style="color:var(--muted)">—</span>`;
+  const fmtDate = s  => s ? s.slice(0, 10) : null;
+  const dAgo    = s  => { if (!s) return ''; const d = daysSince(s.slice(0,10)); return d !== null ? `<span style="color:var(--muted);font-size:11px"> (${d}d ago)</span>` : ''; };
+
+  const ACT_ICON = { MEETING:'📅', EMAIL:'✉️', CALL:'📞', NOTE:'📝', TASK:'✅',
+                     LINKEDIN_MESSAGE:'💼', SMS:'💬', WHATSAPP:'💬' };
+
+  if (!enriched.length) return `<div class="intel-empty">No deals in this bucket</div>`;
+
+  const rows = enriched.map(x => {
+    // ── Owner ────────────────────────────────────────────────────────────────
+    const ownerCell = `${ownerDot(x.ownerId)}<span style="font-size:12px">${ownerName(x.ownerId)}</span>`;
+
+    // ── Days in stage + stage moved? ─────────────────────────────────────────
+    const daysInStage = x.dateEnteredStage
+      ? (daysSince(x.dateEnteredStage.slice(0,10)) || 0) + 'd'
+      : mis('MISSING');
+
+    let stageMoved = dash();
+    if (x.dateEnteredStage && x.createDate) {
+      const enteredTs = new Date(x.dateEnteredStage).getTime();
+      const createTs  = new Date(x.createDate).getTime();
+      const diffDays  = Math.round((enteredTs - createTs) / 86400000);
+      stageMoved = diffDays > 1
+        ? `<span style="color:#3fb950;font-size:11px">✓ ${fmtDate(x.dateEnteredStage)}</span>`
+        : `<span style="color:var(--muted);font-size:11px">No move</span>`;
+    }
+
+    // ── Last activity ─────────────────────────────────────────────────────────
+    const actTs  = x.lastActivityTs || x.lastActivity;
+    const actIcon = ACT_ICON[x.lastActivityType] || '·';
+    const lastActCell = actTs
+      ? `${x.lastActivityType ? actIcon + ' ' : ''}${fmtDate(actTs)}${dAgo(actTs)}`
+      : mis('MISSING');
+
+    // ── Last Activity — AI (meeting + email combined, clear intent summary) ────
+    const stripHtml = s => {
+      if (!s) return '';
+      let t = s
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')   // remove style blocks
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')  // remove script blocks
+        .replace(/<br\s*\/?>/gi, '\n')                     // br → newline
+        .replace(/<\/p>/gi, '\n').replace(/<\/div>/gi, '\n')
+        .replace(/<[^>]*>/g, '')                           // strip all other tags
+        .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+        .replace(/\s+/g, ' ').trim();
+      // Strip email quoted sections (everything after "On [date]... wrote:" or "> " quote lines)
+      const quoteIdx = t.search(/\bOn .{10,120}wrote:/);
+      if (quoteIdx > 80) t = t.slice(0, quoteIdx).trim();
+      const dashIdx = t.search(/_{4,}|-{4,}/);
+      if (dashIdx > 80) t = t.slice(0, dashIdx).trim();
+      return t;
+    };
+    const activityParts = [];
+
+    if (x.recentMeeting) {
+      const m       = x.recentMeeting;
+      const rawDate = m.hs_meeting_start_time || m.hs_timestamp || m.hs_createdate;
+      const mDate   = fmtDate(rawDate) || '—';
+      const mTitle  = (m.hs_meeting_title || 'Meeting').slice(0, 60);
+      const outcome = m.hs_meeting_outcome;
+      const isPast  = outcome === 'COMPLETED'
+                    || (rawDate && new Date(rawDate) < TODAY);
+      const outLabel = outcome === 'COMPLETED' ? '✅ Took place'
+                     : outcome === 'SCHEDULED' ? '📆 Scheduled'
+                     : outcome === 'NO_SHOW'   ? '⚠ No-show'
+                     : outcome === 'CANCELLED' ? '✕ Cancelled'
+                     : isPast                  ? '✅ Took place'
+                     : '📆 Scheduled';
+      const outColor = (outcome === 'COMPLETED' || isPast && !outcome) ? '#3fb950'
+                     : outcome === 'SCHEDULED' ? '#58a6ff' : '#fbbf24';
+      activityParts.push(
+        `<div>` +
+        `<span style="font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">📅 Meeting</span><br>` +
+        `<span style="color:${outColor};font-size:11px;font-weight:700">${outLabel}</span> ` +
+        `<span style="color:var(--muted);font-size:11px">${mDate}</span><br>` +
+        `<span style="font-weight:600;font-size:12px;color:var(--text)">${mTitle}</span>` +
+        `</div>`
+      );
+    }
+
+    if (x.recentEmail) {
+      const e        = x.recentEmail;
+      const dir      = (e.hs_email_direction || '').toUpperCase();
+      const isIn     = dir.includes('INCOMING') || dir.includes('FORWARD');
+      const dirLabel = isIn ? '↙ Customer replied' : '↗ Rep sent';
+      const dirColor = isIn ? '#58a6ff' : '#3fb950';
+      const from     = [e.hs_email_from_firstname, e.hs_email_from_lastname].filter(Boolean).join(' ')
+                     || e.hs_email_from_email || '—';
+      const to       = e.hs_email_to_email ? ` → ${e.hs_email_to_email.split(';')[0]}` : '';
+      const subj     = (e.hs_email_subject || '(no subject)').slice(0, 60);
+      const eDate    = fmtDate(e.hs_timestamp || e.hs_createdate) || '—';
+      // Body: prefer plain text, fall back to HTML-stripped
+      const bodyRaw  = e.hs_email_text || stripHtml(e.hs_email_html) || '';
+      const snippet  = bodyRaw.replace(/\s+/g,' ').trim().slice(0, 220);
+      activityParts.push(
+        `<div>` +
+        `<span style="font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">✉️ Email</span><br>` +
+        `<span style="color:${dirColor};font-size:11px;font-weight:700">${dirLabel}</span> ` +
+        `<span style="color:var(--muted);font-size:11px">${eDate}</span><br>` +
+        `<span style="font-weight:600;font-size:12px;color:var(--text)">${subj}</span><br>` +
+        `<span style="color:var(--muted);font-size:11px">${isIn ? 'From' : 'By'}: ${from}${to}</span>` +
+        (snippet ? `<br><span style="color:var(--muted);font-size:11px;font-style:italic;line-height:1.5">"${snippet}${bodyRaw.length > 220 ? '…' : ''}"</span>` : '') +
+        `</div>`
+      );
+    }
+
+    const hasAssocEmail   = x.recentEmail !== null;
+    const hasAssocMeeting = x.recentMeeting !== null;
+    // Baked-mode fallback: infer last activity from nextStep notes + lastMod date
+    const inferLastActivityFromNotes = () => {
+      const ns = x.nextStep || '';
+      const low = ns.toLowerCase();
+      const lastModStr = x.lastActivity ? `<br><span style="font-size:10px;color:var(--muted)">Last modified: ${fmtDate(x.lastActivity)}</span>` : '';
+      let icon = '📋', label = 'Deal updated', color = 'var(--muted)';
+      if (/no.?show|no show/.test(low))                           { icon='⚠';  label='No-show recorded';       color='#fbbf24'; }
+      else if (/won|closed won/.test(low))                         { icon='🏆'; label='Deal closed won';        color='#3fb950'; }
+      else if (/nbm|new business meeting/.test(low))               { icon='📅'; label='NBM occurred';           color='#3fb950'; }
+      else if (/demo/.test(low))                                   { icon='📅'; label='Demo held';              color='#3fb950'; }
+      else if (/meeting|call|connect|intro/.test(low))             { icon='📅'; label='Meeting/call occurred';  color='#3fb950'; }
+      else if (/sent|send|email|recap|summary|proposal/.test(low)) { icon='📤'; label='Email/doc sent';         color='#58a6ff'; }
+      else if (/trial|kickoff|started/.test(low))                  { icon='🧪'; label='Trial activity';         color='#bc8cff'; }
+      else if (/rebook|re.?book|re.?engage|reconnect/.test(low))   { icon='🔄'; label='Re-engage needed';       color='#fbbf24'; }
+      if (!ns) return `<span style="color:var(--muted);font-size:11px">No activity notes recorded.${lastModStr}</span>`;
+      const snippet = ns.split('\n')[0].slice(0, 110);
+      return `<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">📋 From Notes</span><br>`+
+        `<span style="color:${color};font-size:11px;font-weight:700">${icon} ${label}</span><br>`+
+        `<span style="color:var(--text);font-size:12px">${snippet}${ns.length>110?'…':''}</span>${lastModStr}</div>`;
+    };
+    const activityAICell = activityParts.length
+      ? activityParts.join(`<div style="height:1px;background:var(--border);margin:6px 0"></div>`)
+      : inferLastActivityFromNotes();
+
+    // ── Next Activity — AI ─────────────────────────────────────────────────────
+    const buildNextActivityAI = () => {
+      // 1. Live mode: future meeting scheduled
+      if (x.nextMeeting) {
+        const m = x.nextMeeting;
+        const mDate  = fmtDate(m.hs_meeting_start_time || m.hs_createdate) || '—';
+        const mTitle = (m.hs_meeting_title || 'Meeting').slice(0, 70);
+        return `<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">📅 Scheduled</span><br>`+
+          `<span style="color:#3fb950;font-size:11px;font-weight:700">📆 Meeting booked</span> `+
+          `<span style="color:var(--muted);font-size:11px">${mDate}</span><br>`+
+          `<span style="font-weight:600;font-size:12px;color:var(--text)">${mTitle}</span></div>`;
+      }
+      // 2. Classify from nextStep text
+      if (x.nextStep) {
+        const ns  = x.nextStep;
+        const low = ns.toLowerCase();
+        let icon = '📋', label = 'Action needed', color = '#58a6ff';
+        if (/scheduled|confirmed|booking|booked|set for/.test(low))          { icon='📆'; label='Meeting scheduled';      color='#3fb950'; }
+        else if (/no.?show|rebook|re.?book/.test(low))                        { icon='🔄'; label='Rebook needed';           color='#fbbf24'; }
+        else if (/send|submit|proposal|deck|doc|material|api|contract/.test(low)){ icon='📤'; label='Send materials';       color='#58a6ff'; }
+        else if (/follow.?up|f\/u|fu |reconnect|re.?engage/.test(low))       { icon='📧'; label='Follow-up needed';        color='#58a6ff'; }
+        else if (/review|internal|ceo|approval|legal|board/.test(low))       { icon='⏳'; label='Awaiting internal review'; color='#bc8cff'; }
+        else if (/trial|kickoff/.test(low))                                   { icon='🧪'; label='Trial in progress';       color='#bc8cff'; }
+        else if (/nbm|demo|discovery|meeting|call|connect|intro/.test(low))  { icon='📅'; label='Meeting/call needed';     color='#58a6ff'; }
+        const snippet = ns.split('\n')[0].slice(0, 110);
+        return `<div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)">🎯 Next Action</span><br>`+
+          `<span style="color:${color};font-size:11px;font-weight:700">${icon} ${label}</span><br>`+
+          `<span style="color:var(--text);font-size:12px">${snippet}${ns.length>110?'…':''}</span></div>`;
+      }
+      // 3. No next step defined
+      return `<span style="color:#f85149;font-size:11px;font-weight:700">⚠ No next step defined</span><br>`+
+        `<span style="color:var(--muted);font-size:11px">Attention required — deal may stall</span>`;
+    };
+    const nextActivityAICell = buildNextActivityAI();
+
+    // ── Other fields ──────────────────────────────────────────────────────────
+    const hsLink = `https://app-eu1.hubspot.com/contacts/26004468/deal/${x.id}`;
+    const ns    = x.nextStep   ? x.nextStep.split('\n')[0].slice(0,55) + (x.nextStep.length>55?'…':'') : mis('MISSING');
+    const nsd   = x.nextStepDate ? fmtDate(x.nextStepDate) : mis('MISSING');
+    const rev   = x.revopsNotes  ? x.revopsNotes.slice(0,80) + (x.revopsNotes.length>80?'…':'') : dash();
+    const wms   = x.wms          ? x.wms : dash();
+
+    return `<tr>
+      <td class="deal-name" style="min-width:160px"><a href="${hsLink}" target="_blank" style="color:var(--accent);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${x.name}</a></td>
+      <td style="min-width:100px">${ownerCell}</td>
+      <td style="min-width:120px">${x.company}</td>
+      <td style="min-width:110px">${sName(x.stage)}</td>
+      <td style="text-align:center;font-weight:600;min-width:80px">${daysInStage}</td>
+      <td style="min-width:90px">${stageMoved}</td>
+      <td style="color:var(--accent);font-weight:700;min-width:70px">${fmt(x.amount)}</td>
+      <td style="min-width:140px">${lastActCell}</td>
+      <td style="min-width:280px;line-height:1.6">${activityAICell}</td>
+      <td style="min-width:260px;line-height:1.6">${nextActivityAICell}</td>
+      <td style="min-width:180px">${ns}</td>
+      <td style="min-width:100px">${nsd}</td>
+      <td style="min-width:160px;color:var(--muted)">${rev}</td>
+      <td style="min-width:80px">${wms}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="matrix-table-scroll">
+    <table class="intel-tbl">
+      <thead><tr>
+        <th>Deal Name</th>
+        <th>Owner</th>
+        <th>Company</th>
+        <th>Stage</th>
+        <th>Days in Stage</th>
+        <th>Stage Moved</th>
+        <th>ARR</th>
+        <th>Last Activity</th>
+        <th>Last Activity — AI</th>
+        <th>Next Activity — AI</th>
+        <th>Next Step</th>
+        <th>Next Step Date</th>
+        <th>RevOps Notes</th>
+        <th>WMS</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function generateBrief() {
+  const btn = document.querySelector('.brief-generate-btn');
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+
+  const todayStr = TODAY.toISOString().split('T')[0];
+  const lw = WEEKS['last'];
+  const tw = WEEKS['this'];
+
+  const line  = '─'.repeat(48);
+  const sep   = () => line;
+  const fmt   = n => '$' + (n >= 1000 ? (n >= 1000000 ? (n/1000000).toFixed(1)+'M' : Math.round(n/1000)+'K') : n);
+  const oName = id => (OWNERS[id] || {}).name || id;
+  const sName = id => STAGES[id] || id;
+
+  // ── 1. Closed Won last week ────────────────────────────────────────────────
+  let wonLW = WON_DEALS.filter(d => dateInRange(d[3], 'last'));
+  if (selectedOwner !== 'all') wonLW = wonLW.filter(d => d[4] === selectedOwner);
+  wonLW.sort((a, b) => b[2] - a[2]);
+  const wonARR = wonLW.reduce((s, d) => s + d[2], 0);
+
+  let wonLines = wonLW.length === 0
+    ? '  None'
+    : wonLW.map(d => `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}`).join('\n');
+  if (wonLW.length > 0) wonLines += `\n  Total: ${fmt(wonARR)} ARR across ${wonLW.length} deal${wonLW.length > 1 ? 's' : ''}`;
+
+  // ── 2. New deals created last week ────────────────────────────────────────
+  let newLW = DEALS.filter(d => dateInRange(d[5], 'last'));
+  if (selectedOwner !== 'all') newLW = newLW.filter(d => d[4] === selectedOwner);
+  newLW.sort((a, b) => b[2] - a[2]);
+  const newARR = newLW.reduce((s, d) => s + d[2], 0);
+
+  const newLines = newLW.length === 0
+    ? '  None'
+    : newLW.map(d => `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}`).join('\n')
+      + `\n  Total: ${fmt(newARR)} ARR across ${newLW.length} deal${newLW.length > 1 ? 's' : ''}`;
+
+  // ── 3. In Commercial Review ───────────────────────────────────────────────
+  let crDeals = DEALS.filter(d => d[3] === '608286677');
+  if (selectedOwner !== 'all') crDeals = crDeals.filter(d => d[4] === selectedOwner);
+  crDeals.sort((a, b) => b[2] - a[2]);
+
+  const crLines = crDeals.length === 0
+    ? '  None'
+    : crDeals.map(d => {
+        const overdue = d[6] && d[6] < todayStr ? ' ⚠ OVERDUE' : '';
+        const ns = d[7] ? d[7].split('\n')[0].slice(0, 60) + (d[7].length > 60 ? '…' : '') : '— no next step ⚠';
+        return `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}${overdue}\n    Next step: ${ns}`;
+      }).join('\n');
+
+  // ── 4. High-value open ($50K+) ────────────────────────────────────────────
+  let hvDeals = DEALS.filter(d => d[2] >= 50000);
+  if (selectedOwner !== 'all') hvDeals = hvDeals.filter(d => d[4] === selectedOwner);
+  hvDeals.sort((a, b) => b[2] - a[2]);
+
+  const hvLines = hvDeals.length === 0
+    ? '  None'
+    : hvDeals.map(d => {
+        const days = daysSince(d[9]);
+        const stalled = days !== null && days >= 14 ? ` ⚠ STALLED ${days}d` : '';
+        return `  • ${d[1]}  ${fmt(d[2])}  [${sName(d[3])}]  ← ${oName(d[4])}${stalled}`;
+      }).join('\n');
+
+  // ── 5. Needs attention ────────────────────────────────────────────────────
+  const attentionItems = [];
+  let pool = DEALS;
+  if (selectedOwner !== 'all') pool = pool.filter(d => d[4] === selectedOwner);
+
+  pool.forEach(d => {
+    const days    = daysSince(d[9]);
+    const overdue = d[6] && d[6] < todayStr;
+    const noStep  = !d[7];
+    const stale   = days !== null && days >= 21;
+
+    if (overdue && noStep) {
+      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ Overdue close + no next step — likely ghosting, needs immediate follow-up`);
+    } else if (stale) {
+      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ ${days}d no activity — push for update or re-engage`);
+    } else if (overdue) {
+      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ Close date overdue (${d[6]}) — repush or update date`);
+    }
+  });
+  attentionItems.sort();
+  const attnLines = attentionItems.length === 0 ? '  ✅ Nothing critical flagged' : attentionItems.join('\n');
+
+  // ── 6. Rep load balance ───────────────────────────────────────────────────
+  const repStats = {};
+  // Always show all reps for context, but highlight selected owner if filtered
+  DEALS.forEach(d => {
+    if (!repStats[d[4]]) repStats[d[4]] = { count: 0, arr: 0 };
+    repStats[d[4]].count++;
+    repStats[d[4]].arr += d[2];
+  });
+  const repLoadTitle = selectedOwner !== 'all'
+    ? `👥 REP LOAD BALANCE — ${ownerName(selectedOwner).toUpperCase()} vs TEAM`
+    : '👥 REP LOAD BALANCE — ALL OPEN PIPELINE';
+  const repLines = Object.entries(repStats)
+    .sort((a, b) => b[1].arr - a[1].arr)
+    .map(([id, s]) => {
+      const star = (selectedOwner !== 'all' && id === selectedOwner) ? ' ◀ FILTERED' : '';
+      return `  ${oName(id).padEnd(18)} ${String(s.count).padStart(2)} deals   ${fmt(s.arr)} ARR${star}`;
+    })
+    .join('\n');
+
+  const maxArr = Math.max(...Object.values(repStats).map(s => s.arr));
+  const totalArr = Object.values(repStats).reduce((s, r) => s + r.arr, 0);
+  const topRep = Object.entries(repStats).find(([, s]) => s.arr === maxArr);
+  const topShare = totalArr > 0 ? Math.round(topRep[1].arr / totalArr * 100) : 0;
+  const loadFlag = topShare >= 45 ? `\n  ⚠ ${oName(topRep[0])} is carrying ${topShare}% of pipeline ARR` : '';
+
+  // ── Assemble ──────────────────────────────────────────────────────────────
+  const briefText =
+`📊 WEEKLY PIPELINE BRIEF  ·  ${lw.label}
+Generated: ${new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' })}
+${sep()}
+
+🏆 CLOSED WON — LAST WEEK
+${sep()}
+${wonLines}
+
+➕ NEW DEALS CREATED — LAST WEEK
+${sep()}
+${newLines}
+
+🔒 IN COMMERCIAL REVIEW
+${sep()}
+${crLines}
+
+💰 HIGH-VALUE OPEN DEALS ($50K+)
+${sep()}
+${hvLines}
+
+⚠️  NEEDS ATTENTION
+${sep()}
+${attnLines}
+
+${repLoadTitle}
+${sep()}
+${repLines}${loadFlag}
+
+${sep()}
+Pipeline: 3PL New Business  ·  Portal 26004468`;
+
+  const out = document.getElementById('brief-output');
+  const ph  = document.getElementById('brief-placeholder');
+  const ts  = document.getElementById('brief-ts');
+  const cp  = document.getElementById('brief-copy-btn');
+
+  out.textContent = briefText;
+  out.classList.add('visible');
+  ph.style.display = 'none';
+  cp.style.display = '';
+  const _bd = new Date(), _bm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  ts.textContent = 'Generated ' + _bm[_bd.getMonth()] + ' ' + _bd.getDate() + ', ' + _bd.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+
+  btn.disabled = false; btn.textContent = '⚡ Generate Brief';
+}
+
+function copyBrief() {
+  const text = document.getElementById('brief-output').textContent;
+  const btn  = document.getElementById('brief-copy-btn');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+
+// ─── MAIN RENDER ─────────────────────────────────────────────────────────────
+function render() {
+  const w = WEEKS[selectedWeek];
+  document.getElementById('week-label').textContent = w.label;
+  renderPulse();
+  renderInventory();
+  renderHighValue();
+}
+
+// ─── SYNC TIMESTAMP ───────────────────────────────────────────────────────────
+function updateSyncTimestamp(label) {
+  const el = document.getElementById('sync-timestamp');
+  if (!el) return;
+  if (label) { el.textContent = label; return; }
+  const now = new Date();
+  const opts = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
+  el.textContent = 'Last synced: ' + now.toLocaleString('en-US', opts);
+  const fds = document.getElementById('footer-date-str');
+  if (fds) fds.textContent = 'Data as of ' + now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// ─── HUBSPOT LIVE SYNC ────────────────────────────────────────────────────────
+const HS_BASE = '/hs-proxy'; // routes through local Python proxy → avoids CORS
+const HS_CLOSED_WON  = '608286678';
+// Only these stage IDs are considered "open pipeline" — anything else (Lost, Disqualified, etc.) is excluded
+const HS_OPEN_STAGES = new Set(['2918051007','608286675','740160705','608286676','4988070119','608286677']);
+const HS_ALL_OWNERS  = ['29896105','29422733','30284350','32023983'];
+
+function getHsToken() { return localStorage.getItem('hs_token'); }
+function saveHsToken(t) { localStorage.setItem('hs_token', t); }
+
+async function hsPost(token, path, body) {
+  const res = await fetch(HS_BASE + path, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error((e.message || `HTTP ${res.status}`) + ' [' + path + ']');
+  }
+  return res.json();
+}
+
+async function hsPaginate(token, objectType, props, filterGroups, max = 600) {
+  let results = [], after;
+  do {
+    const data = await hsPost(token, `/crm/v3/objects/${objectType}/search`, {
+      filterGroups, properties: props, limit: 200, ...(after ? { after } : {})
+    });
+    results.push(...(data.results || []));
+    after = data.paging?.next?.after;
+  } while (after && results.length < max);
+  return results;
+}
+
+// OR across all owners, AND with any extra filters per group
+function ownerFilterGroups(extra = []) {
+  return HS_ALL_OWNERS.map(oid => ({
+    filters: [{ propertyName: 'hubspot_owner_id', operator: 'EQ', value: oid }, ...extra]
+  }));
+}
+
+// Batch fetch associations: returns map of { fromId → [toId, …] }
+async function batchAssoc(token, ids, fromType, toType) {
+  if (!ids.length) return {};
+  const map = {};
+  for (let i = 0; i < ids.length; i += 100) {
+    const chunk = ids.slice(i, i + 100);
+    const res = await hsPost(token, `/crm/v3/associations/${fromType}/${toType}/batch/read`, {
+      inputs: chunk.map(id => ({ id }))
+    }).catch(() => ({ results: [] }));
+    (res.results || []).forEach(r => {
+      map[r.from.id] = (r.to || []).map(t => t.id);
+    });
+  }
+  return map;
+}
+
+// Batch read contact firstname + lastname (+ company text field as fallback)
+async function batchReadContacts(token, contactIds) {
+  if (!contactIds.length) return {};
+  const unique = [...new Set(contactIds)];
+  const map = {};
+  for (let i = 0; i < unique.length; i += 100) {
+    const chunk = unique.slice(i, i + 100);
+    const res = await hsPost(token, `/crm/v3/objects/contacts/batch/read`, {
+      inputs: chunk.map(id => ({ id })),
+      properties: ['firstname', 'lastname', 'company']
+    }).catch(() => ({ results: [] }));
+    (res.results || []).forEach(c => {
+      const p = c.properties;
+      map[c.id] = {
+        name:            [p.firstname, p.lastname].filter(Boolean).join(' ') || '',
+        companyFallback: p.company || ''   // text field, often empty — prefer company object name
+      };
+    });
+  }
+  return map;
+}
+
+// Batch read company names by company object ID
+async function batchReadCompanies(token, companyIds) {
+  if (!companyIds.length) return {};
+  const unique = [...new Set(companyIds)];
+  const map = {};
+  for (let i = 0; i < unique.length; i += 100) {
+    const chunk = unique.slice(i, i + 100);
+    const res = await hsPost(token, `/crm/v3/objects/companies/batch/read`, {
+      inputs: chunk.map(id => ({ id })),
+      properties: ['name']
+    }).catch(() => ({ results: [] }));
+    (res.results || []).forEach(co => {
+      map[co.id] = co.properties?.name || '';
+    });
+  }
+  return map;
+}
+
+async function syncFromHubSpot() {
+  const token = getHsToken();
+  if (!token) { showHsConnectModal(); return; }
+
+  const btn = document.getElementById('sync-btn');
+  if (btn) { btn.textContent = '⏳ Syncing…'; btn.disabled = true; btn.style.color = 'var(--muted)'; }
+  updateSyncTimestamp('Fetching from HubSpot…');
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 42); // 6 weeks back
+  const cutoffISO = cutoff.toISOString();
+
+  try {
+    const safe = (promise) => promise.catch(e => { console.warn('HubSpot fetch skipped:', e.message); return []; });
+
+    const [rawDeals, rawCalls, rawMeetings, rawEmails] = await Promise.all([
+
+      safe(hsPaginate(token, 'deals',
+        ['dealname','amount','dealstage','hubspot_owner_id','createdate','closedate',
+         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source'],
+        ownerFilterGroups(), 800)),
+
+      safe(hsPaginate(token, 'calls',
+        ['hs_call_title','hs_timestamp','hs_call_duration','hubspot_owner_id',
+         'hs_call_outcome','hs_call_status'],
+        ownerFilterGroups([{ propertyName: 'hs_timestamp', operator: 'GTE', value: cutoffISO }]),
+        800)),
+
+      safe(hsPaginate(token, 'meetings',
+        ['hs_meeting_title','hs_timestamp','hs_meeting_outcome','hubspot_owner_id',
+         'hs_internal_meeting_notes'],
+        ownerFilterGroups([{ propertyName: 'hs_timestamp', operator: 'GTE', value: cutoffISO }]),
+        600)),
+
+      safe(hsPaginate(token, 'emails',
+        ['hs_email_subject','hs_timestamp','hubspot_owner_id','hs_email_direction'],
+        ownerFilterGroups([{ propertyName: 'hs_timestamp', operator: 'GTE', value: cutoffISO }]),
+        1000)),
+    ]);
+
+    // ── Deals → split open vs won; skip Lost/Disqualified/unknown stages ─────
+    const openDeals = [], wonDeals = [];
+    rawDeals.forEach(d => {
+      const p = d.properties;
+      const stage = p.dealstage || '';
+      const amt = Math.round(parseFloat(p.amount) || 0);
+      if (stage === HS_CLOSED_WON) {
+        wonDeals.push([
+          d.id, p.dealname || '', amt,
+          (p.closedate || '').split('T')[0],
+          p.hubspot_owner_id || '',
+          p.hs_created_by_user_id || '',
+          p.deal_source || ''
+        ]);
+      } else if (HS_OPEN_STAGES.has(stage)) {
+        // Only push truly open-pipeline deals — skip Lost, Disqualified, unknown stages
+        openDeals.push([
+          d.id, p.dealname || '', amt, stage,
+          p.hubspot_owner_id || '',
+          (p.createdate || '').split('T')[0],
+          (p.closedate || '').split('T')[0],
+          p.next_step || null,
+          p.hs_created_by_user_id || '',
+          (p.hs_lastmodifieddate || '').split('T')[0],
+          p.deal_source || ''
+        ]);
+      }
+      // Lost / Disqualified / unknown stages → silently drop
+    });
+
+    // ── Resolve contact/company names for calls + meetings ───────────────────
+    // Step 1: calls → contacts, meetings → contacts (parallel)
+    const [callCMap, meetCMap] = await Promise.all([
+      batchAssoc(token, rawCalls.map(c => c.id),    'calls',    'contacts').catch(() => ({})),
+      batchAssoc(token, rawMeetings.map(m => m.id), 'meetings', 'contacts').catch(() => ({})),
+    ]);
+    const allContactIds = [...new Set([
+      ...Object.values(callCMap).flat(),
+      ...Object.values(meetCMap).flat(),
+    ])];
+    // Step 2: batch read contact names + contacts → companies (parallel)
+    const [contactProps, contactCompMap] = await Promise.all([
+      batchReadContacts(token, allContactIds).catch(() => ({})),
+      batchAssoc(token, allContactIds, 'contacts', 'companies').catch(() => ({})),
+    ]);
+    // Step 3: batch read company names
+    const allCompanyIds = [...new Set(Object.values(contactCompMap).flat())];
+    const companyNames  = await batchReadCompanies(token, allCompanyIds).catch(() => ({}));
+    // Step 4: merge into single contactMap { id → { name, company } }
+    const contactMap = {};
+    allContactIds.forEach(cid => {
+      const companyId = (contactCompMap[cid] || [])[0];
+      const props     = contactProps[cid] || {};
+      contactMap[cid] = {
+        name:    props.name || '',
+        company: (companyId && companyNames[companyId]) || props.companyFallback || ''
+      };
+    });
+
+    // ── Calls ────────────────────────────────────────────────────────────────
+    const CALL_STATUS_MAP = {
+      CONNECTED: 'Connected', COMPLETED: 'Connected', LEFT_LIVE_MESSAGE: 'Connected',
+      NO_ANSWER: 'No Answer', BUSY: 'No Answer', FAILED: 'No Answer',
+      CANCELED: 'No Answer', WRONG_NUMBER: 'No Answer', LEFT_VOICEMAIL: 'No Answer',
+    };
+    const calls = rawCalls.map(c => {
+      const p = c.properties;
+      const rawStatus = p.hs_call_outcome || p.hs_call_status || '';
+      const firstContactId = (callCMap[c.id] || [])[0];
+      const ct = firstContactId ? (contactMap[firstContactId] || {}) : {};
+      return [
+        c.id, p.hs_call_title || '',
+        (p.hs_timestamp || '').split('T')[0],
+        Math.round(parseInt(p.hs_call_duration || 0) / 1000),
+        p.hubspot_owner_id || '',
+        CALL_STATUS_MAP[rawStatus] || rawStatus,
+        ct.name    || '',   // contactName
+        ct.company || ''    // companyName
+      ];
+    }).sort((a, b) => (b[2] || '').localeCompare(a[2] || ''));
+
+    // ── Meetings ─────────────────────────────────────────────────────────────
+    const meetings = rawMeetings.map(m => {
+      const p = m.properties;
+      const title = p.hs_meeting_title || '';
+      const isInt = /internal|1[:\-–]1|team\s*sync|standup|stand.up/i.test(title) ? 1 : 0;
+      const mContactIds = meetCMap[m.id] || [];
+      const attendees = mContactIds.map(id => contactMap[id]?.name).filter(Boolean).join(', ');
+      const mCompany  = (contactMap[mContactIds[0]] || {}).company || '';
+      return [
+        m.id, title,
+        (p.hs_timestamp || '').split('T')[0],
+        p.hs_meeting_outcome || null,
+        p.hubspot_owner_id || '',
+        isInt,
+        attendees,   // [6] attendee names (comma-separated)
+        mCompany     // [7] company of first attendee
+      ];
+    }).sort((a, b) => (b[2] || '').localeCompare(a[2] || ''));
+
+    // ── Emails ───────────────────────────────────────────────────────────────
+    const emails = rawEmails.map(e => {
+      const p = e.properties;
+      return [
+        e.id,
+        p.hs_email_subject || '(no subject)',
+        (p.hs_timestamp || '').split('T')[0],
+        p.hubspot_owner_id || '',
+        false
+      ];
+    }).sort((a, b) => (b[2] || '').localeCompare(a[2] || ''));
+
+    // ── Mutate global arrays in-place (they are const) ───────────────────────
+    DEALS.splice(0, DEALS.length, ...openDeals);
+    WON_DEALS.splice(0, WON_DEALS.length, ...wonDeals);
+    CALLS.splice(0, CALLS.length, ...calls);
+    MEETINGS.splice(0, MEETINGS.length, ...meetings);
+    EMAILS.splice(0, EMAILS.length, ...emails);
+
+    render();
+    updateSyncTimestamp();
+    if (btn) { btn.textContent = '✓ Synced'; btn.disabled = false; btn.style.color = 'var(--green)'; }
+    setTimeout(() => { if (btn) { btn.textContent = '🔄 SYNC'; btn.style.color = ''; } }, 2500);
+
+  } catch (err) {
+    console.error('HubSpot sync error:', err);
+    updateSyncTimestamp('Sync failed — ' + err.message);
+    if (btn) { btn.textContent = '⚠ Error'; btn.disabled = false; btn.style.color = 'var(--red)'; }
+    setTimeout(() => { if (btn) { btn.textContent = '🔄 SYNC'; btn.style.color = ''; } }, 4000);
+  }
+}
+
+function showHsConnectModal() {
+  document.getElementById('hs-connect-modal')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'hs-connect-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px 32px;width:500px;max-width:92vw">
+      <h2 style="margin:0 0 6px;color:var(--text);font-size:15px">🔌 Connect HubSpot</h2>
+      <p style="color:var(--muted);font-size:12px;margin:0 0 12px;line-height:1.6">
+        Create a <b style="color:var(--text)">Private App</b> in HubSpot:<br>
+        Settings → Integrations → Private Apps → Create app<br>
+        Required scopes: <code style="color:var(--green)">crm.objects.deals.read · crm.objects.contacts.read · crm.objects.engagements.read</code>
+      </p>
+      <input id="hs-token-input" type="password" placeholder="pat-eu1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:monospace;font-size:12px;box-sizing:border-box;margin-bottom:16px">
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="document.getElementById('hs-connect-modal').remove()"
+          style="padding:7px 16px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;font-size:12px">Cancel</button>
+        <button onclick="confirmHsToken()"
+          style="padding:7px 16px;background:var(--green);border:none;border-radius:6px;color:#000;cursor:pointer;font-weight:700;font-size:12px">Connect & Sync</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById('hs-token-input').focus();
+}
+
+function confirmHsToken() {
+  const t = (document.getElementById('hs-token-input')?.value || '').trim();
+  if (!t) return;
+  saveHsToken(t);
+  document.getElementById('hs-connect-modal')?.remove();
+  syncFromHubSpot();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
+if (getHsToken()) {
+  syncFromHubSpot();
+} else {
+  updateSyncTimestamp();
+}
+// Auto-refresh every 10 minutes if token is present
+setInterval(() => { if (getHsToken()) syncFromHubSpot(); }, 10 * 60 * 1000);
+</script>
+</body>
+</html>
