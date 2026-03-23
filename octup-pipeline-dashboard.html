@@ -275,6 +275,41 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .brief-ts{font-size:11px;color:var(--muted);margin-left:auto}
 .brief-output{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px 22px;font-family:'SF Mono',ui-monospace,monospace;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;min-height:120px;max-height:680px;overflow-y:auto;display:none}
 .brief-output.visible{display:block}
+/* ── Pipeline DealDesk ─────────────────────────────────────────────────────── */
+.dd-run-btn{padding:9px 20px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px}
+.dd-run-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,.35)}
+.dd-run-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.dd-copy-btn{padding:7px 14px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s}
+.dd-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.dd-ts{font-size:11px;color:var(--muted);margin-bottom:18px;padding:8px 14px;background:var(--bg);border-radius:7px;border:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap}
+.dd-ts b{color:var(--text)}
+.dd-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:760px){.dd-cards{grid-template-columns:1fr}}
+.dd-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column}
+.dd-card-header{font-size:13px;font-weight:700;margin-bottom:2px}
+.dd-card-sub{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.dd-card-count{font-size:30px;font-weight:800;line-height:1;margin-bottom:14px}
+.dd-card-body{display:flex;flex-direction:column;gap:5px;max-height:210px;overflow-y:auto}
+.dd-deal-row{display:flex;flex-direction:column;gap:2px;padding:6px 9px;background:var(--bg2);border-radius:7px}
+.dd-deal-name{font-size:12px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-deal-meta{font-size:11px;color:var(--muted)}
+.dd-subsection{margin-bottom:22px}
+.dd-subtitle{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px}
+.dd-stage-table,.dd-deal-table{width:100%;border-collapse:collapse;background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.dd-deal-table{min-width:860px}
+.dd-th{padding:8px 13px;color:var(--muted);font-size:11px;text-align:left;font-weight:500;border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap}
+.dd-td{padding:7px 13px;font-size:12px;color:var(--text);border-bottom:1px solid rgba(48,54,61,.5);vertical-align:middle}
+.dd-tr:last-child .dd-td{border-bottom:none}
+.dd-tr:hover .dd-td{background:rgba(255,255,255,.025)}
+.dd-bar-wrap{background:var(--bg2);border-radius:4px;height:6px;width:110px}
+.dd-bar{border-radius:4px;height:6px;transition:width .4s}
+.dd-flag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;margin:1px 2px 1px 0;white-space:nowrap}
+.dd-flag-hot{background:rgba(249,115,22,.15);color:#f97316}
+.dd-flag-green{background:rgba(63,185,80,.15);color:#3fb950}
+.dd-flag-stalled{background:rgba(248,81,73,.15);color:#f85149}
+.dd-flag-closing{background:rgba(188,140,255,.15);color:#bc8cff}
+.dd-flag-overdue{background:rgba(248,81,73,.25);color:#f85149}
+#dealdesk-output{display:none}
 .brief-placeholder{text-align:center;padding:32px;color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:10px}
 .brief-line-header{color:var(--accent);font-weight:700}
 .brief-line-sub{color:var(--muted)}
@@ -565,6 +600,25 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       </div>
       <div class="intel-placeholder" id="intel-placeholder">Click <b>⚡ Generate Report</b> to run the full pipeline analysis — stuck deals, at-risk, healthy, commercial review, and top 3 revenue actions.</div>
       <div class="intel-output" id="intel-output"></div>
+    </div>
+  </section>
+
+  <!-- G: PIPELINE DEALDESK -->
+  <section id="section-dealdesk">
+    <div class="section-header">
+      <div class="section-title">🧠 Pipeline DealDesk</div>
+      <div class="section-badge" data-tip="AI-powered RevOps intelligence: flags hot deals, stalled pipeline, closing deadlines, and CEO-level decisions from live data.">RevOps Intelligence · On-Demand</div>
+    </div>
+    <div style="padding:0 0 4px">
+      <p style="font-size:12px;color:var(--muted);margin:0 0 16px;line-height:1.6;max-width:720px">
+        Analyzes all open deals as your RevOps &amp; GTM strategist — identifies what moved, what's stalled, what's closing, and what you need to decide today. Think like a SaaS founder managing toward $1M ARR.
+      </p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+        <button class="dd-run-btn" id="dealdesk-run-btn" onclick="runDealDesk(this)">🧠 Run DealDesk Analysis</button>
+        <button class="dd-copy-btn" id="dealdesk-copy-btn" onclick="copyDealDesk()" style="display:none">📋 Copy CEO Brief</button>
+      </div>
+      <div class="brief-placeholder" id="dealdesk-placeholder">Click <b>🧠 Run DealDesk Analysis</b> to get your CEO-level pipeline intelligence — hot deals, stalled pipeline, stage breakdown &amp; what to decide today.</div>
+      <div id="dealdesk-output"></div>
     </div>
   </section>
 
@@ -2798,6 +2852,236 @@ function copyBrief() {
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✅ Copied!';
     setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+  });
+}
+
+// ─── PIPELINE DEALDESK ───────────────────────────────────────────────────────
+function runDealDesk(btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyzing...';
+
+  const DAY_MS   = 86400000;
+  const NOW_MS   = TODAY.getTime ? TODAY.getTime() : new Date(TODAY).getTime();
+  const oName    = id => (OWNERS[id] || {}).name || id;
+  const shortName = n => n.split(' - ')[0].split(' | ')[0].trim();
+  const fmtK     = n => !n ? '$0' : n >= 1000000 ? '$'+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M' : n >= 1000 ? '$'+Math.round(n/1000)+'K' : '$'+n;
+
+  let pool = DEALS.slice();
+  if (selectedOwner !== 'all') pool = pool.filter(d => d[4] === selectedOwner);
+
+  // ── Annotate each deal ───────────────────────────────────────────────────
+  const ann = pool.map(d => {
+    const lastMs  = d[9] ? new Date(d[9].length===10 ? d[9]+'T12:00:00Z' : d[9]).getTime() : null;
+    const closeMs = d[6] ? new Date(d[6].length===10 ? d[6]+'T12:00:00Z' : d[6]).getTime() : null;
+    const staleDays    = lastMs  ? Math.max(0, Math.floor((NOW_MS - lastMs)  / DAY_MS)) : null;
+    const daysToClose  = closeMs ? Math.round((closeMs - NOW_MS) / DAY_MS)              : null;
+    const movedRecent  = staleDays !== null && staleDays <= 7;
+    const isStalled    = staleDays === null  || staleDays >= 7;
+    const closingSoon  = daysToClose !== null && daysToClose >= 0 && daysToClose <= 30;
+    const isOverdue    = daysToClose !== null && daysToClose < 0;
+    const isHot        = movedRecent && closingSoon;
+    const needsDecide  = (daysToClose !== null && daysToClose >= 0 && daysToClose <= 14) ||
+                         (closingSoon && isStalled);
+    return { d, staleDays, daysToClose, movedRecent, isStalled, closingSoon, isOverdue, isHot, needsDecide };
+  });
+
+  const hotDeals     = ann.filter(a => a.isHot);
+  const stalledDeals = ann.filter(a => a.isStalled && !a.isOverdue);
+  const decideDeals  = ann.filter(a => a.needsDecide);
+  const movedDeals   = ann.filter(a => a.movedRecent);
+  const overdueDeals = ann.filter(a => a.isOverdue);
+  const totalARR     = ann.reduce((s, {d}) => s + (d[2]||0), 0);
+
+  // ── Stage totals ─────────────────────────────────────────────────────────
+  const STAGE_ORDER = ['2918051007','2918051008','608286675','740160705','608286676','4988070119','608286677'];
+  const stageTotals = {};
+  ann.forEach(({d}) => {
+    if (!stageTotals[d[3]]) stageTotals[d[3]] = { count:0, arr:0 };
+    stageTotals[d[3]].count++;
+    stageTotals[d[3]].arr += (d[2]||0);
+  });
+
+  // ── Helper: small deal rows ───────────────────────────────────────────────
+  const dealRows = (list, labelFn, max=7) => {
+    if (!list.length) return '<p style="color:var(--muted);font-size:12px;margin:0">None right now.</p>';
+    return list.slice(0, max).map(a =>
+      `<div class="dd-deal-row">
+        <span class="dd-deal-name">${shortName(a.d[1])}</span>
+        <span class="dd-deal-meta">${oName(a.d[4])} · ${fmtK(a.d[2])} · ${labelFn(a)}</span>
+      </div>`
+    ).join('') + (list.length > max ? `<p style="color:var(--muted);font-size:11px;margin:6px 0 0">+${list.length-max} more</p>` : '');
+  };
+
+  // ── Stage table ───────────────────────────────────────────────────────────
+  const stageTableRows = STAGE_ORDER
+    .filter(sid => stageTotals[sid])
+    .map(sid => {
+      const s   = stageTotals[sid];
+      const pct = totalARR > 0 ? Math.round(s.arr / totalARR * 100) : 0;
+      const col = sid==='608286677' ? '#bc8cff' : sid==='2918051008' ? 'var(--muted)' : sid==='4988070119' ? '#3fb950' : 'var(--accent)';
+      return `<tr class="dd-tr">
+        <td class="dd-td">${STAGES[sid]||sid}</td>
+        <td class="dd-td" style="color:var(--muted);text-align:right">${s.count}</td>
+        <td class="dd-td" style="color:${col};font-weight:600;text-align:right">${fmtK(s.arr)}</td>
+        <td class="dd-td" style="color:var(--muted);text-align:right">${pct}%</td>
+        <td class="dd-td"><div class="dd-bar-wrap"><div class="dd-bar" style="background:${col};width:${pct}%"></div></div></td>
+      </tr>`;
+    }).join('');
+
+  // ── Full deal table ───────────────────────────────────────────────────────
+  const dealTableRows = [...ann]
+    .sort((a, b) => (b.d[2]||0) - (a.d[2]||0))
+    .map(({d, staleDays, daysToClose, isHot, movedRecent, isStalled, closingSoon, isOverdue}) => {
+      const flags = [
+        isHot                          ? '<span class="dd-flag dd-flag-hot">🔥 Hot</span>'          : '',
+        !isHot && movedRecent          ? '<span class="dd-flag dd-flag-green">🟢 Active</span>'     : '',
+        isStalled && !isOverdue        ? '<span class="dd-flag dd-flag-stalled">🚨 Stalled</span>'  : '',
+        !isHot && closingSoon          ? '<span class="dd-flag dd-flag-closing">⚡ Closing</span>'   : '',
+        isOverdue                      ? '<span class="dd-flag dd-flag-overdue">💀 Overdue</span>'  : '',
+      ].filter(Boolean).join('');
+      const stageCol = d[3]==='608286677' ? '#bc8cff' : d[3]==='2918051008' ? 'var(--muted)' : 'var(--accent)';
+      const actColor = staleDays === null ? 'var(--muted)' : staleDays <= 3 ? '#3fb950' : staleDays <= 7 ? '#f59e0b' : '#f85149';
+      const actLabel = staleDays === null ? '—' : staleDays === 0 ? 'Today' : staleDays + 'd ago';
+      const closeLabel = daysToClose === null ? '—'
+        : daysToClose < 0  ? `<span style="color:#f85149">${d[6]} (${Math.abs(daysToClose)}d ago)</span>`
+        : daysToClose === 0 ? `<span style="color:#f85149">Today!</span>`
+        : daysToClose <= 7  ? `<span style="color:#f97316">${d[6]}</span>`
+        : d[6];
+      return `<tr class="dd-tr">
+        <td class="dd-td" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500">${shortName(d[1])}</td>
+        <td class="dd-td" style="color:var(--muted);white-space:nowrap">${oName(d[4])}</td>
+        <td class="dd-td" style="color:var(--accent);font-weight:600;text-align:right;white-space:nowrap">${fmtK(d[2])}</td>
+        <td class="dd-td"><span style="color:${stageCol};font-size:11px">${STAGES[d[3]]||d[3]}</span></td>
+        <td class="dd-td" style="font-size:11px;white-space:nowrap">${closeLabel}</td>
+        <td class="dd-td" style="color:${actColor};font-size:11px;white-space:nowrap">${actLabel}</td>
+        <td class="dd-td" style="color:var(--muted);font-size:11px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d[7]||'—'}</td>
+        <td class="dd-td" style="white-space:nowrap">${flags||'<span style="color:var(--muted);font-size:11px">—</span>'}</td>
+      </tr>`;
+    }).join('');
+
+  // ── CEO Brief (copyable text) ─────────────────────────────────────────────
+  const sep2 = () => '─'.repeat(60);
+  const filterLabel = selectedOwner !== 'all' ? ` · ${ownerName(selectedOwner)}` : ' · All Reps';
+  const ceoText =
+`🧠 PIPELINE DEALDESK  ·  ${new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
+Pipeline: 3PL New Business · Portal 26004468${filterLabel}
+${sep2()}
+
+📊 PIPELINE SNAPSHOT
+${pool.length} open deals · ${fmtK(totalARR)} total ARR
+${STAGE_ORDER.filter(s=>stageTotals[s]).map(s=>`  ${(STAGES[s]||s).padEnd(22)} ${String(stageTotals[s].count).padStart(2)} deals   ${fmtK(stageTotals[s].arr)}`).join('\n')}
+
+${sep2()}
+🔥 WHAT'S HOT  (${hotDeals.length} deals — recent activity + closing ≤30 days)
+${hotDeals.length ? hotDeals.map(a=>`  • ${shortName(a.d[1])}  ${fmtK(a.d[2])}  ← ${oName(a.d[4])}\n    ↳ closes in ${a.daysToClose}d · last activity ${a.staleDays}d ago`).join('\n') : '  None currently.'}
+
+${sep2()}
+🚨 WHAT'S STUCK  (${stalledDeals.length} deals — no activity 7+ days)
+${stalledDeals.length ? stalledDeals.map(a=>`  • ${shortName(a.d[1])}  ${fmtK(a.d[2])}  ← ${oName(a.d[4])}\n    ↳ ${a.staleDays !== null ? a.staleDays+'d' : '?'} silent · ${a.d[7]||'no next step'}`).join('\n') : '  All deals have recent activity.'}
+
+${sep2()}
+⚡ DECIDE TODAY  (${decideDeals.length} deals — closing ≤14d or stuck + closing ≤30d)
+${decideDeals.length ? decideDeals.map(a=>`  • ${shortName(a.d[1])}  ${fmtK(a.d[2])}  ← ${oName(a.d[4])}\n    ↳ ${a.daysToClose !== null && a.daysToClose >= 0 ? 'closes in '+a.daysToClose+'d' : 'overdue'}${a.isStalled ? ' · stalled' : ''} · ${a.d[7]||'no next step'}`).join('\n') : '  Nothing urgent right now.'}
+
+${sep2()}
+🟢 MOVED THIS WEEK  (${movedDeals.length} deals active in last 7 days)
+${movedDeals.length ? movedDeals.map(a=>`  • ${shortName(a.d[1])}  ${fmtK(a.d[2])}  ← ${oName(a.d[4])}`).join('\n') : '  No recent movement.'}
+${overdueDeals.length ? `\n${sep2()}\n💀 OVERDUE CLOSE DATES  (${overdueDeals.length} deals)\n`+overdueDeals.map(a=>`  • ${shortName(a.d[1])}  ← ${oName(a.d[4])}  ${a.d[6]||'no date'}`).join('\n') : ''}
+${sep2()}
+Generated by Octup Pipeline DealDesk · Think like a SaaS founder managing toward $1M ARR`;
+
+  // Store text for copy
+  document.getElementById('dealdesk-output')._ceoText = ceoText;
+
+  // ── Render HTML ──────────────────────────────────────────────────────────
+  const ts = new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  document.getElementById('dealdesk-output').innerHTML = `
+    <div class="dd-ts">
+      <span>⏱ ${ts}${filterLabel}</span>
+      <span>·</span><span><b>${pool.length}</b> open deals</span>
+      <span>·</span><span><b>${fmtK(totalARR)}</b> total ARR</span>
+      <span>·</span><span><b>${movedDeals.length}</b> moved this week</span>
+      <span>·</span><span style="color:${stalledDeals.length>5?'#f85149':'var(--muted)'}"><b>${stalledDeals.length}</b> stalled</span>
+      <span>·</span><span style="color:${overdueDeals.length?'#f85149':'var(--muted)'}"><b>${overdueDeals.length}</b> overdue</span>
+    </div>
+
+    <div class="dd-cards">
+      <div class="dd-card">
+        <div class="dd-card-header" style="color:#f97316">🔥 What's Hot</div>
+        <div class="dd-card-sub">Recent activity + closing within 30 days</div>
+        <div class="dd-card-count" style="color:#f97316">${hotDeals.length}</div>
+        <div class="dd-card-body">${dealRows(hotDeals, a => `closes in ${a.daysToClose}d`)}</div>
+      </div>
+      <div class="dd-card">
+        <div class="dd-card-header" style="color:#f85149">🚨 What's Stuck</div>
+        <div class="dd-card-sub">No activity for 7+ days</div>
+        <div class="dd-card-count" style="color:#f85149">${stalledDeals.length}</div>
+        <div class="dd-card-body">${dealRows(stalledDeals, a => (a.staleDays !== null ? a.staleDays+'d silent' : 'no activity'))}</div>
+      </div>
+      <div class="dd-card">
+        <div class="dd-card-header" style="color:#bc8cff">⚡ Decide Today</div>
+        <div class="dd-card-sub">Closing ≤14d or stalled + closing ≤30d</div>
+        <div class="dd-card-count" style="color:#bc8cff">${decideDeals.length}</div>
+        <div class="dd-card-body">${dealRows(decideDeals, a => a.daysToClose !== null && a.daysToClose >= 0 ? 'closes in '+a.daysToClose+'d' : 'overdue')}</div>
+      </div>
+    </div>
+
+    <div class="dd-subsection">
+      <div class="dd-subtitle">📊 Pipeline by Stage</div>
+      <table class="dd-stage-table">
+        <thead><tr>
+          <th class="dd-th">Stage</th>
+          <th class="dd-th" style="text-align:right">Deals</th>
+          <th class="dd-th" style="text-align:right">ARR</th>
+          <th class="dd-th" style="text-align:right">Share</th>
+          <th class="dd-th" style="width:130px">Distribution</th>
+        </tr></thead>
+        <tbody>${stageTableRows}</tbody>
+        <tfoot><tr style="border-top:1px solid var(--border)">
+          <td class="dd-td" style="font-weight:700">Total</td>
+          <td class="dd-td" style="font-weight:700;text-align:right">${pool.length}</td>
+          <td class="dd-td" style="color:var(--accent);font-weight:700;text-align:right">${fmtK(totalARR)}</td>
+          <td class="dd-td" style="text-align:right">100%</td>
+          <td class="dd-td"></td>
+        </tr></tfoot>
+      </table>
+    </div>
+
+    <div class="dd-subsection">
+      <div class="dd-subtitle">📋 All Open Deals — Sorted by ARR</div>
+      <div style="overflow-x:auto;border-radius:10px">
+        <table class="dd-deal-table">
+          <thead><tr>
+            <th class="dd-th">Deal</th>
+            <th class="dd-th">Owner</th>
+            <th class="dd-th" style="text-align:right">ARR</th>
+            <th class="dd-th">Stage</th>
+            <th class="dd-th">Close Date</th>
+            <th class="dd-th">Last Activity</th>
+            <th class="dd-th">Next Step</th>
+            <th class="dd-th">Status</th>
+          </tr></thead>
+          <tbody>${dealTableRows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('dealdesk-placeholder').style.display = 'none';
+  document.getElementById('dealdesk-output').style.display = 'block';
+  document.getElementById('dealdesk-copy-btn').style.display = '';
+
+  btn.disabled = false;
+  btn.textContent = '🧠 Re-run Analysis';
+  btn.style.background = 'linear-gradient(135deg,#059669,#047857)';
+}
+
+function copyDealDesk() {
+  const text = document.getElementById('dealdesk-output')._ceoText || '';
+  const btn  = document.getElementById('dealdesk-copy-btn');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => { btn.textContent = '📋 Copy CEO Brief'; }, 2200);
   });
 }
 
