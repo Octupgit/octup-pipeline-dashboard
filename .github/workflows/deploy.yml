@@ -10,7 +10,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: us-central1
   SERVICE: octup-pipeline-dashboard
-  IMAGE: ghcr.io/${{ github.repository_owner }}/octup-pipeline-dashboard
+  IMAGE: ghcr.io/octupgit/octup-pipeline-dashboard
 
 jobs:
   deploy:
