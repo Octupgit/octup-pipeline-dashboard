@@ -405,13 +405,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   </div>
   <div class="header-right">
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
-      <button id="sync-btn" onclick="syncFromHubSpot()" title="Pull live data from HubSpot"
-        style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 11px;border-radius:20px;cursor:pointer;font-size:10px;font-weight:600;letter-spacing:.3px;transition:all .15s;"
-        onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'"
-        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🔄 SYNC</button>
-      <div class="live-badge">LIVE DATA</div>
+      <div class="live-badge">Auto-synced 4×/day</div>
     </div>
-    <div style="margin-top:6px" id="sync-timestamp">Syncing…</div>
+    <div style="margin-top:6px" id="sync-timestamp"></div>
   </div>
 </div>
 
@@ -736,6 +732,7 @@ const TODAY = new Date();
   };
 })();
 const PORTAL = '26004468';
+const LAST_SYNC_UTC = '2026-03-25T16:38:00Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
 
 // ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
 // [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource]
@@ -10280,9 +10277,10 @@ function updateSyncTimestamp(label) {
   const el = document.getElementById('sync-timestamp');
   if (!el) return;
   if (label) { el.textContent = label; return; }
-  const now = new Date();
+  // Show the baked-in sync time (set by GitHub Actions auto-sync)
   const opts = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
-  el.textContent = 'Last synced: ' + now.toLocaleString('en-US', opts);
+  const ts = typeof LAST_SYNC_UTC !== 'undefined' ? new Date(LAST_SYNC_UTC) : null;
+  el.textContent = ts ? 'Last synced: ' + ts.toLocaleString('en-US', opts) : 'Data refreshed automatically 4×/day';
   const fds = document.getElementById('footer-date-str');
   if (fds) fds.textContent = 'Data as of ' + now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
@@ -10593,13 +10591,7 @@ function confirmHsToken() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 render();
-if (getHsToken()) {
-  syncFromHubSpot();
-} else {
-  updateSyncTimestamp();
-}
-// Auto-refresh every 10 minutes if token is present
-setInterval(() => { if (getHsToken()) syncFromHubSpot(); }, 10 * 60 * 1000);
+updateSyncTimestamp();
 </script>
 </body>
 </html>

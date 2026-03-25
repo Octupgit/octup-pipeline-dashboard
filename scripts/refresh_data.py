@@ -316,8 +316,17 @@ def replace_block(html, var_name, new_value, open_char='[', close_char=']'):
     return new_html
 
 def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails):
-    now_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+    now_utc = datetime.now(timezone.utc)
+    now_str = now_utc.strftime('%Y-%m-%d %H:%M UTC')
+    now_iso = now_utc.strftime('%Y-%m-%dT%H:%M:%SZ')
     print(f'  Replacing arrays in HTML (synced at {now_str})...')
+
+    # Update sync timestamp constant
+    html = re.sub(
+        r"const LAST_SYNC_UTC = '[^']*';",
+        f"const LAST_SYNC_UTC = '{now_iso}'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py",
+        html
+    )
 
     html = replace_block(html, 'DEALS',         js_array(deals))
     html = replace_block(html, 'STAGE_ENTERED', js_stage_entered(stage_entered), '{', '}')
