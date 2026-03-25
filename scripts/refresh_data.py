@@ -158,7 +158,8 @@ def fetch_open_deals():
     return rows, stage_entered
 
 def fetch_closed_deals(stage, days_back=180):
-    print(f'  Fetching {stage} deals (last {days_back}d)...')
+    # stage is the actual HubSpot stage ID (e.g. '608286678' for won, '608286679' for lost)
+    print(f'  Fetching stage={stage} deals (last {days_back}d)...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     props = ['dealname','amount','closedate','hubspot_owner_id',
              'hs_created_by_user_id','dealstage',
@@ -348,8 +349,8 @@ def main():
     print('=== Octup Dashboard — HubSpot Data Refresh ===')
 
     deals, stage_entered = fetch_open_deals()
-    won   = build_won(fetch_closed_deals('closedwon'))
-    lost  = build_lost(fetch_closed_deals('closedlost'))
+    won   = build_won(fetch_closed_deals('608286678'))   # Closed Won stage ID
+    lost  = build_lost(fetch_closed_deals('608286679'))  # Closed Lost stage ID
 
     # Engagements are best-effort — won't fail the sync if missing
     meeting_raw = fetch_engagements('MEETING', days_back=60)
