@@ -24,7 +24,8 @@ ACTIVE_STAGES = [
     '608286677',   # Commercial Review
 ]
 
-OWNER_IDS = {'29896105', '29422733', '30284350', '74016070'}
+OWNER_IDS   = {'29896105', '29422733', '30284350', '74016070'}
+PIPELINE_ID = '394300639'  # 3PL New Business
 
 SOURCE_MAP = {
     'DIRECT_TRAFFIC':    'Direct',
@@ -127,7 +128,8 @@ def fetch_open_deals():
     ]
     body = {
         'filterGroups': [{'filters': [
-            {'propertyName': 'dealstage', 'operator': 'IN', 'values': ACTIVE_STAGES}
+            {'propertyName': 'dealstage', 'operator': 'IN',  'values': ACTIVE_STAGES},
+            {'propertyName': 'pipeline',  'operator': 'EQ',  'value':  PIPELINE_ID},
         ]}],
         'properties': props,
         'limit': 100,
@@ -157,17 +159,19 @@ def fetch_open_deals():
     print(f'  → {len(rows)} open deals, {len(stage_entered)} stage dates')
     return rows, stage_entered
 
-def fetch_closed_deals(stage, days_back=180):
+def fetch_closed_deals(stage, days_back=1825):
     # stage is the actual HubSpot stage ID (e.g. '608286678' for won, '608286679' for lost)
-    print(f'  Fetching stage={stage} deals (last {days_back}d)...')
+    # days_back=1825 (~5 years) to capture all historical deals
+    print(f'  Fetching stage={stage} deals (last {days_back}d, pipeline {PIPELINE_ID})...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     props = ['dealname','amount','closedate','hubspot_owner_id',
              'hs_created_by_user_id','dealstage',
              'hs_analytics_source','hs_analytics_source_data_1']
     body = {
         'filterGroups': [{'filters': [
-            {'propertyName': 'dealstage', 'operator': 'EQ', 'value': stage},
+            {'propertyName': 'dealstage',  'operator': 'EQ',  'value': stage},
             {'propertyName': 'closedate',  'operator': 'GTE', 'value': str(cutoff)},
+            {'propertyName': 'pipeline',   'operator': 'EQ',  'value': PIPELINE_ID},
         ]}],
         'properties': props,
         'limit': 100,
@@ -208,13 +212,38 @@ def build_lost(deals):
     return rows
 
 # ── Fetch activities ──────────────────────────────────────────────────────────
+def batch_deal_associations(ids, eng_type_lc):
+    """Fetch deal associations for a batch of engagement IDs in one API call.
+    Returns dict {eng_id_str: [deal_id_str, ...]}
+    """
+    if not ids:
+        return {}
+    # HubSpot batch read: up to 100 per call
+    result = {}
+    chunk_size = 100
+    for i in range(0, len(ids), chunk_size):
+        chunk = ids[i:i+chunk_size]
+        body = {'inputs': [{'id': str(eid)} for eid in chunk]}
+        try:
+            resp = hs_post(
+                f'/crm/v4/associations/{eng_type_lc}/deals/batch/read', body
+            )
+            for r in resp.get('results', []):
+                from_id = str(r.get('from', {}).get('id', ''))
+                to_ids  = [str(a.get('toObjectId', '')) for a in r.get('to', [])]
+                if from_id:
+                    result[from_id] = to_ids
+        except Exception as e:
+            print(f'  ⚠ Batch assoc {eng_type_lc}: {e}')
+    return result
+
 def fetch_engagements(eng_type, days_back=60):
     print(f'  Fetching {eng_type} engagements (last {days_back}d)...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     try:
         props = ['hs_timestamp','hubspot_owner_id','hs_engagement_type',
                  'hs_activity_type','hs_call_title','hs_meeting_title',
-                 'hs_email_subject','hs_body_preview']
+                 'hs_meeting_outcome','hs_email_subject','hs_body_preview']
         body = {
             'filterGroups': [{'filters': [
                 {'propertyName': 'hs_engagement_type', 'operator': 'EQ', 'value': eng_type},
@@ -231,6 +260,10 @@ def fetch_engagements(eng_type, days_back=60):
         return []
 
 def build_meetings(items):
+    if not items:
+        return []
+    ids = [e['id'] for e in items]
+    assoc_map = batch_deal_associations(ids, 'meetings')
     rows = []
     for e in items:
         p = e['properties']
@@ -239,12 +272,17 @@ def build_meetings(items):
             'type': 'MEETING',
             'title': safe_str(p.get('hs_meeting_title') or p.get('hs_call_title', '')),
             'timestamp': fmt_date(p.get('hs_timestamp', '')),
+            'outcome': safe_str(p.get('hs_meeting_outcome', '')),
             'ownerId': safe_str(p.get('hubspot_owner_id', '')),
-            'dealIds': [],
+            'dealIds': assoc_map.get(e['id'], []),
         })
     return rows
 
 def build_calls(items):
+    if not items:
+        return []
+    ids = [e['id'] for e in items]
+    assoc_map = batch_deal_associations(ids, 'calls')
     rows = []
     for e in items:
         p = e['properties']
@@ -253,11 +291,15 @@ def build_calls(items):
             'title': safe_str(p.get('hs_call_title', '')),
             'timestamp': fmt_date(p.get('hs_timestamp', '')),
             'ownerId': safe_str(p.get('hubspot_owner_id', '')),
-            'dealIds': [],
+            'dealIds': assoc_map.get(e['id'], []),
         })
     return rows
 
 def build_emails(items):
+    if not items:
+        return []
+    ids = [e['id'] for e in items]
+    assoc_map = batch_deal_associations(ids, 'emails')
     rows = []
     for e in items:
         p = e['properties']
@@ -266,7 +308,7 @@ def build_emails(items):
             'subject': safe_str(p.get('hs_email_subject', '')),
             'timestamp': fmt_date(p.get('hs_timestamp', '')),
             'ownerId': safe_str(p.get('hubspot_owner_id', '')),
-            'dealIds': [],
+            'dealIds': assoc_map.get(e['id'], []),
         })
     return rows
 
