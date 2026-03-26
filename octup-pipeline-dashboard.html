@@ -139,7 +139,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:1000px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:1400px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .modal-header{background:var(--bg3);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .modal-title{font-size:15px;font-weight:700}
 .modal-close{background:none;border:1px solid var(--border);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s}
@@ -153,7 +153,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .modal-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
 .modal-table td{padding:9px 14px;border-bottom:1px solid rgba(48,54,61,.5);font-size:12px;vertical-align:top}
 .modal-table tr:hover td{background:rgba(48,54,61,.4)}
-.modal-table .deal-name{font-weight:600;color:var(--text);max-width:180px}
+.modal-table .deal-name{font-weight:600;color:var(--text);max-width:280px}
 .modal-table .deal-name a{color:var(--text)}
 .modal-table .deal-name a:hover{color:var(--accent)}
 .modal-table .amount{font-weight:700;color:var(--green);white-space:nowrap}
@@ -171,6 +171,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 
 /* CARD ROW 4 */
 .card-row-4{grid-template-columns:repeat(4,1fr)}
+.card-row-5{grid-template-columns:repeat(5,1fr)}
 
 /* MATRIX CELL 2-LINE */
 .mc-count{display:block;font-weight:700;line-height:1.2}
@@ -270,6 +271,18 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .wow-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .wow-summary-card{margin:0 0 16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.8;border-left:3px solid var(--accent)}
 .wow-summary-card b{color:var(--text)}
+.wow-stats-row{display:flex;gap:24px;padding:0 2px 14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.wow-stat-item{display:flex;flex-direction:column}
+.wow-stat-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1}
+.wow-stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.wow-stat-div{width:1px;background:var(--border);align-self:stretch;margin:0 4px}
+.wow-tooltip{position:fixed;background:rgba(15,17,26,.96);border:1px solid var(--border);border-radius:10px;padding:10px 13px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .12s;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:130px}
+.wow-tooltip.vis{opacity:1}
+.wow-tooltip-stage{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.wow-tooltip-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wow-tooltip-count{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1}
+.wow-tooltip-label{font-size:11px;color:var(--muted);margin-top:1px}
+.wow-tooltip-week{font-size:10px;color:var(--muted);margin-top:6px;border-top:1px solid var(--border);padding-top:6px;opacity:.8}
 .sdr-panel{padding:0}
 .sdr-panel.hidden{display:none}
 .sdr-panel-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between}
@@ -466,28 +479,34 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <button class="btn" data-week="alltime">All Time</button>
       </div>
     </div>
-    <div class="card-row card-row-4" style="margin-bottom:14px">
+    <div class="card-row card-row-5" style="margin-bottom:14px">
       <div class="card card-clickable" id="card-won" onclick="openWonModal()">
         <div class="card-icon">🏆</div>
-        <div class="card-label" data-tip="Deals moved to Closed Won stage during the selected week. Gross ARR = full contract value before any deductions.">ARR Won (Gross)</div>
+        <div class="card-label" data-tip="Deals moved to Closed Won stage during the selected period. Gross ARR = full contract value.">ARR Won (Gross)</div>
         <div class="card-value green" id="val-won">—</div>
         <div class="card-sub" id="sub-won"></div>
       </div>
       <div class="card card-clickable" id="card-lost" onclick="openLostModal()">
         <div class="card-icon">❌</div>
-        <div class="card-label" data-tip="Deals moved to Closed Lost or Disqualified during the selected week. Count is displayed; ARR lost shown below.">Deals Lost</div>
+        <div class="card-label" data-tip="Deals moved to Closed Lost during the selected period.">Deals Lost</div>
         <div class="card-value red" id="val-lost-count">—</div>
         <div class="card-sub" id="sub-lost"></div>
       </div>
       <div class="card card-clickable" id="card-new-pipeline" onclick="openNewPipelineModal()">
         <div class="card-icon">➕</div>
-        <div class="card-label" data-tip="All new deals entered into the CRM during the selected week, regardless of current stage. Respects the owner filter.">New Pipeline</div>
+        <div class="card-label" data-tip="All new deals entered into the CRM during the selected period.">New Pipeline</div>
         <div class="card-value blue" id="val-new-pipeline">—</div>
         <div class="card-sub" id="sub-new-pipeline"></div>
       </div>
       <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-label" data-tip="Average Contract Value of deals closed won in this period. All-time ACV shown when no wins in period.">Avg Deal (ACV)</div>
+        <div class="card-value" style="color:#c084fc" id="val-acv">—</div>
+        <div class="card-sub" id="sub-acv"></div>
+      </div>
+      <div class="card">
         <div class="card-icon">📅</div>
-        <div class="card-label">Week Range</div>
+        <div class="card-label">Period Range</div>
         <div class="card-value accent" style="font-size:14px;margin-top:4px" id="val-week-range">—</div>
         <div class="card-sub">Mon–Sat cycle</div>
       </div>
@@ -506,6 +525,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
           <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
         </div>
       </div>
+      <div class="wow-stats-row" id="wow-stats"></div>
       <div class="wow-chart" id="wow-chart-bars"></div>
       <div class="wow-legend-row" id="wow-legend"></div>
       <div class="wow-summary-card" id="wow-last-summary"></div>
@@ -9345,6 +9365,23 @@ function renderWoWChart() {
   const maxTotal = Math.max(...data.map(w => w.total), 1);
   const BAR_H = 140; // px — taller for more visual impact
 
+  // Period stats for header
+  const statsEl = document.getElementById('wow-stats');
+  if (statsEl) {
+    const periodStart = weeks[0].start, periodEnd = weeks[weeks.length-1].end;
+    const periodDeals = ownerDeals.filter(d => d[5] && d[5] >= periodStart && d[5] <= periodEnd);
+    const totalNew  = data.reduce((s,w) => s + w.total, 0);
+    const totalARRp = periodDeals.reduce((s,d) => s + d[2], 0);
+    const periodLabel = _wowMode === 'alltime' ? 'All Time' : 'Last 9 Weeks';
+    statsEl.innerHTML =
+      `<div class="wow-stat-item"><div class="wow-stat-val">${totalNew}</div><div class="wow-stat-lbl">New Deals</div></div>` +
+      `<div class="wow-stat-div"></div>` +
+      `<div class="wow-stat-item"><div class="wow-stat-val">${totalARRp >= 1000000 ? '$'+(totalARRp/1000000).toFixed(1).replace(/\.0$/,'')+'M' : totalARRp >= 1000 ? '$'+Math.round(totalARRp/1000)+'K' : '$'+totalARRp}</div><div class="wow-stat-lbl">Pipeline ARR</div></div>` +
+      `<div class="wow-stat-div"></div>` +
+      `<div class="wow-stat-item"><div class="wow-stat-val">${totalNew && periodDeals.length ? '$'+Math.round(totalARRp/totalNew/1000)+'K' : '—'}</div><div class="wow-stat-lbl">Avg ACV</div></div>` +
+      `<div style="flex:1"></div><div class="wow-stat-item" style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.6">${periodLabel}</div><div style="font-size:10px;color:var(--muted)">${weeks[0].label} → ${weeks[weeks.length-1].label}</div></div>`;
+  }
+
   // Render bars
   container.innerHTML = data.map(w => {
     const fillPct = w.total ? (w.total / maxTotal) * 100 : 0;
@@ -9354,12 +9391,12 @@ function renderWoWChart() {
       const c = w.counts[g.id];
       if (!c) return '';
       const h = (c / w.total) * 100;
-      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" title="${g.label}: ${c} deal${c!==1?'s':''}"></div>`;
+      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" data-wow-stage="${g.label}" data-wow-count="${c}" data-wow-color="${g.color}" data-wow-week="${w.label}"></div>`;
     }).join('');
 
-    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}">
+    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}">
       <div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
-      <div class="wow-bar-stack" style="height:${BAR_H}px">
+      <div class="wow-bar-stack" style="height:${BAR_H}px" data-wow-week="${w.label}" data-wow-total="${w.total}">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
       </div>
       <div class="wow-bar-label">${w.label}</div>
@@ -9422,6 +9459,15 @@ function renderPulse() {
   const newPipeARR = newPipeDeals.reduce((s,d)=>s+d[2],0);
   document.getElementById('val-new-pipeline').textContent = newPipeDeals.length;
   document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' total ARR';
+
+  // ACV (Avg Contract Value of won deals in period; fallback to all-time)
+  const acvBase = wonDeals.length ? wonDeals : WON_DEALS.filter(d => selectedOwner === 'all' || d[4] === selectedOwner);
+  const acvARR  = acvBase.reduce((s,d)=>s+d[2],0);
+  const acvVal  = acvBase.length ? Math.round(acvARR / acvBase.length) : 0;
+  const acvEl   = document.getElementById('val-acv');
+  const acvSub  = document.getElementById('sub-acv');
+  if (acvEl) acvEl.textContent = acvVal ? fmt$(acvVal) : '—';
+  if (acvSub) acvSub.textContent = wonDeals.length ? wonDeals.length + ' deal avg' : 'all-time avg (' + WON_DEALS.length + ' deals)';
 
   // SDR Activity
   renderSDR();
@@ -9789,10 +9835,12 @@ function renderMonthlyBreakdown() {
       const diff = (new Date(d[6]+'T12:00:00Z') - new Date(d[5]+'T12:00:00Z')) / 86400000;
       return s + Math.max(0, diff);
     }, 0) / withCycle.length) : null;
-    const wonCount  = WON_DEALS.filter(w  => monthKey(w[3]) === m).length;
+    const wonInMonth = WON_DEALS.filter(w => monthKey(w[3]) === m);
+    const wonCount  = wonInMonth.length;
+    const wonARR    = wonInMonth.reduce((s,w)=>s+w[2],0);
     const lostCount = LOST_DEALS.filter(l => monthKey(l[3]) === m).length;
     const cvr = (wonCount + lostCount) > 0 ? Math.round(wonCount / (wonCount + lostCount) * 100) : null;
-    colStats[m] = { arr, avgSize, avgCycle, wonCount, cvr };
+    colStats[m] = { arr, avgSize, avgCycle, wonCount, wonARR, cvr };
   });
 
   // Header
@@ -9801,16 +9849,17 @@ function renderMonthlyBreakdown() {
     const isCur = m === todayKey;
     const cs = colStats[m];
     const cvrStr = cs.cvr !== null ? cs.cvr + '% CVR' : '—';
-    const wonStr = cs.wonCount > 0 ? `✓ ${cs.wonCount} Won` : '—';
+    const wonStr = cs.wonCount > 0 ? `✓ ${cs.wonCount} WON` : '—';
+    const wonARRStr = cs.wonARR > 0 ? fmt$(cs.wonARR) : '';
     html += `<th${isCur?' class="cur-month"':''}>${monthLabel(m)}${isCur?' ★':''}
       <div class="mm-col-stats">
         <span class="mm-col-acv">ACV ${fmt$(cs.avgSize)}</span>
         <span class="mm-col-cycle">${cs.avgCycle !== null ? cs.avgCycle+'d' : '—'}</span>
-        <span class="mm-col-won">${wonStr}</span>
+        <span class="mm-col-won">${wonStr}${wonARRStr ? ' · '+wonARRStr : ''}</span>
         <span class="mm-col-cvr">${cvrStr}</span>
       </div></th>`;
   });
-  html += '<th>Total</th></tr></thead><tbody>';
+  html += '<th>Total</th><th style="color:var(--cr);white-space:nowrap">$ Closed</th></tr></thead><tbody>';
 
   // Owner rows
   ownerList.forEach(oid => {
@@ -9840,7 +9889,13 @@ function renderMonthlyBreakdown() {
       ? `<div class="mm-cell"><div class="mm-count">${rowCount}<span class="mm-arr">${fmt$(rowArr)}</span></div></div>`
       : '<span class="mm-empty">—</span>';
     const rowTdCls = rowCount ? 'mm-clickable' : '';
-    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>${rowTotalCell}</td></tr>`;
+    // Won ARR for this owner (across all shown months)
+    const ownerWon = WON_DEALS.filter(w => w[4] === oid && months.some(m => monthKey(w[3]) === m));
+    const ownerWonARR = ownerWon.reduce((s,w)=>s+w[2],0);
+    const wonCell = ownerWonARR > 0
+      ? `<div style="font-size:14px;font-weight:800;color:var(--cr);letter-spacing:-.4px">${fmt$(ownerWonARR)}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${ownerWon.length} deal${ownerWon.length!==1?'s':''} won</div>`
+      : '<span class="mm-empty">—</span>';
+    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>${rowTotalCell}</td><td style="text-align:center;vertical-align:middle">${wonCell}</td></tr>`;
   });
 
   // Totals row
@@ -9859,7 +9914,10 @@ function renderMonthlyBreakdown() {
     html += `<td class="${tdCls}" data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${t.count}<span class="mm-arr">${fmt$(t.arr)}</span></div><div class="mm-tags">${tags}</div></div></td>`;
   });
   const allIds = JSON.stringify(deals.map(d=>d[0]));
-  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${grandTotal}<span class="mm-arr">${fmt$(grandArr)}</span></div></div></td></tr>`;
+  const grandWon = WON_DEALS.filter(w => months.some(m => monthKey(w[3]) === m));
+  const grandWonARR = grandWon.reduce((s,w)=>s+w[2],0);
+  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${grandTotal}<span class="mm-arr">${fmt$(grandArr)}</span></div></div></td>`;
+  html += `<td style="text-align:center;vertical-align:middle"><div style="font-size:14px;font-weight:800;color:var(--cr);letter-spacing:-.4px">${grandWonARR>0?fmt$(grandWonARR):'—'}</div>${grandWon.length>0?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${grandWon.length} won</div>`:''}</td></tr>`;
   html += '</tbody>';
 
   document.getElementById('monthly-table').innerHTML = html;
@@ -10815,7 +10873,7 @@ function updateSyncTimestamp(label) {
   const ts = typeof LAST_SYNC_UTC !== 'undefined' ? new Date(LAST_SYNC_UTC) : null;
   el.textContent = ts ? 'Last synced: ' + ts.toLocaleString('en-US', opts) : 'Data refreshed automatically 4×/day';
   const fds = document.getElementById('footer-date-str');
-  if (fds) fds.textContent = 'Data as of ' + now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  if (fds) fds.textContent = 'Data as of ' + (ts || new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 // ─── HUBSPOT LIVE SYNC ────────────────────────────────────────────────────────
@@ -11125,6 +11183,54 @@ function confirmHsToken() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 render();
 updateSyncTimestamp();
+
+// ── WoW chart tooltip ────────────────────────────────────────────────────────
+(function(){
+  const tip = document.createElement('div');
+  tip.id = 'wow-tip';
+  tip.className = 'wow-tooltip';
+  document.body.appendChild(tip);
+
+  document.getElementById('wow-chart-bars').addEventListener('mousemove', e => {
+    const seg = e.target.closest('[data-wow-stage]');
+    const col = e.target.closest('[data-wow-week]');
+    if (!seg && !col) { tip.classList.remove('vis'); return; }
+
+    if (seg) {
+      const stage = seg.dataset.wowStage;
+      const count = seg.dataset.wowCount;
+      const color = seg.dataset.wowColor;
+      const week  = seg.dataset.wowWeek;
+      tip.innerHTML =
+        `<div class="wow-tooltip-stage"><div class="wow-tooltip-color" style="background:${color}"></div>${stage}</div>` +
+        `<div class="wow-tooltip-count">${count}</div>` +
+        `<div class="wow-tooltip-label">deal${count!=='1'?'s':''} entered</div>` +
+        `<div class="wow-tooltip-week">${week}</div>`;
+    } else {
+      // hovering empty bar track — show week total
+      const total = col.dataset.wowTotal;
+      const week  = col.dataset.wowWeek;
+      tip.innerHTML =
+        `<div class="wow-tooltip-stage">${week}</div>` +
+        `<div class="wow-tooltip-count">${total||'0'}</div>` +
+        `<div class="wow-tooltip-label">new deal${total!=='1'?'s':''}</div>`;
+    }
+
+    // Position tooltip: follow cursor, keep inside viewport
+    const vw = window.innerWidth, vh = window.innerHeight;
+    let x = e.clientX + 16, y = e.clientY - 10;
+    const tw = 150, th = 90;
+    if (x + tw > vw) x = e.clientX - tw - 8;
+    if (y + th > vh) y = e.clientY - th - 8;
+    tip.style.left = x + 'px';
+    tip.style.top  = y + 'px';
+    tip.classList.add('vis');
+  });
+
+  document.getElementById('wow-chart-bars').addEventListener('mouseleave', () => {
+    tip.classList.remove('vis');
+  });
+})();
 </script>
 </body>
 </html>
