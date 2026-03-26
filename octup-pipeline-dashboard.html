@@ -245,24 +245,31 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .sdr-tab-count{background:rgba(245,158,11,.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;min-width:20px;text-align:center}
 .sdr-tab-count.zero{background:rgba(139,148,158,.12);color:var(--border2)}
 /* ── Week-over-Week Chart ──────────────────────────────────────────────────── */
-.wow-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px 12px;margin-bottom:14px}
-.wow-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
-.wow-title{font-size:13px;font-weight:700;color:var(--text)}
-.wow-legend{display:flex;gap:10px;flex-wrap:wrap}
-.wow-legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
-.wow-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.wow-chart{display:flex;align-items:flex-end;gap:6px;overflow-x:auto;padding-bottom:4px}
-.wow-bar-col{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:54px;flex:1}
-.wow-bar-col.wow-bar-highlight .wow-bar-stack{border:1px solid var(--accent);border-radius:4px}
-.wow-bar-count{font-size:10px;font-weight:700;color:var(--text);min-height:14px}
-.wow-bar-stack{width:100%;background:var(--bg3);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;position:relative;min-height:8px}
-.wow-bar-inner{width:100%;display:flex;flex-direction:column;justify-content:flex-end}
+/* ── WoW chart ─────────────────────────────────────────────────────────── */
+.wow-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 20px 0;margin-bottom:14px;position:relative;overflow:hidden}
+.wow-top-bar{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#fb923c 0%,#38bdf8 30%,#c084fc 62%,#4ade80 92%);border-radius:14px 14px 0 0}
+.wow-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap}
+.wow-title{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.wow-subtitle{font-size:11px;color:var(--muted);margin-top:3px}
+.wow-seg-ctrl{display:flex;background:rgba(255,255,255,.07);border-radius:8px;padding:3px;gap:2px;flex-shrink:0}
+.wow-seg-btn{border:none;background:transparent;color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.wow-seg-btn.active{background:var(--accent);color:#000}
+.wow-chart{display:flex;align-items:flex-end;gap:5px;overflow-x:auto;padding-bottom:0;min-height:160px}
+.wow-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;flex:1}
+.wow-bar-col.wow-bar-current .wow-bar-stack{outline:1.5px solid var(--accent);outline-offset:2px}
+.wow-bar-count{font-size:12px;font-weight:800;color:var(--text);min-height:17px;letter-spacing:-.4px}
+.wow-bar-count-empty{min-height:17px}
+.wow-bar-stack{width:80%;border-radius:6px 6px 0 0;overflow:hidden;background:rgba(255,255,255,.04);display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.wow-bar-inner{width:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:6px 6px 0 0;overflow:hidden}
 .wow-bar-seg{width:100%;transition:opacity .15s}
-.wow-bar-seg:hover{opacity:.8}
-.wow-bar-label{font-size:10px;color:var(--muted);text-align:center;white-space:nowrap}
-.wow-bar-sublabel{font-size:9px;color:var(--border2);text-align:center}
-.wow-summary{margin-top:10px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:10px;line-height:1.7}
-.wow-summary b{color:var(--text)}
+.wow-bar-seg:hover{opacity:.7;cursor:default}
+.wow-bar-label{font-size:10px;color:var(--muted);text-align:center;white-space:nowrap;margin-top:3px}
+.wow-bar-marker{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-top:2px}
+.wow-legend-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:14px 0 16px;border-top:1px solid var(--border);margin-top:14px}
+.wow-legend-pill{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);background:rgba(255,255,255,.05);padding:3px 10px 3px 7px;border-radius:20px}
+.wow-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wow-summary-card{margin:0 0 16px;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.8;border-left:3px solid var(--accent)}
+.wow-summary-card b{color:var(--text)}
 .sdr-panel{padding:0}
 .sdr-panel.hidden{display:none}
 .sdr-panel-header{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between}
@@ -488,18 +495,20 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 
     <!-- WEEK-OVER-WEEK NEW PIPELINE CHART -->
     <div class="wow-wrap" id="wow-chart-wrap">
+      <div class="wow-top-bar"></div>
       <div class="wow-header">
-        <div class="wow-title">📈 New Pipeline — Week over Week</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <div style="display:flex;gap:4px">
-            <button class="dd-owner-pill active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
-            <button class="dd-owner-pill"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
-          </div>
-          <div class="wow-legend" id="wow-legend"></div>
+        <div>
+          <div class="wow-title">📈 New Pipeline · Week over Week</div>
+          <div class="wow-subtitle">New deals by creation date · stacked by stage</div>
+        </div>
+        <div class="wow-seg-ctrl">
+          <button class="wow-seg-btn active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
+          <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
         </div>
       </div>
       <div class="wow-chart" id="wow-chart-bars"></div>
-      <div class="wow-summary" id="wow-last-summary"></div>
+      <div class="wow-legend-row" id="wow-legend"></div>
+      <div class="wow-summary-card" id="wow-last-summary"></div>
     </div>
 
     <!-- SDR ACTIVITY -->
@@ -9301,14 +9310,14 @@ function renderWoWChart() {
     }
   }
 
-  // Stage groups
+  // Stage groups — refined palette
   const GROUPS = [
-    {id:'2918051007', label:'NBM',   color:'#f97316'},
-    {id:'608286675',  label:'Disc',  color:'#58a6ff'},
-    {id:'740160705',  label:'Pres',  color:'#a78bfa'},
-    {id:'608286676',  label:'SA',    color:'#bc8cff'},
+    {id:'2918051007', label:'NBM',   color:'#fb923c'},
+    {id:'608286675',  label:'Disc',  color:'#38bdf8'},
+    {id:'740160705',  label:'Pres',  color:'#c084fc'},
+    {id:'608286676',  label:'SA',    color:'#818cf8'},
     {id:'4988070119', label:'Trial', color:'#fbbf24'},
-    {id:'608286677',  label:'CR',    color:'#3fb950'},
+    {id:'608286677',  label:'CR',    color:'#4ade80'},
   ];
 
   // Count deals per week per stage (respect owner filter — ownerDeals already set above)
@@ -9327,33 +9336,33 @@ function renderWoWChart() {
   });
 
   const maxTotal = Math.max(...data.map(w => w.total), 1);
-  const BAR_H = 100; // px
+  const BAR_H = 140; // px — taller for more visual impact
 
   // Render bars
   container.innerHTML = data.map(w => {
-    // Inner bar height = proportion of maxTotal
     const fillPct = w.total ? (w.total / maxTotal) * 100 : 0;
-    // Each segment = proportion of THIS week's total
+    const isHighlight = w.isLast || w.isCurrent;
+    // Segments: reversed so NBM renders at bottom (flex-end stacking)
     const segs = [...GROUPS].reverse().map(g => {
       const c = w.counts[g.id];
       if (!c) return '';
       const h = (c / w.total) * 100;
-      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" title="${g.label}: ${c} deal${c>1?'s':''}"></div>`;
+      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" title="${g.label}: ${c} deal${c!==1?'s':''}"></div>`;
     }).join('');
 
-    return `<div class="wow-bar-col${w.isLast ? ' wow-bar-highlight' : ''}">
-      <div class="wow-bar-count">${w.total || ''}</div>
+    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}">
+      <div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
       <div class="wow-bar-stack" style="height:${BAR_H}px">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
       </div>
       <div class="wow-bar-label">${w.label}</div>
-      ${w.isLast ? '<div class="wow-bar-sublabel" style="color:var(--accent);font-weight:700">← Last wk</div>' : ''}
+      ${isHighlight ? '<div class="wow-bar-marker"></div>' : '<div style="height:7px"></div>'}
     </div>`;
   }).join('');
 
-  // Legend
+  // Legend — pill style, below chart
   legendEl.innerHTML = GROUPS.map(g =>
-    `<div class="wow-legend-item"><div class="wow-legend-dot" style="background:${g.color}"></div>${g.label}</div>`
+    `<div class="wow-legend-pill"><div class="wow-legend-dot" style="background:${g.color}"></div>${g.label}</div>`
   ).join('');
 
   // Last week summary
