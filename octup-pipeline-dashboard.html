@@ -9350,16 +9350,16 @@ function renderWoWChart() {
   // Count deals per week per stage (respect owner filter — ownerDeals already set above)
 
   const data = weeks.map(w => {
-    const counts = {};
-    GROUPS.forEach(g => { counts[g.id] = 0; });
+    const counts = {}, arrs = {};
+    GROUPS.forEach(g => { counts[g.id] = 0; arrs[g.id] = 0; });
     ownerDeals.forEach(d => {
       if (d[5] && d[5] >= w.start && d[5] <= w.end) {
-        if (counts[d[3]] !== undefined) counts[d[3]]++;
-        // ignore stalled/other stages in chart
+        if (counts[d[3]] !== undefined) { counts[d[3]]++; arrs[d[3]] += d[2]; }
       }
     });
     const total = GROUPS.reduce((s, g) => s + counts[g.id], 0);
-    return { ...w, counts, total };
+    const totalArr = GROUPS.reduce((s, g) => s + arrs[g.id], 0);
+    return { ...w, counts, arrs, total, totalArr };
   });
 
   const maxTotal = Math.max(...data.map(w => w.total), 1);
@@ -9391,10 +9391,11 @@ function renderWoWChart() {
       const c = w.counts[g.id];
       if (!c) return '';
       const h = (c / w.total) * 100;
-      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" data-wow-stage="${g.label}" data-wow-count="${c}" data-wow-color="${g.color}" data-wow-week="${w.label}"></div>`;
+      const arr = w.arrs[g.id] || 0;
+      return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" data-wow-stage="${g.label}" data-wow-count="${c}" data-wow-arr="${arr}" data-wow-color="${g.color}" data-wow-week="${w.label}"></div>`;
     }).join('');
 
-    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}">
+    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}">
       <div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
       <div class="wow-bar-stack" style="height:${BAR_H}px" data-wow-week="${w.label}" data-wow-total="${w.total}">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
@@ -11196,24 +11197,29 @@ updateSyncTimestamp();
     const col = e.target.closest('[data-wow-week]');
     if (!seg && !col) { tip.classList.remove('vis'); return; }
 
+    const fmtArr = v => { v=parseInt(v||0); return v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?Math.round(v/1000)+'K':String(v); };
     if (seg) {
       const stage = seg.dataset.wowStage;
       const count = seg.dataset.wowCount;
       const color = seg.dataset.wowColor;
       const week  = seg.dataset.wowWeek;
+      const arr   = seg.dataset.wowArr;
       tip.innerHTML =
         `<div class="wow-tooltip-stage"><div class="wow-tooltip-color" style="background:${color}"></div>${stage}</div>` +
         `<div class="wow-tooltip-count">${count}</div>` +
         `<div class="wow-tooltip-label">deal${count!=='1'?'s':''} entered</div>` +
+        (parseInt(arr||0) ? `<div class="wow-tooltip-label" style="color:var(--accent);font-weight:700;margin-top:3px">$${fmtArr(arr)} ARR</div>` : '') +
         `<div class="wow-tooltip-week">${week}</div>`;
     } else {
-      // hovering empty bar track — show week total
+      // hovering empty bar track — show week total + ARR
       const total = col.dataset.wowTotal;
       const week  = col.dataset.wowWeek;
+      const arr   = col.dataset.wowArr;
       tip.innerHTML =
         `<div class="wow-tooltip-stage">${week}</div>` +
         `<div class="wow-tooltip-count">${total||'0'}</div>` +
-        `<div class="wow-tooltip-label">new deal${total!=='1'?'s':''}</div>`;
+        `<div class="wow-tooltip-label">new deal${total!=='1'?'s':''}</div>` +
+        (parseInt(arr||0) ? `<div class="wow-tooltip-label" style="color:var(--accent);font-weight:700;margin-top:3px">$${fmtArr(arr)} ARR</div>` : '');
     }
 
     // Position tooltip: follow cursor, keep inside viewport
