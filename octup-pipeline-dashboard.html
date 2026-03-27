@@ -9643,7 +9643,7 @@ function renderWoWChart() {
       `<div class="wow-stat-div"></div>` +
       `<div class="wow-stat-item"><div class="wow-stat-val">${totalARRp >= 1000000 ? '$'+(totalARRp/1000000).toFixed(1).replace(/\.0$/,'')+'M' : totalARRp >= 1000 ? '$'+Math.round(totalARRp/1000)+'K' : '$'+totalARRp}</div><div class="wow-stat-lbl">Pipeline ARR</div></div>` +
       `<div class="wow-stat-div"></div>` +
-      `<div class="wow-stat-item"><div class="wow-stat-val">${totalNew && periodDeals.length ? '$'+Math.round(totalARRp/totalNew/1000)+'K' : '—'}</div><div class="wow-stat-lbl">Avg ACV</div></div>` +
+      `<div class="wow-stat-item"><div class="wow-stat-val">${totalNew && periodDeals.length ? '$'+Math.round(totalARRp/totalNew/1000)+'K' : '—'}</div><div class="wow-stat-lbl">Avg Deal Size</div></div>` +
       `<div style="flex:1"></div><div class="wow-stat-item" style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.6">${periodLabel}</div><div style="font-size:10px;color:var(--muted)">${weeks[0].label} → ${weeks[weeks.length-1].label}</div></div>`;
   }
 
