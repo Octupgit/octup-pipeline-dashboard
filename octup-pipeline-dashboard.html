@@ -10030,7 +10030,7 @@ function renderInventory() {
 
 // ─── MONTHLY PIPELINE BREAKDOWN ───────────────────────────────────────────────
 function renderMonthlyBreakdown() {
-  const OWNER_LIST = ['29896105','29422733','30284350'];
+  const OWNER_LIST = ['29896105','29422733'];
   const deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
   const stageOf = d => {
@@ -10071,29 +10071,21 @@ function renderMonthlyBreakdown() {
 
   const mkCell = (mDeals, isCurrent, title, mWonDeals=[]) => {
     const tdCls = [isCurrent ? 'cur-month-col' : '', mDeals.length ? 'mm-clickable' : ''].filter(Boolean).join(' ');
-    if (!mDeals.length) return `<td${tdCls?' class="'+tdCls+'"':''}><span class="mm-empty">—</span></td>`;
-    const arr = mDeals.reduce((s,d)=>s+d[2],0);
-    const nbm   = mDeals.filter(d=>stageOf(d)==='nbm').length;
-    const disc  = mDeals.filter(d=>stageOf(d)==='disc').length;
-    const pres  = mDeals.filter(d=>stageOf(d)==='pres').length;
-    const sa    = mDeals.filter(d=>stageOf(d)==='sa').length;
-    const trial = mDeals.filter(d=>stageOf(d)==='trial').length;
-    const cr    = mDeals.filter(d=>stageOf(d)==='cr').length;
-    let tags = '';
-    if (nbm)   tags += `<span class="mm-tag nbm">${nbm} NBM</span>`;
-    if (disc)  tags += `<span class="mm-tag disc">${disc} Disc</span>`;
-    if (pres)  tags += `<span class="mm-tag pres">${pres} Pres</span>`;
-    if (sa)    tags += `<span class="mm-tag sa">${sa} SA</span>`;
-    if (trial) tags += `<span class="mm-tag trial">${trial} Trial</span>`;
-    if (cr)    tags += `<span class="mm-tag cr">${cr} CR</span>`;
-    const wonARR = mWonDeals.reduce((s,w)=>s+w[2],0);
-    const wonLine = mWonDeals.length ? `<div style="font-size:9px;color:#3fb950;font-weight:700;margin-top:3px">✓ ${fmt$(wonARR)}</div>` : '';
+    if (!mDeals.length && !mWonDeals.length) return `<td${tdCls?' class="'+tdCls+'"':''}><span class="mm-empty">—</span></td>`;
+    const pipeArr = mDeals.reduce((s,d)=>s+d[2],0);
+    const acv     = mDeals.length ? fmt$(Math.round(pipeArr/mDeals.length)) : '—';
+    const wonARR  = mWonDeals.reduce((s,w)=>s+w[2],0);
     const ids = JSON.stringify(mDeals.map(d=>d[0]));
     return `<td class="${tdCls}" data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
-      <div class="mm-cell">
-        <div class="mm-count">${mDeals.length}<span class="mm-arr">${fmt$(arr)}</span></div>
-        <div class="mm-tags">${tags}</div>
-        ${wonLine}
+      <div class="mm-cell" style="text-align:left;min-width:110px">
+        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Pipeline</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.2">${fmt$(pipeArr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px">${mDeals.length} deal${mDeals.length!==1?'s':''}</div>
+        <div style="font-size:10px;color:#3fb950;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Won</div>
+        <div style="font-size:13px;font-weight:800;color:#3fb950;line-height:1.2">${mWonDeals.length ? fmt$(wonARR) : '—'}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px">${mWonDeals.length ? mWonDeals.length+' deal'+(mWonDeals.length!==1?'s':'') : '—'}</div>
+        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">ACV</div>
+        <div style="font-size:12px;font-weight:700;color:#c084fc">${acv}</div>
       </div>
     </td>`;
   };
@@ -10134,7 +10126,7 @@ function renderMonthlyBreakdown() {
         <span class="mm-col-cvr">${cvrStr}</span>
       </div></th>`;
   });
-  html += '<th>Total</th><th style="color:var(--cr);white-space:nowrap">$ Closed</th></tr></thead><tbody>';
+  html += '<th>Total</th></tr></thead><tbody>';
 
   // Owner rows
   ownerList.forEach(oid => {
@@ -10143,7 +10135,7 @@ function renderMonthlyBreakdown() {
     const od = deals.filter(d => d[4] === oid);
     let rowCount = 0, rowArr = 0;
 
-    html += `<tr><td class="owner-col" style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap">${ownerDot(oid)}${o.name}</td>`;
+    html += `<tr><td class="owner-col" style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap">${ownerDot(oid)}${o.name}</td>`;
     months.forEach(m => {
       const isCur = m === todayKey;
       const mDeals = od.filter(d => monthKey(d[5]) === m);
@@ -10163,17 +10155,17 @@ function renderMonthlyBreakdown() {
     });
     grandTotal += rowCount; grandArr += rowArr;
     const rowIds = JSON.stringify(od.map(d=>d[0]));
-    const rowTotalCell = rowCount
-      ? `<div class="mm-cell"><div class="mm-count">${rowCount}<span class="mm-arr">${fmt$(rowArr)}</span></div></div>`
-      : '<span class="mm-empty">—</span>';
+    const rowWon = WON_DEALS.filter(w => w[4] === oid && months.some(m => monthKey(w[3]) === m));
+    const rowWonARR = rowWon.reduce((s,w)=>s+w[2],0);
+    const rowAcv = rowCount ? fmt$(Math.round(rowArr/rowCount)) : '—';
     const rowTdCls = rowCount ? 'mm-clickable' : '';
-    // Won ARR for this owner (across all shown months)
-    const ownerWon = WON_DEALS.filter(w => w[4] === oid && months.some(m => monthKey(w[3]) === m));
-    const ownerWonARR = ownerWon.reduce((s,w)=>s+w[2],0);
-    const wonCell = ownerWonARR > 0
-      ? `<div style="font-size:14px;font-weight:800;color:var(--cr);letter-spacing:-.4px">${fmt$(ownerWonARR)}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${ownerWon.length} deal${ownerWon.length!==1?'s':''} won</div>`
-      : '<span class="mm-empty">—</span>';
-    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>${rowTotalCell}</td><td style="text-align:center;vertical-align:middle">${wonCell}</td></tr>`;
+    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}><div class="mm-cell" style="text-align:left;min-width:110px">
+      <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(rowArr)}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${rowCount} deals</div>
+      <div style="font-size:13px;font-weight:800;color:#3fb950">${rowWon.length ? fmt$(rowWonARR) : '—'}</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${rowWon.length ? rowWon.length+' won' : '—'}</div>
+      <div style="font-size:12px;font-weight:700;color:#c084fc">${rowAcv}</div>
+    </div></td></tr>`;
   });
 
   // Totals row
@@ -10181,23 +10173,31 @@ function renderMonthlyBreakdown() {
   months.forEach(m => {
     const t = colTotals[m];
     const isCur = m === todayKey;
-    if (!t.count) { html += `<td${isCur?' class="cur-month-col"':''}><span class="mm-empty">—</span></td>`; return; }
-    let tags = '';
-    if (t.nbm)   tags += `<span class="mm-tag nbm">${t.nbm} NBM</span>`;
-    if (t.disc)  tags += `<span class="mm-tag disc">${t.disc} Disc</span>`;
-    if (t.pres)  tags += `<span class="mm-tag pres">${t.pres} Pres</span>`;
-    if (t.sa)    tags += `<span class="mm-tag sa">${t.sa} SA</span>`;
-    if (t.trial) tags += `<span class="mm-tag trial">${t.trial} Trial</span>`;
-    if (t.cr)    tags += `<span class="mm-tag cr">${t.cr} CR</span>`;
     const mAllIds = JSON.stringify(deals.filter(d=>monthKey(d[5])===m).map(d=>d[0]));
-    const tdCls = [isCur?'cur-month-col':'','mm-clickable'].filter(Boolean).join(' ');
-    html += `<td class="${tdCls}" data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${t.count}<span class="mm-arr">${fmt$(t.arr)}</span></div><div class="mm-tags">${tags}</div></div></td>`;
+    const mAllWon = WON_DEALS.filter(w => monthKey(w[3]) === m && ownerList.includes(w[4]));
+    const tdCls = [isCur?'cur-month-col':'', t.count?'mm-clickable':''].filter(Boolean).join(' ');
+    const tWonARR = mAllWon.reduce((s,w)=>s+w[2],0);
+    const tAcv = t.count ? fmt$(Math.round(t.arr/t.count)) : '—';
+    html += `<td class="${tdCls}" data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+      <div class="mm-cell" style="text-align:left;min-width:110px">
+        <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(t.arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${t.count} deals</div>
+        <div style="font-size:13px;font-weight:800;color:#3fb950">${mAllWon.length ? fmt$(tWonARR) : '—'}</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${mAllWon.length ? mAllWon.length+' won' : '—'}</div>
+        <div style="font-size:12px;font-weight:700;color:#c084fc">${tAcv}</div>
+      </div></td>`;
   });
   const allIds = JSON.stringify(deals.map(d=>d[0]));
   const grandWon = WON_DEALS.filter(w => months.some(m => monthKey(w[3]) === m));
   const grandWonARR = grandWon.reduce((s,w)=>s+w[2],0);
-  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell"><div class="mm-count">${grandTotal}<span class="mm-arr">${fmt$(grandArr)}</span></div></div></td>`;
-  html += `<td style="text-align:center;vertical-align:middle"><div style="font-size:14px;font-weight:800;color:var(--cr);letter-spacing:-.4px">${grandWonARR>0?fmt$(grandWonARR):'—'}</div>${grandWon.length>0?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${grandWon.length} won</div>`:''}</td></tr>`;
+  const grandAcv = grandTotal ? fmt$(Math.round(grandArr/grandTotal)) : '—';
+  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell" style="text-align:left;min-width:110px">
+    <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(grandArr)}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${grandTotal} deals</div>
+    <div style="font-size:13px;font-weight:800;color:#3fb950">${grandWon.length ? fmt$(grandWonARR) : '—'}</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${grandWon.length ? grandWon.length+' won' : '—'}</div>
+    <div style="font-size:12px;font-weight:700;color:#c084fc">${grandAcv}</div>
+  </div></td></tr>`;
   html += '</tbody>';
 
   document.getElementById('monthly-table').innerHTML = html;
