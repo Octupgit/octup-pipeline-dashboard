@@ -10074,10 +10074,9 @@ function renderMonthlyBreakdown() {
   const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostCount=0) => {
     if (!mDeals.length && !mWonDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
     const pipeArr  = mDeals.reduce((s,d)=>s+d[2], 0);
-    // Avg Deal Size excludes stalled stage
-    const acvDeals = mDeals.filter(d => d[3] !== '2918051008' && d[2] > 0);
-    const acv      = acvDeals.length ? fmt$(Math.round(acvDeals.reduce((s,d)=>s+d[2],0)/acvDeals.length)) : '—';
+    // ACV = avg closed won deal size
     const wonARR   = mWonDeals.reduce((s,w)=>s+w[2], 0);
+    const acv      = mWonDeals.length ? fmt$(Math.round(wonARR / mWonDeals.length)) : '—';
     const cvrTotal = mWonDeals.length + mLostCount;
     const cvrPct   = cvrTotal > 0 ? Math.round(mWonDeals.length / cvrTotal * 100) : null;
     const ids = JSON.stringify(mDeals.map(d=>d[0]));
@@ -10154,8 +10153,8 @@ function renderMonthlyBreakdown() {
     const rowIds = JSON.stringify(od.map(d=>d[0]));
     const rowWon = WON_DEALS.filter(w => w[4] === oid && months.some(m => monthKey(w[3]) === m));
     const rowWonARR = rowWon.reduce((s,w)=>s+w[2],0);
-    const rowAcvDeals = od.filter(d => d[3] !== '2918051008' && d[2] > 0);
-    const rowAcv = rowAcvDeals.length ? fmt$(Math.round(rowAcvDeals.reduce((s,d)=>s+d[2],0)/rowAcvDeals.length)) : '—';
+    // ACV = avg closed won deal size
+    const rowAcv = rowWon.length ? fmt$(Math.round(rowWonARR / rowWon.length)) : '—';
     const rowLost = LOST_DEALS.filter(l => l[4] === oid && months.some(m => monthKey(l[3]) === m)).length;
     const rowCvrTotal = rowWon.length + rowLost;
     const rowCvr = rowCvrTotal > 0 ? Math.round(rowWon.length / rowCvrTotal * 100) : null;
@@ -10177,8 +10176,8 @@ function renderMonthlyBreakdown() {
     const mAllIds = JSON.stringify(deals.filter(d=>monthKey(d[5])===m).map(d=>d[0]));
     const mAllWon = WON_DEALS.filter(w => monthKey(w[3]) === m && ownerList.includes(w[4]));
     const tWonARR = mAllWon.reduce((s,w)=>s+w[2],0);
-    const tAcvDeals = deals.filter(d => monthKey(d[5])===m && ownerList.includes(d[4]) && d[3] !== '2918051008' && d[2] > 0);
-    const tAcv = tAcvDeals.length ? fmt$(Math.round(tAcvDeals.reduce((s,d)=>s+d[2],0)/tAcvDeals.length)) : '—';
+    // ACV = avg closed won deal size
+    const tAcv = mAllWon.length ? fmt$(Math.round(tWonARR / mAllWon.length)) : '—';
     const tCvr = colStats[m] && colStats[m].cvr !== null ? colStats[m].cvr : null;
     html += `<td data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
       <div class="mm-cell${isCur?' cur':''}">
@@ -10191,8 +10190,8 @@ function renderMonthlyBreakdown() {
   const allIds = JSON.stringify(deals.map(d=>d[0]));
   const grandWon = WON_DEALS.filter(w => months.some(m => monthKey(w[3]) === m));
   const grandWonARR = grandWon.reduce((s,w)=>s+w[2],0);
-  const grandAcvDeals = deals.filter(d => ownerList.includes(d[4]) && d[3] !== '2918051008' && d[2] > 0);
-  const grandAcv = grandAcvDeals.length ? fmt$(Math.round(grandAcvDeals.reduce((s,d)=>s+d[2],0)/grandAcvDeals.length)) : '—';
+  // ACV = avg closed won deal size
+  const grandAcv = grandWon.length ? fmt$(Math.round(grandWon.reduce((s,w)=>s+w[2],0) / grandWon.length)) : '—';
   const grandLost = LOST_DEALS.filter(l => months.some(m => monthKey(l[3]) === m)).length;
   const grandCvrTotal = grandWon.length + grandLost;
   const grandCvr = grandCvrTotal > 0 ? Math.round(grandWon.length / grandCvrTotal * 100) : null;
