@@ -15,12 +15,12 @@
   --nbm: #f59e0b; --inp: #58a6ff; --cr: #3fb950;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;min-height:100vh;padding-top:72px}
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(8px)}
+.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(8px)}
 .header-left{display:flex;align-items:center;gap:12px}
 .logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000}
 .header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
@@ -389,11 +389,11 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .brief-ts{font-size:11px;color:var(--muted);margin-left:auto}
 .brief-output{display:none}
 .brief-output.visible{display:block}
-.brief-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
-.brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px}
-.brief-kpi-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.brief-kpi-val{font-size:16px;font-weight:800;color:var(--text);line-height:1}
-.brief-kpi-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.brief-kpi-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:14px}
+.brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 10px;min-width:0}
+.brief-kpi-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brief-kpi-val{font-size:15px;font-weight:800;color:var(--text);line-height:1;white-space:nowrap}
+.brief-kpi-sub{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brief-section{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:10px}
 .brief-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 .brief-deal-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
@@ -10707,7 +10707,7 @@ function renderHighValue() {
     const sigsHtml = signals.map(s => `<span class="hpdi-sig"><span class="hpdi-sig-dot ${s.dot}"></span>${s.text}</span>`).join('');
 
     return `<div class="hpdi-deal ${isT1?'t1':'t2'}" id="${cardId}">
-      <div class="hpdi-deal-top" onclick="document.getElementById('${cardId}').classList.toggle('open')">
+      <div class="hpdi-deal-top" onclick="this.closest('.hpdi-deal').classList.toggle('open')">
         <div style="flex:1;min-width:0">
           <div class="hpdi-deal-left">
             <a href="https://app.hubspot.com/contacts/26004468/deal/${id}" target="_blank" class="hpdi-deal-name" onclick="event.stopPropagation()">${name} ↗</a>
