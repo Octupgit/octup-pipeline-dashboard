@@ -255,39 +255,41 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .matrix-cell.total-cell:hover{background:rgba(230,237,243,.08)}
 
 /* MONTHLY PIPELINE CHART */
-.monthly-chart-wrap{margin-top:18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.monthly-chart-header{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.monthly-chart-wrap{margin-top:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.monthly-chart-header{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg3)}
 .monthly-chart-title{font-size:13px;font-weight:700;color:var(--text)}
 .monthly-chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.monthly-table{width:100%;border-collapse:collapse;font-size:13px}
-.monthly-table th{padding:10px 16px;border-bottom:1px solid var(--border);text-align:center;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;background:var(--bg3)}
-.monthly-table th.left,.monthly-table td.owner-col{text-align:left}
-.monthly-table th.cur-month{color:var(--accent);background:rgba(88,166,255,.06)}
-.monthly-table td{padding:10px 14px;border-bottom:1px solid var(--border);border-right:1px solid rgba(48,54,61,.4);text-align:center;vertical-align:top}
+/* TABLE */
+.monthly-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
+.monthly-table th{padding:10px 16px;border-bottom:2px solid var(--border);text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:var(--bg3)}
+.monthly-table th.mm-owner-hdr{min-width:120px;border-right:2px solid var(--border)}
+.monthly-table th.mm-month-hdr{text-align:center;min-width:130px;border-right:1px solid var(--border)}
+.monthly-table th.mm-month-hdr.cur-month{color:var(--accent);background:rgba(88,166,255,.07);border-bottom:2px solid var(--accent)}
+.monthly-table th.mm-total-hdr{text-align:center;min-width:130px;background:var(--bg3)}
+.monthly-table td{padding:0;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:top}
+.monthly-table td.owner-col{padding:0 16px;height:100%;font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;background:var(--bg3);border-right:2px solid var(--border);vertical-align:middle;min-width:120px}
 .monthly-table tr:last-child td{border-bottom:none}
-.monthly-table tr:hover td{background:rgba(48,54,61,.3)}
-.monthly-table .mm-total-row td{background:var(--bg3);border-top:2px solid var(--border);font-weight:700}
-.mm-cell{display:inline-block;min-width:72px}
-.mm-count{font-size:16px;font-weight:700;color:var(--text);line-height:1.2}
-.mm-arr{font-size:12px;font-weight:600;color:var(--accent);margin-left:5px}
-.mm-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;justify-content:center}
-.mm-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.15px}
-.mm-tag.nbm{color:var(--nbm);background:rgba(245,158,11,.13)}
-.mm-tag.disc{color:#60a5fa;background:rgba(96,165,250,.13)}
-.mm-tag.pres{color:#a78bfa;background:rgba(167,139,250,.13)}
-.mm-tag.sa{color:#34d399;background:rgba(52,211,153,.13)}
-.mm-tag.trial{color:var(--purple);background:rgba(188,140,255,.13)}
-.mm-tag.cr{color:var(--cr);background:rgba(63,185,80,.13)}
-.mm-empty{color:var(--border2);font-size:14px;font-weight:300}
-.monthly-table td.cur-month-col{background:rgba(88,166,255,.04)}
-.mm-col-stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid rgba(48,54,61,.5)}
-.mm-col-acv{font-size:11px;font-weight:700;color:var(--accent)}
-.mm-col-cycle{font-size:10px;color:var(--purple);opacity:.9;text-align:right}
-.mm-col-won{font-size:10px;font-weight:600;color:var(--cr)}
-.mm-col-cvr{font-size:10px;font-weight:600;color:var(--muted);text-align:right}
-.monthly-table td.mm-clickable{cursor:pointer;transition:background .12s}
-.monthly-table td.mm-clickable:hover{background:rgba(88,166,255,.1)!important}
-.monthly-table td.cur-month-col.mm-clickable:hover{background:rgba(88,166,255,.15)!important}
+.monthly-table .mm-total-row td{background:rgba(255,255,255,.025);border-top:2px solid var(--border)}
+.monthly-table .mm-total-row td.owner-col{background:var(--bg3)}
+/* CELL INNER */
+.mm-cell{padding:12px 14px;display:block;cursor:pointer;transition:background .12s}
+.mm-cell:hover{background:rgba(88,166,255,.07)}
+.mm-cell.cur{background:rgba(88,166,255,.04)}
+.mm-cell.cur:hover{background:rgba(88,166,255,.10)}
+.mm-pipe-row{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
+.mm-pipe-arr{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.02em;line-height:1}
+.mm-pipe-cnt{font-size:10px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.07);padding:1px 6px;border-radius:10px;white-space:nowrap}
+.mm-acv-row{font-size:10px;color:var(--muted);margin-bottom:4px}
+.mm-acv-row span{color:#a78bfa;font-weight:600}
+.mm-cvr-row{font-size:10px;color:var(--muted);margin-bottom:8px}
+.mm-cvr-row span{color:#f59e0b;font-weight:600}
+.mm-won-row{display:flex;align-items:center;gap:5px;padding-top:7px;border-top:1px solid rgba(63,185,80,.18);font-size:11px;font-weight:700;color:#3fb950}
+.mm-won-cnt{font-size:10px;font-weight:500;color:rgba(63,185,80,.7)}
+.mm-empty-cell{padding:20px 14px;text-align:center;color:var(--border2);font-size:16px;font-weight:300}
+/* COLUMN HEADER STATS */
+.mm-hdr-won{font-size:10px;font-weight:600;color:#3fb950;margin-top:4px;letter-spacing:0;text-transform:none}
+.mm-hdr-cvr{font-size:10px;font-weight:600;color:#f59e0b;margin-top:2px;letter-spacing:0;text-transform:none}
+.mm-hdr-muted{font-size:10px;color:var(--border2);margin-top:4px}
 
 /* HIGH-PROBABILITY SECTION */
 .hv-stage-header td{font-weight:700;font-size:11px;padding:8px 16px!important;letter-spacing:.5px;text-transform:uppercase}
@@ -10066,26 +10068,31 @@ function renderMonthlyBreakdown() {
   const ownerList = selectedOwner === 'all' ? OWNER_LIST : [selectedOwner];
 
   const colTotals = {};
-  months.forEach(m => colTotals[m] = { count:0, arr:0, nbm:0, disc:0, pres:0, sa:0, trial:0, cr:0 });
+  months.forEach(m => colTotals[m] = { count:0, arr:0 });
   let grandTotal = 0, grandArr = 0;
 
-  const mkCell = (mDeals, isCurrent, title, mWonDeals=[]) => {
-    const tdCls = [isCurrent ? 'cur-month-col' : '', mDeals.length ? 'mm-clickable' : ''].filter(Boolean).join(' ');
-    if (!mDeals.length && !mWonDeals.length) return `<td${tdCls?' class="'+tdCls+'"':''}><span class="mm-empty">—</span></td>`;
-    const pipeArr = mDeals.reduce((s,d)=>s+d[2],0);
-    const acv     = mDeals.length ? fmt$(Math.round(pipeArr/mDeals.length)) : '—';
-    const wonARR  = mWonDeals.reduce((s,w)=>s+w[2],0);
+  const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostCount=0) => {
+    if (!mDeals.length && !mWonDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
+    const pipeArr  = mDeals.reduce((s,d)=>s+d[2], 0);
+    // Avg Deal Size excludes stalled stage
+    const acvDeals = mDeals.filter(d => d[3] !== '2918051008' && d[2] > 0);
+    const acv      = acvDeals.length ? fmt$(Math.round(acvDeals.reduce((s,d)=>s+d[2],0)/acvDeals.length)) : '—';
+    const wonARR   = mWonDeals.reduce((s,w)=>s+w[2], 0);
+    const cvrTotal = mWonDeals.length + mLostCount;
+    const cvrPct   = cvrTotal > 0 ? Math.round(mWonDeals.length / cvrTotal * 100) : null;
     const ids = JSON.stringify(mDeals.map(d=>d[0]));
-    return `<td class="${tdCls}" data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
-      <div class="mm-cell" style="text-align:left;min-width:110px">
-        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Pipeline</div>
-        <div style="font-size:13px;font-weight:800;color:var(--text);line-height:1.2">${fmt$(pipeArr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:6px">${mDeals.length} deal${mDeals.length!==1?'s':''}</div>
-        <div style="font-size:10px;color:#3fb950;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Won</div>
-        <div style="font-size:13px;font-weight:800;color:#3fb950;line-height:1.2">${mWonDeals.length ? fmt$(wonARR) : '—'}</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:6px">${mWonDeals.length ? mWonDeals.length+' deal'+(mWonDeals.length!==1?'s':'') : '—'}</div>
-        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">ACV</div>
-        <div style="font-size:12px;font-weight:700;color:#c084fc">${acv}</div>
+    const curCls = isCurrent ? ' cur' : '';
+    return `<td data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+      <div class="mm-cell${curCls}">
+        <div class="mm-pipe-row">
+          <span class="mm-pipe-arr">${fmt$(pipeArr)}</span>
+          <span class="mm-pipe-cnt">${mDeals.length} deal${mDeals.length!==1?'s':''}</span>
+        </div>
+        <div class="mm-acv-row">ACV <span>${acv}</span></div>
+        ${cvrPct !== null ? `<div class="mm-cvr-row">CVR <span>${cvrPct}%</span></div>` : ''}
+        ${mWonDeals.length
+          ? `<div class="mm-won-row">✓ ${fmt$(wonARR)} <span class="mm-won-cnt">${mWonDeals.length} won</span></div>`
+          : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
       </div>
     </td>`;
   };
@@ -10111,22 +10118,17 @@ function renderMonthlyBreakdown() {
   });
 
   // Header
-  let html = '<thead><tr><th class="left">Owner / Month</th>';
+  let html = '<thead><tr><th class="mm-owner-hdr">Seller</th>';
   months.forEach(m => {
     const isCur = m === todayKey;
     const cs = colStats[m];
-    const cvrStr = cs.cvr !== null ? cs.cvr + '% CVR' : '—';
-    const wonStr = cs.wonCount > 0 ? `✓ ${cs.wonCount} WON` : '—';
-    const wonARRStr = cs.wonARR > 0 ? fmt$(cs.wonARR) : '';
-    html += `<th${isCur?' class="cur-month"':''}>${monthLabel(m)}${isCur?' ★':''}
-      <div class="mm-col-stats">
-        <span class="mm-col-acv">ACV ${fmt$(cs.avgSize)}</span>
-        <span class="mm-col-cycle">${cs.avgCycle !== null ? cs.avgCycle+'d' : '—'}</span>
-        <span class="mm-col-won">${wonStr}${wonARRStr ? ' · '+wonARRStr : ''}</span>
-        <span class="mm-col-cvr">${cvrStr}</span>
-      </div></th>`;
+    const wonHdr = cs.wonCount > 0
+      ? `<div class="mm-hdr-won">✓ ${fmt$(cs.wonARR)} · ${cs.wonCount} won</div>`
+      : `<div class="mm-hdr-muted">No wins</div>`;
+    const cvrHdr = cs.cvr !== null ? `<div class="mm-hdr-cvr">CVR ${cs.cvr}%</div>` : '';
+    html += `<th class="mm-month-hdr${isCur?' cur-month':''}">${monthLabel(m)}${isCur?' ★':''}${wonHdr}${cvrHdr}</th>`;
   });
-  html += '<th>Total</th></tr></thead><tbody>';
+  html += '<th class="mm-total-hdr">Total</th></tr></thead><tbody>';
 
   // Owner rows
   ownerList.forEach(oid => {
@@ -10135,69 +10137,72 @@ function renderMonthlyBreakdown() {
     const od = deals.filter(d => d[4] === oid);
     let rowCount = 0, rowArr = 0;
 
-    html += `<tr><td class="owner-col" style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap">${ownerDot(oid)}${o.name}</td>`;
+    html += `<tr><td class="owner-col">${ownerDot(oid)}${o.name}</td>`;
     months.forEach(m => {
       const isCur = m === todayKey;
       const mDeals = od.filter(d => monthKey(d[5]) === m);
       const mWon = WON_DEALS.filter(w => w[4] === oid && monthKey(w[3]) === m);
-      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon);
+      const mLost = LOST_DEALS.filter(l => l[4] === oid && monthKey(l[3]) === m).length;
+      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon, mLost);
       const arr = mDeals.reduce((s,d)=>s+d[2],0);
       rowCount += mDeals.length;
       rowArr += arr;
       colTotals[m].count += mDeals.length;
       colTotals[m].arr   += arr;
-      colTotals[m].nbm   += mDeals.filter(d=>stageOf(d)==='nbm').length;
-      colTotals[m].disc  += mDeals.filter(d=>stageOf(d)==='disc').length;
-      colTotals[m].pres  += mDeals.filter(d=>stageOf(d)==='pres').length;
-      colTotals[m].sa    += mDeals.filter(d=>stageOf(d)==='sa').length;
-      colTotals[m].trial += mDeals.filter(d=>stageOf(d)==='trial').length;
-      colTotals[m].cr    += mDeals.filter(d=>stageOf(d)==='cr').length;
     });
     grandTotal += rowCount; grandArr += rowArr;
     const rowIds = JSON.stringify(od.map(d=>d[0]));
     const rowWon = WON_DEALS.filter(w => w[4] === oid && months.some(m => monthKey(w[3]) === m));
     const rowWonARR = rowWon.reduce((s,w)=>s+w[2],0);
-    const rowAcv = rowCount ? fmt$(Math.round(rowArr/rowCount)) : '—';
-    const rowTdCls = rowCount ? 'mm-clickable' : '';
-    html += `<td class="${rowTdCls}"${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}><div class="mm-cell" style="text-align:left;min-width:110px">
-      <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(rowArr)}</div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${rowCount} deals</div>
-      <div style="font-size:13px;font-weight:800;color:#3fb950">${rowWon.length ? fmt$(rowWonARR) : '—'}</div>
-      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${rowWon.length ? rowWon.length+' won' : '—'}</div>
-      <div style="font-size:12px;font-weight:700;color:#c084fc">${rowAcv}</div>
-    </div></td></tr>`;
+    const rowAcvDeals = od.filter(d => d[3] !== '2918051008' && d[2] > 0);
+    const rowAcv = rowAcvDeals.length ? fmt$(Math.round(rowAcvDeals.reduce((s,d)=>s+d[2],0)/rowAcvDeals.length)) : '—';
+    const rowLost = LOST_DEALS.filter(l => l[4] === oid && months.some(m => monthKey(l[3]) === m)).length;
+    const rowCvrTotal = rowWon.length + rowLost;
+    const rowCvr = rowCvrTotal > 0 ? Math.round(rowWon.length / rowCvrTotal * 100) : null;
+    html += `<td${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>
+      <div class="mm-cell${rowCount?' ':' '}">
+        <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(rowArr)}</span><span class="mm-pipe-cnt">${rowCount} deals</span></div>
+        <div class="mm-acv-row">ACV <span>${rowAcv}</span></div>
+        ${rowCvr !== null ? `<div class="mm-cvr-row">CVR <span>${rowCvr}%</span></div>` : ''}
+        ${rowWon.length ? `<div class="mm-won-row">✓ ${fmt$(rowWonARR)} <span class="mm-won-cnt">${rowWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
+      </div></td></tr>`;
   });
 
   // Totals row
-  html += '<tr class="mm-total-row"><td class="owner-col">TOTAL</td>';
+  html += '<tr class="mm-total-row"><td class="owner-col" style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Total</td>';
   months.forEach(m => {
     const t = colTotals[m];
     const isCur = m === todayKey;
+    if (!t.count) { html += `<td><div class="mm-empty-cell">—</div></td>`; return; }
     const mAllIds = JSON.stringify(deals.filter(d=>monthKey(d[5])===m).map(d=>d[0]));
     const mAllWon = WON_DEALS.filter(w => monthKey(w[3]) === m && ownerList.includes(w[4]));
-    const tdCls = [isCur?'cur-month-col':'', t.count?'mm-clickable':''].filter(Boolean).join(' ');
     const tWonARR = mAllWon.reduce((s,w)=>s+w[2],0);
-    const tAcv = t.count ? fmt$(Math.round(t.arr/t.count)) : '—';
-    html += `<td class="${tdCls}" data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
-      <div class="mm-cell" style="text-align:left;min-width:110px">
-        <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(t.arr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${t.count} deals</div>
-        <div style="font-size:13px;font-weight:800;color:#3fb950">${mAllWon.length ? fmt$(tWonARR) : '—'}</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${mAllWon.length ? mAllWon.length+' won' : '—'}</div>
-        <div style="font-size:12px;font-weight:700;color:#c084fc">${tAcv}</div>
+    const tAcvDeals = deals.filter(d => monthKey(d[5])===m && ownerList.includes(d[4]) && d[3] !== '2918051008' && d[2] > 0);
+    const tAcv = tAcvDeals.length ? fmt$(Math.round(tAcvDeals.reduce((s,d)=>s+d[2],0)/tAcvDeals.length)) : '—';
+    const tCvr = colStats[m] && colStats[m].cvr !== null ? colStats[m].cvr : null;
+    html += `<td data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+      <div class="mm-cell${isCur?' cur':''}">
+        <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(t.arr)}</span><span class="mm-pipe-cnt">${t.count} deals</span></div>
+        <div class="mm-acv-row">ACV <span>${tAcv}</span></div>
+        ${tCvr !== null ? `<div class="mm-cvr-row">CVR <span>${tCvr}%</span></div>` : ''}
+        ${mAllWon.length ? `<div class="mm-won-row">✓ ${fmt$(tWonARR)} <span class="mm-won-cnt">${mAllWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
       </div></td>`;
   });
   const allIds = JSON.stringify(deals.map(d=>d[0]));
   const grandWon = WON_DEALS.filter(w => months.some(m => monthKey(w[3]) === m));
   const grandWonARR = grandWon.reduce((s,w)=>s+w[2],0);
-  const grandAcv = grandTotal ? fmt$(Math.round(grandArr/grandTotal)) : '—';
-  html += `<td class="mm-clickable" data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"><div class="mm-cell" style="text-align:left;min-width:110px">
-    <div style="font-size:13px;font-weight:800;color:var(--text)">${fmt$(grandArr)}</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${grandTotal} deals</div>
-    <div style="font-size:13px;font-weight:800;color:#3fb950">${grandWon.length ? fmt$(grandWonARR) : '—'}</div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${grandWon.length ? grandWon.length+' won' : '—'}</div>
-    <div style="font-size:12px;font-weight:700;color:#c084fc">${grandAcv}</div>
-  </div></td></tr>`;
+  const grandAcvDeals = deals.filter(d => ownerList.includes(d[4]) && d[3] !== '2918051008' && d[2] > 0);
+  const grandAcv = grandAcvDeals.length ? fmt$(Math.round(grandAcvDeals.reduce((s,d)=>s+d[2],0)/grandAcvDeals.length)) : '—';
+  const grandLost = LOST_DEALS.filter(l => months.some(m => monthKey(l[3]) === m)).length;
+  const grandCvrTotal = grandWon.length + grandLost;
+  const grandCvr = grandCvrTotal > 0 ? Math.round(grandWon.length / grandCvrTotal * 100) : null;
+  html += `<td data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+    <div class="mm-cell">
+      <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(grandArr)}</span><span class="mm-pipe-cnt">${grandTotal} deals</span></div>
+      <div class="mm-acv-row">ACV <span>${grandAcv}</span></div>
+      ${grandCvr !== null ? `<div class="mm-cvr-row">CVR <span>${grandCvr}%</span></div>` : ''}
+      ${grandWon.length ? `<div class="mm-won-row">✓ ${fmt$(grandWonARR)} <span class="mm-won-cnt">${grandWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
+    </div></td></tr>`;
   html += '</tbody>';
 
   document.getElementById('monthly-table').innerHTML = html;
@@ -10257,7 +10262,7 @@ function dealsTable(deals, extraCols) {
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
   return `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Contact</th><th>Last Activity AI</th><th>Next Action AI</th><th>Source</th>'}
+    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Last Activity AI</th><th>Next Action AI</th><th>Source</th>'}
   </tr></thead><tbody>${sorted.map(d => {
     const [id, name, amount, stageId, ownerId, createDate, closeDate, , , lastMod, dealSource] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
