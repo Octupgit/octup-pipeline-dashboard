@@ -20,7 +20,7 @@ a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(8px)}
 .header-left{display:flex;align-items:center;gap:12px}
 .logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000}
 .header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
@@ -273,7 +273,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .mm-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;justify-content:center}
 .mm-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;letter-spacing:.15px}
 .mm-tag.nbm{color:var(--nbm);background:rgba(245,158,11,.13)}
-.mm-tag.inp{color:var(--inp);background:rgba(88,166,255,.13)}
+.mm-tag.disc{color:#60a5fa;background:rgba(96,165,250,.13)}
+.mm-tag.pres{color:#a78bfa;background:rgba(167,139,250,.13)}
+.mm-tag.sa{color:#34d399;background:rgba(52,211,153,.13)}
 .mm-tag.trial{color:var(--purple);background:rgba(188,140,255,.13)}
 .mm-tag.cr{color:var(--cr);background:rgba(63,185,80,.13)}
 .mm-empty{color:var(--border2);font-size:14px;font-weight:300}
@@ -387,11 +389,11 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .brief-ts{font-size:11px;color:var(--muted);margin-left:auto}
 .brief-output{display:none}
 .brief-output.visible{display:block}
-.brief-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
-.brief-kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.brief-kpi-val{font-size:18px;font-weight:800;color:var(--text);line-height:1}
-.brief-kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.brief-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+.brief-kpi-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.brief-kpi-val{font-size:16px;font-weight:800;color:var(--text);line-height:1}
+.brief-kpi-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .brief-section{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:10px}
 .brief-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 .brief-deal-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
@@ -10028,13 +10030,15 @@ function renderInventory() {
 
 // ─── MONTHLY PIPELINE BREAKDOWN ───────────────────────────────────────────────
 function renderMonthlyBreakdown() {
-  const OWNER_LIST = ['29896105','29422733','30284350','32023983'];
+  const OWNER_LIST = ['29896105','29422733','30284350'];
   const deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
   const stageOf = d => {
     const s = d[3];
     if (s === '2918051007') return 'nbm';
-    if (['608286675','740160705','608286676'].includes(s)) return 'inp';
+    if (s === '608286675') return 'disc';
+    if (s === '740160705') return 'pres';
+    if (s === '608286676') return 'sa';
     if (s === '4988070119') return 'trial';
     if (s === '608286677') return 'cr';
     return null;
@@ -10061,29 +10065,35 @@ function renderMonthlyBreakdown() {
 
   const ownerList = selectedOwner === 'all' ? OWNER_LIST : [selectedOwner];
 
-  // colTotals[month] = { count, arr, nbm, inp, trial, cr }
   const colTotals = {};
-  months.forEach(m => colTotals[m] = { count:0, arr:0, nbm:0, inp:0, trial:0, cr:0 });
+  months.forEach(m => colTotals[m] = { count:0, arr:0, nbm:0, disc:0, pres:0, sa:0, trial:0, cr:0 });
   let grandTotal = 0, grandArr = 0;
 
-  const mkCell = (mDeals, isCurrent, title) => {
+  const mkCell = (mDeals, isCurrent, title, mWonDeals=[]) => {
     const tdCls = [isCurrent ? 'cur-month-col' : '', mDeals.length ? 'mm-clickable' : ''].filter(Boolean).join(' ');
     if (!mDeals.length) return `<td${tdCls?' class="'+tdCls+'"':''}><span class="mm-empty">—</span></td>`;
     const arr = mDeals.reduce((s,d)=>s+d[2],0);
     const nbm   = mDeals.filter(d=>stageOf(d)==='nbm').length;
-    const inp   = mDeals.filter(d=>stageOf(d)==='inp').length;
+    const disc  = mDeals.filter(d=>stageOf(d)==='disc').length;
+    const pres  = mDeals.filter(d=>stageOf(d)==='pres').length;
+    const sa    = mDeals.filter(d=>stageOf(d)==='sa').length;
     const trial = mDeals.filter(d=>stageOf(d)==='trial').length;
     const cr    = mDeals.filter(d=>stageOf(d)==='cr').length;
     let tags = '';
     if (nbm)   tags += `<span class="mm-tag nbm">${nbm} NBM</span>`;
-    if (inp)   tags += `<span class="mm-tag inp">${inp} In-P</span>`;
+    if (disc)  tags += `<span class="mm-tag disc">${disc} Disc</span>`;
+    if (pres)  tags += `<span class="mm-tag pres">${pres} Pres</span>`;
+    if (sa)    tags += `<span class="mm-tag sa">${sa} SA</span>`;
     if (trial) tags += `<span class="mm-tag trial">${trial} Trial</span>`;
     if (cr)    tags += `<span class="mm-tag cr">${cr} CR</span>`;
+    const wonARR = mWonDeals.reduce((s,w)=>s+w[2],0);
+    const wonLine = mWonDeals.length ? `<div style="font-size:9px;color:#3fb950;font-weight:700;margin-top:3px">✓ ${fmt$(wonARR)}</div>` : '';
     const ids = JSON.stringify(mDeals.map(d=>d[0]));
     return `<td class="${tdCls}" data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
       <div class="mm-cell">
         <div class="mm-count">${mDeals.length}<span class="mm-arr">${fmt$(arr)}</span></div>
         <div class="mm-tags">${tags}</div>
+        ${wonLine}
       </div>
     </td>`;
   };
@@ -10137,14 +10147,17 @@ function renderMonthlyBreakdown() {
     months.forEach(m => {
       const isCur = m === todayKey;
       const mDeals = od.filter(d => monthKey(d[5]) === m);
-      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`);
+      const mWon = WON_DEALS.filter(w => w[4] === oid && monthKey(w[3]) === m);
+      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon);
       const arr = mDeals.reduce((s,d)=>s+d[2],0);
       rowCount += mDeals.length;
       rowArr += arr;
       colTotals[m].count += mDeals.length;
       colTotals[m].arr   += arr;
       colTotals[m].nbm   += mDeals.filter(d=>stageOf(d)==='nbm').length;
-      colTotals[m].inp   += mDeals.filter(d=>stageOf(d)==='inp').length;
+      colTotals[m].disc  += mDeals.filter(d=>stageOf(d)==='disc').length;
+      colTotals[m].pres  += mDeals.filter(d=>stageOf(d)==='pres').length;
+      colTotals[m].sa    += mDeals.filter(d=>stageOf(d)==='sa').length;
       colTotals[m].trial += mDeals.filter(d=>stageOf(d)==='trial').length;
       colTotals[m].cr    += mDeals.filter(d=>stageOf(d)==='cr').length;
     });
@@ -10171,7 +10184,9 @@ function renderMonthlyBreakdown() {
     if (!t.count) { html += `<td${isCur?' class="cur-month-col"':''}><span class="mm-empty">—</span></td>`; return; }
     let tags = '';
     if (t.nbm)   tags += `<span class="mm-tag nbm">${t.nbm} NBM</span>`;
-    if (t.inp)   tags += `<span class="mm-tag inp">${t.inp} In-P</span>`;
+    if (t.disc)  tags += `<span class="mm-tag disc">${t.disc} Disc</span>`;
+    if (t.pres)  tags += `<span class="mm-tag pres">${t.pres} Pres</span>`;
+    if (t.sa)    tags += `<span class="mm-tag sa">${t.sa} SA</span>`;
     if (t.trial) tags += `<span class="mm-tag trial">${t.trial} Trial</span>`;
     if (t.cr)    tags += `<span class="mm-tag cr">${t.cr} CR</span>`;
     const mAllIds = JSON.stringify(deals.filter(d=>monthKey(d[5])===m).map(d=>d[0]));
@@ -10521,7 +10536,12 @@ function renderHighValue() {
     // Signal 5: Meeting recency (10%)
     const s5n = mtgAgo <= 0 ? 100 : mtgAgo <= 7 ? 85 : mtgAgo <= 14 ? 60 : mtgAgo <= 21 ? 35 : 0;
 
-    const score = Math.round(s1n*0.25 + s2n*0.20 + s3n*0.30 + s4n*0.15 + s5n*0.10);
+    // WMS bonus: active technical evaluation = strong buying signal (+8 pts)
+    const wmsText = [nextStep||'', ...dealMeetings.map(m=>m.title||''), ...dealEmails.map(e=>e.subject||'')].join(' ').toLowerCase();
+    const hasWMS = /\bwms\b/.test(wmsText);
+    const wmsBonus = hasWMS ? 8 : 0;
+
+    const score = Math.round(s1n*0.25 + s2n*0.20 + s3n*0.30 + s4n*0.15 + s5n*0.10) + wmsBonus;
 
     // ── Tier assignment — inbound responsiveness is REQUIRED ─────────────────
     // Tier 1: SA/Trial + customer replied within 7d + 2+ meetings
@@ -10531,7 +10551,7 @@ function renderHighValue() {
                  (stagePct >= 40 || (daysToClose !== null && daysToClose <= 7));
 
     return { d, id, score, stagePct, isT1, isT2, customerResponsive, dealMeetings, dealEmails,
-             mtgAgo, emlAgo, lastContactDays, daysToClose, mc, hasInbound, allContacts };
+             mtgAgo, emlAgo, lastContactDays, daysToClose, mc, hasInbound, allContacts, hasWMS };
   };
 
   const allScored = pool.map(scoreDeal);
@@ -10656,7 +10676,7 @@ function renderHighValue() {
   // tier1/tier2 already split above by isT1/isT2
 
   const mkHpCard = (scored) => {
-    const { d, id, score, dealMeetings, dealEmails, mtgAgo, emlAgo, daysToClose } = scored;
+    const { d, id, score, dealMeetings, dealEmails, mtgAgo, emlAgo, daysToClose, hasWMS } = scored;
     const [, name, amount, stageId, ownerId,, closeDate, nextStep] = d;
     const cfg = _HP_STAGE_CFG[stageId] || { label:'Active', color:'var(--muted)', border:'rgba(139,148,158,.3)' };
     const isT1 = scored.isT1;
@@ -10695,11 +10715,11 @@ function renderHighValue() {
             <span class="hpdi-badge hpdi-badge-owner">${ownerName(ownerId)}</span>
           </div>
           <div class="hpdi-contact-row">
-            <span style="color:${mtgAgo<0?'#00d97e':mtgAgo<=7?'#00d97e':mtgAgo<=14?'#f5a623':'#f85149'}">📅 ${mtgAgo<0?'Booked in '+Math.abs(mtgAgo)+'d':mtgAgo===0?'Today':mtgAgo<999?mtgAgo+'d ago':'No meetings'}</span>
+            <span style="color:${emlAgo<=5?'#00d97e':emlAgo<=9?'#f5a623':'#f85149'}">✉️ Last reply ${emlAgo<999?emlAgo+'d ago':'—'}</span>
             <span style="color:var(--border2)">·</span>
-            <span style="color:${emlAgo<=5?'#00d97e':emlAgo<=9?'#f5a623':'#f85149'}">✉️ ${emlAgo<999?'Inbound '+emlAgo+'d ago':'No inbound email'}</span>
+            <span style="color:${mtgAgo<0?'#00d97e':mtgAgo<=7?'#00d97e':mtgAgo<=14?'#f5a623':'#f85149'}">📅 ${mtgAgo<0?'Mtg in '+Math.abs(mtgAgo)+'d':mtgAgo===0?'Met today':mtgAgo<999?mtgAgo+'d ago':'No meetings'}</span>
             <span style="color:var(--border2)">·</span>
-            <span style="color:${daysToClose!==null&&daysToClose<=7?'#f85149':daysToClose!==null&&daysToClose<=14?'#f5a623':'var(--muted)'}">📆 ${closeDate?closeDate+(daysToClose!==null?' ('+daysToClose+'d)':''):'No close date'}</span>
+            <span style="color:${daysToClose!==null&&daysToClose<=7?'#f85149':daysToClose!==null&&daysToClose<=14?'#f5a623':'var(--muted)'}">📆 ${closeDate?closeDate+(daysToClose!==null?' ('+daysToClose+'d)':''):'—'}</span>
             <span style="color:var(--border2)">·</span>
             <span style="font-size:10px;color:${isT1?'#00d97e':'#f5a623'};font-style:italic">${reason}</span>
           </div>
@@ -10715,7 +10735,12 @@ function renderHighValue() {
         <div class="hpdi-info-grid">
           <div class="hpdi-info-block">
             <div class="hpdi-info-label">Close date</div>
-            <div class="hpdi-info-val ${daysToClose!==null&&daysToClose<=7?'red':daysToClose!==null&&daysToClose<=14?'amber':''}">${closeDate||'Not set'}</div>
+            <div class="hpdi-info-val ${daysToClose!==null&&daysToClose<=7?'red':daysToClose!==null&&daysToClose<=14?'amber':''}">${closeDate||'Not set'}${daysToClose!==null?' · '+(daysToClose<0?Math.abs(daysToClose)+'d overdue':daysToClose+'d left'):''}</div>
+          </div>
+          <div class="hpdi-info-block">
+            <div class="hpdi-info-label">Last customer reply</div>
+            <div class="hpdi-info-val ${emlCls}">${emlVal}</div>
+            <div class="hpdi-info-sub">${emlSub}</div>
           </div>
           <div class="hpdi-info-block">
             <div class="hpdi-info-label">Last meeting</div>
@@ -10723,18 +10748,25 @@ function renderHighValue() {
             <div class="hpdi-info-sub">${mtgSub}</div>
           </div>
           <div class="hpdi-info-block">
-            <div class="hpdi-info-label">Last email (inbound)</div>
-            <div class="hpdi-info-val ${emlCls}">${emlVal}</div>
-            <div class="hpdi-info-sub">${emlSub}</div>
-          </div>
-          <div class="hpdi-info-block">
-            <div class="hpdi-info-label">Next step (rep input)</div>
-            <div class="hpdi-info-val">${ns}</div>
+            <div class="hpdi-info-label">Rep (owner)</div>
+            <div class="hpdi-info-val">${ownerName(ownerId)}</div>
+            <div class="hpdi-info-sub">${scored.mc} meetings · ${dealEmails.length} emails tracked</div>
           </div>
         </div>
-        ${sigsHtml ? `<div class="hpdi-signals">${sigsHtml}</div>` : ''}
-        <div class="hpdi-reasoning">
-          ${obstacle ? `<span style="color:#f5a623;font-weight:600">⚠ ${obstacle} · </span>` : ''}${action}
+        <div class="hpdi-info-block" style="margin-top:8px">
+          <div class="hpdi-info-label">Next step (rep input)</div>
+          <div class="hpdi-info-val" style="white-space:pre-wrap;font-size:11px">${nextStep||'—'}</div>
+        </div>
+        ${dealMeetings.length > 1 ? `<div class="hpdi-info-block" style="margin-top:8px">
+          <div class="hpdi-info-label">Recent meetings</div>
+          <div style="font-size:11px;color:var(--text);line-height:1.8">${dealMeetings.slice(0,4).map(m=>`<div>📅 <b>${fmtAgo(m.timestamp)}</b> — ${(m.title||'Meeting').slice(0,70)}</div>`).join('')}</div>
+        </div>` : ''}
+        ${sigsHtml ? `<div class="hpdi-signals">${sigsHtml}${hasWMS ? '<span class="hpdi-sig"><span class="hpdi-sig-dot green"></span>WMS evaluation active</span>' : ''}</div>` : (hasWMS ? `<div class="hpdi-signals"><span class="hpdi-sig"><span class="hpdi-sig-dot green"></span>WMS evaluation active</span></div>` : '')}
+        <div class="hpdi-reasoning" style="margin-top:10px">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px">Why high priority</div>
+          <div style="color:var(--text);font-size:12px;margin-bottom:4px">${reason}${hasWMS?' · WMS integration underway':''}</div>
+          ${obstacle ? `<div style="color:#f5a623;font-size:11px;margin-top:4px">⚠ ${obstacle}</div>` : ''}
+          <div style="color:var(--muted);font-size:11px;margin-top:4px">${action}</div>
         </div>
       </div>
     </div>`;
@@ -10978,10 +11010,10 @@ function generateBrief() {
       <div class="brief-kpi-sub">${sub}</div>
     </div>`;
 
-  // Deal row helper
-  const dealRow = (name, arr, meta, badge='') =>
+  // Deal row helper — id enables HubSpot link
+  const dealRow = (name, arr, meta, badge='', id='') =>
     `<div class="brief-deal-row">
-      <div class="brief-deal-name">${name}</div>
+      <div class="brief-deal-name">${id ? `<a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${id}" target="_blank" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${name} ↗</a>` : name}</div>
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
         ${badge}
         <span class="brief-deal-meta">${meta}</span>
@@ -10993,18 +11025,18 @@ function generateBrief() {
   const crBadge  = `<span style="font-size:10px;background:rgba(188,140,255,.15);color:#bc8cff;padding:1px 6px;border-radius:8px;font-weight:600">CR</span>`;
 
   const wonThisWeekHtml = wonTW.length
-    ? wonTW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge)).join('')
+    ? wonTW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge, d[0])).join('')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No wins this week yet</div>`;
 
   const wonLastWeekHtml = wonLW.length
-    ? wonLW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge)).join('')
+    ? wonLW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge, d[0])).join('')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None</div>`;
 
   const crHtml = crDeals.length
     ? crDeals.slice(0,5).map(d => {
         const overdue = d[6] && d[6] < todayStr;
         const closeTag = d[6] ? `<span style="color:${overdue?'#f85149':'var(--muted)'}">${d[6]}${overdue?' ⚠':''}</span>` : '';
-        return dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), crBadge) +
+        return dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), crBadge, d[0]) +
           (closeTag ? `<div style="font-size:10px;color:var(--muted);padding:0 0 4px 0">Close: ${closeTag} · ${d[7]?.split('\n')[0].slice(0,55) || 'no next step'}</div>` : '');
       }).join('') + (crDeals.length > 5 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${crDeals.length-5} more in CR</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No deals in Commercial Review</div>`;
@@ -11013,7 +11045,7 @@ function generateBrief() {
     ? awaitingResponse.slice(0,4).map(({d, emlAgo, subj}) =>
         `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
           <div style="flex:1;min-width:0">
-            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
             <div style="font-size:10px;color:var(--muted);margin-top:1px">✉️ "${subj.slice(0,50)}"</div>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
@@ -11031,17 +11063,17 @@ function generateBrief() {
         const reason = isOverdue
           ? `Overdue close · ${lastContactAgo < 999 ? lastContactAgo+'d since contact' : 'no contact tracked'}`
           : `${lastContactAgo < 999 ? lastContactAgo+'d silent' : 'no contact'} · ${stage}`;
-        return `<div class="brief-alert-row"><b>${d[1].split(' - ')[0]}</b> <span style="color:var(--accent)">${fmtK(d[2])}</span> · <span style="color:var(--muted)">${oShort(d[4])}</span> — <span style="color:#f97316">${reason}</span></div>`;
+        return `<div class="brief-alert-row"><b><a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a></b> <span style="color:var(--accent)">${fmtK(d[2])}</span> · <span style="color:var(--muted)">${oShort(d[4])}</span> — <span style="color:#f97316">${reason}</span></div>`;
       }).join('')
     : `<div style="color:var(--muted);font-size:12px">No critical alerts 🟢</div>`;
 
   const newTWHtml = newTW.length
-    ? newTW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`)).join('')
+    ? newTW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`, '', d[0])).join('')
       + (newTW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newTW.length-4} more new deals</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new deals this week yet</div>`;
 
   const newLWHtml = newLW.length
-    ? newLW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`)).join('')
+    ? newLW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`, '', d[0])).join('')
       + (newLW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newLW.length-4} more new deals</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new pipeline last week</div>`;
 
@@ -11085,7 +11117,7 @@ function generateBrief() {
     ? qualifyToLost.slice(0, 6).map(({d, reason}) =>
         `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
           <div style="flex:1;min-width:0">
-            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
             <div style="font-size:10px;color:#f85149;margin-top:1px">${reason}</div>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
@@ -11137,7 +11169,7 @@ function generateBrief() {
         const ns = d[7] ? d[7].split('\n')[0].slice(0,55) : 'no next step';
         return `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
           <div style="flex:1;min-width:0">
-            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
             <div style="font-size:10px;color:var(--muted);margin-top:1px">${stage} · ${ns}</div>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
