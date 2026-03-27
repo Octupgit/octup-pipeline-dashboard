@@ -767,10 +767,6 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 
   <!-- F: WEEKLY DEAL DESK -->
   <section id="section-brief" style="display:none">
-    <div class="section-header">
-      <div class="section-title">📋 Weekly Deal Desk</div>
-      <div class="section-badge" data-tip="Pre-meeting pipeline brief: wins, CR status, awaiting response, qualify-to-lost candidates, alerts.">Live · Pre-Meeting Brief</div>
-    </div>
     <div class="brief-wrap">
       <div class="brief-controls">
         <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Deal Desk</button>
@@ -785,11 +781,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 
   <!-- D: HIGH PROB DEALS (SA + Trial + CR) -->
   <section id="section-highvalue" style="display:none">
-    <div class="section-header">
-      <div class="section-title">🎯 High Prob Deals</div>
-      <div class="section-badge" data-tip="All active pipeline deals scored on engagement: meeting recency, email response, meeting count, high-title contacts, next step quality, positive intent signals. Top-scored deals shown.">Engagement scored · CRO View</div>
-      <div class="section-subtitle" id="hv-subtitle"></div>
-    </div>
+    <div class="section-subtitle" id="hv-subtitle" style="padding:0 20px 8px;font-size:11px;color:var(--muted)"></div>
     <div class="matrix-stats" id="hv-stats" style="padding:0 20px 0;border-bottom:1px solid var(--border);margin-bottom:0"></div>
     <div class="hp-cards-grid" id="hv-cards"></div>
   </section>
