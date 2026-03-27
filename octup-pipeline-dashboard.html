@@ -110,6 +110,62 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .panel-close-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10;border-radius:16px 16px 0 0}
 .panel-close-btn{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer}
 .panel-close-btn:hover{color:var(--text);border-color:var(--text)}
+/* HP DEAL CARDS — new hpdi design */
+.hp-cards-grid{padding:16px 20px 24px}
+/* summary strip */
+.hpdi-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.hpdi-sum-item{background:var(--bg2);padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.hpdi-sum-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.hpdi-sum-val{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+/* tier label */
+.hpdi-tier-label{display:flex;align-items:center;gap:10px;margin:20px 0 12px}
+.hpdi-tier-label span{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+.hpdi-tier-line{flex:1;height:1px;background:var(--border)}
+.hpdi-tier-pip{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* deal card */
+.hpdi-deal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .2s}
+.hpdi-deal:hover{border-color:var(--border2)}
+.hpdi-deal.t1{border-left:2px solid #00d97e}
+.hpdi-deal.t2{border-left:2px solid #f5a623}
+.hpdi-deal-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:12px;cursor:pointer;user-select:none}
+.hpdi-deal-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap}
+.hpdi-deal-name{font-size:13px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.hpdi-deal-name:hover{color:#58a6ff}
+.hpdi-deal-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.hpdi-deal-amount{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap}
+.hpdi-score-pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:8px;border:1px solid;background:rgba(255,255,255,.04)}
+/* badges */
+.hpdi-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;letter-spacing:.03em;white-space:nowrap;border:1px solid transparent}
+.hpdi-badge-stage{background:var(--bg3);color:var(--muted);border-color:var(--border)}
+.hpdi-badge-owner{background:rgba(77,159,255,.1);color:#4d9fff;border-color:rgba(77,159,255,.25)}
+.hpdi-badge-red{background:rgba(248,81,73,.15);color:#f85149;border-color:rgba(248,81,73,.35)}
+.hpdi-badge-amber{background:rgba(245,166,35,.1);color:#f5a623;border-color:rgba(245,166,35,.3)}
+.hpdi-badge-muted{background:rgba(255,255,255,.06);color:var(--muted);border-color:var(--border)}
+/* chevron */
+.hpdi-chevron{width:16px;height:16px;color:var(--border2);transition:transform .22s,color .15s;flex-shrink:0}
+.hpdi-deal.open .hpdi-chevron{transform:rotate(180deg);color:var(--muted)}
+/* deal body */
+.hpdi-deal-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.hpdi-deal.open .hpdi-deal-body{display:block}
+.hpdi-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.hpdi-info-block{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+.hpdi-info-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--border2);margin-bottom:3px}
+.hpdi-info-val{font-size:12px;color:var(--text);line-height:1.4}
+.hpdi-info-val.red{color:#f85149;font-weight:600}
+.hpdi-info-val.amber{color:#f5a623;font-weight:600}
+.hpdi-info-val.green{color:#00d97e;font-weight:600}
+.hpdi-info-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* signals */
+.hpdi-signals{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.hpdi-sig{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.hpdi-sig-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.hpdi-sig-dot.green{background:#00d97e}
+.hpdi-sig-dot.amber{background:#f5a623}
+.hpdi-sig-dot.red{background:#f85149}
+/* reasoning */
+.hpdi-contact-row{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px}
+.hpdi-reasoning{margin-top:10px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-left:2px solid var(--border2);border-radius:0 8px 8px 0;font-size:11px;color:var(--muted);line-height:1.6}
+@media(max-width:600px){.hpdi-summary{grid-template-columns:repeat(2,1fr)}.hpdi-info-grid{grid-template-columns:1fr}}
 
 /* PIPELINE MATRIX */
 .matrix-wrapper{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -329,8 +385,22 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .brief-copy-btn{padding:7px 14px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .brief-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
 .brief-ts{font-size:11px;color:var(--muted);margin-left:auto}
-.brief-output{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px 22px;font-family:'SF Mono',ui-monospace,monospace;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-wrap;min-height:120px;max-height:680px;overflow-y:auto;display:none}
+.brief-output{display:none}
 .brief-output.visible{display:block}
+.brief-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+.brief-kpi-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.brief-kpi-val{font-size:18px;font-weight:800;color:var(--text);line-height:1}
+.brief-kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.brief-section{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:10px}
+.brief-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.brief-deal-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.brief-deal-row:last-child{border-bottom:none}
+.brief-deal-name{font-weight:600;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brief-deal-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.brief-deal-arr{font-weight:700;color:var(--accent);white-space:nowrap}
+.brief-alert-row{font-size:12px;color:var(--text);padding:4px 0 4px 10px;border-left:2px solid #f85149;margin-bottom:5px;line-height:1.4}
+.brief-alert-row:last-child{margin-bottom:0}
 /* ── Pipeline DealDesk ─────────────────────────────────────────────────────── */
 .dd-run-btn{padding:9px 20px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px}
 .dd-run-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,.35)}
@@ -529,6 +599,26 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       </div>
     </div>
 
+    <!-- QUICK ACTIONS: High Prob Deals + Weekly Deal Desk -->
+    <div class="action-btn-row" style="margin-bottom:14px">
+      <div class="action-btn-card" onclick="openSectionPanel('section-highvalue')">
+        <span class="action-btn-icon">🎯</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">High Prob Deals</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">High intent · Likely to close</div>
+        </div>
+        <span class="action-btn-badge" id="hp-action-badge">—</span>
+      </div>
+      <div class="action-btn-card" onclick="openSectionPanel('section-brief')">
+        <span class="action-btn-icon">📋</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">Weekly Deal Desk</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">Pre-meeting pipeline brief</div>
+        </div>
+        <span class="action-btn-badge action-btn-badge-muted">Live</span>
+      </div>
+    </div>
+
     <!-- WEEK-OVER-WEEK NEW PIPELINE CHART -->
     <div class="wow-wrap" id="wow-chart-wrap">
       <div class="wow-top-bar"></div>
@@ -648,36 +738,6 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     </div>
   </section>
 
-  <!-- QUICK ACTIONS: Closing Soon + DealDesk + Brief -->
-  <section style="padding:0 0 4px">
-    <div class="action-btn-row">
-      <div class="action-btn-card" onclick="openSectionPanel('section-highvalue')">
-        <span class="action-btn-icon">🎯</span>
-        <div style="flex:1;min-width:0">
-          <div class="action-btn-label">Closing Soon</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">SA deals · next 2 weeks</div>
-        </div>
-        <span class="action-btn-badge" id="hp-action-badge">—</span>
-      </div>
-      <div class="action-btn-card" onclick="openSectionPanel('section-dealdesk')">
-        <span class="action-btn-icon">🧠</span>
-        <div style="flex:1;min-width:0">
-          <div class="action-btn-label">DealDesk</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">RevOps intelligence</div>
-        </div>
-        <span class="action-btn-badge action-btn-badge-muted">On-Demand</span>
-      </div>
-      <div class="action-btn-card" onclick="openSectionPanel('section-brief')">
-        <span class="action-btn-icon">📋</span>
-        <div style="flex:1;min-width:0">
-          <div class="action-btn-label">Pipeline Brief</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Auto-generated summary</div>
-        </div>
-        <span class="action-btn-badge action-btn-badge-muted">Weekly</span>
-      </div>
-    </div>
-  </section>
-
   <!-- G: PIPELINE DEALDESK -->
   <section id="section-dealdesk" style="display:none">
     <div class="section-header">
@@ -705,50 +765,33 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   </section>
 
 
-  <!-- F: WEEKLY PIPELINE BRIEF -->
+  <!-- F: WEEKLY DEAL DESK -->
   <section id="section-brief" style="display:none">
     <div class="section-header">
-      <div class="section-title">📋 Weekly Pipeline Brief</div>
-      <div class="section-badge" data-tip="Auto-generated summary from live pipeline data. Covers last week's wins, new deals, commercial review, high-value deals, and attention items.">Auto-generated · Live Data</div>
+      <div class="section-title">📋 Weekly Deal Desk</div>
+      <div class="section-badge" data-tip="Pre-meeting pipeline brief: wins, CR status, awaiting response, qualify-to-lost candidates, alerts.">Live · Pre-Meeting Brief</div>
     </div>
     <div class="brief-wrap">
       <div class="brief-controls">
-        <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Brief</button>
+        <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Deal Desk</button>
         <button class="brief-copy-btn" id="brief-copy-btn" onclick="copyBrief()" style="display:none">📋 Copy</button>
         <span class="brief-ts" id="brief-ts"></span>
       </div>
-      <div class="brief-placeholder" id="brief-placeholder">Click <b>⚡ Generate Brief</b> to produce this week's pipeline summary from live data.</div>
-      <pre class="brief-output" id="brief-output"></pre>
+      <div class="brief-placeholder" id="brief-placeholder">Click <b>⚡ Generate Deal Desk</b> to get your pre-meeting pipeline snapshot.</div>
+      <div class="brief-output" id="brief-output"></div>
     </div>
   </section>
 
 
-  <!-- D: CLOSING SOON (SA + next 14 days) -->
+  <!-- D: HIGH PROB DEALS (SA + Trial + CR) -->
   <section id="section-highvalue" style="display:none">
     <div class="section-header">
-      <div class="section-title">🎯 Closing Soon</div>
-      <div class="section-badge" data-tip="SA deals with expected close date in the next 14 days. These are your most urgent opportunities.">SA Stage · Closing in Next 14 Days</div>
+      <div class="section-title">🎯 High Prob Deals</div>
+      <div class="section-badge" data-tip="All active pipeline deals scored on engagement: meeting recency, email response, meeting count, high-title contacts, next step quality, positive intent signals. Top-scored deals shown.">Engagement scored · CRO View</div>
       <div class="section-subtitle" id="hv-subtitle"></div>
     </div>
-    <div class="matrix-wrapper">
-      <div class="matrix-stats" id="hv-stats"></div>
-      <table class="watchlist-table">
-        <thead>
-          <tr>
-            <th>Deal Name</th>
-            <th>ARR</th>
-            <th>Stage</th>
-            <th>Prob</th>
-            <th>Owner</th>
-            <th>Close Date</th>
-            <th>Next Step</th>
-            <th>Last Activity</th>
-            <th>Lifetime</th>
-          </tr>
-        </thead>
-        <tbody id="hv-body"></tbody>
-      </table>
-    </div>
+    <div class="matrix-stats" id="hv-stats" style="padding:0 20px 0;border-bottom:1px solid var(--border);margin-bottom:0"></div>
+    <div class="hp-cards-grid" id="hv-cards"></div>
   </section>
 
 </main>
@@ -10407,82 +10450,313 @@ function openSDRDealsModal(title, deals) {
   openModal(title, summary, content);
 }
 
-// ─── RENDER CLOSING SOON (SA deals closing in next 14 days) ──────────────────
+// ─── RENDER HIGH PROB DEALS (closing in next 14 days — any active stage excl. Won/Lost/Stalled) ───
+const _HP_STAGE_CFG = {
+  '608286677':  { label:'Comm. Review', color:'#bc8cff',  border:'rgba(188,140,255,.6)'  },
+  '4988070119': { label:'Trial',        color:'#3fb950',  border:'rgba(63,185,80,.55)'   },
+  '608286676':  { label:'Sol. Align',   color:'var(--inp)',border:'rgba(88,166,255,.55)'  },
+  '740160705':  { label:'Presentation', color:'#a78bfa',  border:'rgba(167,139,250,.45)' },
+  '608286675':  { label:'Discovery',    color:'#60a5fa',  border:'rgba(96,165,250,.4)'   },
+  '2918051007': { label:'NBM',          color:'var(--muted)',border:'rgba(139,148,158,.3)'},
+};
+// Excluded stages (won/lost/stalled/CR) — high prob shows only active pre-CR stages
+const _HP_EXCLUDED = new Set(['608286678','608286679','2918051008','608286677']);
+
 function renderHighValue() {
   const today = new Date(); today.setUTCHours(0,0,0,0);
-  const in7   = new Date(today.getTime() +  7 * 86400000);
-  const in14  = new Date(today.getTime() + 14 * 86400000);
-  const todayStr = today.toISOString().slice(0,10);
-  const in7Str   = in7.toISOString().slice(0,10);
-  const in14Str  = in14.toISOString().slice(0,10);
+  const NOW_MS = Date.now();
+  const DAY_MS = 86400000;
 
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
-  // SA stage only, close date within next 14 days
-  const hp = deals.filter(d => d[3]==='608286676' && d[6] && d[6] >= todayStr && d[6] <= in14Str);
+  // Pool: all active stages (not won/lost/stalled/CR)
+  const pool = deals.filter(d => !_HP_EXCLUDED.has(d[3]));
 
-  const hpWeek = hp.filter(d => d[6] <= in7Str);   // closing in next 7 days
-  const hp2Wk  = hp.filter(d => d[6] > in7Str);    // closing in 8–14 days
-  const hpARR  = hp.reduce((s,d)=>s+d[2],0);
+  // ── Stage probability lookup (HubSpot defaults) ───────────────────────────
+  const STAGE_PROB = {
+    '2918051007': 10,  // NBM
+    '608286675':  20,  // Discovery
+    '740160705':  40,  // Presentation
+    '608286676':  60,  // Solution Alignment
+    '4988070119': 70,  // Trial
+  };
 
-  // Update action card badge
+  // ── Score each deal on 5 signals (per RevOps prompt spec) ────────────────
+  const scoreDeal = (d) => {
+    const [id, , , stageId, , , closeDate, nextStep] = d;
+    const dealMeetings = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(id))
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const dealEmails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(id) && !e.isInternal)
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const allContacts = [...dealMeetings, ...dealEmails].sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''));
+
+    const daysAgo = ts => ts ? Math.floor((NOW_MS - new Date(ts).getTime()) / DAY_MS) : 999;
+    const mtgAgo  = daysAgo(dealMeetings[0]?.timestamp);
+    const emlAgo  = daysAgo(dealEmails[0]?.timestamp);
+    const lastContactDays = allContacts.length ? daysAgo(allContacts[0].timestamp) : 999;
+    const daysToClose = closeDate ? Math.ceil((new Date(closeDate).getTime() - today.getTime()) / DAY_MS) : null;
+    const stagePct = STAGE_PROB[stageId] || 0;
+    const mc = dealMeetings.length;
+    const hasInbound = dealEmails.length > 0;
+    const inboundDays = emlAgo;
+
+    // ── HARD GATE: customer must have responded within 9 days ─────────────────
+    // emlAgo >= 10 = customer gone quiet = NOT high prob by definition
+    const customerResponsive = emlAgo < 10; // strict: < 10 days since inbound email
+
+    // Signal 1: Stage probability (25%)
+    const s1n = Math.min(stagePct / 70 * 100, 100);
+
+    // Signal 2: Activity volume — total contacts (20%)
+    const totalContacts = dealMeetings.length + dealEmails.length;
+    const s2n = totalContacts >= 20 ? 100 : totalContacts >= 10 ? 80 : totalContacts >= 5 ? 60 : totalContacts >= 3 ? 40 : totalContacts >= 1 ? 20 : 0;
+
+    // Signal 3: Customer inbound recency — PRIMARY close signal (30%)
+    const s3n = emlAgo <= 2 ? 100 : emlAgo <= 5 ? 85 : emlAgo <= 7 ? 70 : emlAgo < 10 ? 50 : 0;
+
+    // Signal 4: Meeting cadence (15%)
+    const s4n = mc >= 5 ? 100 : mc >= 3 ? 75 : mc >= 2 ? 55 : mc >= 1 ? 30 : 0;
+
+    // Signal 5: Meeting recency (10%)
+    const s5n = mtgAgo <= 0 ? 100 : mtgAgo <= 7 ? 85 : mtgAgo <= 14 ? 60 : mtgAgo <= 21 ? 35 : 0;
+
+    const score = Math.round(s1n*0.25 + s2n*0.20 + s3n*0.30 + s4n*0.15 + s5n*0.10);
+
+    // ── Tier assignment — inbound responsiveness is REQUIRED ─────────────────
+    // Tier 1: SA/Trial + customer replied within 7d + 2+ meetings
+    const isT1 = stagePct >= 50 && emlAgo <= 7 && mc >= 2;
+    // Tier 2: customer replied within 9d + (good stage OR closing very soon) + at least 1 meeting
+    const isT2 = !isT1 && customerResponsive && mc >= 1 &&
+                 (stagePct >= 40 || (daysToClose !== null && daysToClose <= 7));
+
+    return { d, id, score, stagePct, isT1, isT2, customerResponsive, dealMeetings, dealEmails,
+             mtgAgo, emlAgo, lastContactDays, daysToClose, mc, hasInbound, allContacts };
+  };
+
+  const allScored = pool.map(scoreDeal);
+  // Show only T1 + T2, top 10 total — T1 first, then T2 fills remaining slots
+  const tier1All = allScored.filter(x => x.isT1).sort((a,b) => b.score - a.score);
+  const tier2All = allScored.filter(x => x.isT2).sort((a,b) => b.score - a.score);
+  const MAX_DEALS = 10;
+  const tier1 = tier1All.slice(0, MAX_DEALS);
+  const tier2 = tier2All.slice(0, MAX_DEALS - tier1.length);
+  const hp = [...tier1, ...tier2];
+
+  const hpARR = hp.reduce((s,x)=>s+x.d[2],0);
+
+  // Update action button badge
   const badge = document.getElementById('hp-action-badge');
-  if (badge) badge.textContent = hp.length ? hp.length + ' deal' + (hp.length!==1?'s':'') : 'None';
+  if (badge) badge.textContent = hp.length ? hp.length + ' deals' : '—';
 
-  document.getElementById('hv-subtitle').textContent =
-    hp.length + ' deal' + (hp.length!==1?'s':'') + ' · ' + fmt$(hpARR) + ' total ARR · SA stage · next 14 days';
+  const subtitleEl = document.getElementById('hv-subtitle');
+  if (subtitleEl) subtitleEl.textContent = hp.length + ' high-prob deals · ' + fmt$(hpARR) + ' pipeline value';
+  document.getElementById('hv-stats').innerHTML = '';
 
-  const mkStat = (label, subset, bucket, tipText, color) => {
-    const count = subset.length;
-    const arr = subset.reduce((s,d)=>s+d[2],0);
-    const idsJson = JSON.stringify(subset.map(d=>d[0]));
-    return `<div class="matrix-stat hv-stats-stat" data-tip="${tipText}"
-              data-bucket="${bucket}" data-ids='${idsJson}'
-              onclick="openHVBucketModal(this.dataset.bucket,JSON.parse(this.dataset.ids))">
-      <div class="matrix-stat-label">${label}</div>
-      <div class="matrix-stat-value" style="color:${color}">${count}</div>
-      <div class="matrix-stat-sub">${fmt$(arr)} ARR</div>
+  // ── Short per-deal reasoning (3–6 words) ──────────────────────────────────
+  const shortReason = (scored) => {
+    const { emlAgo, mtgAgo, mc, daysToClose, stagePct, d, dealEmails, dealMeetings } = scored;
+    const [,,, stageId,,,, nextStep] = d;
+    const allText = [nextStep||'', ...dealEmails.map(e=>e.subject||''), ...dealMeetings.map(m=>m.title||'')].join(' ').toLowerCase();
+    const parts = [];
+    // Customer response signal — most important
+    if      (emlAgo === 0) parts.push('Customer replied today');
+    else if (emlAgo <= 2)  parts.push(`Replied ${emlAgo}d ago`);
+    else if (emlAgo <= 5)  parts.push(`Active ${emlAgo}d ago`);
+    else if (emlAgo < 10)  parts.push(`Last reply ${emlAgo}d ago`);
+    // Meeting signal
+    if      (mtgAgo < 0)  parts.push(`meeting booked`);
+    else if (mtgAgo === 0) parts.push(`met today`);
+    else if (mtgAgo <= 3)  parts.push(`met ${mtgAgo}d ago`);
+    // Depth signal
+    if (mc >= 5) parts.push(`${mc} meetings`);
+    // Intent signals
+    if (/confirm|agreed|moving forward|ready to sign|docusign/.test(allText)) parts.push('positive intent');
+    else if (stageId === '4988070119') parts.push('trial active');
+    else if (daysToClose !== null && daysToClose >= 0 && daysToClose <= 7) parts.push(`closes in ${daysToClose}d`);
+    // Title
+    if (/ceo|founder|president/.test(allText)) parts.push('C-level engaged');
+    else if (/\bvp\b|director/.test(allText))  parts.push('VP engaged');
+    return parts.slice(0, 3).join(' · ') || 'Engaged prospect';
+  };
+
+  // ── Rendering helpers ─────────────────────────────────────────────────────
+  const fmtAgo = ts => { if (!ts) return null; const d=Math.floor((NOW_MS-new Date(ts).getTime())/DAY_MS); return d===0?'Today':d===1?'Yesterday':d+'d ago'; };
+
+  const detectObstacleTxt = (ns, emails, meetings) => {
+    const text = [ns||'', ...emails.map(e=>e.subject||''), ...meetings.map(m=>m.title||'')].join(' ').toLowerCase();
+    if (/ceo|founder|owner|board|c-level|president/.test(text)) return 'C-level sign-off needed';
+    if (/pric|cost|budget|rate|fee|expensive|discount/.test(text)) return 'Pricing negotiation';
+    if (/nda|contract|legal|agreement|term|sign/.test(text)) return 'Contract/legal review';
+    if (/integrat|api|techni|system|edi|connect|platform/.test(text)) return 'Technical evaluation';
+    if (/compet|alternat|evaluat|compar|vendor|vs\./.test(text)) return 'Competitive eval';
+    if (/trial|pilot|test|poc|proof/.test(text)) return 'In trial/pilot';
+    return null;
+  };
+
+  const croAction2 = (scored, obstacle) => {
+    const { d, mtgAgo, emlAgo, daysToClose, dealMeetings, dealEmails } = scored;
+    const [,,,stageId,,,, nextStep] = d;
+    const allText = [nextStep||'', ...dealEmails.map(e=>e.subject||''), ...dealMeetings.map(m=>m.title||'')].join(' ').toLowerCase();
+    const isOverdue = daysToClose !== null && daysToClose < 0;
+    const closingSoon7 = daysToClose !== null && daysToClose >= 0 && daysToClose <= 7;
+    const closingSoon14 = daysToClose !== null && daysToClose >= 0 && daysToClose <= 14;
+    const lastContactAgo = Math.min(mtgAgo, emlAgo);
+    const mc = dealMeetings.length;
+    if (isOverdue) return `Close date passed — push to ${new Date(Date.now()+14*DAY_MS).toLocaleDateString('en',{month:'short',day:'numeric'})} or close-lost today`;
+    if (obstacle === 'C-level sign-off needed') return `Get exec involved — request a 30-min C-level alignment call now`;
+    if (obstacle === 'Contract/legal review') return `Set contract deadline — offer to simplify terms, engage legal proactively`;
+    if (obstacle === 'Pricing negotiation') return `Send ROI calc — consider pilot pricing or multi-year discount to unlock`;
+    if (closingSoon7 && lastContactAgo > 7) return `Closes in ${daysToClose}d but ${lastContactAgo}d since last contact — call today to confirm`;
+    if (closingSoon7) return `Closing this week — confirm all terms and send DocuSign if not done`;
+    if (closingSoon14 && lastContactAgo <= 7) return `On track — lock close criteria, confirm timeline with customer`;
+    if (closingSoon14) return `Close in ${daysToClose}d — book a confirmation call this week`;
+    if (stageId === '4988070119') return `Trial active — run a weekly value check-in, gather feedback, push toward Commercial Review`;
+    if (stageId === '608286676' && lastContactAgo <= 14) return `In SA — align on open items, define close criteria, push to CR`;
+    if (/confirm|agreed|moving forward|docusign/.test(allText)) return `Strong buying signals — define close milestones and push for signature`;
+    return `Strong engagement — define close plan with specific milestones and timeline`;
+  };
+
+  const buildSignals2 = (scored) => {
+    const { d, mtgAgo, emlAgo, daysToClose, dealMeetings, dealEmails } = scored;
+    const [,,, stageId,,,, nextStep] = d;
+    const mc = dealMeetings.length;
+    const allText = [nextStep||'', ...dealEmails.map(e=>e.subject||''), ...dealMeetings.map(m=>m.title||'')].join(' ').toLowerCase();
+    const sigs = [];
+    if      (mtgAgo <= 7)   sigs.push({ dot:'green', text:`Meeting ${mtgAgo===0?'today':mtgAgo+'d ago'}` });
+    else if (mtgAgo <= 14)  sigs.push({ dot:'amber', text:`Last meeting ${mtgAgo}d ago — follow-up due` });
+    else if (mtgAgo < 999)  sigs.push({ dot:'red',   text:`${mtgAgo}d since last meeting` });
+    if      (emlAgo <= 7)   sigs.push({ dot:'green', text:`Customer emailed ${emlAgo===0?'today':emlAgo+'d ago'}` });
+    else if (emlAgo <= 14)  sigs.push({ dot:'amber', text:`Last email ${emlAgo}d ago` });
+    if (mc >= 5) sigs.push({ dot:'green', text:`${mc} meetings — deep relationship` });
+    else if (mc >= 3) sigs.push({ dot:'green', text:`${mc} meetings — solid engagement` });
+    if      (/ceo|founder|president/.test(allText)) sigs.push({ dot:'green', text:'C-level in conversation' });
+    else if (/\bvp\b|director/.test(allText))       sigs.push({ dot:'green', text:'VP-level engaged' });
+    if (/confirm|agreed|moving forward|docusign/.test(allText)) sigs.push({ dot:'green', text:'Positive buying signal detected' });
+    if (stageId === '4988070119') sigs.push({ dot:'green', text:'In active trial' });
+    if (daysToClose !== null) {
+      if      (daysToClose < 0)   sigs.push({ dot:'red',   text:`${Math.abs(daysToClose)}d overdue` });
+      else if (daysToClose <= 7)  sigs.push({ dot:'red',   text:`Closes in ${daysToClose===0?'today':daysToClose+'d'}` });
+      else if (daysToClose <= 14) sigs.push({ dot:'amber', text:`Closes in ${daysToClose}d` });
+    }
+    return sigs;
+  };
+
+  // ── Summary strip ─────────────────────────────────────────────────────────
+  const closingIn14 = hp.filter(x => x.daysToClose !== null && x.daysToClose >= -3 && x.daysToClose <= 14).length;
+  const maxAmt = hp.length ? Math.max(...hp.map(x => x.d[2])) : 0;
+  const t1Total = tier1All.length, t2Total = tier2All.length;
+  const summaryHtml = `<div class="hpdi-summary">
+    <div class="hpdi-sum-item"><div class="hpdi-sum-label">Showing top 10</div><div class="hpdi-sum-val">${hp.length} <span style="font-size:13px;color:var(--muted)">/ ${t1Total+t2Total}</span></div></div>
+    <div class="hpdi-sum-item"><div class="hpdi-sum-label">Pipeline value</div><div class="hpdi-sum-val">${fmt$(hpARR)}</div></div>
+    <div class="hpdi-sum-item"><div class="hpdi-sum-label">Closing ≤ 14d</div><div class="hpdi-sum-val" style="color:#f5a623">${closingIn14}</div></div>
+    <div class="hpdi-sum-item"><div class="hpdi-sum-label">Top deal</div><div class="hpdi-sum-val" style="color:#00d97e">${maxAmt ? fmt$(maxAmt) : '—'}</div></div>
+  </div>`;
+
+  // tier1/tier2 already split above by isT1/isT2
+
+  const mkHpCard = (scored) => {
+    const { d, id, score, dealMeetings, dealEmails, mtgAgo, emlAgo, daysToClose } = scored;
+    const [, name, amount, stageId, ownerId,, closeDate, nextStep] = d;
+    const cfg = _HP_STAGE_CFG[stageId] || { label:'Active', color:'var(--muted)', border:'rgba(139,148,158,.3)' };
+    const isT1 = scored.isT1;
+    const reason = shortReason(scored);
+    const obstacle = detectObstacleTxt(nextStep, dealEmails, dealMeetings);
+    const action = croAction2(scored, obstacle);
+    const signals = buildSignals2(scored);
+    const lastMtg = dealMeetings[0], lastEml = dealEmails[0];
+    const cardId = 'hpdi-' + id;
+
+    let closeBadge = '';
+    if (daysToClose !== null) {
+      if      (daysToClose < 0)   closeBadge = `<span class="hpdi-badge hpdi-badge-red">${Math.abs(daysToClose)}d overdue</span>`;
+      else if (daysToClose === 0) closeBadge = `<span class="hpdi-badge hpdi-badge-red">Today</span>`;
+      else if (daysToClose <= 7)  closeBadge = `<span class="hpdi-badge hpdi-badge-red">In ${daysToClose}d</span>`;
+      else if (daysToClose <= 14) closeBadge = `<span class="hpdi-badge hpdi-badge-amber">${closeDate}</span>`;
+      else                        closeBadge = `<span class="hpdi-badge hpdi-badge-muted">${closeDate}</span>`;
+    }
+
+    const mtgVal = lastMtg ? (mtgAgo < 0 ? `Booked in ${Math.abs(mtgAgo)}d` : fmtAgo(lastMtg.timestamp)) : 'No meetings';
+    const mtgSub = lastMtg ? (lastMtg.title||'Meeting').slice(0,65) : 'No meetings linked to this deal';
+    const mtgCls = mtgAgo <= 7 ? 'green' : mtgAgo <= 14 ? 'amber' : 'red';
+    const emlVal = lastEml ? fmtAgo(lastEml.timestamp) : 'No incoming emails';
+    const emlSub = lastEml ? (lastEml.subject||'Email').slice(0,65) : 'No external emails linked';
+    const emlCls = emlAgo <= 7 ? 'green' : emlAgo <= 14 ? 'amber' : 'red';
+    const ns = nextStep ? nextStep.split('\n')[0].slice(0,130) : '—';
+    const scoreColor = isT1 ? '#00d97e' : '#f5a623';
+    const sigsHtml = signals.map(s => `<span class="hpdi-sig"><span class="hpdi-sig-dot ${s.dot}"></span>${s.text}</span>`).join('');
+
+    return `<div class="hpdi-deal ${isT1?'t1':'t2'}" id="${cardId}">
+      <div class="hpdi-deal-top" onclick="document.getElementById('${cardId}').classList.toggle('open')">
+        <div style="flex:1;min-width:0">
+          <div class="hpdi-deal-left">
+            <a href="https://app.hubspot.com/contacts/26004468/deal/${id}" target="_blank" class="hpdi-deal-name" onclick="event.stopPropagation()">${name} ↗</a>
+            <span class="hpdi-badge hpdi-badge-stage" style="color:${cfg.color};border-color:${cfg.border}">${cfg.label} · ${scored.stagePct}%</span>
+            <span class="hpdi-badge hpdi-badge-owner">${ownerName(ownerId)}</span>
+          </div>
+          <div class="hpdi-contact-row">
+            <span style="color:${mtgAgo<0?'#00d97e':mtgAgo<=7?'#00d97e':mtgAgo<=14?'#f5a623':'#f85149'}">📅 ${mtgAgo<0?'Booked in '+Math.abs(mtgAgo)+'d':mtgAgo===0?'Today':mtgAgo<999?mtgAgo+'d ago':'No meetings'}</span>
+            <span style="color:var(--border2)">·</span>
+            <span style="color:${emlAgo<=5?'#00d97e':emlAgo<=9?'#f5a623':'#f85149'}">✉️ ${emlAgo<999?'Inbound '+emlAgo+'d ago':'No inbound email'}</span>
+            <span style="color:var(--border2)">·</span>
+            <span style="color:${daysToClose!==null&&daysToClose<=7?'#f85149':daysToClose!==null&&daysToClose<=14?'#f5a623':'var(--muted)'}">📆 ${closeDate?closeDate+(daysToClose!==null?' ('+daysToClose+'d)':''):'No close date'}</span>
+            <span style="color:var(--border2)">·</span>
+            <span style="font-size:10px;color:${isT1?'#00d97e':'#f5a623'};font-style:italic">${reason}</span>
+          </div>
+        </div>
+        <div class="hpdi-deal-right">
+          <span class="hpdi-deal-amount">${fmt$(amount)}</span>
+          ${closeBadge}
+          <span class="hpdi-score-pill" style="color:${scoreColor};border-color:${scoreColor}22">${score}</span>
+          <svg class="hpdi-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
+        </div>
+      </div>
+      <div class="hpdi-deal-body">
+        <div class="hpdi-info-grid">
+          <div class="hpdi-info-block">
+            <div class="hpdi-info-label">Close date</div>
+            <div class="hpdi-info-val ${daysToClose!==null&&daysToClose<=7?'red':daysToClose!==null&&daysToClose<=14?'amber':''}">${closeDate||'Not set'}</div>
+          </div>
+          <div class="hpdi-info-block">
+            <div class="hpdi-info-label">Last meeting</div>
+            <div class="hpdi-info-val ${mtgCls}">${mtgVal}</div>
+            <div class="hpdi-info-sub">${mtgSub}</div>
+          </div>
+          <div class="hpdi-info-block">
+            <div class="hpdi-info-label">Last email (inbound)</div>
+            <div class="hpdi-info-val ${emlCls}">${emlVal}</div>
+            <div class="hpdi-info-sub">${emlSub}</div>
+          </div>
+          <div class="hpdi-info-block">
+            <div class="hpdi-info-label">Next step (rep input)</div>
+            <div class="hpdi-info-val">${ns}</div>
+          </div>
+        </div>
+        ${sigsHtml ? `<div class="hpdi-signals">${sigsHtml}</div>` : ''}
+        <div class="hpdi-reasoning">
+          ${obstacle ? `<span style="color:#f5a623;font-weight:600">⚠ ${obstacle} · </span>` : ''}${action}
+        </div>
+      </div>
     </div>`;
   };
 
-  document.getElementById('hv-stats').innerHTML =
-    mkStat('This Week',   hpWeek, 'This Week',  'SA deals with close date in the next 7 days. Click to see list.', '#f85149') +
-    mkStat('Next Week',   hp2Wk,  'Next Week',  'SA deals with close date 8–14 days out. Click to see list.',     '#f97316') +
-    mkStat('Total',       hp,     'All',         'All SA deals closing in the next 14 days.',                      'var(--accent)');
+  const tierHtml = (deals, tierNum, tierLbl, pip) => {
+    if (!deals.length) return '';
+    return `<div class="hpdi-tier-label">
+      <div class="hpdi-tier-pip" style="background:${pip}"></div>
+      <span>Tier ${tierNum} — ${tierLbl}</span>
+      <div class="hpdi-tier-line"></div>
+    </div>` + deals.map(x => mkHpCard(x)).join('');
+  };
 
-  const sorted = [...hp].sort((a,b) => (a[6]||'').localeCompare(b[6]||'')); // sort by close date asc
+  // Stats bar cleared above
 
-  const tbody = document.getElementById('hv-body');
-  if (sorted.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" class="no-data">No SA deals closing in the next 14 days</td></tr>`;
-    return;
-  }
+  const finalHtml = summaryHtml +
+    tierHtml(tier1, 1, 'Highest confidence — very likely to close', '#00d97e') +
+    tierHtml(tier2, 2, 'Active — watch closely this week', '#f5a623');
 
-  let rows = '';
-  sorted.forEach(d => {
-    const [id, name, amount, stageId, ownerId, created, closeDate, nextStep,, lastMod] = d;
-    const days = daysSince(lastMod);
-    const lifetime = daysSince(created);
-    const stale = days !== null && days >= 21;
-    const ns = (nextStep||'').replace(/"/g,"'");
-    const daysToClose = closeDate ? Math.ceil((new Date(closeDate).getTime() - today.getTime()) / 86400000) : null;
-    const urgencyColor = daysToClose !== null && daysToClose <= 7 ? '#f85149' : '#f97316';
-    const urgencyBadge = daysToClose !== null
-      ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(248,81,73,.15);color:${urgencyColor}">closes in ${daysToClose}d</span>`
-      : '';
-    rows += `<tr class="${stale?'stale-row':''}">
-      <td class="deal-link" style="font-weight:600">${dealLink(id,name)}</td>
-      <td style="color:var(--green);font-weight:700;white-space:nowrap">${fmt$(amount)}</td>
-      <td>${stageTag(stageId)}</td>
-      <td style="text-align:center">${urgencyBadge}</td>
-      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
-      <td style="white-space:nowrap;font-weight:700;color:${urgencyColor}">${fmtDate(closeDate)}</td>
-      <td><div class="next-step-text" title="${ns}">${nextStep?nextStep.split('\n')[0]:'<span style="color:var(--red)">—</span>'}</div></td>
-      <td class="${stale?'stale-days':'ok-days'}" style="white-space:nowrap">${days!==null?days+'d':'—'}${stale?' 🔴':''}</td>
-      <td style="white-space:nowrap;color:var(--muted)">${lifetime!==null?lifetime+'d':'—'}</td>
-    </tr>`;
-  });
-  tbody.innerHTML = rows;
+  const cardsEl = document.getElementById('hv-cards');
+  if (cardsEl) cardsEl.innerHTML = finalHtml || '<div style="padding:24px;color:var(--muted);font-size:12px">No high-probability deals found</div>';
 }
+
 
 function openHVBucketModal(bucket, ids) {
   const dealSet = DEALS.filter(d => ids.includes(d[0])).sort((a,b)=>b[2]-a[2]);
@@ -10600,160 +10874,303 @@ function generateBrief() {
   const btn = document.querySelector('.brief-generate-btn');
   btn.disabled = true; btn.textContent = '⏳ Generating…';
 
+  const NOW_MS   = Date.now();
+  const DAY_MS   = 86400000;
   const todayStr = TODAY.toISOString().split('T')[0];
-  const lw = WEEKS['last'];
-  const tw = WEEKS['this'];
+  const fmtK = n => !n ? '$0' : n >= 1000000 ? '$'+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M' : n >= 1000 ? '$'+Math.round(n/1000)+'K' : '$'+n;
+  const oShort = id => (OWNERS[id]||{}).name?.split(' ')[0] || id;
+  const dago = ts => ts ? Math.floor((NOW_MS - new Date(ts).getTime()) / DAY_MS) : null;
+  const STAGE_SHORT2 = {'2918051007':'NBM','2918051008':'Stalled','608286675':'Discovery','740160705':'Pres.','608286676':'SA','4988070119':'Trial','608286677':'CR'};
 
-  const line  = '─'.repeat(48);
-  const sep   = () => line;
-  const fmt   = n => '$' + (n >= 1000 ? (n >= 1000000 ? (n/1000000).toFixed(1)+'M' : Math.round(n/1000)+'K') : n);
-  const oName = id => (OWNERS[id] || {}).name || id;
-  const sName = id => STAGES[id] || id;
-
-  // ── 1. Closed Won last week ────────────────────────────────────────────────
-  let wonLW = WON_DEALS.filter(d => dateInRange(d[3], 'last'));
-  if (selectedOwner !== 'all') wonLW = wonLW.filter(d => d[4] === selectedOwner);
-  wonLW.sort((a, b) => b[2] - a[2]);
-  const wonARR = wonLW.reduce((s, d) => s + d[2], 0);
-
-  let wonLines = wonLW.length === 0
-    ? '  None'
-    : wonLW.map(d => `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}`).join('\n');
-  if (wonLW.length > 0) wonLines += `\n  Total: ${fmt(wonARR)} ARR across ${wonLW.length} deal${wonLW.length > 1 ? 's' : ''}`;
-
-  // ── 2. New deals created last week ────────────────────────────────────────
-  let newLW = DEALS.filter(d => dateInRange(d[5], 'last'));
-  if (selectedOwner !== 'all') newLW = newLW.filter(d => d[4] === selectedOwner);
-  newLW.sort((a, b) => b[2] - a[2]);
-  const newARR = newLW.reduce((s, d) => s + d[2], 0);
-
-  const newLines = newLW.length === 0
-    ? '  None'
-    : newLW.map(d => `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}`).join('\n')
-      + `\n  Total: ${fmt(newARR)} ARR across ${newLW.length} deal${newLW.length > 1 ? 's' : ''}`;
-
-  // ── 3. In Commercial Review ───────────────────────────────────────────────
-  let crDeals = DEALS.filter(d => d[3] === '608286677');
-  if (selectedOwner !== 'all') crDeals = crDeals.filter(d => d[4] === selectedOwner);
-  crDeals.sort((a, b) => b[2] - a[2]);
-
-  const crLines = crDeals.length === 0
-    ? '  None'
-    : crDeals.map(d => {
-        const overdue = d[6] && d[6] < todayStr ? ' ⚠ OVERDUE' : '';
-        const ns = d[7] ? d[7].split('\n')[0].slice(0, 60) + (d[7].length > 60 ? '…' : '') : '— no next step ⚠';
-        return `  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}${overdue}\n    Next step: ${ns}`;
-      }).join('\n');
-
-  // ── 4. High-value open ($50K+) — exclude Stalled stage ───────────────────
-  let hvDeals = DEALS.filter(d => d[2] >= 50000 && d[3] !== '2918051008');
-  if (selectedOwner !== 'all') hvDeals = hvDeals.filter(d => d[4] === selectedOwner);
-  hvDeals.sort((a, b) => b[2] - a[2]);
-
-  const hvLines = hvDeals.length === 0
-    ? '  None'
-    : hvDeals.map(d => {
-        const overdue = d[6] && d[6] < todayStr ? ' ⚠ OVERDUE' : '';
-        return `  • ${d[1]}  ${fmt(d[2])}  [${sName(d[3])}]  ← ${oName(d[4])}${overdue}`;
-      }).join('\n');
-
-  // ── 5. Needs attention — exclude Stalled stage (parked, not actionable) ──
-  const attentionItems = [];
-  let pool = DEALS.filter(d => d[3] !== '2918051008');
+  let pool = DEALS;
   if (selectedOwner !== 'all') pool = pool.filter(d => d[4] === selectedOwner);
 
-  pool.forEach(d => {
-    const days    = daysSince(d[9]);
-    const overdue = d[6] && d[6] < todayStr;
-    const noStep  = !d[7];
-    const stale   = days !== null && days >= 21;
+  // ── KPIs ──────────────────────────────────────────────────────────────────
+  // This week won
+  let wonTW = WON_DEALS.filter(d => dateInRange(d[3], 'this'));
+  if (selectedOwner !== 'all') wonTW = wonTW.filter(d => d[4] === selectedOwner);
+  const wonTWArr = wonTW.reduce((s,d)=>s+d[2],0);
 
-    if (overdue && noStep) {
-      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ Overdue close + no next step — likely ghosting, needs immediate follow-up`);
-    } else if (stale) {
-      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ ${days}d no activity — push for update or re-engage`);
-    } else if (overdue) {
-      attentionItems.push(`  • ${d[1]}  ${fmt(d[2])}  ← ${oName(d[4])}\n    ↳ Close date overdue (${d[6]}) — repush or update date`);
-    }
+  // Last week won
+  let wonLW = WON_DEALS.filter(d => dateInRange(d[3], 'last'));
+  if (selectedOwner !== 'all') wonLW = wonLW.filter(d => d[4] === selectedOwner);
+  const wonLWArr = wonLW.reduce((s,d)=>s+d[2],0);
+
+  // Month won (all)
+  const NOW = new Date(NOW_MS);
+  const monthStart = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), 1)).getTime();
+  let wonMonth = WON_DEALS.filter(d => { const m = d[3] ? new Date(d[3]).getTime() : 0; return m >= monthStart && m <= NOW_MS; });
+  if (selectedOwner !== 'all') wonMonth = wonMonth.filter(d => d[4] === selectedOwner);
+  const wonMonthArr = wonMonth.reduce((s,d)=>s+d[2],0);
+  const monthLabel = NOW.toLocaleString('en-US',{month:'short',timeZone:'UTC'});
+
+  // Q won (Jan 1 of current year)
+  const qStart = new Date(Date.UTC(NOW.getUTCFullYear(), 0, 1)).getTime();
+  let wonQ = WON_DEALS.filter(d => { const m = d[3] ? new Date(d[3]).getTime() : 0; return m >= qStart && m <= NOW_MS; });
+  if (selectedOwner !== 'all') wonQ = wonQ.filter(d => d[4] === selectedOwner);
+  const wonQArr = wonQ.reduce((s,d)=>s+d[2],0);
+
+  // New pipeline this week
+  let newTW = DEALS.filter(d => dateInRange(d[5], 'this'));
+  if (selectedOwner !== 'all') newTW = newTW.filter(d => d[4] === selectedOwner);
+  const newTWArr = newTW.reduce((s,d)=>s+d[2],0);
+
+  // CR deals
+  let crDeals = pool.filter(d => d[3] === '608286677').sort((a,b)=>b[2]-a[2]);
+  const crArr = crDeals.reduce((s,d)=>s+d[2],0);
+
+  // ── Awaiting customer response ─────────────────────────────────────────────
+  // Last email was 2-14d ago, no meeting since that email
+  const awaitingResponse = [];
+  pool.filter(d => !['608286677','608286678','608286679','2918051008'].includes(d[3])).forEach(d => {
+    const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(d[0]) && !e.isInternal)
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const meets  = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(d[0]))
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const lastEml = emails[0], lastMtg = meets[0];
+    if (!lastEml) return;
+    const emlAgo = dago(lastEml.timestamp);
+    if (emlAgo === null || emlAgo < 2 || emlAgo > 14) return;
+    const mtgAgo = dago(lastMtg?.timestamp);
+    // Only "awaiting" if the email was sent AFTER the last meeting (or no meeting)
+    if (mtgAgo !== null && mtgAgo < emlAgo) return; // meeting was more recent = not awaiting
+    awaitingResponse.push({ d, emlAgo, subj: lastEml.subject || 'Email' });
   });
-  attentionItems.sort();
-  const attnLines = attentionItems.length === 0 ? '  ✅ Nothing critical flagged' : attentionItems.join('\n');
+  awaitingResponse.sort((a,b) => a.emlAgo - b.emlAgo);
 
-  // ── 6. Rep load balance ───────────────────────────────────────────────────
-  const repStats = {};
-  // Always show all reps for context, but highlight selected owner if filtered
-  DEALS.forEach(d => {
-    if (!repStats[d[4]]) repStats[d[4]] = { count: 0, arr: 0 };
-    repStats[d[4]].count++;
-    repStats[d[4]].arr += d[2];
+  // ── Top alerts ────────────────────────────────────────────────────────────
+  const alerts = [];
+  pool.filter(d => !['608286678','608286679','2918051008'].includes(d[3])).forEach(d => {
+    const isOverdue = d[6] && d[6] < todayStr;
+    const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(d[0]) && !e.isInternal);
+    const meets  = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(d[0]));
+    const lastContactAgo = Math.min(
+      emails.length ? dago(emails.sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''))[0].timestamp) ?? 999 : 999,
+      meets.length  ? dago(meets.sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''))[0].timestamp) ?? 999 : 999
+    );
+    const score = (isOverdue ? 30 : 0) + (lastContactAgo > 21 ? 25 : lastContactAgo > 14 ? 15 : 0) + Math.min(d[2]/5000, 30);
+    if (score >= 30) alerts.push({ d, isOverdue, lastContactAgo, score });
   });
-  const repLoadTitle = selectedOwner !== 'all'
-    ? `👥 REP LOAD BALANCE — ${ownerName(selectedOwner).toUpperCase()} vs TEAM`
-    : '👥 REP LOAD BALANCE — ALL OPEN PIPELINE';
-  const repLines = Object.entries(repStats)
-    .sort((a, b) => b[1].arr - a[1].arr)
-    .map(([id, s]) => {
-      const star = (selectedOwner !== 'all' && id === selectedOwner) ? ' ◀ FILTERED' : '';
-      return `  ${oName(id).padEnd(18)} ${String(s.count).padStart(2)} deals   ${fmt(s.arr)} ARR${star}`;
-    })
-    .join('\n');
+  alerts.sort((a,b) => b.score - a.score);
+  const topAlerts = alerts.slice(0, 4);
 
-  const maxArr = Math.max(...Object.values(repStats).map(s => s.arr));
-  const totalArr = Object.values(repStats).reduce((s, r) => s + r.arr, 0);
-  const topRep = Object.entries(repStats).find(([, s]) => s.arr === maxArr);
-  const topShare = totalArr > 0 ? Math.round(topRep[1].arr / totalArr * 100) : 0;
-  const loadFlag = topShare >= 45 ? `\n  ⚠ ${oName(topRep[0])} is carrying ${topShare}% of pipeline ARR` : '';
+  // ── Lost this week ────────────────────────────────────────────────────────
+  let lostLW = LOST_DEALS.filter(d => dateInRange(d[3], 'last'));
+  if (selectedOwner !== 'all') lostLW = lostLW.filter(d => d[4] === selectedOwner);
+  const lostLWArr = lostLW.reduce((s,d)=>s+d[2],0);
 
-  // ── Assemble ──────────────────────────────────────────────────────────────
-  const briefText =
-`📊 WEEKLY PIPELINE BRIEF  ·  ${lw.label}
-Generated: ${new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' })}
-${sep()}
+  // ── Build HTML ────────────────────────────────────────────────────────────
+  const repLbl = selectedOwner !== 'all' ? ` · ${oShort(selectedOwner)}` : ' · All Reps';
+  const dateStr = NOW.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
 
-🏆 CLOSED WON — LAST WEEK
-${sep()}
-${wonLines}
+  // KPI helper
+  const kpi = (label, val, sub, color='var(--accent)') =>
+    `<div class="brief-kpi">
+      <div class="brief-kpi-label">${label}</div>
+      <div class="brief-kpi-val" style="color:${color}">${val}</div>
+      <div class="brief-kpi-sub">${sub}</div>
+    </div>`;
 
-➕ NEW DEALS CREATED — LAST WEEK
-${sep()}
-${newLines}
+  // Deal row helper
+  const dealRow = (name, arr, meta, badge='') =>
+    `<div class="brief-deal-row">
+      <div class="brief-deal-name">${name}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        ${badge}
+        <span class="brief-deal-meta">${meta}</span>
+        <span class="brief-deal-arr">${fmtK(arr)}</span>
+      </div>
+    </div>`;
 
-🔒 IN COMMERCIAL REVIEW
-${sep()}
-${crLines}
+  const wonBadge = `<span style="font-size:10px;background:rgba(63,185,80,.15);color:#3fb950;padding:1px 6px;border-radius:8px;font-weight:600">✅ WON</span>`;
+  const crBadge  = `<span style="font-size:10px;background:rgba(188,140,255,.15);color:#bc8cff;padding:1px 6px;border-radius:8px;font-weight:600">CR</span>`;
 
-💰 HIGH-VALUE OPEN DEALS ($50K+)
-${sep()}
-${hvLines}
+  const wonThisWeekHtml = wonTW.length
+    ? wonTW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge)).join('')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No wins this week yet</div>`;
 
-⚠️  NEEDS ATTENTION
-${sep()}
-${attnLines}
+  const wonLastWeekHtml = wonLW.length
+    ? wonLW.map(d => dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), wonBadge)).join('')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None</div>`;
 
-${repLoadTitle}
-${sep()}
-${repLines}${loadFlag}
+  const crHtml = crDeals.length
+    ? crDeals.slice(0,5).map(d => {
+        const overdue = d[6] && d[6] < todayStr;
+        const closeTag = d[6] ? `<span style="color:${overdue?'#f85149':'var(--muted)'}">${d[6]}${overdue?' ⚠':''}</span>` : '';
+        return dealRow(d[1].split(' - ')[0], d[2], oShort(d[4]), crBadge) +
+          (closeTag ? `<div style="font-size:10px;color:var(--muted);padding:0 0 4px 0">Close: ${closeTag} · ${d[7]?.split('\n')[0].slice(0,55) || 'no next step'}</div>` : '');
+      }).join('') + (crDeals.length > 5 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${crDeals.length-5} more in CR</div>` : '')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No deals in Commercial Review</div>`;
 
-${sep()}
-Pipeline: 3PL New Business  ·  Portal 26004468`;
+  const awaitHtml = awaitingResponse.length
+    ? awaitingResponse.slice(0,4).map(({d, emlAgo, subj}) =>
+        `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
+          <div style="flex:1;min-width:0">
+            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">✉️ "${subj.slice(0,50)}"</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            <span style="font-size:11px;color:#fbbf24">${emlAgo}d waiting</span>
+            <span class="brief-deal-meta">${oShort(d[4])}</span>
+            <span class="brief-deal-arr">${fmtK(d[2])}</span>
+          </div>
+        </div>`).join('')
+      + (awaitingResponse.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${awaitingResponse.length-4} more awaiting response</div>` : '')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No deals pending customer response</div>`;
+
+  const alertsHtml = topAlerts.length
+    ? topAlerts.map(({d, isOverdue, lastContactAgo}) => {
+        const stage = STAGE_SHORT2[d[3]] || d[3];
+        const reason = isOverdue
+          ? `Overdue close · ${lastContactAgo < 999 ? lastContactAgo+'d since contact' : 'no contact tracked'}`
+          : `${lastContactAgo < 999 ? lastContactAgo+'d silent' : 'no contact'} · ${stage}`;
+        return `<div class="brief-alert-row"><b>${d[1].split(' - ')[0]}</b> <span style="color:var(--accent)">${fmtK(d[2])}</span> · <span style="color:var(--muted)">${oShort(d[4])}</span> — <span style="color:#f97316">${reason}</span></div>`;
+      }).join('')
+    : `<div style="color:var(--muted);font-size:12px">No critical alerts 🟢</div>`;
+
+  const newTWHtml = newTW.length
+    ? newTW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`)).join('')
+      + (newTW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newTW.length-4} more new deals</div>` : '')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new deals this week yet</div>`;
+
+  // ── Deals with activity changes last week ─────────────────────────────────
+  const dealsChangedLW = pool.filter(d => {
+    if (!d[9]) return false; // no lastMod
+    if (['608286678','608286679'].includes(d[3])) return false;
+    return dateInRange(d[9], 'last'); // lastMod in last week
+  }).sort((a,b) => b[2] - a[2]);
+
+  // ── Qualify to Lost: not in won/lost/stalled, 21d+ no contact OR disinterest signals ──
+  const DISINTEREST_SIGNALS = /not interested|no budget|budget freeze|pausing|on hold|not a fit|pass|cancel|moving on|no longer|decided not|going with|chose another|deprioritiz|hold off|not moving forward|not proceed|not the right time/i;
+  const qualifyToLost = [];
+  pool.filter(d => !['608286677','608286678','608286679','2918051008'].includes(d[3])).forEach(d => {
+    const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(d[0]) && !e.isInternal)
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const meets  = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(d[0]))
+      .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+    const lastEmlAgo = emails[0] ? dago(emails[0].timestamp) : null;
+    const lastMtgAgo = meets[0]  ? dago(meets[0].timestamp)  : null;
+    const lastContactAgo = Math.min(lastEmlAgo ?? 999, lastMtgAgo ?? 999);
+
+    // Signal 1: 21+ days completely dark (no meetings and no emails)
+    const isDark21 = lastContactAgo > 21;
+
+    // Signal 2: last email subject or next step contains disinterest language
+    const lastSubj = emails[0]?.subject || '';
+    const hasDisinterest = DISINTEREST_SIGNALS.test(lastSubj) || DISINTEREST_SIGNALS.test(d[7] || '');
+
+    if (!isDark21 && !hasDisinterest) return;
+
+    const reason = hasDisinterest
+      ? `Disinterest signal: "${(lastSubj || d[7] || '').slice(0, 55)}"`
+      : `${lastContactAgo}d no contact — ghosted`;
+    qualifyToLost.push({ d, reason, lastContactAgo, hasDisinterest });
+  });
+  qualifyToLost.sort((a,b) => (b.hasDisinterest ? 1 : 0) - (a.hasDisinterest ? 1 : 0) || b.lastContactAgo - a.lastContactAgo);
+
+  const qualLostBadge = `<span style="font-size:10px;background:rgba(248,81,73,.15);color:#f85149;padding:1px 6px;border-radius:8px;font-weight:600">❌ QUALIFY OUT</span>`;
+  const qualToLostHtml = qualifyToLost.length
+    ? qualifyToLost.slice(0, 6).map(({d, reason}) =>
+        `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
+          <div style="flex:1;min-width:0">
+            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <div style="font-size:10px;color:#f85149;margin-top:1px">${reason}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            ${qualLostBadge}
+            <span class="brief-deal-meta">${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}</span>
+            <span class="brief-deal-arr" style="color:#f85149">${fmtK(d[2])}</span>
+          </div>
+        </div>`).join('')
+      + (qualifyToLost.length > 6 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${qualifyToLost.length-6} more candidates</div>` : '')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No qualify-to-lost candidates 🟢</div>`;
+
+  const html = `
+    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">${dateStr}${repLbl}</div>
+
+    <div class="brief-kpi-row">
+      ${kpi('Won This Week', fmtK(wonTWArr), `${wonTW.length} deal${wonTW.length!==1?'s':''}`, '#3fb950')}
+      ${kpi(`Won ${monthLabel}`, fmtK(wonMonthArr), `${wonMonth.length} deals`, '#3fb950')}
+      ${kpi('Won This Year', fmtK(wonQArr), `${wonQ.length} deals`, '#58a6ff')}
+      ${kpi('CR Pipeline', fmtK(crArr), `${crDeals.length} deals at stake`, '#bc8cff')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div class="brief-section">
+        <div class="brief-section-title" style="color:#3fb950">🏆 Won This Week</div>
+        ${wonThisWeekHtml}
+      </div>
+      <div class="brief-section">
+        <div class="brief-section-title" style="color:var(--muted)">Won Last Week</div>
+        ${wonLastWeekHtml}
+        ${lostLW.length ? `<div style="font-size:11px;color:#f85149;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.05)">❌ Lost: ${lostLW.map(d=>d[1].split(' - ')[0]).join(', ')} (${fmtK(lostLWArr)})</div>` : ''}
+      </div>
+    </div>
+
+    <div class="brief-section" style="margin-bottom:10px">
+      <div class="brief-section-title" style="color:#bc8cff">🔄 Commercial Review — ${crDeals.length} deals · ${fmtK(crArr)}</div>
+      ${crHtml}
+    </div>
+
+    <div class="brief-section" style="margin-bottom:10px">
+      <div class="brief-section-title" style="color:#fbbf24">⏳ Awaiting Customer Response</div>
+      ${awaitHtml}
+    </div>
+
+    <div class="brief-section" style="margin-bottom:10px">
+      <div class="brief-section-title" style="color:#58a6ff">📝 Deals Updated Last Week — ${dealsChangedLW.length} deals</div>
+      ${dealsChangedLW.length ? dealsChangedLW.slice(0,6).map(d => {
+        const stage = STAGE_SHORT2[d[3]] || d[3];
+        const ns = d[7] ? d[7].split('\n')[0].slice(0,55) : 'no next step';
+        return `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
+          <div style="flex:1;min-width:0">
+            <span class="brief-deal-name">${d[1].split(' - ')[0]}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${stage} · ${ns}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            <span class="brief-deal-meta">${oShort(d[4])}</span>
+            <span class="brief-deal-arr">${fmtK(d[2])}</span>
+          </div>
+        </div>`;
+      }).join('') + (dealsChangedLW.length > 6 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${dealsChangedLW.length-6} more updated</div>` : '')
+      : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No deal updates tracked last week</div>`}
+    </div>
+
+    <div class="brief-section" style="margin-bottom:10px">
+      <div class="brief-section-title" style="color:#f85149">☠️ Qualify to Lost — ${qualifyToLost.length} candidates · <span style="font-size:10px;font-weight:400;color:var(--muted)">21d+ dark or disinterest signals</span></div>
+      ${qualToLostHtml}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="brief-section">
+        <div class="brief-section-title" style="color:#f97316">🚨 Top Alerts</div>
+        ${alertsHtml}
+      </div>
+      <div class="brief-section">
+        <div class="brief-section-title" style="color:#58a6ff">➕ New Pipeline This Week</div>
+        ${newTWHtml}
+      </div>
+    </div>
+  `;
 
   const out = document.getElementById('brief-output');
   const ph  = document.getElementById('brief-placeholder');
   const ts  = document.getElementById('brief-ts');
   const cp  = document.getElementById('brief-copy-btn');
 
-  out.textContent = briefText;
+  out.innerHTML = html;
   out.classList.add('visible');
   ph.style.display = 'none';
   cp.style.display = '';
-  const _bd = new Date(), _bm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  ts.textContent = 'Generated ' + _bm[_bd.getMonth()] + ' ' + _bd.getDate() + ', ' + _bd.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+  const _bd = new Date();
+  ts.textContent = 'Generated ' + _bd.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
 
-  btn.disabled = false; btn.textContent = '⚡ Generate Brief';
+  btn.disabled = false; btn.textContent = '⚡ Refresh Deal Desk';
 }
 
 function copyBrief() {
-  const text = document.getElementById('brief-output').textContent;
+  const el  = document.getElementById('brief-output');
+  const text = el ? el.innerText || el.textContent : '';
   const btn  = document.getElementById('brief-copy-btn');
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✅ Copied!';
@@ -10790,20 +11207,55 @@ function runDealDesk(btn) {
   let pool = DEALS.slice();
   if (_ddOwner !== 'all') pool = pool.filter(d => d[4] === _ddOwner);
 
+  // ── Per-deal engagement: real contact activity from MEETINGS + EMAILS ─────
+  const dealEngagement = dealId => {
+    const meets  = (typeof MEETINGS !== 'undefined' ? MEETINGS : []).filter(m => m.dealIds && m.dealIds.includes(dealId));
+    const emails = (typeof EMAILS   !== 'undefined' ? EMAILS   : []).filter(e => e.dealIds && e.dealIds.includes(dealId) && !e.isInternal);
+    let lastMeetMs = null, lastEmailMs = null, lastMeetTitle = null, lastEmailSubj = null;
+    meets.forEach(m => {
+      if (m.timestamp) {
+        const ms = new Date(m.timestamp).getTime();
+        if (!lastMeetMs || ms > lastMeetMs) { lastMeetMs = ms; lastMeetTitle = m.title || 'Meeting'; }
+      }
+    });
+    emails.forEach(e => {
+      if (e.timestamp) {
+        const ms = new Date(e.timestamp).getTime();
+        if (!lastEmailMs || ms > lastEmailMs) { lastEmailMs = ms; lastEmailSubj = e.subject || 'Email'; }
+      }
+    });
+    const lastContactMs = Math.max(lastMeetMs || 0, lastEmailMs || 0) || null;
+    return {
+      meetCount: meets.length, emailCount: emails.length,
+      lastMeetMs, lastEmailMs, lastContactMs, lastMeetTitle, lastEmailSubj,
+      daysSinceMeet:    lastMeetMs    ? Math.floor((NOW_MS - lastMeetMs)    / DAY_MS) : null,
+      daysSinceEmail:   lastEmailMs   ? Math.floor((NOW_MS - lastEmailMs)   / DAY_MS) : null,
+      daysSinceContact: lastContactMs ? Math.floor((NOW_MS - lastContactMs) / DAY_MS) : null,
+    };
+  };
+
   // ── Annotate each deal ───────────────────────────────────────────────────
   const ann = pool.map(d => {
     const lastMs       = dateMs(d[9]);
     const closeMs      = dateMs(d[6]);
     const staleDays    = lastMs  ? Math.max(0, Math.floor((NOW_MS - lastMs)  / DAY_MS)) : null;
     const daysToClose  = closeMs ? Math.round((closeMs - NOW_MS) / DAY_MS)              : null;
-    const movedRecent  = staleDays !== null && staleDays <= 7;
-    const isStalled    = staleDays === null  || staleDays >= 7;
+    // Real engagement from MEETINGS + EMAILS (more reliable than lastMod alone)
+    const eng = dealEngagement(d[0]);
+    // Use real contact activity when available; fall back to HubSpot lastMod
+    const effectiveStaleDays = eng.daysSinceContact !== null ? eng.daysSinceContact : staleDays;
+    const movedRecent  = effectiveStaleDays !== null && effectiveStaleDays <= 7;
+    const isStalled    = effectiveStaleDays === null  || effectiveStaleDays >= 14;
     const closingSoon  = daysToClose !== null && daysToClose >= 0 && daysToClose <= 30;
     const isOverdue    = daysToClose !== null && daysToClose < 0;
     const isHot        = movedRecent && closingSoon;
     const needsDecide  = (daysToClose !== null && daysToClose >= 0 && daysToClose <= 14) ||
                          (closingSoon && isStalled);
-    return { d, staleDays, daysToClose, movedRecent, isStalled, closingSoon, isOverdue, isHot, needsDecide };
+    // Engagement health tier based on real contact recency
+    const engHealth = eng.daysSinceContact === null ? 'dark'
+      : eng.daysSinceContact > 30 ? 'cold'
+      : eng.daysSinceContact > 14 ? 'warm' : 'active';
+    return { d, staleDays, effectiveStaleDays, daysToClose, movedRecent, isStalled, closingSoon, isOverdue, isHot, needsDecide, eng, engHealth };
   });
 
   const hotDeals     = ann.filter(a => a.isHot);
@@ -10864,176 +11316,114 @@ function runDealDesk(btn) {
     '740160705':'Presentation','608286676':'SA','4988070119':'Trial','608286677':'CR'
   };
 
-  // ── 1. What's hot (closing ≤30d, sorted by close date) ───────────────────
-  const hotListHtml = closingDeals.length === 0
-    ? '<li style="color:var(--muted)">No deals closing within 30 days right now.</li>'
-    : closingDeals.slice(0, 9).map(a => {
-        const stageLabel = STAGE_SHORT[a.d[3]] || STAGES[a.d[3]] || a.d[3];
-        const dis = daysInStage(a.d);
-        const inStage = dis !== null ? `${dis}d in stage` : `${a.staleDays ?? '?'}d since update`;
-        const stageColor = dis !== null && dis > 21 ? '#f85149' : dis !== null && dis > 14 ? '#f97316' : 'var(--muted)';
-        const stageSpan = `<span style="color:${stageColor};font-size:11px"> · ${stageLabel} · ${inStage}</span>`;
-        const ownerTag = `<span style="color:var(--muted);font-size:11px"> · ${ownerName(a.d[4])}</span>`;
-        return `<li><b>${dealLink(a.d[0], shortName(a.d[1]))} (${fmtK(a.d[2])})</b>${ownerTag}${stageSpan} — ${ctxLine(a.d, a.daysToClose)}${urgencyTag(a.daysToClose)}</li>`;
-      }).join('') + (closingDeals.length > 9 ? `<li style="color:var(--muted)">+${closingDeals.length-9} more closing within 30d</li>` : '');
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const contactLine = eng => {
+    if (eng.daysSinceMeet !== null && (eng.daysSinceEmail === null || eng.daysSinceMeet <= eng.daysSinceEmail))
+      return `📅 Met ${eng.daysSinceMeet}d ago`;
+    if (eng.daysSinceEmail !== null)
+      return `✉️ Emailed ${eng.daysSinceEmail}d ago`;
+    return `⚠️ No tracked contact`;
+  };
+  // ── Triage classification ─────────────────────────────────────────────────
+  const suggestAction = a => {
+    const { isOverdue, daysToClose, eng, engHealth } = a;
+    const stage = a.d[3], dis = daysInStage(a.d), ns = a.d[7] || '';
+    if (isOverdue) return `Decide: push close date or close-lost today`;
+    if (stage === '608286677' && dis !== null && dis > 21) return `Contract stalled ${dis}d — get signature or renegotiate terms`;
+    if (eng.daysSinceMeet !== null && eng.daysSinceMeet > 21 && engHealth !== 'dark') return `No meeting in ${eng.daysSinceMeet}d — book a call this week`;
+    if (engHealth === 'dark') return `No tracked contact — assign rep and initiate outreach now`;
+    if (daysToClose !== null && daysToClose <= 3 && engHealth === 'active') return `Closing in ${daysToClose}d — confirm terms, push to sign`;
+    if (daysToClose !== null && daysToClose <= 7) return `Closing in ${daysToClose}d — reach out today or update close date`;
+    if (engHealth === 'cold') return `Cold ${eng.daysSinceContact}d — re-engage or qualify out`;
+    if (stage === '608286676' && dis !== null && dis > 21) return `In SA ${dis}d — needs decision meeting or trial start`;
+    if (stage === '4988070119' && dis !== null && dis > 21) return `Trial ${dis}d — get feedback, push to CR or close-lost`;
+    if (!ns) return `No next step defined — rep must update today`;
+    return ns.length > 72 ? ns.substring(0, 69) + '…' : ns;
+  };
 
-  // ── 2. What's not moving (active stage, 7+ days no activity) ────────────
-  const practStalledHtml = practStalledDeals.length === 0
-    ? '<li style="color:var(--muted)">All active deals have had recent activity. 🟢</li>'
-    : practStalledDeals.slice(0, 10).map(a => {
-        const stageLabel = STAGE_SHORT[a.d[3]] || STAGES[a.d[3]] || a.d[3];
-        const dis = daysInStage(a.d);
-        const disLabel = dis !== null ? `${dis}d in stage` : `${a.staleDays ?? '?'}d since update`;
-        const disColor = dis !== null && dis > 30 ? '#f85149' : dis !== null && dis > 14 ? '#f97316' : '#fbbf24';
-        const stageSpan = `<span style="color:${disColor};font-size:11px"> · ${stageLabel} · ${disLabel}</span>`;
-        const ctx = a.d[7] ? (a.d[7].length > 80 ? a.d[7].substring(0,77)+'…' : a.d[7]) : 'No next step on file.';
-        const ownerTag = `<span style="color:var(--muted);font-size:11px"> · ${ownerName(a.d[4])}</span>`;
-        return `<li><b>${dealLink(a.d[0], shortName(a.d[1]))} (${fmtK(a.d[2])})</b>${ownerTag}${stageSpan} — ${ctx}</li>`;
-      }).join('') + (practStalledDeals.length > 10 ? `<li style="color:var(--muted)">+${practStalledDeals.length-10} more not moving</li>` : '');
+  // 🔴 ACT NOW: overdue OR closing ≤7d with stale contact OR dark + high value OR dis>30
+  const actNow = [...ann].filter(a =>
+    a.isOverdue ||
+    (a.daysToClose !== null && a.daysToClose <= 7 && a.engHealth !== 'active') ||
+    (a.engHealth === 'dark' && a.d[2] >= 30000) ||
+    (daysInStage(a.d) !== null && daysInStage(a.d) > 30 && a.d[3] !== '2918051008' && a.engHealth !== 'active')
+  ).sort((a,b) => {
+    const pa = a.isOverdue ? 0 : a.daysToClose !== null && a.daysToClose <= 7 ? 1 : 2;
+    const pb = b.isOverdue ? 0 : b.daysToClose !== null && b.daysToClose <= 7 ? 1 : 2;
+    return pa !== pb ? pa - pb : (b.d[2]||0) - (a.d[2]||0);
+  }).slice(0, 6);
 
-  // ── 3. Stalled risk paragraph ─────────────────────────────────────────────
-  let stalledParaHtml = '';
-  if (stalledDeals.length === 0) {
-    stalledParaHtml = 'No deals are currently stalled — all open deals have recent activity. 🟢';
-  } else {
-    const top3 = stalledDeals.slice(0, 3).map(a => {
-      const days = a.staleDays != null ? `${a.staleDays}d silent` : 'unknown';
-      const ctx  = a.d[7] ? ` — ${a.d[7].substring(0,48)}${a.d[7].length>48?'…':''}` : ' — no next step';
-      return `<b>${dealLink(a.d[0], shortName(a.d[1]))}</b> (${fmtK(a.d[2])}, ${ownerName(a.d[4])}${ctx}, ${days})`;
-    });
-    const tail = stalledDeals.length > 3 ? `, plus ${stalledDeals.length - 3} others` : '';
-    stalledParaHtml = `You have <b>${fmtK(stalledARR)}+</b> sitting in stalled/no-activity deals. The biggest are ${top3.join(', ')}${tail}. These need a CEO-to-CEO touch or a compelling reason to move now.`;
-  }
+  // 🟡 WATCH: closing ≤30d OR cold+high-value OR warm — not already in actNow
+  const actNowIds = new Set(actNow.map(a => a.d[0]));
+  const watchList = [...ann].filter(a =>
+    !actNowIds.has(a.d[0]) && (
+      (a.closingSoon) ||
+      (a.engHealth === 'cold' && a.d[2] >= 24000) ||
+      (a.engHealth === 'warm' && a.closingSoon)
+    )
+  ).sort((a,b) => (a.daysToClose??999) - (b.daysToClose??999)).slice(0, 7);
 
-  // ── 3. Pipeline health paragraph ─────────────────────────────────────────
-  const nbmS  = stageTotals['2918051007'];
-  const crS   = stageTotals['608286677'];
-  const saS   = stageTotals['608286676'];
-  const discS = stageTotals['608286675'];
-  const stalS = stageTotals['2918051008'];
-  const healthParts = [];
-  if (crS)   healthParts.push(`Strong volume in Commercial Review (<b>${fmtK(crS.arr)}</b> across <b>${crS.count}</b> deals)`);
-  if (saS)   healthParts.push(`<b>${saS.count}</b> deals in Solution Alignment (<b>${fmtK(saS.arr)}</b>)`);
-  if (discS) healthParts.push(`<b>${discS.count}</b> in Discovery (<b>${fmtK(discS.arr)}</b>)`);
-  if (nbmS)  healthParts.push(`your NBM stage has <b>${fmtK(nbmS.arr)}</b> that needs converting — <b>${nbmS.count}</b> deals haven't had a discovery call yet`);
-  if (stalS) healthParts.push(`<b>${stalS.count}</b> Stalled deals (<b>${fmtK(stalS.arr)}</b>) need review`);
-  const healthParaHtml = healthParts.length ? healthParts.join('. ') + '.' : `${pool.length} open deals totalling ${fmtK(totalARR)}.`;
+  // 🟢 HEALTHY summary: active + not in above
+  const watchIds = new Set(watchList.map(a => a.d[0]));
+  const healthy = ann.filter(a => !actNowIds.has(a.d[0]) && !watchIds.has(a.d[0]) && a.engHealth === 'active');
+  const nextClose = [...ann].filter(a => a.closingSoon && !a.isOverdue).sort((a,b)=>(a.daysToClose??999)-(b.daysToClose??999))[0];
 
-  // ── 4. Last week recap ───────────────────────────────────────────────────
+  // ── Month recap ───────────────────────────────────────────────────────────
   const monthLabel = new Date(MONTH_START).toLocaleString('en-US',{month:'long',timeZone:'UTC'});
-  const wonLWHtml  = wonLW.length  === 0 ? `No closed-won deals in ${monthLabel}.`
-    : `<b style="color:#3fb950">✅ Closed Won (${wonLW.length} · ${fmtK(wonARRLW)}):</b> ${wonLW.map(d=>`<b>${shortName(d[1])}</b> (${fmtK(d[2])})`).join(', ')}.`;
-  const lostLWHtml = lostLW.length === 0 ? `No closed-lost deals in ${monthLabel}.`
-    : `<b style="color:#f85149">❌ Closed Lost (${lostLW.length} · ${fmtK(lostARRLW)}):</b> ${lostLW.map(d=>`<b>${shortName(d[1])}</b> (${fmtK(d[2])})`).join(', ')}.`;
-  const newLWHtml  = newLW.length  === 0 ? `No new deals entered the pipeline in ${monthLabel}.`
-    : `<b style="color:#58a6ff">➕ New pipeline (${newLW.length}):</b> ${newLW.map(d=>`<b>${shortName(d[1])}</b> (${fmtK(d[2])})`).join(', ')}.`;
 
-  // ── Stage table ───────────────────────────────────────────────────────────
-  const stageTableRows = STAGE_ORDER
-    .filter(sid => stageTotals[sid])
-    .map(sid => {
-      const s   = stageTotals[sid];
-      const pct = totalARR > 0 ? Math.round(s.arr / totalARR * 100) : 0;
-      const col = sid==='608286677' ? '#bc8cff' : sid==='2918051008' ? 'var(--muted)' : sid==='4988070119' ? '#3fb950' : 'var(--accent)';
-      return `<tr class="dd-tr">
-        <td class="dd-td">${STAGES[sid]||sid}</td>
-        <td class="dd-td" style="color:var(--muted);text-align:right">${s.count}</td>
-        <td class="dd-td" style="color:${col};font-weight:600;text-align:right">${fmtK(s.arr)}</td>
-        <td class="dd-td" style="color:var(--muted);text-align:right">${pct}%</td>
-        <td class="dd-td"><div class="dd-bar-wrap"><div class="dd-bar" style="background:${col};width:${pct}%"></div></div></td>
-      </tr>`;
-    }).join('');
+  // ── Deal card renderer ────────────────────────────────────────────────────
+  const mkCard = (a, tier) => {
+    const stageLabel = STAGE_SHORT[a.d[3]] || STAGES[a.d[3]] || a.d[3];
+    const dis = daysInStage(a.d);
+    const borderColor = tier === 'red' ? '#f85149' : tier === 'yellow' ? '#f97316' : '#3fb950';
+    const contactStr = contactLine(a.eng);
+    const contactColor = a.eng.daysSinceContact === null ? '#f85149' : a.eng.daysSinceContact > 14 ? '#f97316' : '#3fb950';
+    const closeStr = a.daysToClose !== null
+      ? (a.isOverdue ? `<span style="color:#f85149;font-weight:700">${Math.abs(a.daysToClose)}d overdue</span>`
+        : a.daysToClose === 0 ? `<span style="color:#f85149;font-weight:700">Closes today</span>`
+        : a.daysToClose <= 7 ? `<span style="color:#f97316;font-weight:600">Closes in ${a.daysToClose}d</span>`
+        : `Closes ${a.d[6]}`) : '';
+    const action = suggestAction(a);
+    return `<div style="background:var(--bg);border:1px solid var(--border);border-left:3px solid ${borderColor};border-radius:8px;padding:10px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px">
+        <div style="font-weight:700;font-size:13px">${dealLink(a.d[0], shortName(a.d[1]))}</div>
+        <div style="font-weight:700;color:var(--accent);white-space:nowrap">${fmtK(a.d[2])}</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${ownerName(a.d[4])} · ${stageLabel}${dis !== null ? ` · ${dis}d in stage` : ''} ${closeStr ? '· ' + closeStr : ''}</div>
+      <div style="font-size:11px;color:${contactColor};margin-bottom:5px">${contactStr}</div>
+      <div style="font-size:11px;color:var(--text);background:rgba(255,255,255,.04);border-radius:5px;padding:5px 8px;border-left:2px solid ${borderColor}">→ ${action}</div>
+    </div>`;
+  };
 
-  // ── Full deal table ───────────────────────────────────────────────────────
-  const dealTableRows = [...ann]
-    .sort((a, b) => (b.d[2]||0) - (a.d[2]||0))
-    .map(({d, staleDays, daysToClose, isHot, movedRecent, isStalled, closingSoon, isOverdue}) => {
-      const flags = [
-        isHot                   ? '<span class="dd-flag dd-flag-hot">🔥 Hot</span>'         : '',
-        !isHot && movedRecent   ? '<span class="dd-flag dd-flag-green">🟢 Active</span>'    : '',
-        isStalled && !isOverdue ? '<span class="dd-flag dd-flag-stalled">🚨 Stalled</span>' : '',
-        !isHot && closingSoon   ? '<span class="dd-flag dd-flag-closing">⚡ Closing</span>'  : '',
-        isOverdue               ? '<span class="dd-flag dd-flag-overdue">💀 Overdue</span>' : '',
-      ].filter(Boolean).join('');
-      const stageCol = d[3]==='608286677' ? '#bc8cff' : d[3]==='2918051008' ? 'var(--muted)' : 'var(--accent)';
-      const actColor = staleDays===null ? 'var(--muted)' : staleDays<=3 ? '#3fb950' : staleDays<=7 ? '#f59e0b' : '#f85149';
-      const actLabel = staleDays===null ? '—' : staleDays===0 ? 'Today' : staleDays+'d ago';
-      const closeLabel = daysToClose===null ? '—'
-        : daysToClose<0  ? `<span style="color:#f85149">${d[6]} (${Math.abs(daysToClose)}d ago)</span>`
-        : daysToClose===0 ? `<span style="color:#f85149">Today!</span>`
-        : daysToClose<=7  ? `<span style="color:#f97316">${d[6]}</span>`
-        : d[6];
-      return `<tr class="dd-tr">
-        <td class="dd-td" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500">${shortName(d[1])}</td>
-        <td class="dd-td" style="color:var(--muted);white-space:nowrap">${oName(d[4])}</td>
-        <td class="dd-td" style="color:var(--accent);font-weight:600;text-align:right;white-space:nowrap">${fmtK(d[2])}</td>
-        <td class="dd-td"><span style="color:${stageCol};font-size:11px">${STAGES[d[3]]||d[3]}</span></td>
-        <td class="dd-td" style="font-size:11px;white-space:nowrap">${closeLabel}</td>
-        <td class="dd-td" style="color:${actColor};font-size:11px;white-space:nowrap">${actLabel}</td>
-        <td class="dd-td" style="color:var(--muted);font-size:11px;max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d[7]||'—'}</td>
-        <td class="dd-td" style="white-space:nowrap">${flags||'<span style="color:var(--muted);font-size:11px">—</span>'}</td>
-      </tr>`;
-    }).join('');
+  // ── Pipeline health snapshot (1-liner per stage) ──────────────────────────
+  const STAGE_ORDER2 = ['608286677','4988070119','608286676','740160705','608286675','2918051007','2918051008'];
+  const healthSnap = STAGE_ORDER2.filter(sid => stageTotals[sid]).map(sid => {
+    const s = stageTotals[sid]; const col = sid==='608286677'?'#bc8cff':sid==='2918051008'?'var(--muted)':sid==='4988070119'?'#3fb950':'var(--accent)';
+    return `<span style="color:${col};font-weight:600">${STAGE_SHORT[sid]||STAGES[sid]}</span> <span style="color:var(--muted)">${s.count} · ${fmtK(s.arr)}</span>`;
+  }).join('  ·  ');
 
-  // ── Deals table rows (stage + days in stage) ────────────────────────────
-  const dealStageTableRows = [...ann]
-    .sort((a,b) => {
-      const da = daysInStage(a.d) ?? 0, db = daysInStage(b.d) ?? 0;
-      return db - da; // most days in stage first (needs most attention)
-    })
-    .map(({d, staleDays, daysToClose, isStalled, isOverdue}) => {
-      const dis = daysInStage(d);
-      const disLabel = dis !== null ? dis + 'd' : (staleDays !== null ? staleDays + 'd*' : '—');
-      const disColor = dis === null ? 'var(--muted)' : dis > 30 ? '#f85149' : dis > 21 ? '#f97316' : dis > 14 ? '#fbbf24' : '#3fb950';
-      const stageLabel = STAGE_SHORT[d[3]] || STAGES[d[3]] || d[3];
-      const stageColor = d[3]==='608286677' ? '#bc8cff' : d[3]==='2918051008' ? 'var(--muted)' : 'var(--accent)';
-      const ns = d[7] ? (d[7].length > 60 ? d[7].substring(0,57)+'…' : d[7]) : '—';
-      const flagIcon = isOverdue ? '💀' : isStalled && dis !== null && dis > 21 ? '🚨' : dis !== null && dis > 14 ? '⚠️' : '';
-      return `<tr class="dd-tr">
-        <td class="dd-td" style="font-weight:500;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${flagIcon ? flagIcon+' ' : ''}${shortName(d[1])}</td>
-        <td class="dd-td" style="color:var(--muted);white-space:nowrap;font-size:11px">${oName(d[4])}</td>
-        <td class="dd-td"><span style="color:${stageColor};font-size:11px">${stageLabel}</span></td>
-        <td class="dd-td" style="text-align:right;font-weight:700;color:${disColor}">${disLabel}</td>
-        <td class="dd-td" style="text-align:right;color:var(--accent);font-weight:600;white-space:nowrap">${fmtK(d[2])}</td>
-        <td class="dd-td" style="color:var(--muted);font-size:11px;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ns}</td>
-      </tr>`;
-    }).join('');
-
-  // ── CEO plain text (for copy) ─────────────────────────────────────────────
-  const SEP   = '─'.repeat(60);
+  // ── CEO copy text ─────────────────────────────────────────────────────────
+  const SEP   = '─'.repeat(55);
   const flLbl = _ddOwner !== 'all' ? ` · ${oName(_ddOwner)}` : ' · All Reps';
   const strip = h => h.replace(/<[^>]+>/g, '');
   const ceoText =
-`🧠 PIPELINE DEALDESK  ·  ${new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
-Pipeline: 3PL New Business · Portal 26004468${flLbl}
+`🧠 PIPELINE DEALDESK  ·  ${new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}${flLbl}
 ${SEP}
 
-Here's your deal desk war room — fully built from your live HubSpot data. Here's the CEO-level read:
+🔴 ACT NOW (${actNow.length} deals · ${fmtK(actNow.reduce((s,a)=>s+a.d[2],0))} at risk)
+${actNow.map(a=>`  • ${shortName(a.d[1])} (${fmtK(a.d[2])}) · ${ownerName(a.d[4])} · ${STAGE_SHORT[a.d[3]]||''} · ${contactLine(a.eng)}\n    → ${suggestAction(a)}`).join('\n') || '  None'}
 
-${SEP}
-What's hot right now (closing soon, by stage):
-${closingDeals.slice(0,9).map(a=>`  • [${STAGE_SHORT[a.d[3]]||STAGES[a.d[3]]||a.d[3]}] ${shortName(a.d[1])} (${fmtK(a.d[2])}) — ${a.d[7]||'no next step'}${a.daysToClose<=2?' ← Closest to done.':a.daysToClose<=7?' ← Push to close.':''}`).join('\n') || '  No deals closing within 30 days.'}
+🟡 WATCH (${watchList.length} deals · ${fmtK(watchList.reduce((s,a)=>s+a.d[2],0))})
+${watchList.map(a=>`  • ${shortName(a.d[1])} (${fmtK(a.d[2])}) · ${ownerName(a.d[4])} · ${STAGE_SHORT[a.d[3]]||''} · ${contactLine(a.eng)}${a.daysToClose!=null&&!a.isOverdue?' · closes '+a.d[6]:''}`).join('\n') || '  None'}
 
-${SEP}
-What's not moving (7+ days no activity — active stage):
-${practStalledDeals.slice(0,10).map(a=>`  • [${STAGE_SHORT[a.d[3]]||STAGES[a.d[3]]||a.d[3]}] ${shortName(a.d[1])} (${fmtK(a.d[2])}) — ${daysInStage(a.d) ?? a.staleDays ?? '?'}d · ${a.d[7]||'no next step'}`).join('\n') || '  All active deals have had recent activity.'}
+🟢 HEALTHY: ${healthy.length} active deals · ${fmtK(healthy.reduce((s,a)=>s+a.d[2],0))}
+${nextClose ? `Next close: ${shortName(nextClose.d[1])} (${fmtK(nextClose.d[2])}) in ${nextClose.daysToClose}d` : ''}
 
-${SEP}
-Big stalled risk:
-${strip(stalledParaHtml)}
+PIPELINE STAGE SNAPSHOT: ${STAGE_ORDER2.filter(s=>stageTotals[s]).map(s=>`${STAGE_SHORT[s]} ${stageTotals[s].count} · ${fmtK(stageTotals[s].arr)}`).join(' | ')}
 
-${SEP}
-Pipeline health:
-${strip(healthParaHtml)}
-
-${SEP}
-${monthLabel.toUpperCase()} RECAP:
-${strip(wonLWHtml)}
-${strip(lostLWHtml)}
-${strip(newLWHtml)}
-
-${SEP}
-Generated by Octup Pipeline DealDesk · Think like a SaaS founder managing toward $1M ARR`;
+${monthLabel.toUpperCase()} RECAP
+✅ Won: ${wonLW.length} deals · ${fmtK(wonARRLW)}  ❌ Lost: ${lostLW.length} deals · ${fmtK(lostARRLW)}  ➕ New: ${newLW.length} deals
+${SEP}`;
 
   document.getElementById('dealdesk-output')._ceoText = ceoText;
 
@@ -11042,39 +11432,51 @@ Generated by Octup Pipeline DealDesk · Think like a SaaS founder managing towar
   document.getElementById('dealdesk-output').innerHTML = `
     <div class="dd-ts">
       <span>⏱ ${ts}${flLbl}</span>
-      <span>·</span><span><b>${pool.length}</b> open deals</span>
-      <span>·</span><span><b>${fmtK(totalARR)}</b> total ARR</span>
-      <span>·</span><span><b>${movedDeals.length}</b> moved this week</span>
-      <span>·</span><span style="color:${stalledDeals.length>5?'#f85149':'var(--muted)'}"><b>${stalledDeals.length}</b> stalled</span>
-      <span>·</span><span style="color:${overdueDeals.length?'#f85149':'var(--muted)'}"><b>${overdueDeals.length}</b> overdue</span>
+      <span>·</span><span><b>${pool.length}</b> deals</span>
+      <span>·</span><span><b>${fmtK(totalARR)}</b> ARR</span>
+      <span>·</span><span style="color:#f85149"><b>${actNow.length}</b> act now</span>
+      <span>·</span><span style="color:#f97316"><b>${watchList.length}</b> watch</span>
+      <span>·</span><span style="color:#3fb950"><b>${healthy.length}</b> healthy</span>
     </div>
 
-    <div class="dd-brief-wrap">
-      <p class="dd-brief-intro">Here's your deal desk war room — fully built from your live HubSpot data. Here's the CEO-level read:</p>
-      <hr class="dd-brief-divider">
+    <div style="padding:0 4px">
 
-      <div class="dd-brief-label">What's hot right now (closing soon, by stage):</div>
-      <ul class="dd-brief-list">${hotListHtml}</ul>
+      <!-- ACT NOW -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
+        <div style="font-size:12px;font-weight:700;color:#f85149;text-transform:uppercase;letter-spacing:.5px">🔴 Act Now · ${actNow.length} deals</div>
+        <div style="font-size:11px;color:var(--muted)">${fmtK(actNow.reduce((s,a)=>s+a.d[2],0))} at risk</div>
+      </div>
+      ${actNow.length ? actNow.map(a=>mkCard(a,'red')).join('') : '<div style="color:var(--muted);font-size:12px;padding:8px 0">No critical deals right now 🟢</div>'}
 
-      <hr class="dd-brief-divider">
-      <div class="dd-brief-label">What's not moving (7+ days, no activity):</div>
-      <ul class="dd-brief-list">${practStalledHtml}</ul>
+      <!-- WATCH -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px">
+        <div style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.5px">🟡 Watch · ${watchList.length} deals</div>
+        <div style="font-size:11px;color:var(--muted)">${fmtK(watchList.reduce((s,a)=>s+a.d[2],0))} pipeline</div>
+      </div>
+      ${watchList.length ? watchList.map(a=>mkCard(a,'yellow')).join('') : '<div style="color:var(--muted);font-size:12px;padding:8px 0">No deals in watch zone</div>'}
 
-      <hr class="dd-brief-divider">
-      <div class="dd-brief-label">Big stalled risk (formal Stalled stage):</div>
-      <p class="dd-brief-p">${stalledParaHtml}</p>
+      <!-- HEALTHY -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 6px">
+        <div style="font-size:12px;font-weight:700;color:#3fb950;text-transform:uppercase;letter-spacing:.5px">🟢 Healthy · ${healthy.length} deals</div>
+        <div style="font-size:11px;color:var(--muted)">${fmtK(healthy.reduce((s,a)=>s+a.d[2],0))} moving</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);padding:6px 0 4px">
+        ${nextClose ? `Next close: <b style="color:var(--text)">${shortName(nextClose.d[1])}</b> · ${fmtK(nextClose.d[2])} · in <b>${nextClose.daysToClose}d</b>` : 'No imminent closes'}
+        ${healthy.length > 0 ? ` · Active reps: ${[...new Set(healthy.map(a=>ownerName(a.d[4])))].join(', ')}` : ''}
+      </div>
 
-      <hr class="dd-brief-divider">
-      <div class="dd-brief-label">Pipeline health:</div>
-      <p class="dd-brief-p">${healthParaHtml}</p>
+      <!-- STAGE SNAPSHOT -->
+      <div style="margin:16px 0 6px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:11px;line-height:1.8">${healthSnap}</div>
 
-      <hr class="dd-brief-divider">
-      <div class="dd-brief-label" id="dd-recap-label">This month's recap:</div>
-      <p class="dd-brief-p" style="margin-bottom:6px">${wonLWHtml}</p>
-      <p class="dd-brief-p" style="margin-bottom:6px">${lostLWHtml}</p>
-      <p class="dd-brief-p">${newLWHtml}</p>
+      <!-- MONTH RECAP -->
+      <div style="margin:12px 0 4px;font-size:12px;color:var(--muted)">
+        <b style="color:var(--text)">${monthLabel} recap</b> &nbsp;·&nbsp;
+        <span style="color:#3fb950">✅ Won ${wonLW.length} · ${fmtK(wonARRLW)}</span> &nbsp;·&nbsp;
+        <span style="color:#f85149">❌ Lost ${lostLW.length} · ${fmtK(lostARRLW)}</span> &nbsp;·&nbsp;
+        <span style="color:#58a6ff">➕ New ${newLW.length} · ${fmtK(newLW.reduce((s,d)=>s+(d[2]||0),0))}</span>
+      </div>
+
     </div>
-
   `;
 
   document.getElementById('dealdesk-placeholder').style.display = 'none';
@@ -11107,26 +11509,44 @@ function render() {
 
 // ─── SECTION PANEL OVERLAY ────────────────────────────────────────────────────
 const _panelTitles = {
-  'section-highvalue': '🎯 Closing Soon — SA deals · next 14 days',
+  'section-highvalue': '🎯 High Prob Deals — High Intent to Close',
   'section-dealdesk':  '🧠 Pipeline DealDesk',
-  'section-brief':     '📋 Weekly Pipeline Brief',
+  'section-brief':     '📋 Weekly Deal Desk',
 };
+let _panelMovedSection = null;
 
 function openSectionPanel(sectionId) {
   const section = document.getElementById(sectionId);
   if (!section) return;
-  // Clone section innerHTML into the panel
-  const content = document.getElementById('section-panel-content');
-  content.innerHTML = section.innerHTML;
+  const panelContent = document.getElementById('section-panel-content');
   const titleEl = document.getElementById('panel-title');
   if (titleEl) titleEl.textContent = _panelTitles[sectionId] || '';
+
+  if (sectionId === 'section-highvalue') {
+    // Static rendered content — safe to clone
+    panelContent.innerHTML = section.innerHTML;
+  } else {
+    // Interactive (DealDesk / Brief) — DOM-move to preserve event listeners
+    _panelMovedSection = { id: sectionId, parent: section.parentNode, next: section.nextSibling };
+    section.style.display = '';
+    panelContent.appendChild(section);
+  }
+
   document.getElementById('section-panel-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // Auto-run deal desk on open
+  if (sectionId === 'section-brief') setTimeout(generateBrief, 50);
 }
 
 function closeSectionPanel() {
-  document.getElementById('section-panel-overlay').classList.remove('open');
+  if (_panelMovedSection) {
+    const { id, parent, next } = _panelMovedSection;
+    const sec = document.getElementById(id);
+    if (sec && parent) { sec.style.display = 'none'; parent.insertBefore(sec, next); }
+    _panelMovedSection = null;
+  }
   document.getElementById('section-panel-content').innerHTML = '';
+  document.getElementById('section-panel-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
