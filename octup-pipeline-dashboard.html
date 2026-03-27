@@ -92,8 +92,24 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .tag-trial{background:rgba(188,140,255,.15);color:var(--purple)}
 .tag-won{background:rgba(63,185,80,.2);color:var(--green)}
 .tag-lost{background:rgba(248,81,73,.15);color:var(--red)}
-/* HV table: all stage tags orange */
-#section-highvalue .tag-inp,#section-highvalue .tag-cr{background:rgba(245,158,11,.15)!important;color:var(--nbm)!important}
+/* HP table: keep natural stage tag colors */
+
+/* ACTION BUTTONS ROW */
+.action-btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0}
+.action-btn-card{flex:1;min-width:180px;display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .15s;user-select:none}
+.action-btn-card:hover{border-color:var(--accent);background:rgba(88,166,255,.06);transform:translateY(-1px)}
+.action-btn-card:active{transform:translateY(0)}
+.action-btn-icon{font-size:20px;flex-shrink:0}
+.action-btn-label{font-weight:700;font-size:14px;color:var(--text);flex:1}
+.action-btn-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;background:rgba(88,166,255,.15);color:var(--accent);white-space:nowrap}
+.action-btn-badge-muted{background:rgba(255,255,255,.07);color:var(--muted)}
+/* SECTION PANEL OVERLAY */
+#section-panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:5000;display:flex;align-items:flex-start;justify-content:center;opacity:0;pointer-events:none;transition:opacity .18s;overflow-y:auto;padding:32px 16px}
+#section-panel-overlay.open{opacity:1;pointer-events:all}
+#section-panel-inner{background:var(--bg);border:1px solid var(--border);border-radius:16px;width:min(1280px,96vw);min-height:200px;padding-bottom:24px}
+.panel-close-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10;border-radius:16px 16px 0 0}
+.panel-close-btn{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer}
+.panel-close-btn:hover{color:var(--text);border-color:var(--text)}
 
 /* PIPELINE MATRIX */
 .matrix-wrapper{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -215,11 +231,12 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .monthly-table td.mm-clickable:hover{background:rgba(88,166,255,.1)!important}
 .monthly-table td.cur-month-col.mm-clickable:hover{background:rgba(88,166,255,.15)!important}
 
-/* HIGH-VALUE SECTION */
+/* HIGH-PROBABILITY SECTION */
 .hv-stage-header td{font-weight:700;font-size:11px;padding:8px 16px!important;letter-spacing:.5px;text-transform:uppercase}
 .hv-stage-nbm td{background:rgba(245,158,11,.12)!important;color:var(--nbm)!important;border-top:2px solid rgba(245,158,11,.3)!important}
 .hv-stage-inp td{background:rgba(88,166,255,.1)!important;color:var(--inp)!important;border-top:2px solid rgba(88,166,255,.25)!important}
-.hv-stage-sa td{background:rgba(188,140,255,.1)!important;color:var(--purple)!important;border-top:2px solid rgba(188,140,255,.25)!important}
+.hv-stage-sa td{background:rgba(88,166,255,.1)!important;color:var(--inp)!important;border-top:2px solid rgba(88,166,255,.25)!important}
+.hv-stage-trial td{background:rgba(188,140,255,.1)!important;color:var(--purple)!important;border-top:2px solid rgba(188,140,255,.25)!important}
 .hv-stage-cr td{background:rgba(63,185,80,.1)!important;color:var(--cr)!important;border-top:2px solid rgba(63,185,80,.25)!important}
 .hv-stats-stat{cursor:pointer}
 .hv-stats-stat:hover .matrix-stat-value{opacity:.8}
@@ -631,8 +648,38 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     </div>
   </section>
 
+  <!-- QUICK ACTIONS: Closing Soon + DealDesk + Brief -->
+  <section style="padding:0 0 4px">
+    <div class="action-btn-row">
+      <div class="action-btn-card" onclick="openSectionPanel('section-highvalue')">
+        <span class="action-btn-icon">🎯</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">Closing Soon</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">SA deals · next 2 weeks</div>
+        </div>
+        <span class="action-btn-badge" id="hp-action-badge">—</span>
+      </div>
+      <div class="action-btn-card" onclick="openSectionPanel('section-dealdesk')">
+        <span class="action-btn-icon">🧠</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">DealDesk</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">RevOps intelligence</div>
+        </div>
+        <span class="action-btn-badge action-btn-badge-muted">On-Demand</span>
+      </div>
+      <div class="action-btn-card" onclick="openSectionPanel('section-brief')">
+        <span class="action-btn-icon">📋</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">Pipeline Brief</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">Auto-generated summary</div>
+        </div>
+        <span class="action-btn-badge action-btn-badge-muted">Weekly</span>
+      </div>
+    </div>
+  </section>
+
   <!-- G: PIPELINE DEALDESK -->
-  <section id="section-dealdesk">
+  <section id="section-dealdesk" style="display:none">
     <div class="section-header">
       <div class="section-title">🧠 Pipeline DealDesk</div>
       <div class="section-badge" data-tip="AI-powered RevOps intelligence: flags hot deals, stalled pipeline, closing deadlines, and CEO-level decisions from live data.">RevOps Intelligence · On-Demand</div>
@@ -659,7 +706,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 
 
   <!-- F: WEEKLY PIPELINE BRIEF -->
-  <section id="section-brief">
+  <section id="section-brief" style="display:none">
     <div class="section-header">
       <div class="section-title">📋 Weekly Pipeline Brief</div>
       <div class="section-badge" data-tip="Auto-generated summary from live pipeline data. Covers last week's wins, new deals, commercial review, high-value deals, and attention items.">Auto-generated · Live Data</div>
@@ -676,11 +723,11 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   </section>
 
 
-  <!-- D: HIGH-VALUE DEALS >$40K -->
-  <section id="section-highvalue">
+  <!-- D: CLOSING SOON (SA + next 14 days) -->
+  <section id="section-highvalue" style="display:none">
     <div class="section-header">
-      <div class="section-title">💎 High-Value Deals</div>
-      <div class="section-badge" data-tip="All open deals with ARR above $40K. Grouped by stage, sorted by ARR within each stage. Respects owner filter. No date filter.">ARR &gt; $40K · All Open · No Date Filter</div>
+      <div class="section-title">🎯 Closing Soon</div>
+      <div class="section-badge" data-tip="SA deals with expected close date in the next 14 days. These are your most urgent opportunities.">SA Stage · Closing in Next 14 Days</div>
       <div class="section-subtitle" id="hv-subtitle"></div>
     </div>
     <div class="matrix-wrapper">
@@ -691,12 +738,12 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
             <th>Deal Name</th>
             <th>ARR</th>
             <th>Stage</th>
+            <th>Prob</th>
             <th>Owner</th>
             <th>Close Date</th>
             <th>Next Step</th>
             <th>Last Activity</th>
             <th>Lifetime</th>
-            <th>Source</th>
           </tr>
         </thead>
         <tbody id="hv-body"></tbody>
@@ -705,6 +752,18 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   </section>
 
 </main>
+
+<!-- SECTION PANEL OVERLAY -->
+<div id="section-panel-overlay" onclick="if(event.target===this)closeSectionPanel()">
+  <div id="section-panel-inner">
+    <div class="panel-close-bar">
+      <span id="panel-title" style="font-weight:700;font-size:14px;color:var(--text)"></span>
+      <button class="panel-close-btn" onclick="closeSectionPanel()">✕ Close</button>
+    </div>
+    <div id="section-panel-content"></div>
+  </div>
+</div>
+
 
 <div class="footer">Octup RevOps Dashboard v3.5 · Portal 26004468 · 3PL Partner Pipeline · <span id="footer-date-str"></span></div>
 <!-- TOOLTIP -->
@@ -9472,7 +9531,7 @@ function renderWoWChart() {
     // Mark the previous (last complete) month as "last" for summary
     if (weeks.length >= 2) weeks[weeks.length - 2].isLast = true;
   } else {
-    // Last 9 complete weeks (Mon–Sat)
+    // Last 9 complete weeks (Mon–Sat) + current in-progress week
     let sat = new Date();
     sat.setUTCHours(12,0,0,0);
     while (sat.getUTCDay() !== 6) sat = new Date(sat - DAY_MS);
@@ -9483,6 +9542,13 @@ function renderWoWChart() {
       const isLast = i === 0;
       const label  = start.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
       weeks.push({ label, start: toYMD(start), end: toYMD(end), isLast });
+    }
+    // Add current in-progress week (this Mon → today)
+    const todayD = new Date(); todayD.setUTCHours(12,0,0,0);
+    if (toYMD(todayD) > toYMD(sat)) {
+      const cwStart = new Date(sat.getTime() + 2 * DAY_MS); // Monday after last Sat
+      const cwLabel = cwStart.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
+      weeks.push({ label: cwLabel, start: toYMD(cwStart), end: toYMD(todayD), isLast: false, isCurrent: true });
     }
   }
 
@@ -9521,7 +9587,8 @@ function renderWoWChart() {
     const periodDeals = ownerDeals.filter(d => d[5] && d[5] >= periodStart && d[5] <= periodEnd);
     const totalNew  = data.reduce((s,w) => s + w.total, 0);
     const totalARRp = periodDeals.reduce((s,d) => s + d[2], 0);
-    const periodLabel = _wowMode === 'alltime' ? 'All Time' : 'Last 9 Weeks';
+    const hasThisWeek = weeks.some(w => w.isCurrent && !w.isCurrent === false);
+    const periodLabel = _wowMode === 'alltime' ? 'All Time' : (weeks[weeks.length-1].isCurrent ? 'Last 9 Weeks + This Week' : 'Last 9 Weeks');
     statsEl.innerHTML =
       `<div class="wow-stat-item"><div class="wow-stat-val">${totalNew}</div><div class="wow-stat-lbl">New Deals</div></div>` +
       `<div class="wow-stat-div"></div>` +
@@ -9544,8 +9611,11 @@ function renderWoWChart() {
       return `<div class="wow-bar-seg" style="height:${h.toFixed(1)}%;background:${g.color}" data-wow-stage="${g.label}" data-wow-count="${c}" data-wow-arr="${arr}" data-wow-color="${g.color}" data-wow-week="${w.label}"></div>`;
     }).join('');
 
+    const arrTop = w.totalArr >= 1000000 ? '$'+(w.totalArr/1000000).toFixed(1).replace(/\.0$/,'')+'M' : w.totalArr >= 1000 ? '$'+Math.round(w.totalArr/1000)+'K' : '';
+    const thisWeekBadge = w.isCurrent ? `<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.3px;text-transform:uppercase;line-height:1;margin-bottom:1px">This Week</div>` : '';
     return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}">
-      <div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
+      ${thisWeekBadge}<div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
+      ${w.total && arrTop ? `<div style="font-size:9px;font-weight:600;color:var(--muted);letter-spacing:-.2px;line-height:1;margin-bottom:1px">${arrTop}</div>` : '<div style="min-height:11px"></div>'}
       <div class="wow-bar-stack" style="height:${BAR_H}px" data-wow-week="${w.label}" data-wow-total="${w.total}">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
       </div>
@@ -10099,14 +10169,35 @@ function closeModal() {
 function handleOverlayClick(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSectionPanel(); } });
+
+// ─── LAST CONTACT ACTIVITY HELPER ────────────────────────────────────────────
+// Returns the most recent external meeting or email for a deal (by dealId)
+function lastContactActivity(dealId) {
+  // Meetings associated with this deal
+  const meetings = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(dealId));
+  // Emails associated with this deal (exclude internal-only)
+  const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(dealId) && !e.isInternal);
+
+  let best = null; // { ts, type, label }
+  meetings.forEach(m => {
+    const ts = m.timestamp ? new Date(m.timestamp).getTime() : 0;
+    if (!best || ts > best.ts) best = { ts, type: 'meeting', label: m.title || 'Meeting' };
+  });
+  emails.forEach(e => {
+    const ts = e.timestamp ? new Date(e.timestamp).getTime() : 0;
+    if (!best || ts > best.ts) best = { ts, type: 'email', label: e.subject || 'Email' };
+  });
+  if (!best) return null;
+  return { ...best, daysAgo: Math.floor((Date.now() - best.ts) / 86400000) };
+}
 
 function dealsTable(deals, extraCols) {
   if (deals.length === 0) return '<div class="no-data">No deals to display</div>';
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
   return `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Activity AI</th><th>Next Action AI</th><th>Source</th>'}
+    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Contact</th><th>Last Activity AI</th><th>Next Action AI</th><th>Source</th>'}
   </tr></thead><tbody>${sorted.map(d => {
     const [id, name, amount, stageId, ownerId, createDate, closeDate, , , lastMod, dealSource] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
@@ -10124,10 +10215,18 @@ function dealsTable(deals, extraCols) {
     const dis = getDaysInStage(d);
     const disLabel = dis !== null ? dis + 'd' : '—';
     const disColor = dis === null ? 'var(--muted)' : dis > 30 ? '#f85149' : dis > 21 ? '#f97316' : dis > 14 ? '#fbbf24' : '#3fb950';
+    // Last contact activity
+    const lca = lastContactActivity(id);
+    const lcaIcon = lca ? (lca.type === 'meeting' ? '📅' : '✉️') : '';
+    const lcaColor = lca ? (lca.daysAgo > 30 ? '#f85149' : lca.daysAgo > 14 ? '#f97316' : lca.daysAgo > 7 ? '#fbbf24' : '#3fb950') : 'var(--muted)';
+    const lcaLabel = lca
+      ? `<div style="line-height:1.4"><span style="color:${lcaColor};font-weight:700;white-space:nowrap">${lcaIcon} ${lca.daysAgo}d ago</span><div style="font-size:10px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lca.label.replace(/"/g,"'")}">${lca.label}</div></div>`
+      : '<span style="color:var(--muted)">—</span>';
     const extraData = extraCols ? '' : `
       <td style="text-align:right;font-weight:600;color:${lcColor};white-space:nowrap">${lcLabel}</td>
       <td style="text-align:right;font-weight:700;color:${disColor};white-space:nowrap">${disLabel}</td>
       <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
+      <td style="min-width:120px">${lcaLabel}</td>
       <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
       <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>
       <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>`;
@@ -10308,85 +10407,78 @@ function openSDRDealsModal(title, deals) {
   openModal(title, summary, content);
 }
 
-// ─── RENDER HIGH-VALUE DEALS >$40K ───────────────────────────────────────────
+// ─── RENDER CLOSING SOON (SA deals closing in next 14 days) ──────────────────
 function renderHighValue() {
-  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
-  const hv = deals.filter(d => d[2] > 40000);
+  const today = new Date(); today.setUTCHours(0,0,0,0);
+  const in7   = new Date(today.getTime() +  7 * 86400000);
+  const in14  = new Date(today.getTime() + 14 * 86400000);
+  const todayStr = today.toISOString().slice(0,10);
+  const in7Str   = in7.toISOString().slice(0,10);
+  const in14Str  = in14.toISOString().slice(0,10);
 
-  const hvNBM  = hv.filter(d => d[3]==='2918051007');
-  const hvDisc = hv.filter(d => ['608286675','740160705'].includes(d[3]));   // Discovery (incl. legacy Demo)
-  const hvSA   = hv.filter(d => d[3]==='608286676');                          // Solution Alignment
-  const hvCR   = hv.filter(d => d[3]==='608286677');                          // Commercial Review
-  const hvTotal = hv.length;
-  const hvARR   = hv.reduce((s,d)=>s+d[2],0);
+  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  // SA stage only, close date within next 14 days
+  const hp = deals.filter(d => d[3]==='608286676' && d[6] && d[6] >= todayStr && d[6] <= in14Str);
+
+  const hpWeek = hp.filter(d => d[6] <= in7Str);   // closing in next 7 days
+  const hp2Wk  = hp.filter(d => d[6] > in7Str);    // closing in 8–14 days
+  const hpARR  = hp.reduce((s,d)=>s+d[2],0);
+
+  // Update action card badge
+  const badge = document.getElementById('hp-action-badge');
+  if (badge) badge.textContent = hp.length ? hp.length + ' deal' + (hp.length!==1?'s':'') : 'None';
 
   document.getElementById('hv-subtitle').textContent =
-    hvTotal + ' deal' + (hvTotal!==1?'s':'') + ' · ' + fmt$(hvARR) + ' total ARR';
+    hp.length + ' deal' + (hp.length!==1?'s':'') + ' · ' + fmt$(hpARR) + ' total ARR · SA stage · next 14 days';
 
-  const mkStat = (label, subset, bucket, tipText) => {
+  const mkStat = (label, subset, bucket, tipText, color) => {
     const count = subset.length;
     const arr = subset.reduce((s,d)=>s+d[2],0);
-    const colorVar = bucket==='NBM'?'var(--nbm)':bucket==='Commercial Review'?'var(--cr)':bucket==='All'?'var(--accent)':'var(--inp)';
     const idsJson = JSON.stringify(subset.map(d=>d[0]));
     return `<div class="matrix-stat hv-stats-stat" data-tip="${tipText}"
               data-bucket="${bucket}" data-ids='${idsJson}'
               onclick="openHVBucketModal(this.dataset.bucket,JSON.parse(this.dataset.ids))">
       <div class="matrix-stat-label">${label}</div>
-      <div class="matrix-stat-value" style="color:${colorVar}">${count}</div>
+      <div class="matrix-stat-value" style="color:${color}">${count}</div>
       <div class="matrix-stat-sub">${fmt$(arr)} ARR</div>
     </div>`;
   };
 
   document.getElementById('hv-stats').innerHTML =
-    mkStat('NBM',          hvNBM,  'NBM',              'High-value NBM deals (>$40K). Click to see list.') +
-    mkStat('Discovery',    hvDisc, 'In-Progress',      'High-value Discovery stage deals (>$40K). Click to see list.') +
-    mkStat('Sol. Align.',  hvSA,   'Solution Alignment','High-value Solution Alignment deals (>$40K). Click to see list.') +
-    mkStat('Comm. Review', hvCR,   'Commercial Review', 'High-value Commercial Review deals (>$40K). Click to see list.') +
-    mkStat('Total',        hv,     'All',               'All open deals over $40K ARR. Click to see full list.');
+    mkStat('This Week',   hpWeek, 'This Week',  'SA deals with close date in the next 7 days. Click to see list.', '#f85149') +
+    mkStat('Next Week',   hp2Wk,  'Next Week',  'SA deals with close date 8–14 days out. Click to see list.',     '#f97316') +
+    mkStat('Total',       hp,     'All',         'All SA deals closing in the next 14 days.',                      'var(--accent)');
 
-  // Sort by pipeline stage order then ARR desc
-  const stageSort = {'2918051007':0,'608286675':1,'740160705':1,'608286676':2,'608286677':3};
-  const sorted = [...hv].sort((a,b) => {
-    const sa = stageSort[a[3]]??99, sb = stageSort[b[3]]??99;
-    return sa !== sb ? sa - sb : b[2] - a[2];
-  });
+  const sorted = [...hp].sort((a,b) => (a[6]||'').localeCompare(b[6]||'')); // sort by close date asc
 
   const tbody = document.getElementById('hv-body');
   if (sorted.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" class="no-data">No deals over $40K matching current filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" class="no-data">No SA deals closing in the next 14 days</td></tr>`;
     return;
   }
 
-  // Each stage shown under its own header (no merging)
-  const hvGroupName = id => stageName(id);
-  let currentStageName = null, rows = '';
+  let rows = '';
   sorted.forEach(d => {
-    const [id, name, amount, stageId, ownerId, created, closeDate, nextStep,, lastMod, dealSource] = d;
-    const sName = hvGroupName(stageId);
-    if (sName !== currentStageName) {
-      currentStageName = sName;
-      const grp = sorted.filter(x => hvGroupName(x[3]) === sName);
-      const grpARR = grp.reduce((s,x)=>s+x[2],0);
-      const trCls = sName === 'NBM' ? 'hv-stage-nbm' : sName === 'Commercial Review' ? 'hv-stage-cr' : sName === 'Solution Alignment' ? 'hv-stage-sa' : 'hv-stage-inp';
-      rows += `<tr class="hv-stage-header ${trCls}">
-        <td colspan="9">
-          ${sName} &nbsp;·&nbsp; ${grp.length} deal${grp.length!==1?'s':''} &nbsp;·&nbsp; ${fmt$(grpARR)}
-        </td></tr>`;
-    }
+    const [id, name, amount, stageId, ownerId, created, closeDate, nextStep,, lastMod] = d;
     const days = daysSince(lastMod);
     const lifetime = daysSince(created);
     const stale = days !== null && days >= 21;
     const ns = (nextStep||'').replace(/"/g,"'");
+    const daysToClose = closeDate ? Math.ceil((new Date(closeDate).getTime() - today.getTime()) / 86400000) : null;
+    const urgencyColor = daysToClose !== null && daysToClose <= 7 ? '#f85149' : '#f97316';
+    const urgencyBadge = daysToClose !== null
+      ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(248,81,73,.15);color:${urgencyColor}">closes in ${daysToClose}d</span>`
+      : '';
     rows += `<tr class="${stale?'stale-row':''}">
       <td class="deal-link" style="font-weight:600">${dealLink(id,name)}</td>
       <td style="color:var(--green);font-weight:700;white-space:nowrap">${fmt$(amount)}</td>
       <td>${stageTag(stageId)}</td>
+      <td style="text-align:center">${urgencyBadge}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
-      <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
+      <td style="white-space:nowrap;font-weight:700;color:${urgencyColor}">${fmtDate(closeDate)}</td>
       <td><div class="next-step-text" title="${ns}">${nextStep?nextStep.split('\n')[0]:'<span style="color:var(--red)">—</span>'}</div></td>
       <td class="${stale?'stale-days':'ok-days'}" style="white-space:nowrap">${days!==null?days+'d':'—'}${stale?' 🔴':''}</td>
       <td style="white-space:nowrap;color:var(--muted)">${lifetime!==null?lifetime+'d':'—'}</td>
-      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>
     </tr>`;
   });
   tbody.innerHTML = rows;
@@ -10395,12 +10487,12 @@ function renderHighValue() {
 function openHVBucketModal(bucket, ids) {
   const dealSet = DEALS.filter(d => ids.includes(d[0])).sort((a,b)=>b[2]-a[2]);
   const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
-  const label = bucket === 'All' ? 'All High-Value (>$40K)' : bucket;
+  const label = bucket === 'All' ? 'All High-Probability (SA + Trial + CR)' : bucket;
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${dealSet.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Filter</span><span class="modal-summary-val" style="font-size:13px">${label}</span></div>`;
-  openModal('💎 High-Value — ' + label, summary, dealsTable(dealSet));
+  openModal('🎯 High Probability — ' + label, summary, dealsTable(dealSet));
 }
 
 // ─── NEW PIPELINE MODAL ───────────────────────────────────────────────────────
@@ -11011,6 +11103,31 @@ function render() {
   renderPulse();
   renderInventory();
   renderHighValue();
+}
+
+// ─── SECTION PANEL OVERLAY ────────────────────────────────────────────────────
+const _panelTitles = {
+  'section-highvalue': '🎯 Closing Soon — SA deals · next 14 days',
+  'section-dealdesk':  '🧠 Pipeline DealDesk',
+  'section-brief':     '📋 Weekly Pipeline Brief',
+};
+
+function openSectionPanel(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  // Clone section innerHTML into the panel
+  const content = document.getElementById('section-panel-content');
+  content.innerHTML = section.innerHTML;
+  const titleEl = document.getElementById('panel-title');
+  if (titleEl) titleEl.textContent = _panelTitles[sectionId] || '';
+  document.getElementById('section-panel-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSectionPanel() {
+  document.getElementById('section-panel-overlay').classList.remove('open');
+  document.getElementById('section-panel-content').innerHTML = '';
+  document.body.style.overflow = '';
 }
 
 // ─── SYNC TIMESTAMP ───────────────────────────────────────────────────────────
