@@ -10915,6 +10915,11 @@ function generateBrief() {
   if (selectedOwner !== 'all') newTW = newTW.filter(d => d[4] === selectedOwner);
   const newTWArr = newTW.reduce((s,d)=>s+d[2],0);
 
+  // New pipeline last week
+  let newLW = DEALS.filter(d => dateInRange(d[5], 'last'));
+  if (selectedOwner !== 'all') newLW = newLW.filter(d => d[4] === selectedOwner);
+  const newLWArr = newLW.reduce((s,d)=>s+d[2],0);
+
   // CR deals
   let crDeals = pool.filter(d => d[3] === '608286677').sort((a,b)=>b[2]-a[2]);
   const crArr = crDeals.reduce((s,d)=>s+d[2],0);
@@ -11033,6 +11038,11 @@ function generateBrief() {
       + (newTW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newTW.length-4} more new deals</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new deals this week yet</div>`;
 
+  const newLWHtml = newLW.length
+    ? newLW.slice(0,4).map(d => dealRow(d[1].split(' - ')[0], d[2], `${oShort(d[4])} · ${STAGE_SHORT2[d[3]]||d[3]}`)).join('')
+      + (newLW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newLW.length-4} more new deals</div>` : '')
+    : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new pipeline last week</div>`;
+
   // ── Deals with activity changes last week ─────────────────────────────────
   const dealsChangedLW = pool.filter(d => {
     if (!d[9]) return false; // no lastMod
@@ -11092,6 +11102,7 @@ function generateBrief() {
       ${kpi('Won This Week', fmtK(wonTWArr), `${wonTW.length} deal${wonTW.length!==1?'s':''}`, '#3fb950')}
       ${kpi(`Won ${monthLabel}`, fmtK(wonMonthArr), `${wonMonth.length} deals`, '#3fb950')}
       ${kpi('Won This Year', fmtK(wonQArr), `${wonQ.length} deals`, '#58a6ff')}
+      ${kpi('New Pipeline LW', fmtK(newLWArr), `${newLW.length} deals created`, '#f97316')}
       ${kpi('CR Pipeline', fmtK(crArr), `${crDeals.length} deals at stake`, '#bc8cff')}
     </div>
 
@@ -11141,13 +11152,17 @@ function generateBrief() {
       ${qualToLostHtml}
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
       <div class="brief-section">
         <div class="brief-section-title" style="color:#f97316">🚨 Top Alerts</div>
         ${alertsHtml}
       </div>
       <div class="brief-section">
-        <div class="brief-section-title" style="color:#58a6ff">➕ New Pipeline This Week</div>
+        <div class="brief-section-title" style="color:#f97316">📥 New Pipeline Last Week — ${fmtK(newLWArr)}</div>
+        ${newLWHtml}
+      </div>
+      <div class="brief-section">
+        <div class="brief-section-title" style="color:#58a6ff">➕ New Pipeline This Week — ${fmtK(newTWArr)}</div>
         ${newTWHtml}
       </div>
     </div>
