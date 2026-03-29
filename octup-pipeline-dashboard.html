@@ -9565,7 +9565,7 @@ function renderInventory() {
     const trial = od.filter(d => d[3]==='4988070119');
     const cr    = od.filter(d => d[3]==='608286677');
     const arr = od.reduce((s,d)=>s+d[2],0);
-    const mtgs = MEETINGS.filter(m => m[4] === oid && dateInRange(m[2], selectedWeek) && !m[5]).length;
+    const mtgs = MEETINGS.filter(m => m.ownerId === oid && dateInRange(m.timestamp, selectedWeek) && m.outcome !== 'CANCELLED').length;
     totNBM+=nbm.length; totINP+=inp.length; totTRIAL+=trial.length; totCR+=cr.length;
     totAll+=od.length; totArrAll+=arr; totMtgs+=mtgs;
     totNBMArr+=nbm.reduce((s,d)=>s+d[2],0);
