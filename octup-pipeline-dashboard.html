@@ -249,6 +249,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 /* MATRIX CELL 2-LINE */
 .mc-count{display:block;font-weight:700;line-height:1.2}
 .mc-arr{display:block;font-size:10px;font-weight:500;opacity:.75;line-height:1.3}
+.mc-mrr{display:block;font-size:9px;font-weight:400;color:var(--muted);opacity:.7;line-height:1.2}
 .matrix-stat-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .matrix-stat{cursor:pointer}
 .matrix-stat:hover .matrix-stat-value{opacity:.8}
@@ -9102,6 +9103,7 @@ function fmt$(n) {
   if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
   return '$' + n.toLocaleString();
 }
+function fmtMRR(arr) { return fmt$(Math.round(arr / 12)); }
 function fmtDate(d) {
   if (!d) return '—';
   const dt = new Date(d + (d.length === 10 ? 'T12:00:00Z' : ''));
@@ -9315,21 +9317,21 @@ function renderPulse() {
   if (selectedOwner !== 'all') wonDeals = wonDeals.filter(d => d[4] === selectedOwner);
   const wonARR = wonDeals.reduce((s,d)=>s+d[2],0);
   document.getElementById('val-won').textContent = wonARR > 0 ? fmt$(wonARR) : '$0';
-  document.getElementById('sub-won').textContent = wonDeals.length + ' deal' + (wonDeals.length !== 1 ? 's' : '') + ' closed won';
+  document.getElementById('sub-won').textContent = wonDeals.length + ' deal' + (wonDeals.length !== 1 ? 's' : '') + ' closed · ' + fmtMRR(wonARR) + '/mo';
 
   // Deals Lost
   let lostDeals = LOST_DEALS.filter(d => dateInRange(d[3], selectedWeek));
   if (selectedOwner !== 'all') lostDeals = lostDeals.filter(d => d[4] === selectedOwner);
   const lostARR = lostDeals.reduce((s,d)=>s+d[2],0);
   document.getElementById('val-lost-count').textContent = lostDeals.length;
-  document.getElementById('sub-lost').textContent = fmt$(lostARR) + ' ARR lost';
+  document.getElementById('sub-lost').textContent = fmt$(lostARR) + ' ARR · ' + fmtMRR(lostARR) + '/mo';
 
   // New Pipeline (deals created this week)
   let newPipeDeals = DEALS.filter(d => dateInRange(d[5], selectedWeek));
   if (selectedOwner !== 'all') newPipeDeals = newPipeDeals.filter(d => d[4] === selectedOwner);
   const newPipeARR = newPipeDeals.reduce((s,d)=>s+d[2],0);
   document.getElementById('val-new-pipeline').textContent = newPipeDeals.length;
-  document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' total ARR';
+  document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' ARR · ' + fmtMRR(newPipeARR) + '/mo';
 
   // ACV (Avg Contract Value of won deals in period; fallback to all-time)
   const acvBase = wonDeals.length ? wonDeals : WON_DEALS.filter(d => selectedOwner === 'all' || d[4] === selectedOwner);
@@ -9531,7 +9533,7 @@ function renderInventory() {
 
   const totalARR = deals.reduce((s,d)=>s+d[2],0);
   document.getElementById('stat-total-deals').textContent = deals.length;
-  document.getElementById('stat-total-arr-sub').textContent = fmt$(totalARR) + ' ARR';
+  document.getElementById('stat-total-arr-sub').textContent = fmt$(totalARR) + ' ARR · ' + fmtMRR(totalARR) + '/mo';
 
   const nbmDeals   = deals.filter(d=>d[3]==='2918051007');
   const inpDeals   = deals.filter(d=>['608286675','740160705','608286676'].includes(d[3]));
@@ -9543,13 +9545,13 @@ function renderInventory() {
   const crARR    = crDeals.reduce((s,d)=>s+d[2],0);
 
   document.getElementById('stat-nbm').textContent = nbmDeals.length;
-  document.getElementById('stat-nbm-sub').textContent = fmt$(nbmARR) + ' ARR';
+  document.getElementById('stat-nbm-sub').textContent = fmt$(nbmARR) + ' ARR · ' + fmtMRR(nbmARR) + '/mo';
   document.getElementById('stat-inp').textContent = inpDeals.length;
-  document.getElementById('stat-inp-sub').textContent = fmt$(inpARR) + ' ARR';
+  document.getElementById('stat-inp-sub').textContent = fmt$(inpARR) + ' ARR · ' + fmtMRR(inpARR) + '/mo';
   document.getElementById('stat-trial').textContent = trialDeals.length;
-  document.getElementById('stat-trial-sub').textContent = fmt$(trialARR) + ' ARR';
+  document.getElementById('stat-trial-sub').textContent = fmt$(trialARR) + ' ARR · ' + fmtMRR(trialARR) + '/mo';
   document.getElementById('stat-cr').textContent  = crDeals.length;
-  document.getElementById('stat-cr-sub').textContent = fmt$(crARR) + ' ARR';
+  document.getElementById('stat-cr-sub').textContent = fmt$(crARR) + ' ARR · ' + fmtMRR(crARR) + '/mo';
 
   const ownerList = selectedOwner === 'all' ? owners : [selectedOwner];
   let rows = '';
@@ -9583,6 +9585,7 @@ function renderInventory() {
                onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
                  <span class="mc-count">${subset.length}</span>
                  <span class="mc-arr">${fmt$(subARR)}</span>
+                 <span class="mc-mrr">${fmtMRR(subARR)}/mo</span>
                </span>`;
     };
 
@@ -9597,10 +9600,11 @@ function renderInventory() {
         onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
         <span class="mc-count">${od.length}</span>
         <span class="mc-arr">${fmt$(arr)}</span>
+        <span class="mc-mrr">${fmtMRR(arr)}/mo</span>
       </span></td>
       <td style="font-weight:700;color:var(--accent);cursor:pointer"
         data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
-        onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">${fmt$(arr)}</td>
+        onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">${fmt$(arr)}<div style="font-size:9px;font-weight:400;color:var(--muted)">${fmtMRR(arr)}/mo</div></td>
       <td style="font-weight:700;color:var(--blue);text-align:center">${mtgs > 0 ? mtgs : '<span style="color:var(--muted)">—</span>'}</td>
     </tr>`;
   });
@@ -9609,21 +9613,21 @@ function renderInventory() {
     rows += `<tr class="totals-row">
       <td class="owner-col" style="color:var(--muted)">TOTAL</td>
       <td>
-        <span class="matrix-cell nbm" onclick="openInventoryStatModal('nbm')"><span class="mc-count">${totNBM}</span><span class="mc-arr">${fmt$(totNBMArr)}</span></span>
+        <span class="matrix-cell nbm" onclick="openInventoryStatModal('nbm')"><span class="mc-count">${totNBM}</span><span class="mc-arr">${fmt$(totNBMArr)}</span><span class="mc-mrr">${fmtMRR(totNBMArr)}/mo</span></span>
       </td>
       <td>
-        <span class="matrix-cell inp" onclick="openInventoryStatModal('inp')"><span class="mc-count">${totINP}</span><span class="mc-arr">${fmt$(totINPArr)}</span></span>
+        <span class="matrix-cell inp" onclick="openInventoryStatModal('inp')"><span class="mc-count">${totINP}</span><span class="mc-arr">${fmt$(totINPArr)}</span><span class="mc-mrr">${fmtMRR(totINPArr)}/mo</span></span>
       </td>
       <td>
-        <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span></span>
+        <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span><span class="mc-mrr">${fmtMRR(totTRIALArr)}/mo</span></span>
       </td>
       <td>
-        <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span></span>
+        <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span><span class="mc-mrr">${fmtMRR(totCRArr)}/mo</span></span>
       </td>
       <td>
-        <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span></span>
+        <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span><span class="mc-mrr">${fmtMRR(totArrAll)}/mo</span></span>
       </td>
-      <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}</td>
+      <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}<div style="font-size:9px;font-weight:400;color:var(--muted)">${fmtMRR(totArrAll)}/mo</div></td>
       <td style="font-weight:700;color:var(--blue);text-align:center">${totMtgs > 0 ? totMtgs : '<span style="color:var(--muted)">—</span>'}</td>
     </tr>`;
   }
@@ -9689,6 +9693,7 @@ function renderMonthlyBreakdown() {
           <span class="mm-pipe-arr">${fmt$(pipeArr)}</span>
           <span class="mm-pipe-cnt">${mDeals.length} deal${mDeals.length!==1?'s':''}</span>
         </div>
+        <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(pipeArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
         <div class="mm-acv-row">ACV <span>${acv}</span></div>
         ${cvrPct !== null ? `<div class="mm-cvr-row">CVR <span>${cvrPct}%</span></div>` : ''}
         ${mWonDeals.length
@@ -9763,6 +9768,7 @@ function renderMonthlyBreakdown() {
     html += `<td${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>
       <div class="mm-cell${rowCount?' ':' '}">
         <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(rowArr)}</span><span class="mm-pipe-cnt">${rowCount} deals</span></div>
+        <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(rowArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
         <div class="mm-acv-row">ACV <span>${rowAcv}</span></div>
         ${rowCvr !== null ? `<div class="mm-cvr-row">CVR <span>${rowCvr}%</span></div>` : ''}
         ${rowWon.length ? `<div class="mm-won-row">✓ ${fmt$(rowWonARR)} <span class="mm-won-cnt">${rowWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
@@ -9784,6 +9790,7 @@ function renderMonthlyBreakdown() {
     html += `<td data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
       <div class="mm-cell${isCur?' cur':''}">
         <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(t.arr)}</span><span class="mm-pipe-cnt">${t.count} deals</span></div>
+        <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(t.arr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
         <div class="mm-acv-row">ACV <span>${tAcv}</span></div>
         ${tCvr !== null ? `<div class="mm-cvr-row">CVR <span>${tCvr}%</span></div>` : ''}
         ${mAllWon.length ? `<div class="mm-won-row">✓ ${fmt$(tWonARR)} <span class="mm-won-cnt">${mAllWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
@@ -9800,6 +9807,7 @@ function renderMonthlyBreakdown() {
   html += `<td data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
     <div class="mm-cell">
       <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(grandArr)}</span><span class="mm-pipe-cnt">${grandTotal} deals</span></div>
+      <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(grandArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
       <div class="mm-acv-row">ACV <span>${grandAcv}</span></div>
       ${grandCvr !== null ? `<div class="mm-cvr-row">CVR <span>${grandCvr}%</span></div>` : ''}
       ${grandWon.length ? `<div class="mm-won-row">✓ ${fmt$(grandWonARR)} <span class="mm-won-cnt">${grandWon.length} won</span></div>` : `<div style="padding-top:7px;border-top:1px solid var(--border);font-size:10px;color:var(--border2)">No wins</div>`}
