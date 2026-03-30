@@ -324,6 +324,33 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .sdr-tab.sdr-tab-active{color:var(--accent);border-bottom-color:var(--accent);background:none}
 .sdr-tab-count{background:rgba(245,158,11,.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;min-width:20px;text-align:center}
 .sdr-tab-count.zero{background:rgba(139,148,158,.12);color:var(--border2)}
+/* ── Conversion KPI strip ──────────────────────────────────────────────────── */
+.conv-strip{display:flex;gap:8px;margin-bottom:14px;flex-wrap:nowrap}
+.conv-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.conv-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.conv-val{font-size:18px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.conv-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.conv-bar-wrap{height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:4px;overflow:hidden}
+.conv-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+/* ── Source Funnel Section ──────────────────────────────────────────────────── */
+.src-funnel-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:18px}
+.src-funnel-header{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.src-funnel-title{font-size:13px;font-weight:700;color:var(--text)}
+.src-funnel-badge{font-size:10px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:2px 9px}
+.src-table{width:100%;border-collapse:collapse;font-size:12px}
+.src-table th{padding:8px 14px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;text-align:left}
+.src-table th.num{text-align:right}
+.src-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.src-table tr:last-child td{border-bottom:none;background:rgba(255,255,255,.025);font-weight:700}
+.src-table tr:hover:not(:last-child) td{background:rgba(255,255,255,.03)}
+.src-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0}
+.src-name{font-weight:600;color:var(--text);display:flex;align-items:center}
+.src-num{text-align:right;font-weight:700;color:var(--text)}
+.src-muted{text-align:right;color:var(--muted);font-size:11px}
+.src-pct{text-align:right;font-weight:700}
+.src-bar-cell{width:80px;padding-right:10px}
+.src-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden;min-width:40px}
+.src-bar-inner{height:100%;border-radius:2px;transition:width .4s}
 /* ── Week-over-Week Chart ──────────────────────────────────────────────────── */
 /* ── WoW chart ─────────────────────────────────────────────────────────── */
 .wow-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 20px 0;margin-bottom:14px;position:relative;overflow:hidden}
@@ -572,6 +599,28 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <button class="btn" data-week="alltime">All Time</button>
       </div>
     </div>
+    <!-- CONVERSION KPI STRIP -->
+    <div class="conv-strip" id="conv-strip">
+      <div class="conv-card">
+        <div class="conv-label">Gen → SQL Rate</div>
+        <div class="conv-val" id="conv-gen-sql" style="color:#38bdf8">—</div>
+        <div class="conv-sub" id="conv-gen-sql-sub"></div>
+        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-gen-sql-bar" style="background:#38bdf8;width:0%"></div></div>
+      </div>
+      <div class="conv-card">
+        <div class="conv-label">SQL → Won Rate</div>
+        <div class="conv-val" id="conv-sql-won" style="color:#4ade80">—</div>
+        <div class="conv-sub" id="conv-sql-won-sub"></div>
+        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-sql-won-bar" style="background:#4ade80;width:0%"></div></div>
+      </div>
+      <div class="conv-card">
+        <div class="conv-label">Overall Win Rate</div>
+        <div class="conv-val" id="conv-win-rate" style="color:#c084fc">—</div>
+        <div class="conv-sub" id="conv-win-rate-sub"></div>
+        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-win-rate-bar" style="background:#c084fc;width:0%"></div></div>
+      </div>
+    </div>
+
     <div class="card-row card-row-5" style="margin-bottom:14px">
       <div class="card card-clickable" id="card-won" onclick="openWonModal()">
         <div class="card-icon">🏆</div>
@@ -672,6 +721,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div id="sdr-panel-emails" class="sdr-panel hidden"></div>
       <div id="sdr-panel-deals" class="sdr-panel hidden"></div>
     </div>
+
   </section>
 
   <!-- B: PIPELINE INVENTORY -->
@@ -748,6 +798,31 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div class="monthly-chart-scroll">
         <table class="monthly-table" id="monthly-table"><tbody><tr><td style="color:var(--muted);padding:20px">Loading…</td></tr></tbody></table>
       </div>
+    </div>
+  </section>
+
+  <!-- SOURCE CONVERSION FUNNEL -->
+  <section id="section-funnel">
+    <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+      <div class="src-funnel-header">
+        <div class="src-funnel-title">🔀 Source Conversion Funnel</div>
+        <div class="src-funnel-badge" id="src-funnel-period-badge">All Time</div>
+        <div class="src-funnel-badge">Generated → SQL → Won</div>
+      </div>
+      <table class="src-table">
+        <thead><tr>
+          <th style="min-width:140px">Source</th>
+          <th class="num">Generated</th>
+          <th class="num">ARR</th>
+          <th></th>
+          <th class="num">SQL</th>
+          <th class="num">Gen→SQL</th>
+          <th class="num">Won</th>
+          <th class="num">SQL→Won</th>
+          <th class="num">Won ARR</th>
+        </tr></thead>
+        <tbody id="src-funnel-tbody"></tbody>
+      </table>
     </div>
   </section>
 
@@ -9023,8 +9098,132 @@ function renderPulse() {
   if (acvEl) acvEl.textContent = acvVal ? fmt$(acvVal) : '—';
   if (acvSub) acvSub.textContent = wonDeals.length ? wonDeals.length + ' deal avg' : 'all-time avg (' + WON_DEALS.length + ' deals)';
 
+  // Conversion KPIs + Source Funnel
+  renderConversionKPIs();
+  renderSourceFunnel();
+
   // SDR Activity
   renderSDR();
+}
+
+// ─── CONVERSION KPIs ──────────────────────────────────────────────────────────
+function renderConversionKPIs() {
+  // SQL stages = Discovery, Pres, SA, Trial, CR (past NBM, not stalled)
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
+  const allDeals   = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  const allWon     = selectedOwner === 'all' ? WON_DEALS : WON_DEALS.filter(d => d[4] === selectedOwner);
+  const allLost    = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
+
+  // Gen = all deals ever created (open + won + lost)
+  const genCount  = allDeals.length + allWon.length + allLost.length;
+  // SQL = open deals in SQL stages + all won + all lost (they passed NBM)
+  const sqlOpen   = allDeals.filter(d => SQL_STAGES.has(d[3])).length;
+  const sqlCount  = sqlOpen + allWon.length + allLost.length;
+  // Won
+  const wonCount  = allWon.length;
+  const wonARR    = allWon.reduce((s,d) => s + d[2], 0);
+
+  const genSqlPct  = genCount  ? Math.round(sqlCount  / genCount  * 100) : 0;
+  const sqlWonPct  = sqlCount  ? Math.round(wonCount  / sqlCount  * 100) : 0;
+  const winRate    = (wonCount + allLost.length) ? Math.round(wonCount / (wonCount + allLost.length) * 100) : 0;
+  const avgDeal    = wonCount  ? Math.round(wonARR / wonCount) : 0;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setW = (id, w) => { const el = document.getElementById(id); if (el) el.style.width = Math.min(w,100) + '%'; };
+
+  set('conv-gen-sql',      genSqlPct + '%');
+  set('conv-gen-sql-sub',  sqlCount + ' of ' + genCount + ' deals reached SQL');
+  setW('conv-gen-sql-bar', genSqlPct);
+
+  set('conv-sql-won',      sqlWonPct + '%');
+  set('conv-sql-won-sub',  wonCount + ' of ' + sqlCount + ' SQL closed won');
+  setW('conv-sql-won-bar', sqlWonPct);
+
+  set('conv-win-rate',     winRate + '%');
+  set('conv-win-rate-sub', wonCount + ' won · ' + allLost.length + ' lost');
+  setW('conv-win-rate-bar', winRate);
+
+  set('conv-avg-deal',     avgDeal ? fmt$(avgDeal) : '—');
+  set('conv-avg-deal-sub', wonCount + ' closed won deals');
+  setW('conv-avg-deal-bar', avgDeal ? Math.min(avgDeal / 1000, 100) : 0);
+}
+
+// ─── SOURCE CONVERSION FUNNEL ────────────────────────────────────────────────
+function renderSourceFunnel() {
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
+  const allDeals   = selectedOwner === 'all' ? DEALS      : DEALS.filter(d => d[4] === selectedOwner);
+  const allWon     = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
+  const allLost    = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
+
+  // Update period badge
+  const badge = document.getElementById('src-funnel-period-badge');
+  if (badge) badge.textContent = WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'All Time';
+
+  // Build per-source stats from live data
+  const srcMap = {};
+  const getOrAdd = src => {
+    const k = src || 'Unknown';
+    if (!srcMap[k]) srcMap[k] = { src:k, gen:0, genArr:0, sql:0, won:0, wonArr:0, lost:0 };
+    return srcMap[k];
+  };
+
+  // Open deals
+  allDeals.forEach(d => {
+    const s = getOrAdd(d[10]);
+    s.gen++; s.genArr += d[2];
+    if (SQL_STAGES.has(d[3])) s.sql++;
+  });
+  // Won deals — count as both gen + sql + won
+  allWon.forEach(d => {
+    const src = d[6]; // WON_DEALS[6] = dealSource
+    const s = getOrAdd(src);
+    s.gen++; s.genArr += d[2];
+    s.sql++; s.won++; s.wonArr += d[2];
+  });
+  // Lost deals — count as gen + sql
+  allLost.forEach(d => {
+    const src = d[7]; // LOST_DEALS[7] = dealSource
+    const s = getOrAdd(src);
+    s.gen++; s.genArr += d[2];
+    s.sql++; s.lost++;
+  });
+
+  // Sort by gen count desc, totals last
+  const rows = Object.values(srcMap).sort((a,b) => b.gen - a.gen);
+  const totals = rows.reduce((t,r) => ({
+    gen: t.gen+r.gen, genArr: t.genArr+r.genArr,
+    sql: t.sql+r.sql, won: t.won+r.won, wonArr: t.wonArr+r.wonArr
+  }), {gen:0,genArr:0,sql:0,won:0,wonArr:0});
+
+  const SOURCE_COLORS = ['#6366f1','#06b6d4','#a855f7','#10b981','#f97316','#f43f5e','#84cc16','#8b5cf6','#fb923c','#38bdf8'];
+  const maxGen = Math.max(...rows.map(r=>r.gen), 1);
+
+  const mkRow = (r, isTot, idx) => {
+    const color  = isTot ? 'var(--muted)' : SOURCE_COLORS[idx % SOURCE_COLORS.length];
+    const genSql = r.gen  ? Math.round(r.sql / r.gen  * 100) : 0;
+    const sqlWon = r.sql  ? Math.round(r.won / r.sql  * 100) : 0;
+    const barW   = isTot  ? 100 : Math.round(r.gen / maxGen * 100);
+    const pctCol = pct => pct === 0 ? `<span style="color:var(--muted)">—</span>`
+      : `<span style="color:${pct>=40?'#4ade80':pct>=20?'#fbbf24':'#f87171'};font-weight:700">${pct}%</span>`;
+    return `<tr>
+      <td class="src-name">
+        ${isTot ? '<span style="color:var(--muted);font-size:11px">ALL SOURCES</span>' : `<span class="src-dot" style="background:${color}"></span>${r.src}`}
+      </td>
+      <td class="src-num">${r.gen}</td>
+      <td class="src-muted">${fmt$(r.genArr)}</td>
+      <td class="src-bar-cell"><div class="src-bar"><div class="src-bar-inner" style="width:${barW}%;background:${color}"></div></div></td>
+      <td class="src-num">${r.sql}</td>
+      <td class="src-pct">${pctCol(genSql)}</td>
+      <td class="src-num">${r.won}</td>
+      <td class="src-pct">${pctCol(sqlWon)}</td>
+      <td class="src-num" style="color:#4ade80">${r.wonArr ? fmt$(r.wonArr) : '<span style="color:var(--muted)">—</span>'}</td>
+    </tr>`;
+  };
+
+  const tbody = document.getElementById('src-funnel-tbody');
+  if (tbody) tbody.innerHTML =
+    rows.map((r,i) => mkRow(r, false, i)).join('') +
+    mkRow(totals, true, 0);
 }
 
 // ─── SDR TAB SELECTION ────────────────────────────────────────────────────────
