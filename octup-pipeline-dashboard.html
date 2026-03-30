@@ -634,11 +634,11 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
           <div class="wow-subtitle" id="wow-subtitle">New deals by creation date · stacked by stage</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <div class="wow-seg-ctrl">
-            <button class="wow-seg-btn wow-brk-btn active" onclick="setWoWBreakdown('stage',this)">By Stage</button>
-            <button class="wow-seg-btn wow-brk-btn"        onclick="setWoWBreakdown('rep',this)">By Rep</button>
-            <button class="wow-seg-btn wow-brk-btn"        onclick="setWoWBreakdown('source',this)">By Source</button>
-          </div>
+          <select id="wow-brk-select" onchange="setWoWBreakdown(this.value)" style="background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
+            <option value="stage">By Stage</option>
+            <option value="rep">By Rep</option>
+            <option value="source">By Deal Source</option>
+          </select>
           <div class="wow-seg-ctrl">
             <button class="wow-seg-btn active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
             <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
@@ -8805,10 +8805,10 @@ function setWoWMode(mode, btn) {
   if (btn) btn.classList.add('active');
   renderWoWChart();
 }
-function setWoWBreakdown(mode, btn) {
+function setWoWBreakdown(mode) {
   _wowBreakdown = mode;
-  document.querySelectorAll('.wow-brk-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  const sel = document.getElementById('wow-brk-select');
+  if (sel) sel.value = mode;
   renderWoWChart();
 }
 
@@ -8879,19 +8879,18 @@ function renderWoWChart() {
     ];
     getDealKey = d => d[4];
   } else if (_wowBreakdown === 'source') {
-    const srcOrder = ['Outbound Sales','Referral','Direct','Social','Paid Search','Organic Search','Email','Campaign'];
-    const srcSeen = [...new Set(ownerDeals.map(d => d[10] || 'Other'))];
-    const allSrc = [...srcOrder.filter(s => srcSeen.includes(s)), ...srcSeen.filter(s => !srcOrder.includes(s))];
-    GROUPS = allSrc.map((s, i) => ({id: s, label: s, color: SOURCE_COLORS[i % SOURCE_COLORS.length]}));
-    getDealKey = d => d[10] || 'Other';
+    const srcSeen = [...new Set(ownerDeals.map(d => d[10]).filter(Boolean))];
+    GROUPS = srcSeen.map((s, i) => ({id: s, label: s, color: SOURCE_COLORS[i % SOURCE_COLORS.length]}));
+    getDealKey = d => d[10];
   } else {
     GROUPS = [
-      {id:'2918051007', label:'NBM',   color:'#fb923c'},
-      {id:'608286675',  label:'Disc',  color:'#38bdf8'},
-      {id:'740160705',  label:'Pres',  color:'#c084fc'},
-      {id:'608286676',  label:'SA',    color:'#818cf8'},
-      {id:'4988070119', label:'Trial', color:'#fbbf24'},
-      {id:'608286677',  label:'CR',    color:'#4ade80'},
+      {id:'2918051007', label:'NBM',     color:'#fb923c'},
+      {id:'608286675',  label:'Disc',    color:'#38bdf8'},
+      {id:'740160705',  label:'Pres',    color:'#c084fc'},
+      {id:'608286676',  label:'SA',      color:'#818cf8'},
+      {id:'4988070119', label:'Trial',   color:'#fbbf24'},
+      {id:'608286677',  label:'CR',      color:'#4ade80'},
+      {id:'2918051008', label:'Stalled', color:'#4b5563'},
     ];
     getDealKey = d => d[3];
   }
@@ -9656,33 +9655,46 @@ function openLostModal() {
 }
 
 function openMeetingsModal(title, meetings) {
-  const completed = meetings.filter(m => (m.outcome||m[3]) === 'COMPLETED').length;
+  const completed  = meetings.filter(m => (m.outcome||m[3]) === 'COMPLETED').length;
+  const noShow     = meetings.filter(m => (m.outcome||m[3]) === 'NO_SHOW').length;
+  const scheduled  = meetings.filter(m => !['COMPLETED','NO_SHOW'].includes(m.outcome||m[3])).length;
   const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${meetings.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total</span><span class="modal-summary-val">${meetings.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Completed</span><span class="modal-summary-val" style="color:var(--green)">${completed}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
-  const rows = meetings.map(m => {
-    // Support both object (MEETINGS array) and legacy array format
+    <div class="modal-summary-item"><span class="modal-summary-label">No Show</span><span class="modal-summary-val" style="color:var(--red)">${noShow}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Scheduled</span><span class="modal-summary-val" style="color:var(--accent)">${scheduled}</span></div>`;
+  // Build deal lookup for company name
+  const _dealMap = {};
+  DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+  WON_DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+  LOST_DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+  const sorted = [...meetings].sort((a,b) => new Date(b.timestamp||b[2]) - new Date(a.timestamp||a[2]));
+  const rows = sorted.map(m => {
     const id        = m.id        || m[0];
     const t         = m.title     || m[1] || '—';
     const startDate = m.timestamp || m[2];
     const outcome   = m.outcome   || m[3];
     const ownerId   = m.ownerId   || m[4];
-    const outBadge = outcome
-      ? `<span class="tag ${outcome==='COMPLETED'?'tag-won':outcome==='NO_SHOW'?'tag-lost':'tag-inp'}">${outcome}</span>`
-      : '<span class="tag tag-nbm">SCHEDULED</span>';
-    const ownerLbl = ownerName(ownerId);
-    const hsMeetLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${id}" target="_blank" style="color:var(--muted);text-decoration:none;font-size:15px" title="Open in HubSpot">↗</a>`;
+    // Company: derive from linked deal name or parse from title
+    const linkedDeal = m.dealIds && m.dealIds.length ? _dealMap[m.dealIds[0]] : null;
+    const company = linkedDeal || '—';
+    const outBadge = outcome === 'COMPLETED'
+      ? `<span class="tag tag-won">✓ Completed</span>`
+      : outcome === 'NO_SHOW'
+      ? `<span class="tag tag-lost">✗ No Show</span>`
+      : `<span class="tag tag-nbm">Scheduled</span>`;
+    const hsMeetLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;font-weight:700" title="Open in HubSpot">↗</a>`;
     return `<tr>
-      <td style="font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.replace(/"/g,"'")}">${t}</td>
-      <td>${ownerDot(ownerId)}${ownerLbl}</td>
-      <td>${fmtDate(startDate)}</td>
+      <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)" title="${t.replace(/"/g,"'")}">${t}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px" title="${company.replace(/"/g,"'")}">${company}</td>
+      <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
+      <td style="white-space:nowrap">${fmtDate(startDate)}</td>
       <td>${outBadge}</td>
       <td style="text-align:center">${hsMeetLink}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="5" class="no-data">No meetings in this period</td></tr>';
+  }).join('') || '<tr><td colspan="6" class="no-data">No meetings in this period</td></tr>';
   const content = `<table class="modal-table"><thead><tr>
-    <th>Meeting Title</th><th>Owner</th><th>Date</th><th>Outcome</th><th></th>
+    <th>Meeting Title</th><th>Company / Deal</th><th>Rep</th><th>Date</th><th>Status</th><th></th>
   </tr></thead><tbody>${rows}</tbody></table>`;
   openModal(title, summary, content);
 }
