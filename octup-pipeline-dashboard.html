@@ -631,11 +631,18 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div class="wow-header">
         <div>
           <div class="wow-title">📈 New Pipeline · Week over Week</div>
-          <div class="wow-subtitle">New deals by creation date · stacked by stage</div>
+          <div class="wow-subtitle" id="wow-subtitle">New deals by creation date · stacked by stage</div>
         </div>
-        <div class="wow-seg-ctrl">
-          <button class="wow-seg-btn active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
-          <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="wow-seg-ctrl">
+            <button class="wow-seg-btn wow-brk-btn active" onclick="setWoWBreakdown('stage',this)">By Stage</button>
+            <button class="wow-seg-btn wow-brk-btn"        onclick="setWoWBreakdown('rep',this)">By Rep</button>
+            <button class="wow-seg-btn wow-brk-btn"        onclick="setWoWBreakdown('source',this)">By Source</button>
+          </div>
+          <div class="wow-seg-ctrl">
+            <button class="wow-seg-btn active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
+            <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
+          </div>
         </div>
       </div>
       <div class="wow-stats-row" id="wow-stats"></div>
@@ -8791,9 +8798,16 @@ function filterByOwner(deals, ownerIdx) {
 
 // ─── WEEK-OVER-WEEK CHART ─────────────────────────────────────────────────────
 let _wowMode = '9w';
+let _wowBreakdown = 'stage';
 function setWoWMode(mode, btn) {
   _wowMode = mode;
   document.querySelectorAll('#wow-btn-9w,#wow-btn-alltime').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderWoWChart();
+}
+function setWoWBreakdown(mode, btn) {
+  _wowBreakdown = mode;
+  document.querySelectorAll('.wow-brk-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderWoWChart();
 }
@@ -8854,24 +8868,45 @@ function renderWoWChart() {
     }
   }
 
-  // Stage groups — refined palette
-  const GROUPS = [
-    {id:'2918051007', label:'NBM',   color:'#fb923c'},
-    {id:'608286675',  label:'Disc',  color:'#38bdf8'},
-    {id:'740160705',  label:'Pres',  color:'#c084fc'},
-    {id:'608286676',  label:'SA',    color:'#818cf8'},
-    {id:'4988070119', label:'Trial', color:'#fbbf24'},
-    {id:'608286677',  label:'CR',    color:'#4ade80'},
-  ];
+  // Dynamic groups based on breakdown mode
+  const SOURCE_COLORS = ['#fb923c','#38bdf8','#c084fc','#4ade80','#fbbf24','#818cf8','#f87171','#a3e635'];
+  let GROUPS, getDealKey;
+  if (_wowBreakdown === 'rep') {
+    GROUPS = [
+      {id:'29896105', label:'Blake',  color:'#fb923c'},
+      {id:'29422733', label:'Jay',    color:'#38bdf8'},
+      {id:'30284350', label:'Chanan', color:'#c084fc'},
+    ];
+    getDealKey = d => d[4];
+  } else if (_wowBreakdown === 'source') {
+    const srcOrder = ['Outbound Sales','Referral','Direct','Social','Paid Search','Organic Search','Email','Campaign'];
+    const srcSeen = [...new Set(ownerDeals.map(d => d[10] || 'Other'))];
+    const allSrc = [...srcOrder.filter(s => srcSeen.includes(s)), ...srcSeen.filter(s => !srcOrder.includes(s))];
+    GROUPS = allSrc.map((s, i) => ({id: s, label: s, color: SOURCE_COLORS[i % SOURCE_COLORS.length]}));
+    getDealKey = d => d[10] || 'Other';
+  } else {
+    GROUPS = [
+      {id:'2918051007', label:'NBM',   color:'#fb923c'},
+      {id:'608286675',  label:'Disc',  color:'#38bdf8'},
+      {id:'740160705',  label:'Pres',  color:'#c084fc'},
+      {id:'608286676',  label:'SA',    color:'#818cf8'},
+      {id:'4988070119', label:'Trial', color:'#fbbf24'},
+      {id:'608286677',  label:'CR',    color:'#4ade80'},
+    ];
+    getDealKey = d => d[3];
+  }
 
-  // Count deals per week per stage (respect owner filter — ownerDeals already set above)
+  // Update subtitle
+  const subtitleEl = document.getElementById('wow-subtitle');
+  if (subtitleEl) subtitleEl.textContent = 'New deals by creation date · stacked by ' + (_wowBreakdown === 'rep' ? 'rep' : _wowBreakdown === 'source' ? 'deal source' : 'stage');
 
   const data = weeks.map(w => {
     const counts = {}, arrs = {};
     GROUPS.forEach(g => { counts[g.id] = 0; arrs[g.id] = 0; });
     ownerDeals.forEach(d => {
       if (d[5] && d[5] >= w.start && d[5] <= w.end) {
-        if (counts[d[3]] !== undefined) { counts[d[3]]++; arrs[d[3]] += d[2]; }
+        const key = getDealKey(d);
+        if (counts[key] !== undefined) { counts[key]++; arrs[key] += d[2]; }
       }
     });
     const total = GROUPS.reduce((s, g) => s + counts[g.id], 0);
@@ -9216,7 +9251,8 @@ function renderInventory() {
     const trial = od.filter(d => d[3]==='4988070119');
     const cr    = od.filter(d => d[3]==='608286677');
     const arr = od.reduce((s,d)=>s+d[2],0);
-    const mtgs = MEETINGS.filter(m => m.ownerId === oid && dateInRange(m.timestamp, selectedWeek) && m.outcome !== 'CANCELLED').length;
+    const mtgList = MEETINGS.filter(m => m.ownerId === oid && dateInRange(m.timestamp, selectedWeek) && m.outcome !== 'CANCELLED');
+    const mtgs = mtgList.length;
     totNBM+=nbm.length; totINP+=inp.length; totTRIAL+=trial.length; totCR+=cr.length;
     totAll+=od.length; totArrAll+=arr; totMtgs+=mtgs;
     totNBMArr+=nbm.reduce((s,d)=>s+d[2],0);
@@ -9254,8 +9290,10 @@ function renderInventory() {
       <td style="font-weight:700;color:var(--accent);cursor:pointer"
         data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
         onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">${fmt$(arr)}<div style="font-size:9px;font-weight:400;color:var(--muted)">${fmtMRR(arr)}/mo</div></td>
-      <td style="font-weight:700;color:var(--blue);text-align:center">${mtgs > 0 ? mtgs : '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-weight:700;color:var(--blue);text-align:center;cursor:${mtgs>0?'pointer':'default'}"
+        onclick="${mtgs>0?`openMeetingsModal('${OWNERS[oid]?.name||oid} — Meetings',window._mtgCache_${oid})`:''}">${mtgs > 0 ? mtgs : '<span style="color:var(--muted)">—</span>'}</td>
     </tr>`;
+    window[`_mtgCache_${oid}`] = mtgList;
   });
 
   if (selectedOwner === 'all') {
@@ -9277,8 +9315,10 @@ function renderInventory() {
         <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span><span class="mc-mrr">${fmtMRR(totArrAll)}/mo</span></span>
       </td>
       <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}<div style="font-size:9px;font-weight:400;color:var(--muted)">${fmtMRR(totArrAll)}/mo</div></td>
-      <td style="font-weight:700;color:var(--blue);text-align:center">${totMtgs > 0 ? totMtgs : '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-weight:700;color:var(--blue);text-align:center;cursor:${totMtgs>0?'pointer':'default'}"
+        onclick="${totMtgs>0?`openMeetingsModal('All Reps — Meetings',window._mtgCacheAll)`:''}">${totMtgs > 0 ? totMtgs : '<span style="color:var(--muted)">—</span>'}</td>
     </tr>`;
+    window._mtgCacheAll = MEETINGS.filter(m => dateInRange(m.timestamp, selectedWeek) && m.outcome !== 'CANCELLED');
   }
 
   document.getElementById('matrix-body').innerHTML = rows;
@@ -9616,29 +9656,33 @@ function openLostModal() {
 }
 
 function openMeetingsModal(title, meetings) {
-  const completed = meetings.filter(m => m[3] === 'COMPLETED').length;
+  const completed = meetings.filter(m => (m.outcome||m[3]) === 'COMPLETED').length;
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${meetings.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Completed</span><span class="modal-summary-val" style="color:var(--green)">${completed}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
   const rows = meetings.map(m => {
-    const [id, t, startDate, outcome, ownerId, isInternal, attendees, companyName] = m;
+    // Support both object (MEETINGS array) and legacy array format
+    const id        = m.id        || m[0];
+    const t         = m.title     || m[1] || '—';
+    const startDate = m.timestamp || m[2];
+    const outcome   = m.outcome   || m[3];
+    const ownerId   = m.ownerId   || m[4];
     const outBadge = outcome
       ? `<span class="tag ${outcome==='COMPLETED'?'tag-won':outcome==='NO_SHOW'?'tag-lost':'tag-inp'}">${outcome}</span>`
       : '<span class="tag tag-nbm">SCHEDULED</span>';
-    const primaryName = attendees || '—';
+    const ownerLbl = ownerName(ownerId);
     const hsMeetLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${id}" target="_blank" style="color:var(--muted);text-decoration:none;font-size:15px" title="Open in HubSpot">↗</a>`;
     return `<tr>
-      <td style="font-weight:600">${primaryName}</td>
-      <td style="color:var(--muted)">${companyName || '—'}</td>
-      <td style="color:var(--muted);font-size:11px;max-width:180px">${t}</td>
+      <td style="font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.replace(/"/g,"'")}">${t}</td>
+      <td>${ownerDot(ownerId)}${ownerLbl}</td>
       <td>${fmtDate(startDate)}</td>
       <td>${outBadge}</td>
       <td style="text-align:center">${hsMeetLink}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" class="no-data">No meetings in this period</td></tr>';
+  }).join('') || '<tr><td colspan="5" class="no-data">No meetings in this period</td></tr>';
   const content = `<table class="modal-table"><thead><tr>
-    <th>Attendee</th><th>Company</th><th>Meeting Title</th><th>Date</th><th>Outcome</th><th></th>
+    <th>Meeting Title</th><th>Owner</th><th>Date</th><th>Outcome</th><th></th>
   </tr></thead><tbody>${rows}</tbody></table>`;
   openModal(title, summary, content);
 }
