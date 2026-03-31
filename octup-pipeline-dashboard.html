@@ -590,34 +590,14 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div class="btn-group" id="week-btns">
         <button class="btn active" data-week="this">This Week ★</button>
         <button class="btn" data-week="last">Last Week</button>
-        <button class="btn" data-week="2w">2 Weeks Ago</button>
-        <button class="btn" data-week="3w">3 Weeks Ago</button>
-        <button class="btn" data-week="4w">4 Weeks Ago</button>
+        <button class="btn" data-week="2w">2 Wks Ago</button>
+        <button class="btn" data-week="3w">3 Wks Ago</button>
+        <button class="btn" data-week="4w">4 Wks Ago</button>
+        <button class="btn" data-week="last9w">Last 9 Weeks</button>
         <button class="btn" data-week="month">This Month</button>
         <button class="btn" data-week="quarter">This Q</button>
         <button class="btn" data-week="year">This Y</button>
         <button class="btn" data-week="alltime">All Time</button>
-      </div>
-    </div>
-    <!-- CONVERSION KPI STRIP -->
-    <div class="conv-strip" id="conv-strip">
-      <div class="conv-card">
-        <div class="conv-label">Gen → SQL Rate</div>
-        <div class="conv-val" id="conv-gen-sql" style="color:#38bdf8">—</div>
-        <div class="conv-sub" id="conv-gen-sql-sub"></div>
-        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-gen-sql-bar" style="background:#38bdf8;width:0%"></div></div>
-      </div>
-      <div class="conv-card">
-        <div class="conv-label">SQL → Won Rate</div>
-        <div class="conv-val" id="conv-sql-won" style="color:#4ade80">—</div>
-        <div class="conv-sub" id="conv-sql-won-sub"></div>
-        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-sql-won-bar" style="background:#4ade80;width:0%"></div></div>
-      </div>
-      <div class="conv-card">
-        <div class="conv-label">Overall Win Rate</div>
-        <div class="conv-val" id="conv-win-rate" style="color:#c084fc">—</div>
-        <div class="conv-sub" id="conv-win-rate-sub"></div>
-        <div class="conv-bar-wrap"><div class="conv-bar-fill" id="conv-win-rate-bar" style="background:#c084fc;width:0%"></div></div>
       </div>
     </div>
 
@@ -688,10 +668,6 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
             <option value="rep">By Rep</option>
             <option value="source">By Deal Source</option>
           </select>
-          <div class="wow-seg-ctrl">
-            <button class="wow-seg-btn active" id="wow-btn-9w"      onclick="setWoWMode('9w',this)">Last 9 Weeks</button>
-            <button class="wow-seg-btn"        id="wow-btn-alltime" onclick="setWoWMode('alltime',this)">All Time</button>
-          </div>
         </div>
       </div>
       <div class="wow-stats-row" id="wow-stats"></div>
@@ -730,14 +706,6 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
         <div class="section-title">🗂 Pipeline Inventory</div>
         <div class="section-badge" id="inventory-badge">All Open Deals · All Time</div>
-      </div>
-      <div class="btn-group" id="inventory-period-btns">
-        <button class="btn active" data-inv-period="all">All Time</button>
-        <button class="btn" data-inv-period="this">This Week</button>
-        <button class="btn" data-inv-period="last">Last Week</button>
-        <button class="btn" data-inv-period="2w">2 Wks Ago</button>
-        <button class="btn" data-inv-period="3w">3 Wks Ago</button>
-        <button class="btn" data-inv-period="4w">4 Wks Ago</button>
       </div>
     </div>
     <div class="matrix-wrapper">
@@ -810,17 +778,24 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div class="src-funnel-badge">Generated → SQL → Won</div>
       </div>
       <table class="src-table">
-        <thead><tr>
-          <th style="min-width:140px">Source</th>
-          <th class="num">Generated</th>
-          <th class="num">ARR</th>
-          <th></th>
-          <th class="num">SQL</th>
-          <th class="num">Gen→SQL</th>
-          <th class="num">Won</th>
-          <th class="num">SQL→Won</th>
-          <th class="num">Won ARR</th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th rowspan="2" style="min-width:140px;vertical-align:bottom;border-right:2px solid var(--border)">Source</th>
+            <th colspan="2" style="text-align:center;border-bottom:2px solid #38bdf8;border-right:1px solid rgba(255,255,255,.08);color:#38bdf8;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(56,189,248,.12);padding:7px 6px">⚡ GENERATED</th>
+            <th colspan="3" style="text-align:center;border-bottom:2px solid #fbbf24;border-right:1px solid rgba(255,255,255,.08);color:#fbbf24;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(251,191,36,.12);padding:7px 6px">🎯 SQL</th>
+            <th colspan="3" style="text-align:center;border-bottom:2px solid #4ade80;color:#4ade80;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(74,222,128,.12);padding:7px 6px">🏆 WON</th>
+          </tr>
+          <tr>
+            <th class="num" style="color:#38bdf8;opacity:.85;background:rgba(56,189,248,.06)">Deals</th>
+            <th class="num" style="color:#38bdf8;opacity:.85;border-right:1px solid rgba(255,255,255,.08);background:rgba(56,189,248,.06)">ARR</th>
+            <th class="num" style="color:#fbbf24;opacity:.85;background:rgba(251,191,36,.06)">Deals</th>
+            <th class="num" style="color:#fbbf24;opacity:.85;background:rgba(251,191,36,.06)">Gen→SQL</th>
+            <th class="num" style="color:#fbbf24;opacity:.85;border-right:1px solid rgba(255,255,255,.08);background:rgba(251,191,36,.06)">ARR</th>
+            <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">Deals</th>
+            <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">SQL→Won</th>
+            <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">ARR</th>
+          </tr>
+        </thead>
         <tbody id="src-funnel-tbody"></tbody>
       </table>
     </div>
@@ -856,6 +831,8 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <!-- F: WEEKLY DEAL DESK -->
   <section id="section-brief" style="display:none">
     <div class="brief-wrap">
+      <!-- MEETINGS PANEL -->
+      <div id="brief-meetings-panel" style="margin-bottom:18px"></div>
       <div class="brief-controls">
         <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Deal Desk</button>
         <button class="brief-copy-btn" id="brief-copy-btn" onclick="copyBrief()" style="display:none">📋 Copy</button>
@@ -965,12 +942,15 @@ const TODAY = new Date();
   const yStart = new Date(TODAY.getFullYear(), 0, 1);
   const yEnd   = new Date(TODAY.getFullYear(), 11, 31);
 
+  // Last 9 weeks range: 8 Mondays ago → today
+  const l9Start = new Date(mon); l9Start.setDate(mon.getDate() - 8 * 7);
   window.WEEKS = {
     'this':    weekObj( 0, 'This Week'),
     'last':    weekObj(-1, 'Last Week'),
     '2w':      weekObj(-2, '2 Wks Ago'),
     '3w':      weekObj(-3, '3 Wks Ago'),
     '4w':      weekObj(-4, '4 Wks Ago'),
+    'last9w':  rangeObj(l9Start, TODAY, `Last 9 Weeks (${shortFmt(l9Start)}–${shortFmt(TODAY)})`),
     'month':   rangeObj(mStart, mEnd,  `This Month (${shortFmt(mStart)}–${shortFmt(mEnd)}, ${TODAY.getFullYear()})`),
     'quarter': rangeObj(qStart, qEnd,  `This ${qNames[q]} (${shortFmt(qStart)}–${shortFmt(qEnd)}, ${TODAY.getFullYear()})`),
     'year':    rangeObj(yStart, yEnd,  `This Year (Jan 1–Dec 31, ${TODAY.getFullYear()})`),
@@ -8781,8 +8761,6 @@ let _wowMode = '9w';
 let _wowBreakdown = 'stage';
 function setWoWMode(mode, btn) {
   _wowMode = mode;
-  document.querySelectorAll('#wow-btn-9w,#wow-btn-alltime').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
   renderWoWChart();
 }
 function setWoWBreakdown(mode) {
@@ -8802,6 +8780,8 @@ function renderWoWChart() {
   const toYMD  = d => d.toISOString().slice(0,10);
 
   const ownerDeals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  // Derive WoW mode from global period: alltime → monthly view, else → 9-week view
+  const _wowMode = selectedWeek === 'alltime' ? 'alltime' : '9w';
 
   let weeks = [];
 
@@ -9005,8 +8985,7 @@ function renderPulse() {
   if (acvEl) acvEl.textContent = acvVal ? fmt$(acvVal) : '—';
   if (acvSub) acvSub.textContent = wonDeals.length ? wonDeals.length + ' deal avg' : 'all-time avg (' + WON_DEALS.length + ' deals)';
 
-  // Conversion KPIs + Source Funnel
-  renderConversionKPIs();
+  // Source Funnel
   renderSourceFunnel();
 
   // SDR Activity
@@ -9058,9 +9037,16 @@ function renderConversionKPIs() {
 // ─── SOURCE CONVERSION FUNNEL ────────────────────────────────────────────────
 function renderSourceFunnel() {
   const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
-  const allDeals   = selectedOwner === 'all' ? DEALS      : DEALS.filter(d => d[4] === selectedOwner);
-  const allWon     = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
-  const allLost    = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
+  // Filter by owner
+  let allDeals = selectedOwner === 'all' ? DEALS      : DEALS.filter(d => d[4] === selectedOwner);
+  let allWon   = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
+  let allLost  = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
+  // Filter by global period — DEALS by createDate(d[5]), WON/LOST by closeDate(d[3])
+  if (selectedWeek !== 'alltime') {
+    allDeals = allDeals.filter(d => dateInRange(d[5], selectedWeek));
+    allWon   = allWon.filter(d   => dateInRange(d[3], selectedWeek));
+    allLost  = allLost.filter(d  => dateInRange(d[3], selectedWeek));
+  }
 
   // Update period badge
   const badge = document.getElementById('src-funnel-period-badge');
@@ -9070,60 +9056,97 @@ function renderSourceFunnel() {
   const srcMap = {};
   const getOrAdd = src => {
     const k = src || 'Unknown';
-    if (!srcMap[k]) srcMap[k] = { src:k, gen:0, genArr:0, sql:0, won:0, wonArr:0, lost:0 };
+    if (!srcMap[k]) srcMap[k] = { src:k, gen:0, genArr:0, sql:0, sqlArr:0, won:0, wonArr:0, lost:0, genIds:[], sqlIds:[], wonIds:[] };
     return srcMap[k];
   };
 
   // Open deals
   allDeals.forEach(d => {
     const s = getOrAdd(d[10]);
-    s.gen++; s.genArr += d[2];
-    if (SQL_STAGES.has(d[3])) s.sql++;
+    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+    if (SQL_STAGES.has(d[3])) { s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); }
   });
-  // Won deals — count as both gen + sql + won
+  // Won deals — count as gen + sql + won
   allWon.forEach(d => {
-    const src = d[6]; // WON_DEALS[6] = dealSource
+    const src = d[6];
     const s = getOrAdd(src);
-    s.gen++; s.genArr += d[2];
-    s.sql++; s.won++; s.wonArr += d[2];
+    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+    s.won++; s.wonArr += d[2]; s.wonIds.push(d[0]);
   });
   // Lost deals — count as gen + sql
   allLost.forEach(d => {
-    const src = d[7]; // LOST_DEALS[7] = dealSource
+    const src = d[7];
     const s = getOrAdd(src);
-    s.gen++; s.genArr += d[2];
-    s.sql++; s.lost++;
+    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); s.lost++;
   });
 
-  // Sort by gen count desc, totals last
+  // Sort by gen count desc
   const rows = Object.values(srcMap).sort((a,b) => b.gen - a.gen);
   const totals = rows.reduce((t,r) => ({
-    gen: t.gen+r.gen, genArr: t.genArr+r.genArr,
-    sql: t.sql+r.sql, won: t.won+r.won, wonArr: t.wonArr+r.wonArr
-  }), {gen:0,genArr:0,sql:0,won:0,wonArr:0});
+    src:'Total', gen:t.gen+r.gen, genArr:t.genArr+r.genArr,
+    sql:t.sql+r.sql, sqlArr:t.sqlArr+r.sqlArr, won:t.won+r.won, wonArr:t.wonArr+r.wonArr,
+    genIds:[...t.genIds,...r.genIds], sqlIds:[...t.sqlIds,...r.sqlIds], wonIds:[...t.wonIds,...r.wonIds]
+  }), {src:'',gen:0,genArr:0,sql:0,sqlArr:0,won:0,wonArr:0,genIds:[],sqlIds:[],wonIds:[]});
 
   const SOURCE_COLORS = ['#6366f1','#06b6d4','#a855f7','#10b981','#f97316','#f43f5e','#84cc16','#8b5cf6','#fb923c','#38bdf8'];
-  const maxGen = Math.max(...rows.map(r=>r.gen), 1);
+
+  // Deal lookup map for modal — open + won + lost reformatted to DEALS structure
+  const _allDealMap = {};
+  allDeals.forEach(d => { _allDealMap[d[0]] = d; });
+  allWon.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[3],d[3],'',d[5],'',d[6]]; });
+  allLost.forEach(d => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[3],d[3],'',d[5],'',d[7]]; });
+
+  const openFunnelModal = (title, ids) => {
+    const dealSet = ids.map(id => _allDealMap[id]).filter(Boolean).sort((a,b)=>b[2]-a[2]);
+    const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+    const summary = `<div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>`;
+    openModal('🔀 ' + title, summary, dealsTable(dealSet));
+  };
+  window._openFunnelModal = openFunnelModal;
+
+  // Click registry — avoids HTML attribute quoting issues with JSON
+  window._funnelCells = {};
+  let _fci = 0;
+  const clickCell = (label, ids) => {
+    if (!ids.length) return ``;
+    const key = _fci++;
+    window._funnelCells[key] = { label, ids };
+    return `style="cursor:pointer" onclick="(function(){const d=window._funnelCells[${key}];window._openFunnelModal(d.label,d.ids);})()"`;
+  };
+
+  const num = (n, ids, color) => {
+    if (!n) return `<span style="color:var(--muted)">—</span>`;
+    const underline = ids?.length ? `text-decoration:underline dotted;text-underline-offset:3px;` : '';
+    return `<span style="${underline}${color?'color:'+color:''};font-weight:700">${n}</span>`;
+  };
+  const pct = p => !p ? `<span style="color:var(--muted)">—</span>`
+    : `<span style="color:${p>=40?'#4ade80':p>=20?'#fbbf24':'#f87171'};font-weight:700">${p}%</span>`;
+  const arr = (v, color) => v ? `<span style="color:${color||'var(--muted)'};font-size:11px">${fmt$(v)}</span>` : `<span style="color:var(--muted)">—</span>`;
 
   const mkRow = (r, isTot, idx) => {
-    const color  = isTot ? 'var(--muted)' : SOURCE_COLORS[idx % SOURCE_COLORS.length];
-    const genSql = r.gen  ? Math.round(r.sql / r.gen  * 100) : 0;
-    const sqlWon = r.sql  ? Math.round(r.won / r.sql  * 100) : 0;
-    const barW   = isTot  ? 100 : Math.round(r.gen / maxGen * 100);
-    const pctCol = pct => pct === 0 ? `<span style="color:var(--muted)">—</span>`
-      : `<span style="color:${pct>=40?'#4ade80':pct>=20?'#fbbf24':'#f87171'};font-weight:700">${pct}%</span>`;
-    return `<tr>
-      <td class="src-name">
-        ${isTot ? '<span style="color:var(--muted);font-size:11px">ALL SOURCES</span>' : `<span class="src-dot" style="background:${color}"></span>${r.src}`}
+    const color   = isTot ? '#888' : SOURCE_COLORS[idx % SOURCE_COLORS.length];
+    const genSql  = r.gen ? Math.round(r.sql / r.gen * 100) : 0;
+    const sqlWon  = r.sql ? Math.round(r.won / r.sql * 100) : 0;
+    const srcLabel = r.src || 'Unknown';
+    const totStyle = isTot ? ' style="background:rgba(255,255,255,.03);border-top:2px solid var(--border)"' : '';
+    const bdr = 'border-right:1px solid rgba(255,255,255,.06)';
+    return `<tr${totStyle}>
+      <td class="src-name" style="border-right:2px solid var(--border)">
+        ${isTot
+          ? `<span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Total</span>`
+          : `<span class="src-dot" style="background:${color}"></span>${srcLabel}`}
       </td>
-      <td class="src-num">${r.gen}</td>
-      <td class="src-muted">${fmt$(r.genArr)}</td>
-      <td class="src-bar-cell"><div class="src-bar"><div class="src-bar-inner" style="width:${barW}%;background:${color}"></div></div></td>
-      <td class="src-num">${r.sql}</td>
-      <td class="src-pct">${pctCol(genSql)}</td>
-      <td class="src-num">${r.won}</td>
-      <td class="src-pct">${pctCol(sqlWon)}</td>
-      <td class="src-num" style="color:#4ade80">${r.wonArr ? fmt$(r.wonArr) : '<span style="color:var(--muted)">—</span>'}</td>
+      <td class="src-num" ${clickCell(srcLabel+' — Generated', r.genIds)}>${num(r.gen, r.genIds, '#38bdf8')}</td>
+      <td class="src-num" style="${bdr}">${arr(r.genArr)}</td>
+      <td class="src-num" ${clickCell(srcLabel+' — SQL', r.sqlIds)}>${num(r.sql, r.sqlIds, '#fbbf24')}</td>
+      <td class="src-num">${pct(genSql)}</td>
+      <td class="src-num" style="${bdr}">${arr(r.sqlArr)}</td>
+      <td class="src-num" ${clickCell(srcLabel+' — Won', r.wonIds)}>${num(r.won, r.wonIds, '#4ade80')}</td>
+      <td class="src-num">${pct(sqlWon)}</td>
+      <td class="src-num">${arr(r.wonArr, '#4ade80')}</td>
     </tr>`;
   };
 
@@ -9304,18 +9327,18 @@ function renderInventory() {
   const owners = ['29896105','29422733','30284350','32023983'];
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
-  // Apply creation-date filter if a specific period is selected
-  if (selectedInventoryPeriod !== 'all') {
-    deals = deals.filter(d => dateInRange(d[5], selectedInventoryPeriod));
+  // Apply creation-date filter from global period
+  if (selectedWeek !== 'alltime') {
+    deals = deals.filter(d => dateInRange(d[5], selectedWeek));
   }
 
   // Update badge text
   const badge = document.getElementById('inventory-badge');
   if (badge) {
-    const periodLabel = selectedInventoryPeriod === 'all'
+    const periodLabel = selectedWeek === 'alltime'
       ? 'All Time'
-      : WEEKS[selectedInventoryPeriod].label.split('(')[0].trim();
-    badge.textContent = 'Open Deals · Created ' + (selectedInventoryPeriod === 'all' ? 'All Time' : periodLabel);
+      : WEEKS[selectedWeek].label.split('(')[0].trim();
+    badge.textContent = 'Open Deals · Created ' + periodLabel;
   }
 
   const totalARR = deals.reduce((s,d)=>s+d[2],0);
@@ -9758,6 +9781,22 @@ function openLostModal() {
   openModal('❌ Deals Lost — ' + WEEKS[selectedWeek].label, summary, content);
 }
 
+// Extract external contact name from meeting title
+// Titles like "Blake (Octup) x Brian (Innovative WH) Check In" → "Brian (Innovative WH)"
+function extractMeetingContact(title) {
+  if (!title) return '—';
+  // Pattern: "x [Name]" or "X [Name]" — grab everything after " x " up to next "/"
+  const xMatch = title.match(/\s[xX]\s+([^\/\|]+)/);
+  if (xMatch) {
+    const raw = xMatch[1].trim();
+    // Strip trailing "Check In", "Intro", "Meeting" etc (after last " - " or parenthetical end)
+    // Keep the name + company in parens if present
+    const nameAndCo = raw.replace(/\s+(Check\s*In|Intro|Meeting|Call|Demo|Follow\s*Up|Touchbase|Touch\s*base|Sync|Review|Discovery|Presentation).*$/i,'').trim();
+    return nameAndCo || raw;
+  }
+  return '—';
+}
+
 function openMeetingsModal(title, meetings) {
   const completed  = meetings.filter(m => (m.outcome||m[3]) === 'COMPLETED').length;
   const noShow     = meetings.filter(m => (m.outcome||m[3]) === 'NO_SHOW').length;
@@ -9779,9 +9818,9 @@ function openMeetingsModal(title, meetings) {
     const startDate = m.timestamp || m[2];
     const outcome   = m.outcome   || m[3];
     const ownerId   = m.ownerId   || m[4];
-    // Company: derive from linked deal name or parse from title
     const linkedDeal = m.dealIds && m.dealIds.length ? _dealMap[m.dealIds[0]] : null;
     const company = linkedDeal || '—';
+    const contact = extractMeetingContact(t);
     const outBadge = outcome === 'COMPLETED'
       ? `<span class="tag tag-won">✓ Completed</span>`
       : outcome === 'NO_SHOW'
@@ -9789,16 +9828,17 @@ function openMeetingsModal(title, meetings) {
       : `<span class="tag tag-nbm">Scheduled</span>`;
     const hsMeetLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;font-weight:700" title="Open in HubSpot">↗</a>`;
     return `<tr>
-      <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)" title="${t.replace(/"/g,"'")}">${t}</td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px" title="${company.replace(/"/g,"'")}">${company}</td>
+      <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)" title="${t.replace(/"/g,"'")}">${t}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px" title="${company.replace(/"/g,"'")}">${company}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--text)" title="${contact.replace(/"/g,"'")}">${contact}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
       <td style="white-space:nowrap">${fmtDate(startDate)}</td>
       <td>${outBadge}</td>
       <td style="text-align:center">${hsMeetLink}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" class="no-data">No meetings in this period</td></tr>';
+  }).join('') || '<tr><td colspan="7" class="no-data">No meetings in this period</td></tr>';
   const content = `<table class="modal-table"><thead><tr>
-    <th>Meeting Title</th><th>Company / Deal</th><th>Rep</th><th>Date</th><th>Status</th><th></th>
+    <th>Meeting Title</th><th>Company / Deal</th><th>Contact</th><th>Rep</th><th>Date</th><th>Status</th><th></th>
   </tr></thead><tbody>${rows}</tbody></table>`;
   openModal(title, summary, content);
 }
@@ -10242,9 +10282,9 @@ function openNewPipelineModal() {
 // ─── INVENTORY STAT MODAL ─────────────────────────────────────────────────────
 function openInventoryStatModal(bucket) {
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
-  // Apply the same period filter as the inventory table
-  if (selectedInventoryPeriod !== 'all') {
-    deals = deals.filter(d => dateInRange(d[5], selectedInventoryPeriod));
+  // Apply the same global period filter as the inventory table
+  if (selectedWeek !== 'alltime') {
+    deals = deals.filter(d => dateInRange(d[5], selectedWeek));
   }
   let filtered, label;
   if (bucket === 'nbm') {
@@ -10265,7 +10305,7 @@ function openInventoryStatModal(bucket) {
   }
   filtered.sort((a,b) => b[2]-a[2]);
   const totalARR = filtered.reduce((s,d)=>s+d[2],0);
-  const periodLabel = selectedInventoryPeriod === 'all' ? 'All Time' : WEEKS[selectedInventoryPeriod].label.split('(')[0].trim();
+  const periodLabel = selectedWeek === 'alltime' ? 'All Time' : WEEKS[selectedWeek].label.split('(')[0].trim();
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${filtered.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
@@ -10315,16 +10355,74 @@ document.getElementById('owner-btns').addEventListener('click', e => {
   render();
 });
 
-document.getElementById('inventory-period-btns').addEventListener('click', e => {
-  const btn = e.target.closest('[data-inv-period]');
-  if (!btn) return;
-  selectedInventoryPeriod = btn.dataset.invPeriod;
-  document.querySelectorAll('#inventory-period-btns .btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderInventory();
-});
 
 
+
+// ─── BRIEF MEETINGS PANEL ────────────────────────────────────────────────────
+function renderBriefMeetings() {
+  const panel = document.getElementById('brief-meetings-panel');
+  if (!panel) return;
+
+  // Build deal name lookup
+  const _dealMap = {};
+  DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+  WON_DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+  LOST_DEALS.forEach(d => { _dealMap[d[0]] = d[1]; });
+
+  // Filter meetings by owner + selectedWeek, exclude cancelled
+  let mtgs = MEETINGS.filter(m => m.outcome !== 'CANCELLED' && dateInRange(m.timestamp, selectedWeek));
+  if (selectedOwner !== 'all') mtgs = mtgs.filter(m => m.ownerId === selectedOwner);
+  mtgs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  const completed = mtgs.filter(m => m.outcome === 'COMPLETED');
+  const booked    = mtgs.filter(m => !['COMPLETED','NO_SHOW'].includes(m.outcome));
+  const noShows   = mtgs.filter(m => m.outcome === 'NO_SHOW');
+
+  const mkMtgRow = m => {
+    const company = m.dealIds?.length ? (_dealMap[m.dealIds[0]] || '—') : '—';
+    const contact = extractMeetingContact(m.title);
+    const badge = m.outcome === 'COMPLETED'
+      ? `<span class="tag tag-won" style="font-size:10px">✓ Completed</span>`
+      : m.outcome === 'NO_SHOW'
+      ? `<span class="tag tag-lost" style="font-size:10px">✗ No Show</span>`
+      : `<span class="tag tag-nbm" style="font-size:10px">Scheduled</span>`;
+    const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${m.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:700;font-size:12px">↗</a>`;
+    return `<tr>
+      <td style="font-weight:600;font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(m.title||'').replace(/"/g,"'")}">${m.title||'—'}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${company.replace(/"/g,"'")}">${company}</td>
+      <td style="font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${contact.replace(/"/g,"'")}">${contact}</td>
+      <td style="white-space:nowrap;font-size:11px">${ownerDot(m.ownerId)}${ownerName(m.ownerId)}</td>
+      <td style="white-space:nowrap;font-size:11px">${fmtDate(m.timestamp)}</td>
+      <td>${badge}</td>
+      <td style="text-align:center">${hsLink}</td>
+    </tr>`;
+  };
+
+  const mkSection = (label, color, list) => {
+    if (!list.length) return '';
+    const rows = list.map(mkMtgRow).join('');
+    return `<div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${label} · ${list.length}</div>
+      <div style="overflow-x:auto">
+      <table class="modal-table" style="width:100%">
+        <thead><tr><th>Meeting</th><th>Company / Deal</th><th>Contact</th><th>Rep</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  };
+
+  if (!mtgs.length) {
+    panel.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:10px 0">No meetings in this period.</div>`;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📅 Meetings — ${WEEKS[selectedWeek]?.label?.split('(')[0]?.trim()||'This Period'}</div>
+    ${mkSection('✓ Took Place', '#4ade80', completed)}
+    ${mkSection('📅 Booked / Upcoming', '#38bdf8', booked)}
+    ${mkSection('✗ No Show', '#f87171', noShows)}
+  `;
+}
 
 // ─── WEEKLY PIPELINE BRIEF ───────────────────────────────────────────────────
 function generateBrief() {
@@ -11006,8 +11104,8 @@ function openSectionPanel(sectionId) {
 
   document.getElementById('section-panel-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-  // Auto-run deal desk on open
-  if (sectionId === 'section-brief') setTimeout(generateBrief, 50);
+  // Auto-run deal desk + meetings on open
+  if (sectionId === 'section-brief') { renderBriefMeetings(); setTimeout(generateBrief, 50); }
 }
 
 function closeSectionPanel() {
