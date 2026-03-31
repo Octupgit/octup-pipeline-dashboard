@@ -978,16 +978,15 @@ const TODAY = new Date();
   };
 })();
 const PORTAL = '26004468';
-const LAST_SYNC_UTC = '2026-03-31T10:26:04Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
+const LAST_SYNC_UTC = '2026-03-31T14:35:51Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
 
 // ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
 // [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource]
 const DEALS = [
-  ['21754029791','Delta Fulfilment - Trial',57000,'608286677','29896105','2024-10-07','2026-03-25','Has Docusign - 3/17 update from Steve, needs a few days.','69626301','2026-03-30','Outbound Sales'],
   ['154487611634','ShipBots - 3PL Partner',48000,'2918051008','29422733','2025-03-14','2026-03-28','Call Payam 1/15 and reference email and shed light on pricing model + most importantly updates to the platform.','69626301','2026-03-11','Outbound Sales'],
   ['266505689330','Speed Commerce - 3PL Partner',50000,'2918051008','29422733','2025-07-21','2026-03-27','Set Demo deep dive after a great onsite visit with him and head of finance. 5 locations, 2 WMS\'s. Ship Hero and Deposco. Looking towards more M&A.','29422733','2026-03-11','Social'],
   ['275759382720','PipShip',36000,'608286676','29422733','2025-07-30','2026-03-27','Need Meeting with Claudia / Jeff & Avery. Claudia is Avery\'s Wife, Jeff is a brand and investor in pipship. See emails.','29422733','2026-03-30','Outbound Sales'],
-  ['296064239860','HyperNile Fulfillment',12000,'2918051008','29896105','2025-08-26','2026-05-31','1/15 connected via call. Open to have convo in Q2 due to other software priorities','29896105','2026-01-15','Outbound Sales'],
+  ['296064239860','HyperNile Fulfillment',12000,'2918051008','29896105','2025-08-26','2026-05-31','1/15 connected via call. Open to have convo in Q2 due to other software priorities','29896105','2026-03-31','Outbound Sales'],
   ['296064239865','Hero Fulfillment',30000,'2918051007','30284350','2025-08-26','2026-03-31','Currently ghosting after booking a meeting','29896105','2026-02-04','Outbound Sales'],
   ['311147104455','Barrett Distribution Centers',120000,'2918051008','29896105','2025-09-18','2026-05-29','Reached out to Jordan to see if he connected to Brian at GPA','29896105','2026-03-25','Outbound Sales'],
   ['321305284846','Crocodile Fulfillment - 3PL',24000,'2918051008','29422733','2025-10-01','2026-04-30','Matt shared they have to iron out other items before revisiting this with Octup.','29422733','2026-03-11','Referral'],
@@ -1054,7 +1053,6 @@ const DEALS = [
   ['477922067703','Cirro Fulfillment',102000,'608286676','29896105','2026-02-23','2026-04-24','Set a new meeting with NDA signed','32023983','2026-03-17','Outbound Sales'],
   ['478124890347','Your Logistics Corp',54000,'608286675','29896105','2026-02-23','2026-04-24','Blake & Jay to reach out to Hossein early next week w/ pilot plan and set next steps','29422733','2026-03-19','Outbound Sales'],
   ['477992997065','eGourmet Solutions Inc. - Manifest Trial',48000,'608286676','29422733','2026-02-23','2026-04-24','Ellie & Maggie to provide free text fields they\'re using as SOP\'s to determine how orders are packed with what materials. (2) They need to connect their extensiv instance.','29422733','2026-03-30','Outbound Sales'],
-  ['478621106408','Orange County 3PL - 3PL Partner',36000,'608286677','29422733','2026-02-24','2026-04-30','3/16 - has docusign, has reviewed along with a minor tweak which has been added. 3/17 - asking for < 2 week hold to work through issues with ShipHero. (currently migrating from Logiwa to ShipHero and there\'s many issues).','30284350','2026-03-25','Outbound Sales'],
   ['481871055094','Saia Logistics (fka LinkX)',60000,'2918051008','29896105','2026-02-27','2026-04-28','Steve reached out and said SAIA President said to put this on hold. No other info given. Nurture accordingly','29896105','2026-03-18','Direct'],
   ['481189626047','AMZ Prep',36000,'2918051008','29896105','2026-02-27','2026-04-28','Thomas responded this is not the focus right now. Pushed back for hopeful re engagement but likely move to stalled/delayed','29896105','2026-03-16','Direct'],
   ['481449860294','Fulfillment House',24000,'2918051008','29896105','2026-02-27','2026-06-30','No interest in moving quicker to implement. Likely to consider new solution in July','29896105','2026-03-16','Outbound Sales'],
@@ -1071,13 +1069,13 @@ const DEALS = [
   ['494473543890','Shipping Butler',30000,'2918051007','29422733','2026-03-18','2026-05-17','schedule NBM (rescheduled Neil was sick last thursday)','29422733','2026-03-18','Email'],
   ['494470845628','Excelsior Integrated - 3PL Partner',36000,'2918051007','29422733','2026-03-19','2026-05-29','Re-engagment call with Mathew 3/23','29422733','2026-03-25','Direct'],
   ['495370596574','Left Brain Logistics, LLC - 3PL',40000,'2918051007','29422733','2026-03-25','2026-04-30','3/30 - NBM','29422733','2026-03-30','Paid Search'],
-  ['495866858729','BioLongevity Labs',12000,'608286676','29896105','2026-03-26','2026-06-19','Commercial Review','29896105','2026-03-26','Paid Search']
+  ['495866858729','BioLongevity Labs',12000,'608286677','29896105','2026-03-26','2026-03-31','Commercial Review','29896105','2026-03-31','Paid Search']
 ];
 
 // ─── STAGE ENTRY DATES (from HubSpot hs_v2_date_entered_current_stage) ───────
 // dealId → date entered current stage (YYYY-MM-DD)
 const STAGE_ENTERED = {
-  '154487611634':'2026-01-14','21754029791':'2026-03-12','266505689330':'2025-12-15','275759382720':'2026-01-22','296064239860':'2025-12-01','296064239865':'2025-11-11','311147104455':'2026-03-05','321305284846':'2025-12-01','322792814794':'2026-01-14','329121454290':'2025-10-10','335551607996':'2025-10-16','347229675723':'2026-03-12','356797053159':'2026-01-26','367595752685':'2026-01-26','370749058247':'2025-11-12','373924524263':'2025-11-13','373932429521':'2025-11-13','374103853256':'2025-11-14','374574725350':'2025-11-14','374945230028':'2026-01-12','375009107158':'2025-12-30','378240498937':'2026-03-13','378594107601':'2026-03-18','385415697648':'2025-11-24','386781338821':'2026-03-03','388158166241':'2026-02-11','395434951886':'2026-03-20','395616403694':'2025-12-02','397125735624':'2025-12-04','398470018272':'2025-12-04','399702182089':'2026-02-06','403976773878':'2025-12-10','405224989943':'2025-12-11','406329249978':'2026-03-11','411340706014':'2025-12-17','411341426928':'2026-03-11','411341444307':'2025-12-17','411385661666':'2025-12-17','412353323233':'2025-12-18','412482107602':'2025-12-18','412482821359':'2026-02-20','417001074931':'2025-12-23','425075783911':'2026-01-06','426737647808':'2026-01-12','427713702126':'2026-03-24','450457727200':'2026-01-30','451126015174':'2026-01-27','451425591533':'2026-01-27','452137009352':'2026-02-18','454024375493':'2026-01-29','459497499890':'2026-02-06','461107103961':'2026-02-05','461172802797':'2026-02-05','472141769930':'2026-02-19','472770962642':'2026-02-20','473244614880':'2026-03-07','473452158169':'2026-03-24','473541862644':'2026-02-19','474056691933':'2026-02-25','474120071396':'2026-03-24','474457379063':'2026-03-07','474608465119':'2026-03-25','475675551947':'2026-02-24','477756852439':'2026-02-23','477764106470':'2026-03-25','477905091779':'2026-02-23','477912008924':'2026-02-23','477916308702':'2026-02-23','477922067703':'2026-03-04','477992997065':'2026-03-10','478124890347':'2026-03-02','478621106408':'2026-03-16','481189626047':'2026-03-18','481449860294':'2026-03-18','481710229706':'2026-03-13','481871055094':'2026-03-19','485120763085':'2026-03-03','486004873438':'2026-03-09','488034107600':'2026-03-09','489993367772':'2026-03-25','492304500976':'2026-03-13','493033828577':'2026-03-10','493035264210':'2026-03-11','493677246687':'2026-03-12','494192049356':'2026-03-20','494470845628':'2026-03-19','494473543890':'2026-03-18','495370596574':'2026-03-25','495866858729':'2026-03-26'
+  '154487611634':'2026-01-14','266505689330':'2025-12-15','275759382720':'2026-01-22','296064239860':'2025-12-01','296064239865':'2025-11-11','311147104455':'2026-03-05','321305284846':'2025-12-01','322792814794':'2026-01-14','329121454290':'2025-10-10','335551607996':'2025-10-16','347229675723':'2026-03-12','356797053159':'2026-01-26','367595752685':'2026-01-26','370749058247':'2025-11-12','373924524263':'2025-11-13','373932429521':'2025-11-13','374103853256':'2025-11-14','374574725350':'2025-11-14','374945230028':'2026-01-12','375009107158':'2025-12-30','378240498937':'2026-03-13','378594107601':'2026-03-18','385415697648':'2025-11-24','386781338821':'2026-03-03','388158166241':'2026-02-11','395434951886':'2026-03-20','395616403694':'2025-12-02','397125735624':'2025-12-04','398470018272':'2025-12-04','399702182089':'2026-02-06','403976773878':'2025-12-10','405224989943':'2025-12-11','406329249978':'2026-03-11','411340706014':'2025-12-17','411341426928':'2026-03-11','411341444307':'2025-12-17','411385661666':'2025-12-17','412353323233':'2025-12-18','412482107602':'2025-12-18','412482821359':'2026-02-20','417001074931':'2025-12-23','425075783911':'2026-01-06','426737647808':'2026-01-12','427713702126':'2026-03-24','450457727200':'2026-01-30','451126015174':'2026-01-27','451425591533':'2026-01-27','452137009352':'2026-02-18','454024375493':'2026-01-29','459497499890':'2026-02-06','461107103961':'2026-02-05','461172802797':'2026-02-05','472141769930':'2026-02-19','472770962642':'2026-02-20','473244614880':'2026-03-07','473452158169':'2026-03-24','473541862644':'2026-02-19','474056691933':'2026-02-25','474120071396':'2026-03-24','474457379063':'2026-03-07','474608465119':'2026-03-25','475675551947':'2026-02-24','477756852439':'2026-02-23','477764106470':'2026-03-25','477905091779':'2026-02-23','477912008924':'2026-02-23','477916308702':'2026-02-23','477922067703':'2026-03-04','477992997065':'2026-03-10','478124890347':'2026-03-02','481189626047':'2026-03-18','481449860294':'2026-03-18','481710229706':'2026-03-13','481871055094':'2026-03-19','485120763085':'2026-03-03','486004873438':'2026-03-09','488034107600':'2026-03-09','489993367772':'2026-03-25','492304500976':'2026-03-13','493033828577':'2026-03-10','493035264210':'2026-03-11','493677246687':'2026-03-12','494192049356':'2026-03-20','494470845628':'2026-03-19','494473543890':'2026-03-18','495370596574':'2026-03-25','495866858729':'2026-03-31'
 };
 
 // Global helper: real days in current stage using STAGE_ENTERED lookup
@@ -1093,6 +1091,7 @@ function getDaysInStage(d) {
 const WON_DEALS = [
   ['10169373890','Deliverzen - 3PL Partner',42000,'2024-02-12','1285136351','60223552','Referral'],
   ['13560161733','Excelsior Integrated - 3PL whitelabel',4776,'2024-07-12','1285136351','60223552','Referral'],
+  ['21754029791','Delta Fulfilment - Trial',57000,'2026-03-31','29896105','69626301','Outbound Sales'],
   ['40017025215','Rapid Pack Fulfilment - 3PL Partner',19152,'2025-02-28','180866001','69626301','Outbound Sales'],
   ['47214548196','ShipLab - 3PL Partner',24000,'2025-02-05','1285136351','60223552','Outbound Sales'],
   ['79225569521','GPA Logistics Group - 3PL Partner',96000,'2025-01-22','1285136351','60223552','Social'],
@@ -1347,6 +1346,7 @@ const LOST_DEALS = [
   ['473541823721','247 Fulfillment',12000,'2026-03-18','29896105','29896105','608286679','Outbound Sales'],
   ['472770959585','BoxHero - Manifest Trial',12000,'2026-03-26','29896105','29896105','608286679','Outbound Sales'],
   ['474055253202','Legacy Drayage Inc',60000,'2026-03-13','29896105','29896105','608286679','Outbound Sales'],
+  ['478621106408','Orange County 3PL - 3PL Partner',36000,'2026-03-31','29422733','30284350','608286679','Outbound Sales'],
   ['493652724932','All4logic',24000,'2026-03-12','29896105','29896105','608286679','Outbound Sales'],
   ['494017571063','Test Deal',2000,'2026-03-18','32126513','32126513','608286679','Outbound Sales']
 ];
@@ -1384,7 +1384,6 @@ const MEETINGS = [
   {id:'436804304098',type:'MEETING',title:'Jennifer & Jay at Octup',timestamp:'2026-02-04',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["454024375493"]},
   {id:'436706996453',type:'MEETING',title:'Russ & Jay at Octup',timestamp:'2026-02-18',outcome:'SCHEDULED',ownerId:'29422733',dealIds:[]},
   {id:'442478770415',type:'MEETING',title:'Drew <> Octup',timestamp:'2026-02-04',outcome:'',ownerId:'1285136351',dealIds:[]},
-  {id:'437506063608',type:'MEETING',title:'Fathom summary for GOSS x STORD Sync',timestamp:'2026-01-30',outcome:'COMPLETED',ownerId:'1285136351',dealIds:["177966571757", "403391945935"]},
   {id:'437695781074',type:'MEETING',title:'Fathom summary for Ship 321 x Sync',timestamp:'2026-01-30',outcome:'COMPLETED',ownerId:'78746883',dealIds:[]},
   {id:'437664692471',type:'MEETING',title:'Fathom summary for BrandFox x Octup [Dynamic Categories]',timestamp:'2026-01-30',outcome:'COMPLETED',ownerId:'78746883',dealIds:[]},
   {id:'437291939004',type:'MEETING',title:'Fathom summary for Meet with Octup',timestamp:'2026-01-30',outcome:'COMPLETED',ownerId:'29896105',dealIds:["450457727200"]},
@@ -1842,7 +1841,11 @@ const MEETINGS = [
   {id:'481928419517',type:'MEETING',title:'Calendly: Octup <> Follow-Up from IWLA',timestamp:'2026-04-07',outcome:'',ownerId:'29422733',dealIds:[]},
   {id:'481926616254',type:'MEETING',title:'Keith goggin and Octup Team',timestamp:'2026-04-07',outcome:'',ownerId:'29422733',dealIds:[]},
   {id:'481924959469',type:'MEETING',title:'Octup billing review w/eGourmet',timestamp:'2026-04-02',outcome:'',ownerId:'29422733',dealIds:["477992997065"]},
-  {id:'481963574464',type:'MEETING',title:'Jasper at  & Blake at Octup',timestamp:'2026-04-09',outcome:'SCHEDULED',ownerId:'29896105',dealIds:[]}
+  {id:'481963574464',type:'MEETING',title:'Jasper at  & Blake at Octup',timestamp:'2026-04-09',outcome:'SCHEDULED',ownerId:'29896105',dealIds:[]},
+  {id:'482066098380',type:'MEETING',title:'Fathom summary for Michael <> Alon, SDR Octup',timestamp:'2026-03-31',outcome:'COMPLETED',ownerId:'',dealIds:[]},
+  {id:'482250417350',type:'MEETING',title:'Matt Swartley and Octup Team',timestamp:'2026-04-07',outcome:'',ownerId:'29422733',dealIds:[]},
+  {id:'482250147027',type:'MEETING',title:'Calendly: Octup <> Follow-Up from IWLA',timestamp:'2026-04-07',outcome:'',ownerId:'29422733',dealIds:[]},
+  {id:'482271970540',type:'MEETING',title:'Ship Essential x Octup: Billing & Analytics Sync',timestamp:'2026-03-31',outcome:'',ownerId:'78746883',dealIds:[]}
 ];
 
 // ─── CALLS ────────────────────────────────────────────────────────────────────
@@ -1851,13 +1854,6 @@ const MEETINGS = [
 // 13 entries have real contact names (page 1 of HubSpot filtered view);
 // remaining 45 use outcome-based titles; company names pending HubSpot lookup
 const CALLS = [
-  {id:'437583840482',title:'Call with Gary Mirsky',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437583776988',title:'Call with Aaron Rubin',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437583864002',title:'Call with Todd Voda',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437692142788',title:'Call with Ben Schwartz',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437584807136',title:'Call with Josh Proctor',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437584809168',title:'Call with Michael Vitiello',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437692668114',title:'Call with Katie Fox',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
   {id:'437584870628',title:'Call with Lee Smith',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
   {id:'437692831980',title:'Call with Steve Jensen',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
   {id:'437585564864',title:'Call with Renato Garbin',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
@@ -4980,7 +4976,8 @@ const CALLS = [
   {id:'480691487943',title:'No Answer',timestamp:'2026-03-25',ownerId:'29896105',dealIds:[]},
   {id:'480687873220',title:'No Answer',timestamp:'2026-03-25',ownerId:'29896105',dealIds:[]},
   {id:'480693271791',title:'No Answer',timestamp:'2026-03-25',ownerId:'29896105',dealIds:[]},
-  {id:'480861585601',title:'Call with Catherine Weis',timestamp:'2026-03-26',ownerId:'29896105',dealIds:[]}
+  {id:'480861585601',title:'Call with Catherine Weis',timestamp:'2026-03-26',ownerId:'29896105',dealIds:[]},
+  {id:'482243680500',title:'Call with Ryan Foster',timestamp:'2026-03-31',ownerId:'29896105',dealIds:["495866858729"]}
 ];
 
 // ─── EMAILS ───────────────────────────────────────────────────────────────────
@@ -4988,37 +4985,6 @@ const CALLS = [
 // isInternal: true = only @octup.com people involved (excluded from SDR external view)
 // Chanan last week (Feb 22-28, 2026): 44 total — verified in HubSpot Mar 3 2026
 const EMAILS = [
-  {id:'437533025492',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436708276416',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437520059590',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437592964339',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437351987388',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437592972493',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437291291846',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436988525795',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437533051124',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436823481580',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437507618024',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437266232542',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437523685615',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437291310324',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437514728682',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437462201530',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437064833261',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437064837344',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437540256975',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437238861035',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437598398671',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437200639217',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437543843002',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437291348209',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436885154031',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436988584131',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437476737261',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437520138429',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'436777170146',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437445983428',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
-  {id:'437352059100',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
   {id:'437688115396',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
   {id:'437439298764',subject:'Re: Meeting Today',timestamp:'2026-01-30',ownerId:'29896105',dealIds:["373932429521"]},
   {id:'437354228982',subject:'🟢 weeks to bill | cash stuck | why',timestamp:'2026-01-30',ownerId:'30284350',dealIds:[]},
@@ -8608,7 +8574,28 @@ const EMAILS = [
   {id:'482070743268',subject:'Re: Blue Chip Fulfilmment & Symple',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]},
   {id:'481998261493',subject:'Re: Blue Chip Fulfilmment & Symple',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]},
   {id:'482135746766',subject:'Re: Delta Enhancements',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]},
-  {id:'482130347202',subject:'Re: New customers onboarding SLA',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]}
+  {id:'482130347202',subject:'Re: New customers onboarding SLA',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]},
+  {id:'482138219707',subject:'Re: New payment request from Supply Chaney - invoice 1074',timestamp:'2026-03-31',ownerId:'29974968',dealIds:[]},
+  {id:'482080181448',subject:'Fw: Good Morning IWLA Exhibitors !  Board Buddy Reminder',timestamp:'2026-03-31',ownerId:'29974968',dealIds:[]},
+  {id:'481995296967',subject:'Re: Good Morning IWLA Exhibitors !  Board Buddy Reminder',timestamp:'2026-03-31',ownerId:'29974968',dealIds:[]},
+  {id:'482055556312',subject:'Re: Spotwork / Octup',timestamp:'2026-03-31',ownerId:'33033873',dealIds:[]},
+  {id:'482136439012',subject:'Re: Gaps in our customer care today',timestamp:'2026-03-31',ownerId:'33033873',dealIds:[]},
+  {id:'482048897234',subject:'Re: Octup x Ops Engine - Billing Workflows Chat',timestamp:'2026-03-31',ownerId:'29896105',dealIds:["347229675723"]},
+  {id:'482078807270',subject:'Re: Ava\'s 2025 Bonus',timestamp:'2026-03-31',ownerId:'29974968',dealIds:[]},
+  {id:'481990273266',subject:'Re: Ava\'s 2025 Bonus',timestamp:'2026-03-31',ownerId:'30769886',dealIds:[]},
+  {id:'481997523149',subject:'Re: Customers - April Go live update',timestamp:'2026-03-31',ownerId:'30860443',dealIds:[]},
+  {id:'481988443359',subject:'Declined: Platform/Data Feature Requests',timestamp:'2026-03-31',ownerId:'78746883',dealIds:[]},
+  {id:'482249623745',subject:'Action Required: Legal Documents Missing from Won Dealsing Legal Docs',timestamp:'2026-03-31',ownerId:'32126513',dealIds:[]},
+  {id:'482251538651',subject:'Matt Swartley and Octup Team',timestamp:'2026-03-31',ownerId:'29422733',dealIds:[]},
+  {id:'482251834597',subject:'Re: Octup x BioLongevity Intro Recap',timestamp:'2026-03-31',ownerId:'29896105',dealIds:[]},
+  {id:'481993873650',subject:'Re: Quick note, Grady - ahead of IWLA',timestamp:'2026-03-31',ownerId:'33033873',dealIds:[]},
+  {id:'482258175208',subject:'Re: [*EXTERNAL*]Quick note, Jeremy - ahead of IWLA',timestamp:'2026-03-31',ownerId:'33033873',dealIds:[]},
+  {id:'482258233553',subject:'Re: INVITE: Warehousing After Dark w/Octup - LIVE @ IWLA 2026',timestamp:'2026-03-31',ownerId:'33033873',dealIds:[]},
+  {id:'482271522024',subject:'Re: Invitation: Michael <> Yotam, SDR Opportunity Octup @ Tue Mar 31, 2026 8:30am - 8:45am (EDT) (michael21chenoweth@gmail.com)',timestamp:'2026-03-31',ownerId:'32126513',dealIds:[]},
+  {id:'482268323041',subject:'Ship Essential x Octup: Billing & Analytics Sync',timestamp:'2026-03-31',ownerId:'78746883',dealIds:[]},
+  {id:'482271659246',subject:'Canceled: Blue Chip & Octup | Weekly Check-in',timestamp:'2026-03-31',ownerId:'30860443',dealIds:[]},
+  {id:'482268960987',subject:'Re: Customers - April Go live update',timestamp:'2026-03-31',ownerId:'29140485',dealIds:[]},
+  {id:'482261427399',subject:'Blue Chip & Octup | Weekly Check-in',timestamp:'2026-03-31',ownerId:'30860443',dealIds:[]}
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
