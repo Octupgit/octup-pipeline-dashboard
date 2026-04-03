@@ -409,6 +409,46 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .sdr-status-outbound{background:rgba(88,166,255,.12);color:var(--inp)}
 .sdr-status-scheduled{background:rgba(88,166,255,.12);color:var(--inp)}
 
+/* PIPE HYGIENE */
+.hygiene-wrap{padding:16px 20px;min-height:200px}
+.hygiene-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.hygiene-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.hygiene-card-val{font-size:22px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px}
+.hygiene-card-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.hygiene-card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.hygiene-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.hg-filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.hg-filter-btn.active,.hg-filter-btn:hover{background:rgba(255,255,255,.1);color:var(--text);border-color:rgba(255,255,255,.3)}
+.hg-search{padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font-size:12px;outline:none;width:180px;margin-left:auto}
+.hg-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+.hygiene-table{width:100%;border-collapse:collapse;font-size:12px}
+.hygiene-table th{padding:8px 10px;border-bottom:2px solid var(--border);text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;background:var(--bg3);position:sticky;top:0}
+.hygiene-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap}
+.hygiene-table tr:last-child td{border-bottom:none}
+.hygiene-table tr:hover td{background:rgba(255,255,255,.03)}
+.hg-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.hg-hot{background:rgba(239,68,68,.15);color:#f87171}
+.hg-good{background:rgba(74,222,128,.15);color:#4ade80}
+.hg-monitor{background:rgba(56,189,248,.15);color:#38bdf8}
+.hg-actnow{background:rgba(251,191,36,.18);color:#fbbf24}
+.hg-stalled{background:rgba(156,163,175,.12);color:#9ca3af}
+.hg-lost{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.hg-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle;flex-shrink:0}
+.hg-dot-green{background:#4ade80;box-shadow:0 0 4px rgba(74,222,128,.5)}
+.hg-dot-amber{background:#fbbf24}
+.hg-dot-red{background:#f87171}
+.hg-dot-grey{background:#4b5563}
+.hygiene-controls{display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.hg-act-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.hg-act-btn:hover{background:rgba(255,255,255,.12)}
+.hg-act-btn:disabled{opacity:.5;cursor:not-allowed}
+.hg-export{color:#38bdf8;border-color:rgba(56,189,248,.3)}
+.hg-export:hover{background:rgba(56,189,248,.1)!important}
+.hygiene-loading{padding:50px;text-align:center;color:var(--muted);font-size:13px}
+.hygiene-error{padding:16px;color:#f87171;font-size:12px;background:rgba(239,68,68,.06);border-radius:8px;border:1px solid rgba(239,68,68,.2);margin-bottom:12px}
+.hygiene-legend{display:flex;gap:14px;font-size:10px;color:var(--muted);margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.hg-progress{height:3px;background:var(--border);border-radius:2px;margin-bottom:12px;overflow:hidden}
+.hg-progress-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
 /* WEEKLY PIPELINE BRIEF */
 .brief-wrap{padding:20px 24px}
 .brief-controls{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -595,6 +635,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <button class="btn" data-week="4w">4 Wks Ago</button>
         <button class="btn" data-week="last9w">Last 9 Weeks</button>
         <button class="btn" data-week="month">This Month</button>
+        <button class="btn" data-week="lastq">Last Q</button>
         <button class="btn" data-week="quarter">This Q</button>
         <button class="btn" data-week="year">This Y</button>
         <button class="btn" data-week="alltime">All Time</button>
@@ -649,6 +690,14 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div style="flex:1;min-width:0">
           <div class="action-btn-label">Weekly Deal Desk</div>
           <div style="font-size:11px;color:var(--muted);margin-top:1px">Pre-meeting pipeline brief</div>
+        </div>
+        <span class="action-btn-badge action-btn-badge-muted">Live</span>
+      </div>
+      <div class="action-btn-card" onclick="openSectionPanel('section-hygiene')">
+        <span class="action-btn-icon">🧹</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">Pipe Hygiene</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">Pipeline health check · Live HubSpot</div>
         </div>
         <span class="action-btn-badge action-btn-badge-muted">Live</span>
       </div>
@@ -831,8 +880,6 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <!-- F: WEEKLY DEAL DESK -->
   <section id="section-brief" style="display:none">
     <div class="brief-wrap">
-      <!-- MEETINGS PANEL -->
-      <div id="brief-meetings-panel" style="margin-bottom:18px"></div>
       <div class="brief-controls">
         <button class="brief-generate-btn" onclick="generateBrief()">⚡ Generate Deal Desk</button>
         <button class="brief-copy-btn" id="brief-copy-btn" onclick="copyBrief()" style="display:none">📋 Copy</button>
@@ -843,6 +890,24 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     </div>
   </section>
 
+
+  <!-- G: PIPE HYGIENE -->
+  <section id="section-hygiene" style="display:none">
+    <div class="hygiene-wrap">
+      <div id="hygiene-controls" class="hygiene-controls" style="display:none">
+        <button class="hg-act-btn" onclick="loadPipeHygiene()">🔄 Refresh</button>
+        <button class="hg-act-btn hg-export" id="hg-copy-btn" onclick="copyHygieneOutput()" style="display:none">📋 Copy</button>
+        <button class="hg-act-btn hg-export" id="hg-csv-btn" onclick="exportHygieneCSV()" style="display:none">⬇ Export CSV</button>
+        <span id="hg-ts" style="font-size:11px;color:var(--muted);margin-left:4px"></span>
+      </div>
+      <div id="hygiene-body">
+        <div class="hygiene-loading">
+          <div style="font-size:28px;margin-bottom:10px">🧹</div>
+          <div>Loading pipeline health data from HubSpot…</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- D: HIGH PROB DEALS (SA + Trial + CR) -->
   <section id="section-highvalue" style="display:none">
@@ -938,6 +1003,11 @@ const TODAY = new Date();
   const qStart = new Date(TODAY.getFullYear(), q * 3, 1);
   const qEnd   = new Date(TODAY.getFullYear(), q * 3 + 3, 0);
   const qNames = ['Q1','Q2','Q3','Q4'];
+  // Last Quarter
+  const lqQ     = q === 0 ? 3 : q - 1;
+  const lqYear  = q === 0 ? TODAY.getFullYear() - 1 : TODAY.getFullYear();
+  const lqStart = new Date(lqYear, lqQ * 3, 1);
+  const lqEnd   = new Date(lqYear, lqQ * 3 + 3, 0);
   // This Year
   const yStart = new Date(TODAY.getFullYear(), 0, 1);
   const yEnd   = new Date(TODAY.getFullYear(), 11, 31);
@@ -952,6 +1022,7 @@ const TODAY = new Date();
     '4w':      weekObj(-4, '4 Wks Ago'),
     'last9w':  rangeObj(l9Start, TODAY, `Last 9 Weeks (${shortFmt(l9Start)}–${shortFmt(TODAY)})`),
     'month':   rangeObj(mStart, mEnd,  `This Month (${shortFmt(mStart)}–${shortFmt(mEnd)}, ${TODAY.getFullYear()})`),
+    'lastq':   rangeObj(lqStart, lqEnd, `Last ${qNames[lqQ]} (${shortFmt(lqStart)}–${shortFmt(lqEnd)}, ${lqYear})`),
     'quarter': rangeObj(qStart, qEnd,  `This ${qNames[q]} (${shortFmt(qStart)}–${shortFmt(qEnd)}, ${TODAY.getFullYear()})`),
     'year':    rangeObj(yStart, yEnd,  `This Year (Jan 1–Dec 31, ${TODAY.getFullYear()})`),
     'alltime': { start: '2020-01-01', end: isoDate(TODAY), label: 'All Time' },
@@ -10308,7 +10379,6 @@ function renderBriefMeetings() {
 
   panel.innerHTML = `
     <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📅 Meetings — ${WEEKS[selectedWeek]?.label?.split('(')[0]?.trim()||'This Period'}</div>
-    ${mkSection('✓ Took Place', '#4ade80', completed)}
     ${mkSection('📅 Booked / Upcoming', '#38bdf8', booked)}
     ${mkSection('✗ No Show', '#f87171', noShows)}
   `;
@@ -10972,6 +11042,7 @@ const _panelTitles = {
   'section-highvalue': '🎯 High Prob Deals — High Intent to Close',
   'section-dealdesk':  '🧠 Pipeline DealDesk',
   'section-brief':     '📋 Weekly Deal Desk',
+  'section-hygiene':   '🧹 Pipe Hygiene — Pipeline Health Check',
 };
 let _panelMovedSection = null;
 
@@ -10995,7 +11066,8 @@ function openSectionPanel(sectionId) {
   document.getElementById('section-panel-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   // Auto-run deal desk + meetings on open
-  if (sectionId === 'section-brief') { renderBriefMeetings(); setTimeout(generateBrief, 50); }
+  if (sectionId === 'section-brief') { setTimeout(generateBrief, 50); }
+  if (sectionId === 'section-hygiene') { setTimeout(loadPipeHygiene, 50); }
 }
 
 function closeSectionPanel() {
@@ -11383,6 +11455,386 @@ updateSyncTimestamp();
     tip.classList.remove('vis');
   });
 })();
+
+// ─── PIPE HYGIENE ─────────────────────────────────────────────────────────────
+const HG_PIPELINE_ID  = '394300639';
+const HG_PORTAL_ID    = '26004468';
+const HG_STAGE_LABELS = {
+  '2918051007': 'NBM Scheduled',
+  '608286675':  'Discovery',
+  '740160705':  'Technical Eval',
+  '608286676':  'Solution Alignment',
+  '4988070119': 'Trial',
+  '608286677':  'Commercial Review',
+  '2918051008': 'Stalled/Delayed',
+  '608286678':  'Closed Won',
+  '608286679':  'Closed Lost',
+};
+const HG_OWNERS = { '29896105': 'Blake', '29422733': 'Jay', '30284350': 'Chanan', '32023983': 'Other' };
+
+let _hgDeals = [];      // raw enriched deal objects
+let _hgFilter = 'all';  // active filter
+let _hgSearch = '';
+
+function _hgDaysAgo(ts) {
+  if (!ts) return null;
+  return Math.floor((Date.now() - new Date(ts).getTime()) / 86400000);
+}
+
+function _hgDot(days) {
+  if (days === null) return `<span class="hg-dot hg-dot-grey"></span>`;
+  if (days < 14)    return `<span class="hg-dot hg-dot-green"></span>`;
+  if (days < 28)    return `<span class="hg-dot hg-dot-amber"></span>`;
+  return `<span class="hg-dot hg-dot-red"></span>`;
+}
+
+function _hgAge(days) {
+  if (days === null) return `<span style="color:var(--muted)">—</span>`;
+  if (days === 0)   return `<span style="color:#4ade80;font-weight:700">Today</span>`;
+  const col = days < 14 ? '#4ade80' : days < 28 ? '#fbbf24' : '#f87171';
+  return `<span style="color:${col};font-weight:700">${days}d ago</span>`;
+}
+
+function classifyDeal(d) {
+  const sel  = d.sellerDays;
+  const cust = d.customerDays;
+  const score = d.score || 0;
+  const dtc   = d.daysToClose;
+  const hasCust = cust !== null;
+
+  // Priority order
+  if (!hasCust && sel !== null && sel >= 45 && score < 15 && dtc !== null && dtc <= 30)
+    return { key: 'lost',    label: '❌ Move to Lost',    cls: 'hg-lost',    action: 'Lost or close. No customer signal.' };
+  if (score >= 45 && hasCust && cust <= 28)
+    return { key: 'hot',     label: '🔥 Hot',             cls: 'hg-hot',     action: 'Keep momentum — follow up within 3 days.' };
+  if (score >= 45 && !hasCust && dtc !== null && dtc <= 30)
+    return { key: 'actnow',  label: '⚠️ Act Now',         cls: 'hg-actnow',  action: 'High score, no reply. Push or update close date.' };
+  if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
+    return { key: 'good',    label: '✅ Good',             cls: 'hg-good',    action: 'On track. Continue cadence.' };
+  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25)
+    return { key: 'stalled', label: '⏸ Move to Stalled',  cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
+  return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
+}
+
+async function loadPipeHygiene() {
+  const body   = document.getElementById('hygiene-body');
+  const ctrlEl = document.getElementById('hygiene-controls');
+  const token  = getHsToken();
+
+  if (!token) {
+    body.innerHTML = `<div class="hygiene-error">⚠️ No HubSpot token found. Click the 🔄 SYNC button at the top of the page and enter your Private App token first.</div>`;
+    return;
+  }
+
+  // Show loading
+  body.innerHTML = `
+    <div class="hygiene-loading">
+      <div style="font-size:20px;margin-bottom:8px">⏳</div>
+      <div id="hg-load-msg">Fetching open deals…</div>
+      <div class="hg-progress" style="width:300px;margin:12px auto 0"><div class="hg-progress-bar" id="hg-prog" style="width:5%"></div></div>
+    </div>`;
+  ctrlEl.style.display = 'none';
+
+  const setMsg  = (m, pct) => {
+    const el = document.getElementById('hg-load-msg'); if (el) el.textContent = m;
+    const pb = document.getElementById('hg-prog');     if (pb) pb.style.width = pct + '%';
+  };
+
+  try {
+    // 1. Fetch open deals in the hygiene pipeline
+    setMsg('Fetching open deals…', 10);
+    const dealProps = ['dealname','dealstage','pipeline','amount','closedate','hubspot_owner_id',
+      'createdate','deal_source','event_source','hs_deal_stage_probability','hs_v2_date_entered_current_stage',
+      'notes_last_contacted','notes_last_updated','notes_next_activity_date','hs_is_stalled',
+      'hs_deal_score','num_contacted_notes','num_notes','type__deal_'];
+
+    const rawDeals = await hsPaginate(token, 'deals', dealProps, [{
+      filters: [
+        { propertyName: 'pipeline',  operator: 'EQ',      value: HG_PIPELINE_ID },
+        { propertyName: 'dealstage', operator: 'NOT_IN',  values: ['608286678','608286679'] },
+      ]
+    }], 300);
+
+    // Filter out Brand / Final Mile
+    const deals = rawDeals.filter(d => {
+      const t = (d.properties.type__deal_ || '').toLowerCase();
+      return !t.includes('brand') && !t.includes('final mile') && !t.includes('transportation');
+    });
+
+    setMsg(`Fetching engagement signals for ${deals.length} deals…`, 30);
+
+    // 2. Batch fetch last incoming email per deal (5 at a time)
+    const emailMap   = {};
+    const meetingMap = {};
+    const BATCH = 6;
+
+    for (let i = 0; i < deals.length; i += BATCH) {
+      const chunk = deals.slice(i, i + BATCH);
+      const pct   = 30 + Math.round((i / deals.length) * 55);
+      setMsg(`Checking engagement for deal ${i + 1}–${Math.min(i + BATCH, deals.length)} of ${deals.length}…`, pct);
+
+      await Promise.all(chunk.map(async d => {
+        const did = d.id;
+        // Last inbound email
+        try {
+          const er = await hsPost(token, '/crm/v3/objects/emails/search', {
+            filterGroups: [{ filters: [
+              { propertyName: 'associations.deal',      operator: 'EQ', value: did },
+              { propertyName: 'hs_email_direction',     operator: 'EQ', value: 'INCOMING_EMAIL' },
+            ]}],
+            properties: ['hs_timestamp','hs_email_subject','hs_email_from_email'],
+            sorts: [{ propertyName: 'hs_timestamp', direction: 'DESCENDING' }],
+            limit: 1,
+          });
+          emailMap[did] = er.results?.[0] || null;
+        } catch(e) { emailMap[did] = null; }
+
+        // Last completed meeting
+        try {
+          const mr = await hsPost(token, '/crm/v3/objects/meetings/search', {
+            filterGroups: [{ filters: [
+              { propertyName: 'associations.deal',    operator: 'EQ', value: did },
+              { propertyName: 'hs_meeting_outcome',   operator: 'EQ', value: 'COMPLETED' },
+            ]}],
+            properties: ['hs_timestamp','hs_meeting_title'],
+            sorts: [{ propertyName: 'hs_timestamp', direction: 'DESCENDING' }],
+            limit: 1,
+          });
+          meetingMap[did] = mr.results?.[0] || null;
+        } catch(e) { meetingMap[did] = null; }
+      }));
+    }
+
+    setMsg('Classifying deals…', 90);
+
+    // 3. Enrich and classify
+    _hgDeals = deals.map(d => {
+      const p   = d.properties;
+      const did = d.id;
+      const email   = emailMap[did];
+      const meeting = meetingMap[did];
+
+      // Customer signal: latest of inbound email or completed meeting
+      const emailTs   = email?.properties?.hs_timestamp   || null;
+      const meetingTs = meeting?.properties?.hs_timestamp || null;
+      let customerTs  = null;
+      if (emailTs && meetingTs)   customerTs = emailTs > meetingTs ? emailTs : meetingTs;
+      else if (emailTs)           customerTs = emailTs;
+      else if (meetingTs)         customerTs = meetingTs;
+
+      const sellerDays   = _hgDaysAgo(p.notes_last_contacted);
+      const customerDays = _hgDaysAgo(customerTs);
+      const score        = parseFloat(p.hs_deal_score) || 0;
+      const closeDate    = p.closedate ? p.closedate.split('T')[0] : null;
+      const daysToClose  = closeDate ? Math.ceil((new Date(closeDate) - Date.now()) / 86400000) : null;
+      const amount       = parseFloat(p.amount) || 0;
+
+      const cls = classifyDeal({ sellerDays, customerDays, score, daysToClose });
+
+      return {
+        id:          did,
+        name:        p.dealname || '—',
+        stage:       HG_STAGE_LABELS[p.dealstage] || p.dealstage || '—',
+        owner:       HG_OWNERS[p.hubspot_owner_id] || p.hubspot_owner_id || '—',
+        amount,
+        closeDate,
+        daysToClose,
+        score,
+        dealSource:  [p.deal_source, p.event_source].filter(Boolean).join(' / ') || '—',
+        sellerDays,
+        customerDays,
+        customerTs,
+        emailSubject:  email?.properties?.hs_email_subject || null,
+        emailFrom:     email?.properties?.hs_email_from_email || null,
+        meetingTitle:  meeting?.properties?.hs_meeting_title || null,
+        cls,
+      };
+    });
+
+    setMsg('Done!', 100);
+    document.getElementById('hg-ts').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('hg-copy-btn').style.display = '';
+    document.getElementById('hg-csv-btn').style.display  = '';
+    ctrlEl.style.display = '';
+    renderPipeHygiene();
+
+  } catch(err) {
+    body.innerHTML = `<div class="hygiene-error">❌ Error loading data: ${err.message}<br><br><button class="hg-act-btn" onclick="loadPipeHygiene()">Try Again</button></div>`;
+  }
+}
+
+function renderPipeHygiene() {
+  const body = document.getElementById('hygiene-body');
+  const search = _hgSearch.toLowerCase();
+
+  // Sort by status priority
+  const _statusOrder = { hot:0, actnow:1, good:2, monitor:3, stalled:4, lost:5 };
+  const filtered = _hgDeals
+    .filter(d => {
+      if (_hgFilter !== 'all' && d.cls.key !== _hgFilter) return false;
+      if (search && !d.name.toLowerCase().includes(search) && !d.owner.toLowerCase().includes(search)) return false;
+      return true;
+    })
+    .sort((a,b) => (_statusOrder[a.cls.key]||9) - (_statusOrder[b.cls.key]||9));
+
+  // Summary counts (always full dataset)
+  const counts = { hot:0, good:0, monitor:0, actnow:0, stalled:0, lost:0 };
+  const arrByKey = { hot:0, good:0, monitor:0, actnow:0, stalled:0, lost:0 };
+  let totalArr = 0;
+  const overdueDeals = _hgDeals.filter(d => d.daysToClose !== null && d.daysToClose < 0);
+  const overdueArr = overdueDeals.reduce((s,d) => s + d.amount, 0);
+  _hgDeals.forEach(d => {
+    counts[d.cls.key] = (counts[d.cls.key] || 0) + 1;
+    arrByKey[d.cls.key] = (arrByKey[d.cls.key] || 0) + d.amount;
+    totalArr += d.amount;
+  });
+
+  const fmt$ = v => v >= 1000000 ? '$'+(v/1000000).toFixed(1).replace(/\.0$/,'')+'M' : v >= 1000 ? '$'+Math.round(v/1000)+'K' : '$'+v;
+
+  const summaryHTML = `
+    <div class="hygiene-summary">
+      <div class="hygiene-card">
+        <div class="hygiene-card-val">${fmt$(totalArr)}</div>
+        <div class="hygiene-card-lbl">Total Pipeline</div>
+        <div class="hygiene-card-sub">${_hgDeals.length} open deals</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(239,68,68,.3)">
+        <div class="hygiene-card-val" style="color:#f87171">${counts.hot||0}</div>
+        <div class="hygiene-card-lbl">🔥 Hot</div>
+        <div class="hygiene-card-sub">${fmt$(arrByKey.hot||0)}</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(74,222,128,.3)">
+        <div class="hygiene-card-val" style="color:#4ade80">${counts.good||0}</div>
+        <div class="hygiene-card-lbl">✅ Good</div>
+        <div class="hygiene-card-sub">${fmt$(arrByKey.good||0)}</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(56,189,248,.3)">
+        <div class="hygiene-card-val" style="color:#38bdf8">${counts.monitor||0}</div>
+        <div class="hygiene-card-lbl">👁 Monitor</div>
+        <div class="hygiene-card-sub">${fmt$(arrByKey.monitor||0)}</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(251,191,36,.3)">
+        <div class="hygiene-card-val" style="color:#fbbf24">${counts.actnow||0}</div>
+        <div class="hygiene-card-lbl">⚠️ Act Now</div>
+        <div class="hygiene-card-sub">${fmt$(arrByKey.actnow||0)}</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(156,163,175,.25)">
+        <div class="hygiene-card-val" style="color:#9ca3af">${(counts.stalled||0)+(counts.lost||0)}</div>
+        <div class="hygiene-card-lbl">⏸ / ❌ At Risk</div>
+        <div class="hygiene-card-sub">${fmt$((arrByKey.stalled||0)+(arrByKey.lost||0))}</div>
+      </div>
+      <div class="hygiene-card" style="border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.06)">
+        <div class="hygiene-card-val" style="color:#f97316">${overdueDeals.length}</div>
+        <div class="hygiene-card-lbl">📅 Overdue</div>
+        <div class="hygiene-card-sub">${fmt$(overdueArr)} · close date passed</div>
+      </div>
+    </div>`;
+
+  const filterBtns = [
+    ['all','All',''],['hot','🔥 Hot',''],['good','✅ Good',''],
+    ['monitor','👁 Monitor',''],['actnow','⚠️ Act Now',''],
+    ['stalled','⏸ → Stalled',''],['lost','❌ → Lost',''],
+  ].map(([key,lbl]) =>
+    `<button class="hg-filter-btn${_hgFilter===key?' active':''}" onclick="_hgSetFilter('${key}')">${lbl}${key!=='all'?' ('+(_hgDeals.filter(d=>d.cls.key===key).length)+')':' ('+_hgDeals.length+')'}</button>`
+  ).join('');
+
+  const filterRow = `
+    <div class="hygiene-filter-row">
+      ${filterBtns}
+      <input class="hg-search" type="text" placeholder="Search deals…" value="${_hgSearch}" oninput="_hgSetSearch(this.value)">
+    </div>
+    <div class="hygiene-legend">
+      <span><span class="hg-dot hg-dot-green"></span>Active &lt;14d</span>
+      <span><span class="hg-dot hg-dot-amber"></span>Warm 14–28d</span>
+      <span><span class="hg-dot hg-dot-red"></span>Cold 28d+</span>
+      <span><span class="hg-dot hg-dot-grey"></span>No activity</span>
+    </div>`;
+
+  const rows = filtered.length === 0
+    ? `<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:30px">No deals match this filter</td></tr>`
+    : filtered.map(d => {
+        const hsLink = `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`;
+        const closeCol = !d.closeDate ? '—'
+          : d.daysToClose !== null && d.daysToClose < 0
+            ? `<span style="color:#f87171;font-weight:700">${d.closeDate} ⚠️</span>`
+            : d.daysToClose !== null && d.daysToClose <= 7
+              ? `<span style="color:#fbbf24;font-weight:700">${d.closeDate}</span>`
+              : `<span>${d.closeDate}</span>`;
+
+        const custCell = d.customerDays !== null
+          ? `<span title="${d.emailSubject ? 'Last: '+d.emailSubject : ''}">${_hgDot(d.customerDays)}${_hgAge(d.customerDays)}</span>`
+          : `${_hgDot(null)}<span style="color:var(--muted)">No reply</span>`;
+
+        return `<tr>
+          <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            <a href="${hsLink}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600" title="${d.name}">${d.name}</a>
+          </td>
+          <td><span class="hg-badge ${d.cls.cls}">${d.cls.label}</span></td>
+          <td style="color:var(--muted)">${d.stage}</td>
+          <td style="font-weight:600">${d.owner}</td>
+          <td>${_hgDot(d.sellerDays)}${_hgAge(d.sellerDays)}</td>
+          <td>${custCell}</td>
+          <td style="text-align:right;font-weight:700;color:var(--text)">${d.amount ? fmt$(d.amount) : '—'}</td>
+          <td>${closeCol}</td>
+          <td style="color:var(--muted);font-size:11px">${d.dealSource}</td>
+          <td style="text-align:center;font-weight:700;color:${d.score>=45?'#4ade80':d.score>=20?'#fbbf24':'var(--muted)'}">${d.score||'—'}</td>
+          <td style="font-size:11px;color:var(--muted);max-width:180px;white-space:normal">${d.cls.action}</td>
+        </tr>`;
+      }).join('');
+
+  const tableHTML = `
+    <div class="hg-table-wrap">
+      <table class="hygiene-table">
+        <thead><tr>
+          <th>Deal</th><th>Status</th><th>Stage</th><th>Owner</th>
+          <th>Seller Touch</th><th>Customer Reply</th>
+          <th style="text-align:right">Amount</th><th>Close Date</th>
+          <th>Source</th><th style="text-align:center">Score</th><th>Action</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+
+  body.innerHTML = summaryHTML + filterRow + tableHTML;
+}
+
+function _hgSetFilter(key) { _hgFilter = key; renderPipeHygiene(); }
+function _hgSetSearch(val)  { _hgSearch = val; renderPipeHygiene(); }
+
+function copyHygieneOutput() {
+  const lines = ['Pipe Hygiene Report — ' + new Date().toLocaleString(), ''];
+  _hgDeals.forEach(d => {
+    lines.push(`${d.cls.label}  ${d.name}`);
+    lines.push(`  Stage: ${d.stage} | Owner: ${d.owner} | Amount: ${d.amount ? '$'+d.amount.toLocaleString() : '—'} | Close: ${d.closeDate||'—'}`);
+    lines.push(`  Seller last touch: ${d.sellerDays !== null ? d.sellerDays+'d ago' : 'N/A'}  |  Customer reply: ${d.customerDays !== null ? d.customerDays+'d ago' : 'No reply'}`);
+    lines.push(`  Action: ${d.cls.action}`);
+    lines.push('');
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById('hg-copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+function exportHygieneCSV() {
+  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Score','Action','HubSpot Link'];
+  const rows = _hgDeals.map(d => [
+    d.name, d.cls.label.replace(/[🔥✅👁⚠️⏸❌]/g,'').trim(), d.stage, d.owner,
+    d.sellerDays ?? '', d.customerDays ?? '',
+    d.amount || '', d.closeDate || '', d.dealSource,
+    d.score || '', d.cls.action,
+    `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `pipe-hygiene-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 </script>
 </body>
 </html>
