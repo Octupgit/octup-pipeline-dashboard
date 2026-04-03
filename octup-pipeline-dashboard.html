@@ -9585,18 +9585,35 @@ function lastContactActivity(dealId) {
   return { ...best, daysAgo: Math.floor((Date.now() - best.ts) / 86400000) };
 }
 
+function dealSourceTag(src) {
+  if (!src) return `<span style="color:var(--muted);font-size:11px">—</span>`;
+  const MAP = {
+    'Outbound Sales':  { bg:'rgba(56,189,248,.15)',  color:'#38bdf8' },
+    'Referral':        { bg:'rgba(74,222,128,.15)',   color:'#4ade80' },
+    'Inbound':         { bg:'rgba(251,191,36,.15)',   color:'#fbbf24' },
+    'Direct':          { bg:'rgba(167,139,250,.15)',  color:'#a78bfa' },
+    'Social':          { bg:'rgba(249,115,22,.15)',   color:'#fb923c' },
+    'Partner':         { bg:'rgba(236,72,153,.15)',   color:'#f472b6' },
+    'Event':           { bg:'rgba(20,184,166,.15)',   color:'#2dd4bf' },
+    'Unknown':         { bg:'rgba(156,163,175,.12)',  color:'#9ca3af' },
+  };
+  const style = MAP[src] || { bg:'rgba(99,102,241,.15)', color:'#818cf8' };
+  return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;background:${style.bg};color:${style.color}">${src}</span>`;
+}
+
 function dealsTable(deals, extraCols) {
   if (deals.length === 0) return '<div class="no-data">No deals to display</div>';
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
   return `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Last Activity AI</th><th>Next Action AI</th><th>Source</th>'}
+    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Last Activity AI</th><th>Next Action AI</th>'}
   </tr></thead><tbody>${sorted.map(d => {
     const [id, name, amount, stageId, ownerId, createDate, closeDate, , , lastMod, dealSource] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
     const ai = dealAISummary(d);
     const baseRow = `<td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount">${fmt$(amount)}</td>
+      <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
       <td>${stageTag(stageId)}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>`;
     // Lifecycle = days since deal created
@@ -9621,8 +9638,7 @@ function dealsTable(deals, extraCols) {
       <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
       <td style="min-width:120px">${lcaLabel}</td>
       <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
-      <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>
-      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>`;
+      <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>`;
     return `<tr class="${stale?'stale-row':''}">${baseRow}${extraData}</tr>`;
   }).join('')}</tbody></table>`;
 }
@@ -11459,6 +11475,100 @@ function classifyDeal(d) {
   return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
 }
 
+// ─── PIPE HYGIENE — STATIC DATA FALLBACK (used on GitHub Pages / no proxy) ───
+function loadPipeHygieneStatic() {
+  const body   = document.getElementById('hygiene-body');
+  const ctrlEl = document.getElementById('hygiene-controls');
+  ctrlEl.style.display = 'none';
+
+  body.innerHTML = `<div class="hygiene-loading"><div style="font-size:20px;margin-bottom:8px">⏳</div><div>Building pipeline health from synced data…</div></div>`;
+
+  // Build per-deal activity maps from static MEETINGS / EMAILS / CALLS
+  const actMap = {}; // dealId → { sellerTs, customerTs }
+  const ensure = id => { if (!actMap[id]) actMap[id] = { sellerTs: null, customerTs: null }; };
+
+  MEETINGS.forEach(m => {
+    const ts = m.timestamp ? new Date(m.timestamp).getTime() : null;
+    if (!ts || !m.dealIds?.length) return;
+    m.dealIds.forEach(did => {
+      ensure(did);
+      // Completed meeting = customer signal
+      if (m.outcome === 'COMPLETED') {
+        if (!actMap[did].customerTs || ts > actMap[did].customerTs) actMap[did].customerTs = ts;
+      }
+      // Any meeting = seller activity
+      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
+    });
+  });
+
+  EMAILS.forEach(e => {
+    const ts = e.timestamp ? new Date(e.timestamp).getTime() : null;
+    if (!ts || !e.dealIds?.length) return;
+    e.dealIds.forEach(did => {
+      ensure(did);
+      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
+    });
+  });
+
+  CALLS.forEach(c => {
+    const ts = c.timestamp ? new Date(c.timestamp).getTime() : null;
+    if (!ts || !c.dealIds?.length) return;
+    c.dealIds.forEach(did => {
+      ensure(did);
+      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
+    });
+  });
+
+  // Stage → score proxy (mirrors live hs_deal_score ranges)
+  const STAGE_SCORE = {
+    '2918051008': 5,    // Early pipeline
+    '2918051007': 12,   // NBM Scheduled
+    '608286675':  20,   // Discovery
+    '740160705':  30,   // Technical Eval
+    '608286676':  40,   // Solution Alignment
+    '4988070119': 50,   // Trial
+    '608286677':  58,   // Commercial Review
+  };
+
+  const today = Date.now();
+  _hgDeals = DEALS.map(d => {
+    const [id, name, amount, stageId, ownerId,, closeDate,,, lastMod, dealSource] = d;
+    const act = actMap[id] || { sellerTs: null, customerTs: null };
+
+    // Seller days: last logged activity or deal lastMod as fallback
+    const sellerRaw = act.sellerTs || (lastMod ? new Date(lastMod).getTime() : null);
+    const sellerDays   = sellerRaw   ? Math.floor((today - sellerRaw)           / 86400000) : null;
+    const customerDays = act.customerTs ? Math.floor((today - act.customerTs)   / 86400000) : null;
+    const daysToClose  = closeDate ? Math.ceil((new Date(closeDate) - today) / 86400000) : null;
+    const score        = STAGE_SCORE[stageId] || 10;
+
+    return {
+      id,
+      name,
+      stage:       HG_STAGE_LABELS[stageId] || stageName(stageId) || stageId,
+      owner:       HG_OWNERS[ownerId]        || ownerName(ownerId) || ownerId,
+      amount:      parseFloat(amount) || 0,
+      closeDate,
+      daysToClose,
+      score,
+      dealSource:  dealSource || '—',
+      sellerDays,
+      customerDays,
+      customerTs:  act.customerTs,
+      emailSubject: null,
+      emailFrom:    null,
+      meetingTitle: null,
+      cls: classifyDeal({ sellerDays, customerDays, score, daysToClose }),
+    };
+  });
+
+  ctrlEl.style.display = '';
+  document.getElementById('hg-ts').textContent       = '📦 Synced data · ' + new Date().toLocaleDateString();
+  document.getElementById('hg-copy-btn').style.display = '';
+  document.getElementById('hg-csv-btn').style.display  = '';
+  renderPipeHygiene();
+}
+
 async function loadPipeHygiene() {
   const body   = document.getElementById('hygiene-body');
   const ctrlEl = document.getElementById('hygiene-controls');
@@ -11466,11 +11576,7 @@ async function loadPipeHygiene() {
   const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
   if (!isLocal) {
-    body.innerHTML = `<div class="hygiene-error" style="font-size:13px;line-height:1.8">
-      <b style="font-size:14px;color:var(--text)">🔒 Requires local server</b><br><br>
-      Pipe Hygiene makes live HubSpot API calls that need the local proxy.<br>
-      Open the dashboard at <b>http://localhost:8080</b> with <b>serve_pipeline.py</b> running to use this feature.
-    </div>`;
+    loadPipeHygieneStatic();
     return;
   }
 
