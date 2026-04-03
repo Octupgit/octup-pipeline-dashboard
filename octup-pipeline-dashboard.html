@@ -9667,13 +9667,13 @@ function openWonModal() {
     const [id, name, amount, closeDate, ownerId,, dealSource] = d;
     return `<tr><td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount">${fmt$(amount)}</td>
+      <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
       <td><span class="tag tag-won">✓ Won</span></td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
-      <td>${fmtDate(closeDate)}</td>
-      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td></tr>`;
+      <td>${fmtDate(closeDate)}</td></tr>`;
   }).join('');
   const content = `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Status</th><th>Owner</th><th>Close Date</th><th>Source</th>
+    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Status</th><th>Owner</th><th>Close Date</th>
   </tr></thead><tbody>${rows || '<tr><td colspan="6" class="no-data">No won deals this period</td></tr>'}</tbody></table>`;
   openModal('🏆 ARR Won — ' + WEEKS[selectedWeek].label, summary, content);
 }
@@ -9690,13 +9690,13 @@ function openLostModal() {
     const [id, name, amount, closeDate, ownerId,, dealSource] = d;
     return `<tr><td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount" style="color:var(--red)">${fmt$(amount)}</td>
+      <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
       <td><span class="tag tag-lost">✗ Lost</span></td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
-      <td>${fmtDate(closeDate)}</td>
-      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td></tr>`;
+      <td>${fmtDate(closeDate)}</td></tr>`;
   }).join('');
   const content = `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Status</th><th>Owner</th><th>Close Date</th><th>Source</th>
+    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Status</th><th>Owner</th><th>Close Date</th>
   </tr></thead><tbody>${rows || '<tr><td colspan="6" class="no-data">No lost deals this period</td></tr>'}</tbody></table>`;
   openModal('❌ Deals Lost — ' + WEEKS[selectedWeek].label, summary, content);
 }
@@ -9836,16 +9836,16 @@ function openSDRDealsModal(title, deals) {
     return `<tr>
       <td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount">${fmt$(amount)}</td>
+      <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
       <td>${stageTag(stageId)}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>
       <td style="white-space:nowrap">${fmtDate(created)}</td>
       <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
       <td class="next-step-cell">${nextStep ? nextStep.slice(0,70)+(nextStep.length>70?'…':'') : '<span style="color:var(--red)">—</span>'}</td>
-      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${dealSource || '—'}</td>
     </tr>`;
   }).join('');
   const content = `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Stage</th><th>Assigned AE</th><th>Created</th><th>Close Date</th><th>Next Step</th><th>Source</th>
+    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Stage</th><th>Assigned AE</th><th>Created</th><th>Close Date</th><th>Next Step</th>
   </tr></thead><tbody>${rows}</tbody></table>`;
   openModal(title, summary, content);
 }
@@ -11171,7 +11171,7 @@ async function syncFromHubSpot() {
 
       safe(hsPaginate(token, 'deals',
         ['dealname','amount','dealstage','hubspot_owner_id','createdate','closedate',
-         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source'],
+         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source','event_source'],
         ownerFilterGroups(), 800)),
 
       safe(hsPaginate(token, 'calls',
@@ -11204,7 +11204,7 @@ async function syncFromHubSpot() {
           (p.closedate || '').split('T')[0],
           p.hubspot_owner_id || '',
           p.hs_created_by_user_id || '',
-          p.deal_source || ''
+          p.event_source || p.deal_source || ''
         ]);
       } else if (HS_OPEN_STAGES.has(stage)) {
         // Only push truly open-pipeline deals — skip Lost, Disqualified, unknown stages
@@ -11216,7 +11216,7 @@ async function syncFromHubSpot() {
           p.next_step || null,
           p.hs_created_by_user_id || '',
           (p.hs_lastmodifieddate || '').split('T')[0],
-          p.deal_source || ''
+          p.event_source || p.deal_source || ''
         ]);
       }
       // Lost / Disqualified / unknown stages → silently drop
