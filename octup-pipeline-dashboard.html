@@ -11520,9 +11520,19 @@ async function loadPipeHygiene() {
   const body   = document.getElementById('hygiene-body');
   const ctrlEl = document.getElementById('hygiene-controls');
   const token  = getHsToken();
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+  if (!isLocal) {
+    body.innerHTML = `<div class="hygiene-error" style="font-size:13px;line-height:1.8">
+      <b style="font-size:14px;color:var(--text)">🔒 Requires local server</b><br><br>
+      Pipe Hygiene makes live HubSpot API calls that need the local proxy.<br>
+      Open the dashboard at <b>http://localhost:8080</b> with <b>serve_pipeline.py</b> running to use this feature.
+    </div>`;
+    return;
+  }
 
   if (!token) {
-    body.innerHTML = `<div class="hygiene-error">⚠️ No HubSpot token found. Click the 🔄 SYNC button at the top of the page and enter your Private App token first.</div>`;
+    body.innerHTML = `<div class="hygiene-error">⚠️ No HubSpot token. Click the 🔄 SYNC button and enter your Private App token first.</div>`;
     return;
   }
 
@@ -11659,7 +11669,9 @@ async function loadPipeHygiene() {
     renderPipeHygiene();
 
   } catch(err) {
-    body.innerHTML = `<div class="hygiene-error">❌ Error loading data: ${err.message}<br><br><button class="hg-act-btn" onclick="loadPipeHygiene()">Try Again</button></div>`;
+    const isFetch = err.message?.includes('fetch') || err.message?.includes('Failed');
+    const hint = isFetch ? '<br><small style="color:var(--muted)">Make sure serve_pipeline.py is running on port 8080.</small>' : '';
+    body.innerHTML = `<div class="hygiene-error">❌ ${err.message}${hint}<br><br><button class="hg-act-btn" onclick="loadPipeHygiene()" style="margin-top:8px">Try Again</button></div>`;
   }
 }
 
