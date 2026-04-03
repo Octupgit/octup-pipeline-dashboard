@@ -11171,7 +11171,7 @@ async function syncFromHubSpot() {
 
       safe(hsPaginate(token, 'deals',
         ['dealname','amount','dealstage','hubspot_owner_id','createdate','closedate',
-         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source','event_source'],
+         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source'],
         ownerFilterGroups(), 800)),
 
       safe(hsPaginate(token, 'calls',
@@ -11204,7 +11204,7 @@ async function syncFromHubSpot() {
           (p.closedate || '').split('T')[0],
           p.hubspot_owner_id || '',
           p.hs_created_by_user_id || '',
-          p.event_source || p.deal_source || ''
+          p.deal_source || ''
         ]);
       } else if (HS_OPEN_STAGES.has(stage)) {
         // Only push truly open-pipeline deals — skip Lost, Disqualified, unknown stages
@@ -11216,7 +11216,7 @@ async function syncFromHubSpot() {
           p.next_step || null,
           p.hs_created_by_user_id || '',
           (p.hs_lastmodifieddate || '').split('T')[0],
-          p.event_source || p.deal_source || ''
+          p.deal_source || ''
         ]);
       }
       // Lost / Disqualified / unknown stages → silently drop
@@ -11603,7 +11603,7 @@ async function loadPipeHygiene() {
     // 1. Fetch open deals in the hygiene pipeline
     setMsg('Fetching open deals…', 10);
     const dealProps = ['dealname','dealstage','pipeline','amount','closedate','hubspot_owner_id',
-      'createdate','deal_source','event_source','hs_deal_stage_probability','hs_v2_date_entered_current_stage',
+      'createdate','deal_source','hs_deal_stage_probability','hs_v2_date_entered_current_stage',
       'notes_last_contacted','notes_last_updated','notes_next_activity_date','hs_is_stalled',
       'hs_deal_score','num_contacted_notes','num_notes','type__deal_'];
 
@@ -11699,7 +11699,7 @@ async function loadPipeHygiene() {
         closeDate,
         daysToClose,
         score,
-        dealSource:  [p.deal_source, p.event_source].filter(Boolean).join(' / ') || '—',
+        dealSource:  p.deal_source || '—',
         sellerDays,
         customerDays,
         customerTs,
