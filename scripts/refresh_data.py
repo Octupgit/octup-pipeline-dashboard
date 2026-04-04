@@ -158,8 +158,7 @@ def fetch_closed_deals(stage, days_back=1825):
     print(f'  Fetching stage={stage} deals (last {days_back}d, pipeline {PIPELINE_ID})...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     props = ['dealname','amount','closedate','hubspot_owner_id',
-             'hs_created_by_user_id','dealstage',
-             'hs_analytics_source','hs_analytics_source_data_1']
+             'hs_created_by_user_id','dealstage','deal_source']
     body = {
         'filterGroups': [{'filters': [
             {'propertyName': 'dealstage',  'operator': 'EQ',  'value': stage},
