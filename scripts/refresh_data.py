@@ -109,13 +109,7 @@ def safe_str(v):
     return str(v).replace('\n', ' ').replace('\r', '').strip()
 
 def deal_source(props):
-    raw = safe_str(props.get('hs_analytics_source', ''))
-    d1  = safe_str(props.get('hs_analytics_source_data_1', ''))
-    if raw == 'OFFLINE':
-        if 'sdr' in d1.lower() or 'bdr' in d1.lower():
-            return 'Outbound SDR'
-        return 'Outbound Sales'
-    return SOURCE_MAP.get(raw, safe_str(props.get('deal_source', '')) or 'Direct')
+    return safe_str(props.get('deal_source', ''))
 
 # ── Fetch deals ───────────────────────────────────────────────────────────────
 def fetch_open_deals():
@@ -123,8 +117,7 @@ def fetch_open_deals():
     props = [
         'dealname','amount','dealstage','hubspot_owner_id','createdate',
         'closedate','hs_next_step','hs_created_by_user_id','notes_last_updated',
-        'hs_analytics_source','hs_analytics_source_data_1',
-        'hs_v2_date_entered_current_stage',
+        'deal_source','hs_v2_date_entered_current_stage',
     ]
     body = {
         'filterGroups': [{'filters': [
