@@ -11232,10 +11232,12 @@ function renderWoWChart() {
 
   if (_wowMode === 'alltime') {
     // Group by calendar month from earliest deal to last completed month
+    // d[7] = createDate for WON (added in latest refresh); fall back to closeDate d[3] until next sync
+    // d[8] = createDate for LOST; fall back to closeDate d[3]
     const allCreateDates = [
       ...ownerDeals.map(d => d[5]),
-      ...ownerWon.map(d => d[7]),
-      ...ownerLost.map(d => d[8]),
+      ...ownerWon.map(d => d[7] || d[3]),
+      ...ownerLost.map(d => d[8] || d[3]),
     ].filter(Boolean).sort();
     const dates = allCreateDates;
     if (!dates.length) { container.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px">No deal data</div>'; return; }
@@ -11255,8 +11257,8 @@ function renderWoWChart() {
     // Keep only months that have at least 1 deal (skip empty months) — include won/lost createDates
     weeks = weeks.filter(w =>
       ownerDeals.some(d => d[5] && d[5] >= w.start && d[5] <= w.end) ||
-      ownerWon.some(d => d[7] && d[7] >= w.start && d[7] <= w.end) ||
-      ownerLost.some(d => d[8] && d[8] >= w.start && d[8] <= w.end) ||
+      ownerWon.some(d => (d[7]||d[3]) && (d[7]||d[3]) >= w.start && (d[7]||d[3]) <= w.end) ||
+      ownerLost.some(d => (d[8]||d[3]) && (d[8]||d[3]) >= w.start && (d[8]||d[3]) <= w.end) ||
       w.isCurrent
     );
     // Mark the previous (last complete) month as "last" for summary
@@ -11304,9 +11306,9 @@ function renderWoWChart() {
       {id:'740160705',  label:'Pres',    color:'#c084fc'},
       {id:'608286676',  label:'SA',      color:'#818cf8'},
       {id:'4988070119', label:'Trial',   color:'#fbbf24'},
-      {id:'608286677',  label:'CR',      color:'#4ade80'},
+      {id:'608286677',  label:'CR',      color:'#06b6d4'},
       {id:'2918051008', label:'Stalled', color:'#4b5563'},
-      {id:'WON',        label:'Won',     color:'#22c55e'},
+      {id:'WON',        label:'Won',     color:'#eab308'},
       {id:'LOST',       label:'Lost',    color:'#ef4444'},
     ];
     getDealKey = d => d[3];
@@ -11325,13 +11327,15 @@ function renderWoWChart() {
         if (counts[key] !== undefined) { counts[key]++; arrs[key] += d[2]; }
       }
     });
-    // Won/Lost by createDate — only in stage breakdown (WON_DEALS[7], LOST_DEALS[8])
+    // Won/Lost by createDate — fall back to closeDate until next sync refreshes createDate field
     if (_wowBreakdown === 'stage') {
       ownerWon.forEach(d => {
-        if (d[7] && d[7] >= w.start && d[7] <= w.end) { counts['WON']++; arrs['WON'] += d[2]; }
+        const dt = d[7] || d[3];
+        if (dt && dt >= w.start && dt <= w.end) { counts['WON']++; arrs['WON'] += d[2]; }
       });
       ownerLost.forEach(d => {
-        if (d[8] && d[8] >= w.start && d[8] <= w.end) { counts['LOST']++; arrs['LOST'] += d[2]; }
+        const dt = d[8] || d[3];
+        if (dt && dt >= w.start && dt <= w.end) { counts['LOST']++; arrs['LOST'] += d[2]; }
       });
     }
     const total = GROUPS.reduce((s, g) => s + counts[g.id], 0);
