@@ -1032,7 +1032,7 @@ const PORTAL = '26004468';
 const LAST_SYNC_UTC = '2026-04-05T14:11:54Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
 
 // ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
-// [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource]
+// [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource, reengageDate]
 const DEALS = [
   ['154487611634','ShipBots - 3PL Partner',48000,'2918051008','29422733','2025-03-14','2026-03-28','Call Payam 1/15 and reference email and shed light on pricing model + most importantly updates to the platform.','69626301','2026-03-11',''],
   ['266505689330','Speed Commerce - 3PL Partner',50000,'2918051008','29422733','2025-07-21','2026-03-27','Set Demo deep dive after a great onsite visit with him and head of finance. 5 locations, 2 WMS\'s. Ship Hero and Deposco. Looking towards more M&A.','29422733','2026-03-11',''],
@@ -14072,7 +14072,7 @@ function loadPipeHygieneStatic() {
 
   const today = Date.now();
   _hgDeals = DEALS.map(d => {
-    const [id, name, amount, stageId, ownerId,, closeDate, nextStep,, lastMod, dealSource] = d;
+    const [id, name, amount, stageId, ownerId,, closeDate, nextStep,, lastMod, dealSource, reengageDate] = d;
     const act = actMap[id] || { sellerTs: null, customerTs: null };
 
     // Seller days: last logged activity or deal lastMod as fallback
@@ -14099,6 +14099,7 @@ function loadPipeHygieneStatic() {
       emailSubject: null,
       emailFrom:    null,
       meetingTitle: null,
+      reengageDate,
       cls:  classifyDeal({ sellerDays, customerDays, score, daysToClose }),
       risk: classifyNextStepRisk(nextStep),
     };
@@ -14147,7 +14148,7 @@ async function loadPipeHygiene() {
     const dealProps = ['dealname','dealstage','pipeline','amount','closedate','hubspot_owner_id',
       'createdate','deal_source','hs_deal_stage_probability','hs_v2_date_entered_current_stage',
       'notes_last_contacted','notes_last_updated','notes_next_activity_date','hs_is_stalled',
-      'hs_deal_score','num_contacted_notes','num_notes','type__deal_'];
+      'hs_deal_score','num_contacted_notes','num_notes','type__deal_','reengage_date','hs_next_step'];
 
     const rawDeals = await hsPaginate(token, 'deals', dealProps, [{
       filters: [
@@ -14241,8 +14242,9 @@ async function loadPipeHygiene() {
         closeDate,
         daysToClose,
         score,
-        dealSource:  p.deal_source || '—',
-        nextStep:    p.hs_next_step || '',
+        dealSource:    p.deal_source || '—',
+        nextStep:      p.hs_next_step || '',
+        reengageDate:  p.reengage_date ? p.reengage_date.split('T')[0] : null,
         sellerDays,
         customerDays,
         customerTs,
@@ -14356,7 +14358,7 @@ function renderPipeHygiene() {
     </div>`;
 
   const rows = filtered.length === 0
-    ? `<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:30px">No deals match this filter</td></tr>`
+    ? `<tr><td colspan="14" style="text-align:center;color:var(--muted);padding:30px">No deals match this filter</td></tr>`
     : filtered.map(d => {
         const hsLink = `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`;
         const closeCol = !d.closeDate ? '—'
@@ -14381,6 +14383,7 @@ function renderPipeHygiene() {
           <td>${custCell}</td>
           <td style="text-align:right;font-weight:700;color:var(--text)">${d.amount ? fmt$(d.amount) : '—'}</td>
           <td>${closeCol}</td>
+          <td style="font-size:11px;color:${d.reengageDate && d.reengageDate <= new Date().toISOString().slice(0,10) ? '#fbbf24' : 'var(--muted)'};font-weight:${d.reengageDate && d.reengageDate <= new Date().toISOString().slice(0,10) ? '700' : 'normal'}">${d.reengageDate || '—'}</td>
           <td style="color:var(--muted);font-size:11px">${d.dealSource}</td>
           <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(d.nextStep||'').replace(/"/g,"'")}">${d.nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
           <td style="text-align:center;font-weight:700;color:${d.risk?.color||'var(--muted)'}">${d.risk?.label||'—'}</td>
@@ -14395,7 +14398,7 @@ function renderPipeHygiene() {
         <thead><tr>
           <th>Deal</th><th>Status</th><th>Stage</th><th>Owner</th>
           <th>Seller Touch</th><th>Customer Reply</th>
-          <th style="text-align:right">Amount</th><th>Close Date</th>
+          <th style="text-align:right">Amount</th><th>Close Date</th><th>Reengage Date</th>
           <th>Source</th><th>Next Step</th><th>Risk</th><th style="text-align:center">Score</th><th>Action</th>
         </tr></thead>
         <tbody>${rows}</tbody>
@@ -14426,12 +14429,12 @@ function copyHygieneOutput() {
 }
 
 function exportHygieneCSV() {
-  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Next Step','Risk','Score','Action','HubSpot Link'];
+  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Reengage Date','Deal Source','Next Step','Risk','Score','Action','HubSpot Link'];
   const rows = _hgDeals.map(d => [
     d.name, d.cls.label.replace(/[🔥✅👁⚠️⏸❌]/g,'').trim(), d.stage, d.owner,
     d.sellerDays ?? '', d.customerDays ?? '',
-    d.amount || '', d.closeDate || '', d.dealSource,
-    d.nextStep || '', d.risk?.label || '', d.score || '', d.cls.action,
+    d.amount || '', d.closeDate || '', d.reengageDate || '',
+    d.dealSource, d.nextStep || '', d.risk?.label || '', d.score || '', d.cls.action,
     `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`
   ]);
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');

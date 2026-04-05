@@ -117,7 +117,7 @@ def fetch_open_deals():
     props = [
         'dealname','amount','dealstage','hubspot_owner_id','createdate',
         'closedate','hs_next_step','hs_created_by_user_id','notes_last_updated',
-        'deal_source','hs_v2_date_entered_current_stage',
+        'deal_source','hs_v2_date_entered_current_stage','reengage_date',
     ]
     body = {
         'filterGroups': [{'filters': [
@@ -148,6 +148,7 @@ def fetch_open_deals():
             safe_str(p.get('hs_created_by_user_id')),
             fmt_date(p.get('notes_last_updated')),
             deal_source(p),
+            fmt_date(p.get('reengage_date')),   # [11] Reengage Date
         ])
     print(f'  → {len(rows)} open deals, {len(stage_entered)} stage dates')
     return rows, stage_entered
