@@ -11222,6 +11222,9 @@ function renderWoWChart() {
   const toYMD  = d => d.toISOString().slice(0,10);
 
   const ownerDeals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
+  // WON_DEALS[7] = createDate, LOST_DEALS[8] = createDate (added in refresh_data.py)
+  const ownerWon  = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
+  const ownerLost = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
   // Derive WoW mode from global period: alltime → monthly view, else → 9-week view
   const _wowMode = selectedWeek === 'alltime' ? 'alltime' : '9w';
 
@@ -11229,7 +11232,12 @@ function renderWoWChart() {
 
   if (_wowMode === 'alltime') {
     // Group by calendar month from earliest deal to last completed month
-    const dates = ownerDeals.map(d => d[5]).filter(Boolean).sort();
+    const allCreateDates = [
+      ...ownerDeals.map(d => d[5]),
+      ...ownerWon.map(d => d[7]),
+      ...ownerLost.map(d => d[8]),
+    ].filter(Boolean).sort();
+    const dates = allCreateDates;
     if (!dates.length) { container.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:20px">No deal data</div>'; return; }
     const earliest = new Date(dates[0] + 'T12:00:00Z');
     const now = new Date();
@@ -11244,8 +11252,13 @@ function renderWoWChart() {
       weeks.push({ label, start, end, isLast: false, isCurrent });
       mo++; if (mo > 11) { mo = 0; yr++; }
     }
-    // Keep only months that have at least 1 deal (skip empty months)
-    weeks = weeks.filter(w => ownerDeals.some(d => d[5] && d[5] >= w.start && d[5] <= w.end) || w.isCurrent);
+    // Keep only months that have at least 1 deal (skip empty months) — include won/lost createDates
+    weeks = weeks.filter(w =>
+      ownerDeals.some(d => d[5] && d[5] >= w.start && d[5] <= w.end) ||
+      ownerWon.some(d => d[7] && d[7] >= w.start && d[7] <= w.end) ||
+      ownerLost.some(d => d[8] && d[8] >= w.start && d[8] <= w.end) ||
+      w.isCurrent
+    );
     // Mark the previous (last complete) month as "last" for summary
     if (weeks.length >= 2) weeks[weeks.length - 2].isLast = true;
   } else {
@@ -11293,6 +11306,8 @@ function renderWoWChart() {
       {id:'4988070119', label:'Trial',   color:'#fbbf24'},
       {id:'608286677',  label:'CR',      color:'#4ade80'},
       {id:'2918051008', label:'Stalled', color:'#4b5563'},
+      {id:'WON',        label:'Won',     color:'#22c55e'},
+      {id:'LOST',       label:'Lost',    color:'#ef4444'},
     ];
     getDealKey = d => d[3];
   }
@@ -11310,6 +11325,15 @@ function renderWoWChart() {
         if (counts[key] !== undefined) { counts[key]++; arrs[key] += d[2]; }
       }
     });
+    // Won/Lost by createDate — only in stage breakdown (WON_DEALS[7], LOST_DEALS[8])
+    if (_wowBreakdown === 'stage') {
+      ownerWon.forEach(d => {
+        if (d[7] && d[7] >= w.start && d[7] <= w.end) { counts['WON']++; arrs['WON'] += d[2]; }
+      });
+      ownerLost.forEach(d => {
+        if (d[8] && d[8] >= w.start && d[8] <= w.end) { counts['LOST']++; arrs['LOST'] += d[2]; }
+      });
+    }
     const total = GROUPS.reduce((s, g) => s + counts[g.id], 0);
     const totalArr = GROUPS.reduce((s, g) => s + arrs[g.id], 0);
     return { ...w, counts, arrs, total, totalArr };
@@ -14010,6 +14034,20 @@ function classifyDeal(d) {
   return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
 }
 
+function classifyNextStepRisk(nextStep) {
+  if (!nextStep || !nextStep.trim()) return { key: 'high', label: 'High', color: '#f87171' };
+  const text = nextStep.toLowerCase().trim();
+  // High risk: vague, stalling, no clear action
+  const highWords = ['tbd', 'n/a', 'unclear', 'unknown', '??', 'waiting', 'no next', 'check back', 'follow up later', 'not sure'];
+  if (highWords.some(w => text.includes(w))) return { key: 'high', label: 'High', color: '#f87171' };
+  // Low risk: specific, actionable, time-bound
+  const lowWords = ['demo', 'contract', 'proposal', 'send', 'schedule', 'trial', 'signature', 'meeting', 'call', 'review',
+                    'this week', 'next week', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'today', 'tomorrow',
+                    '2026', '2025', 'by end', 'eow', 'deliver', 'present', 'confirm', 'submit', 'onboard', 'kickoff'];
+  if (lowWords.some(w => text.includes(w))) return { key: 'low', label: 'Low', color: '#4ade80' };
+  return { key: 'medium', label: 'Medium', color: '#fbbf24' };
+}
+
 // ─── PIPE HYGIENE — STATIC DATA FALLBACK (used on GitHub Pages / no proxy) ───
 function loadPipeHygieneStatic() {
   const body   = document.getElementById('hygiene-body');
@@ -14061,7 +14099,8 @@ function loadPipeHygieneStatic() {
       emailSubject: null,
       emailFrom:    null,
       meetingTitle: null,
-      cls: classifyDeal({ sellerDays, customerDays, score, daysToClose }),
+      cls:  classifyDeal({ sellerDays, customerDays, score, daysToClose }),
+      risk: classifyNextStepRisk(nextStep),
     };
   });
 
@@ -14211,6 +14250,7 @@ async function loadPipeHygiene() {
         emailFrom:     email?.properties?.hs_email_from_email || null,
         meetingTitle:  meeting?.properties?.hs_meeting_title || null,
         cls,
+        risk: classifyNextStepRisk(p.hs_next_step),
       };
     });
 
@@ -14316,7 +14356,7 @@ function renderPipeHygiene() {
     </div>`;
 
   const rows = filtered.length === 0
-    ? `<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:30px">No deals match this filter</td></tr>`
+    ? `<tr><td colspan="13" style="text-align:center;color:var(--muted);padding:30px">No deals match this filter</td></tr>`
     : filtered.map(d => {
         const hsLink = `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`;
         const closeCol = !d.closeDate ? '—'
@@ -14343,6 +14383,7 @@ function renderPipeHygiene() {
           <td>${closeCol}</td>
           <td style="color:var(--muted);font-size:11px">${d.dealSource}</td>
           <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(d.nextStep||'').replace(/"/g,"'")}">${d.nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
+          <td style="text-align:center;font-weight:700;color:${d.risk?.color||'var(--muted)'}">${d.risk?.label||'—'}</td>
           <td style="text-align:center;font-weight:700;color:${d.score>=45?'#4ade80':d.score>=20?'#fbbf24':'var(--muted)'}">${d.score||'—'}</td>
           <td style="font-size:11px;color:var(--muted);max-width:180px;white-space:normal">${d.cls.action}</td>
         </tr>`;
@@ -14355,7 +14396,7 @@ function renderPipeHygiene() {
           <th>Deal</th><th>Status</th><th>Stage</th><th>Owner</th>
           <th>Seller Touch</th><th>Customer Reply</th>
           <th style="text-align:right">Amount</th><th>Close Date</th>
-          <th>Source</th><th>Next Step</th><th style="text-align:center">Score</th><th>Action</th>
+          <th>Source</th><th>Next Step</th><th>Risk</th><th style="text-align:center">Score</th><th>Action</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -14385,12 +14426,12 @@ function copyHygieneOutput() {
 }
 
 function exportHygieneCSV() {
-  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Next Step','Score','Action','HubSpot Link'];
+  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Next Step','Risk','Score','Action','HubSpot Link'];
   const rows = _hgDeals.map(d => [
     d.name, d.cls.label.replace(/[🔥✅👁⚠️⏸❌]/g,'').trim(), d.stage, d.owner,
     d.sellerDays ?? '', d.customerDays ?? '',
     d.amount || '', d.closeDate || '', d.dealSource,
-    d.nextStep || '', d.score || '', d.cls.action,
+    d.nextStep || '', d.risk?.label || '', d.score || '', d.cls.action,
     `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`
   ]);
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');

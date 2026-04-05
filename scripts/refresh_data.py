@@ -157,7 +157,7 @@ def fetch_closed_deals(stage, days_back=1825):
     # days_back=1825 (~5 years) to capture all historical deals
     print(f'  Fetching stage={stage} deals (last {days_back}d, pipeline {PIPELINE_ID})...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
-    props = ['dealname','amount','closedate','hubspot_owner_id',
+    props = ['dealname','amount','closedate','createdate','hubspot_owner_id',
              'hs_created_by_user_id','dealstage','deal_source']
     body = {
         'filterGroups': [{'filters': [
@@ -184,6 +184,7 @@ def build_won(deals):
             safe_str(p.get('hubspot_owner_id')),
             safe_str(p.get('hs_created_by_user_id')),
             deal_source(p),
+            fmt_date(p.get('createdate')),   # [7] createDate — for WoW chart
         ])
     return rows
 
@@ -200,6 +201,7 @@ def build_lost(deals):
             safe_str(p.get('hs_created_by_user_id')),
             safe_str(p.get('dealstage')),
             deal_source(p),
+            fmt_date(p.get('createdate')),   # [8] createDate — for WoW chart
         ])
     return rows
 
