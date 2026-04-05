@@ -11511,14 +11511,16 @@ function renderSourceFunnel() {
   let allDeals = selectedOwner === 'all' ? DEALS      : DEALS.filter(d => d[4] === selectedOwner);
   let allWon   = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
   let allLost  = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
-  // Filter by global period — DEALS by createDate(d[5]).
-  // Won/Lost use closeDate which is a different dimension; for time-filtered views,
-  // exclude them from the funnel so "This Week" means "deals CREATED this week".
-  // Won/Lost are still shown in their own dedicated dashboard sections.
-  if (selectedWeek !== 'alltime') {
+  // Filter by global period:
+  //   Open deals → by createDate (d[5])
+  //   Won/Lost   → by closeDate  (d[3]) — shown in Won column only, NOT added to Gen/SQL
+  //   This prevents Won/Lost from inflating Gen for "This Week" while still
+  //   showing Won deals in the Won column for "Last Q" / "Last Month" etc.
+  const isFiltered = selectedWeek !== 'alltime';
+  if (isFiltered) {
     allDeals = allDeals.filter(d => dateInRange(d[5], selectedWeek));
-    allWon   = [];
-    allLost  = [];
+    allWon   = allWon.filter(d  => dateInRange(d[3], selectedWeek));
+    allLost  = allLost.filter(d => dateInRange(d[3], selectedWeek));
   }
 
   // Update period badge
@@ -11539,20 +11541,25 @@ function renderSourceFunnel() {
     s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
     if (SQL_STAGES.has(d[3])) { s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); }
   });
-  // Won deals — count as gen + sql + won
+  // Won deals — for alltime: count as gen+sql+won; for filtered: won column only (closeDate filter)
   allWon.forEach(d => {
     const src = d[6];
     const s = getOrAdd(src);
-    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
-    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+    if (!isFiltered) {
+      s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+      s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+    }
     s.won++; s.wonArr += d[2]; s.wonIds.push(d[0]);
   });
-  // Lost deals — count as gen + sql
+  // Lost deals — for alltime: count as gen+sql+lost; for filtered: lost count only (closeDate filter)
   allLost.forEach(d => {
     const src = d[7];
     const s = getOrAdd(src);
-    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
-    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); s.lost++;
+    if (!isFiltered) {
+      s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+      s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+    }
+    s.lost++;
   });
 
   // Sort by gen count desc
