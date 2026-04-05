@@ -10907,7 +10907,7 @@ function loadPipeHygieneStatic() {
 
   const today = Date.now();
   _hgDeals = DEALS.map(d => {
-    const [id, name, amount, stageId, ownerId,, closeDate,,, lastMod, dealSource] = d;
+    const [id, name, amount, stageId, ownerId,, closeDate, nextStep,, lastMod, dealSource] = d;
     const act = actMap[id] || { sellerTs: null, customerTs: null };
 
     // Seller days: last logged activity or deal lastMod as fallback
@@ -10927,6 +10927,7 @@ function loadPipeHygieneStatic() {
       daysToClose,
       score,
       dealSource:  dealSource || '—',
+      nextStep:    nextStep || '',
       sellerDays,
       customerDays,
       customerTs:  act.customerTs,
@@ -11075,6 +11076,7 @@ async function loadPipeHygiene() {
         daysToClose,
         score,
         dealSource:  p.deal_source || '—',
+        nextStep:    p.hs_next_step || '',
         sellerDays,
         customerDays,
         customerTs,
@@ -11213,6 +11215,7 @@ function renderPipeHygiene() {
           <td style="text-align:right;font-weight:700;color:var(--text)">${d.amount ? fmt$(d.amount) : '—'}</td>
           <td>${closeCol}</td>
           <td style="color:var(--muted);font-size:11px">${d.dealSource}</td>
+          <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(d.nextStep||'').replace(/"/g,"'")}">${d.nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
           <td style="text-align:center;font-weight:700;color:${d.score>=45?'#4ade80':d.score>=20?'#fbbf24':'var(--muted)'}">${d.score||'—'}</td>
           <td style="font-size:11px;color:var(--muted);max-width:180px;white-space:normal">${d.cls.action}</td>
         </tr>`;
@@ -11225,7 +11228,7 @@ function renderPipeHygiene() {
           <th>Deal</th><th>Status</th><th>Stage</th><th>Owner</th>
           <th>Seller Touch</th><th>Customer Reply</th>
           <th style="text-align:right">Amount</th><th>Close Date</th>
-          <th>Source</th><th style="text-align:center">Score</th><th>Action</th>
+          <th>Source</th><th>Next Step</th><th style="text-align:center">Score</th><th>Action</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -11255,12 +11258,12 @@ function copyHygieneOutput() {
 }
 
 function exportHygieneCSV() {
-  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Score','Action','HubSpot Link'];
+  const headers = ['Deal Name','Status','Stage','Owner','Seller Touch (days)','Customer Reply (days)','Amount','Close Date','Deal Source','Next Step','Score','Action','HubSpot Link'];
   const rows = _hgDeals.map(d => [
     d.name, d.cls.label.replace(/[🔥✅👁⚠️⏸❌]/g,'').trim(), d.stage, d.owner,
     d.sellerDays ?? '', d.customerDays ?? '',
     d.amount || '', d.closeDate || '', d.dealSource,
-    d.score || '', d.cls.action,
+    d.nextStep || '', d.score || '', d.cls.action,
     `https://app-eu1.hubspot.com/contacts/${HG_PORTAL_ID}/record/0-3/${d.id}`
   ]);
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
