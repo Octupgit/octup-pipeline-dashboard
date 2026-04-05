@@ -7980,6 +7980,54 @@ function dateInRange(dateStr, weekKey) {
   const e = new Date(w.end + 'T23:59:59Z');
   return d >= s && d <= e;
 }
+
+// ─── GLOBAL ACTIVITY MAP ──────────────────────────────────────────────────────
+// customerTs = last COMPLETED meeting OR last INBOUND email (true customer signal)
+// sellerTs   = last any activity (meeting / email / call)
+const ACTIVITY_MAP = {};
+(function buildActivityMap() {
+  const ensure = id => {
+    if (!ACTIVITY_MAP[id]) ACTIVITY_MAP[id] = { customerTs: null, customerLabel: null, customerType: null, sellerTs: null };
+  };
+  MEETINGS.forEach(m => {
+    const ts = m.timestamp ? new Date(m.timestamp).getTime() : null;
+    if (!ts || !m.dealIds?.length) return;
+    m.dealIds.forEach(did => {
+      ensure(did);
+      if (m.outcome === 'COMPLETED') {
+        if (!ACTIVITY_MAP[did].customerTs || ts > ACTIVITY_MAP[did].customerTs) {
+          ACTIVITY_MAP[did].customerTs = ts;
+          ACTIVITY_MAP[did].customerLabel = m.title || 'Meeting completed';
+          ACTIVITY_MAP[did].customerType = 'meeting';
+        }
+      }
+      if (!ACTIVITY_MAP[did].sellerTs || ts > ACTIVITY_MAP[did].sellerTs) ACTIVITY_MAP[did].sellerTs = ts;
+    });
+  });
+  EMAILS.forEach(e => {
+    const ts = e.timestamp ? new Date(e.timestamp).getTime() : null;
+    if (!ts || !e.dealIds?.length) return;
+    e.dealIds.forEach(did => {
+      ensure(did);
+      if (e.direction === 'INBOUND') {
+        if (!ACTIVITY_MAP[did].customerTs || ts > ACTIVITY_MAP[did].customerTs) {
+          ACTIVITY_MAP[did].customerTs = ts;
+          ACTIVITY_MAP[did].customerLabel = e.subject || 'Email reply';
+          ACTIVITY_MAP[did].customerType = 'email';
+        }
+      }
+      if (!ACTIVITY_MAP[did].sellerTs || ts > ACTIVITY_MAP[did].sellerTs) ACTIVITY_MAP[did].sellerTs = ts;
+    });
+  });
+  CALLS.forEach(c => {
+    const ts = c.timestamp ? new Date(c.timestamp).getTime() : null;
+    if (!ts || !c.dealIds?.length) return;
+    c.dealIds.forEach(did => {
+      ensure(did);
+      if (!ACTIVITY_MAP[did].sellerTs || ts > ACTIVITY_MAP[did].sellerTs) ACTIVITY_MAP[did].sellerTs = ts;
+    });
+  });
+})();
 function fmt$(n) {
   if (!n || n < 1) return '$0';
   if (n >= 1000000) return '$' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
@@ -8931,24 +8979,17 @@ function handleOverlayClick(e) {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSectionPanel(); } });
 
 // ─── LAST CONTACT ACTIVITY HELPER ────────────────────────────────────────────
-// Returns the most recent external meeting or email for a deal (by dealId)
+// Returns the last customer signal: INBOUND email or COMPLETED meeting.
+// Uses the global ACTIVITY_MAP built from all MEETINGS / EMAILS / CALLS.
 function lastContactActivity(dealId) {
-  // Meetings associated with this deal
-  const meetings = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(dealId));
-  // Emails associated with this deal (exclude internal-only)
-  const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(dealId) && !e.isInternal);
-
-  let best = null; // { ts, type, label }
-  meetings.forEach(m => {
-    const ts = m.timestamp ? new Date(m.timestamp).getTime() : 0;
-    if (!best || ts > best.ts) best = { ts, type: 'meeting', label: m.title || 'Meeting' };
-  });
-  emails.forEach(e => {
-    const ts = e.timestamp ? new Date(e.timestamp).getTime() : 0;
-    if (!best || ts > best.ts) best = { ts, type: 'email', label: e.subject || 'Email' };
-  });
-  if (!best) return null;
-  return { ...best, daysAgo: Math.floor((Date.now() - best.ts) / 86400000) };
+  const act = ACTIVITY_MAP[dealId];
+  if (!act || !act.customerTs) return null;
+  return {
+    ts: act.customerTs,
+    type: act.customerType,
+    label: act.customerLabel || '',
+    daysAgo: Math.floor((Date.now() - act.customerTs) / 86400000)
+  };
 }
 
 function dealSourceTag(src) {
@@ -8972,9 +9013,9 @@ function dealsTable(deals, extraCols) {
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
   return `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Last Activity AI</th><th>Next Action AI</th>'}
+    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Next Step</th><th>Last Activity AI</th><th>Next Action AI</th>'}
   </tr></thead><tbody>${sorted.map(d => {
-    const [id, name, amount, stageId, ownerId, createDate, closeDate, , , lastMod, dealSource] = d;
+    const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
     const ai = dealAISummary(d);
     const baseRow = `<td class="deal-name">${dealLink(id, name)}</td>
@@ -9003,6 +9044,7 @@ function dealsTable(deals, extraCols) {
       <td style="text-align:right;font-weight:700;color:${disColor};white-space:nowrap">${disLabel}</td>
       <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
       <td style="min-width:120px">${lcaLabel}</td>
+      <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(nextStep||'').replace(/"/g,"'")}">${nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
       <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
       <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>`;
     return `<tr class="${stale?'stale-row':''}">${baseRow}${extraData}</tr>`;
@@ -10849,41 +10891,8 @@ function loadPipeHygieneStatic() {
 
   body.innerHTML = `<div class="hygiene-loading"><div style="font-size:20px;margin-bottom:8px">⏳</div><div>Building pipeline health from synced data…</div></div>`;
 
-  // Build per-deal activity maps from static MEETINGS / EMAILS / CALLS
-  const actMap = {}; // dealId → { sellerTs, customerTs }
-  const ensure = id => { if (!actMap[id]) actMap[id] = { sellerTs: null, customerTs: null }; };
-
-  MEETINGS.forEach(m => {
-    const ts = m.timestamp ? new Date(m.timestamp).getTime() : null;
-    if (!ts || !m.dealIds?.length) return;
-    m.dealIds.forEach(did => {
-      ensure(did);
-      // Completed meeting = customer signal
-      if (m.outcome === 'COMPLETED') {
-        if (!actMap[did].customerTs || ts > actMap[did].customerTs) actMap[did].customerTs = ts;
-      }
-      // Any meeting = seller activity
-      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
-    });
-  });
-
-  EMAILS.forEach(e => {
-    const ts = e.timestamp ? new Date(e.timestamp).getTime() : null;
-    if (!ts || !e.dealIds?.length) return;
-    e.dealIds.forEach(did => {
-      ensure(did);
-      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
-    });
-  });
-
-  CALLS.forEach(c => {
-    const ts = c.timestamp ? new Date(c.timestamp).getTime() : null;
-    if (!ts || !c.dealIds?.length) return;
-    c.dealIds.forEach(did => {
-      ensure(did);
-      if (!actMap[did].sellerTs || ts > actMap[did].sellerTs) actMap[did].sellerTs = ts;
-    });
-  });
+  // Use the global ACTIVITY_MAP (customerTs = INBOUND email or COMPLETED meeting)
+  const actMap = ACTIVITY_MAP;
 
   // Stage → score proxy (mirrors live hs_deal_score ranges)
   const STAGE_SCORE = {

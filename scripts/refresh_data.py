@@ -235,7 +235,8 @@ def fetch_engagements(eng_type, days_back=60):
     try:
         props = ['hs_timestamp','hubspot_owner_id','hs_engagement_type',
                  'hs_activity_type','hs_call_title','hs_meeting_title',
-                 'hs_meeting_outcome','hs_email_subject','hs_body_preview']
+                 'hs_meeting_outcome','hs_email_subject','hs_body_preview',
+                 'hs_email_direction']
         body = {
             'filterGroups': [{'filters': [
                 {'propertyName': 'hs_engagement_type', 'operator': 'EQ', 'value': eng_type},
@@ -301,6 +302,7 @@ def build_emails(items):
             'timestamp': fmt_date(p.get('hs_timestamp', '')),
             'ownerId': safe_str(p.get('hubspot_owner_id', '')),
             'dealIds': assoc_map.get(e['id'], []),
+            'direction': safe_str(p.get('hs_email_direction', '')),
         })
     return rows
 
@@ -398,7 +400,7 @@ def main():
     # Engagements are best-effort — won't fail the sync if missing
     meeting_raw = fetch_engagements('MEETING', days_back=60)
     call_raw    = fetch_engagements('CALL',    days_back=60)
-    email_raw   = fetch_engagements('EMAIL',   days_back=60)
+    email_raw   = fetch_engagements('EMAIL',   days_back=120)
 
     meetings = build_meetings(meeting_raw)
     calls    = build_calls(call_raw)
