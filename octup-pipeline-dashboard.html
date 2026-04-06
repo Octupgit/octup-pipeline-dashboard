@@ -11336,16 +11336,23 @@ function renderSourceFunnel() {
   let allWon   = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
   let allLost  = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
   // Filter by global period:
-  //   Open deals → by createDate (d[5])
-  //   Won/Lost   → by closeDate  (d[3]) — shown in Won column only, NOT added to Gen/SQL
-  //   This prevents Won/Lost from inflating Gen for "This Week" while still
-  //   showing Won deals in the Won column for "Last Q" / "Last Month" etc.
+  //   Gen column  → createDate for all deal types (true cohort: entered pipeline in period)
+  //   Won column  → closeDate  (actual conversions closed in the period)
+  //   This avoids inflating Gen for "This Week" while correctly counting all
+  //   Marketing Paid deals created in "Last Q" (open + won + lost by createDate).
   const isFiltered = selectedWeek !== 'alltime';
   if (isFiltered) {
     allDeals = allDeals.filter(d => dateInRange(d[5], selectedWeek));
-    allWon   = allWon.filter(d  => dateInRange(d[3], selectedWeek));
-    allLost  = allLost.filter(d => dateInRange(d[3], selectedWeek));
+    // Won/Lost filtered by closeDate → used for Won column only
+    allWon  = allWon.filter(d  => dateInRange(d[3], selectedWeek));
+    allLost = allLost.filter(d => dateInRange(d[3], selectedWeek));
   }
+  // Separate won/lost filtered by createDate → used for Gen/SQL cohort counts
+  // WON_DEALS[7] = createDate, LOST_DEALS[8] = createDate (added in refresh_data.py)
+  const baseOwnerWon  = selectedOwner === 'all' ? WON_DEALS  : WON_DEALS.filter(d => d[4] === selectedOwner);
+  const baseOwnerLost = selectedOwner === 'all' ? LOST_DEALS : LOST_DEALS.filter(d => d[4] === selectedOwner);
+  const wonForGen  = isFiltered ? baseOwnerWon.filter(d  => d[7] && dateInRange(d[7], selectedWeek)) : allWon;
+  const lostForGen = isFiltered ? baseOwnerLost.filter(d => d[8] && dateInRange(d[8], selectedWeek)) : allLost;
 
   // Update period badge
   const badge = document.getElementById('src-funnel-period-badge');
@@ -11373,26 +11380,23 @@ function renderSourceFunnel() {
     s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
     if (SQL_STAGES.has(d[3])) { s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); }
   });
-  // Won deals — for alltime: count as gen+sql+won; for filtered: won column only (closeDate filter)
+  // Won deals — Gen/SQL by createDate (wonForGen), Won column by closeDate (allWon)
+  wonForGen.forEach(d => {
+    const s = getOrAdd(d[6]);
+    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+  });
   allWon.forEach(d => {
-    const src = d[6];
-    const s = getOrAdd(src);
-    if (!isFiltered) {
-      s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
-      s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
-    }
+    const s = getOrAdd(d[6]);
     s.won++; s.wonArr += d[2]; s.wonIds.push(d[0]);
   });
-  // Lost deals — for alltime: count as gen+sql+lost; for filtered: lost count only (closeDate filter)
-  allLost.forEach(d => {
-    const src = d[7];
-    const s = getOrAdd(src);
-    if (!isFiltered) {
-      s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
-      s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
-    }
-    s.lost++;
+  // Lost deals — Gen/SQL by createDate (lostForGen), lost count by closeDate (allLost)
+  lostForGen.forEach(d => {
+    const s = getOrAdd(d[7]);
+    s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
+    s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
   });
+  allLost.forEach(d => { getOrAdd(d[7]).lost++; });
 
   // Sort: sources with activity in the current period first, then by gen desc
   const rows = Object.values(srcMap).sort((a,b) => {
