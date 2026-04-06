@@ -12911,12 +12911,16 @@ function generateBrief() {
       + (newLW.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${newLW.length-4} more new deals</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new pipeline last week</div>`;
 
-  // ── Deals with activity changes last week ─────────────────────────────────
-  const dealsChangedLW = pool.filter(d => {
-    if (!d[9]) return false; // no lastMod
-    if (['608286678','608286679'].includes(d[3])) return false;
-    return dateInRange(d[9], 'last'); // lastMod in last week
+  // ── Stage transitions last week (entered current stage last week) ──────────
+  const STAGE_PIPE_ORDER = ['2918051008','2918051007','608286675','740160705','608286676','4988070119','608286677'];
+  // Stalled → NBM → Discovery → Pres → SA → Trial → CR
+  const stageTransitionsLW = pool.filter(d => {
+    const entered = STAGE_ENTERED[d[0]];
+    if (!entered) return false;
+    return dateInRange(entered, 'last'); // entered current stage last week
   }).sort((a,b) => b[2] - a[2]);
+  // Keep dealsChangedLW as alias so existing code below still compiles
+  const dealsChangedLW = stageTransitionsLW;
 
   // ── Qualify to Lost: not in won/lost/stalled, 21d+ no contact OR disinterest signals ──
   const DISINTEREST_SIGNALS = /not interested|no budget|budget freeze|pausing|on hold|not a fit|pass|cancel|moving on|no longer|decided not|going with|chose another|deprioritiz|hold off|not moving forward|not proceed|not the right time/i;
@@ -12997,22 +13001,33 @@ function generateBrief() {
     </div>
 
     <div class="brief-section" style="margin-bottom:10px">
-      <div class="brief-section-title" style="color:#58a6ff">📝 Deals Updated Last Week — ${dealsChangedLW.length} deals</div>
-      ${dealsChangedLW.length ? dealsChangedLW.slice(0,6).map(d => {
-        const stage = STAGE_SHORT2[d[3]] || d[3];
-        const ns = d[7] ? d[7].split('\n')[0].slice(0,55) : 'no next step';
+      <div class="brief-section-title" style="color:#58a6ff">🔀 Stage Transitions Last Week — ${stageTransitionsLW.length} deals</div>
+      ${stageTransitionsLW.length ? stageTransitionsLW.slice(0,8).map(d => {
+        const toStageId = d[3];
+        const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
+        const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
+        const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
+        const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
+        const isForward = toIdx >= 0;
+        const arrowColor = isForward ? '#4ade80' : '#f87171';
+        const enteredDate = STAGE_ENTERED[d[0]] || '';
         return `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
           <div style="flex:1;min-width:0">
             <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
-            <div style="font-size:10px;color:var(--muted);margin-top:1px">${stage} · ${ns}</div>
+            <div style="font-size:11px;margin-top:2px">
+              <span style="color:var(--muted)">${fromLabel}</span>
+              <span style="color:${arrowColor};font-weight:700;margin:0 4px">→</span>
+              <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
+              ${enteredDate ? `<span style="color:var(--muted);font-size:10px;margin-left:6px">${enteredDate}</span>` : ''}
+            </div>
           </div>
           <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
             <span class="brief-deal-meta">${oShort(d[4])}</span>
             <span class="brief-deal-arr">${fmtK(d[2])}</span>
           </div>
         </div>`;
-      }).join('') + (dealsChangedLW.length > 6 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${dealsChangedLW.length-6} more updated</div>` : '')
-      : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No deal updates tracked last week</div>`}
+      }).join('') + (stageTransitionsLW.length > 8 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${stageTransitionsLW.length-8} more transitions</div>` : '')
+      : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No stage transitions last week</div>`}
     </div>
 
     <div class="brief-section" style="margin-bottom:10px">
