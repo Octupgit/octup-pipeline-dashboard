@@ -10874,10 +10874,16 @@ function renderSourceFunnel() {
   const SOURCE_COLORS = ['#6366f1','#06b6d4','#a855f7','#10b981','#f97316','#f43f5e','#84cc16','#8b5cf6','#fb923c','#38bdf8'];
 
   // Deal lookup map for modal — open + won + lost reformatted to DEALS structure
+  // IMPORTANT: must include wonForGen/lostForGen (createDate-filtered) in addition to
+  // allWon/allLost (closeDate-filtered) so that Gen drilldown IDs are always resolvable.
+  // e.g. a deal created in Q1 but closed in Q2 appears in genIds but not in allWon/allLost.
   const _allDealMap = {};
   allDeals.forEach(d => { _allDealMap[d[0]] = d; });
-  allWon.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[3],d[3],'',d[5],'',d[6]]; });
-  allLost.forEach(d => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[3],d[3],'',d[5],'',d[7]]; });
+  allWon.forEach(d   => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[3],d[3],'',d[5],'',d[6]]; });
+  allLost.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[3],d[3],'',d[5],'',d[7]]; });
+  // Also seed from cohort arrays so Gen/SQL clicks always resolve all IDs
+  wonForGen.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[7],d[3],'',d[5],'',d[6]]; });
+  lostForGen.forEach(d => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[8],d[3],'',d[5],'',d[7]]; });
 
   const openFunnelModal = (title, ids) => {
     const dealSet = ids.map(id => _allDealMap[id]).filter(Boolean).sort((a,b)=>b[2]-a[2]);
