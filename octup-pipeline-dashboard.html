@@ -10850,23 +10850,21 @@ function renderSourceFunnel() {
     s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
     if (SQL_STAGES.has(d[3])) { s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]); }
   });
-  // Won deals — Gen/SQL by createDate (wonForGen), Won column by closeDate (allWon)
+  // Won deals — all three columns (Gen, SQL, Won) use createDate cohort (wonForGen)
+  // This ensures Gen ≥ SQL ≥ Won is always maintained (Won is a subset of Gen)
   wonForGen.forEach(d => {
     const s = getOrAdd(d[6]);
     s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
     s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
-  });
-  allWon.forEach(d => {
-    const s = getOrAdd(d[6]);
     s.won++; s.wonArr += d[2]; s.wonIds.push(d[0]);
   });
-  // Lost deals — Gen/SQL by createDate (lostForGen), lost count by closeDate (allLost)
+  // Lost deals — Gen, SQL, and lost count all use createDate cohort (lostForGen)
   lostForGen.forEach(d => {
     const s = getOrAdd(d[7]);
     s.gen++; s.genArr += d[2]; s.genIds.push(d[0]);
     s.sql++; s.sqlArr += d[2]; s.sqlIds.push(d[0]);
+    s.lost++;
   });
-  allLost.forEach(d => { getOrAdd(d[7]).lost++; });
 
   // Sort: sources with activity in the current period first, then by gen desc
   const rows = Object.values(srcMap).sort((a,b) => {
