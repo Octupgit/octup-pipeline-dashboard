@@ -10890,8 +10890,10 @@ function renderSourceFunnel() {
   const openFunnelModal = (title, ids) => {
     const dealSet = ids.map(id => _allDealMap[id]).filter(Boolean).sort((a,b)=>b[2]-a[2]);
     const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+    const avgARR   = dealSet.length ? Math.round(totalARR / dealSet.length) : 0;
     const summary = `<div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
-      <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>`;
+      <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Avg Deal Size</span><span class="modal-summary-val">${fmt$(avgARR)}</span></div>`;
     openModal('🔀 ' + title, summary, dealsTable(dealSet));
   };
   window._openFunnelModal = openFunnelModal;
