@@ -832,7 +832,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
             <th rowspan="2" style="min-width:140px;vertical-align:bottom;border-right:2px solid var(--border)">Source</th>
             <th colspan="2" style="text-align:center;border-bottom:2px solid #38bdf8;border-right:1px solid rgba(255,255,255,.08);color:#38bdf8;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(56,189,248,.12);padding:7px 6px">⚡ GENERATED</th>
             <th colspan="3" style="text-align:center;border-bottom:2px solid #fbbf24;border-right:1px solid rgba(255,255,255,.08);color:#fbbf24;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(251,191,36,.12);padding:7px 6px">🎯 SQL</th>
-            <th colspan="3" style="text-align:center;border-bottom:2px solid #4ade80;color:#4ade80;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(74,222,128,.12);padding:7px 6px">🏆 WON</th>
+            <th colspan="4" style="text-align:center;border-bottom:2px solid #4ade80;color:#4ade80;letter-spacing:.06em;font-size:11px;font-weight:800;background:rgba(74,222,128,.12);padding:7px 6px">🏆 WON</th>
           </tr>
           <tr>
             <th class="num" style="color:#38bdf8;opacity:.85;background:rgba(56,189,248,.06)">Deals</th>
@@ -843,6 +843,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
             <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">Deals</th>
             <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">SQL→Won</th>
             <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">ARR</th>
+            <th class="num" style="color:#4ade80;opacity:.85;background:rgba(74,222,128,.06)">% of Total</th>
           </tr>
         </thead>
         <tbody id="src-funnel-tbody"></tbody>
@@ -10913,13 +10914,17 @@ function renderSourceFunnel() {
     : `<span style="color:${p>=40?'#4ade80':p>=20?'#fbbf24':'#f87171'};font-weight:700">${p}%</span>`;
   const arr = (v, color) => v ? `<span style="color:${color||'var(--muted)'};font-size:11px">${fmt$(v)}</span>` : `<span style="color:var(--muted)">—</span>`;
 
-  const mkRow = (r, isTot, idx) => {
+  const mkRow = (r, isTot, idx, totalWonArr) => {
     const color   = isTot ? '#888' : SOURCE_COLORS[idx % SOURCE_COLORS.length];
     const genSql  = r.gen ? Math.round(r.sql / r.gen * 100) : 0;
     const sqlWon  = r.sql ? Math.round(r.won / r.sql * 100) : 0;
+    const wonPct  = totalWonArr ? Math.round(r.wonArr / totalWonArr * 100) : 0;
     const srcLabel = r.src || 'Unknown';
     const totStyle = isTot ? ' style="background:rgba(255,255,255,.03);border-top:2px solid var(--border)"' : '';
     const bdr = 'border-right:1px solid rgba(255,255,255,.06)';
+    const wonPctCell = isTot
+      ? `<span style="color:var(--muted);font-size:11px">100%</span>`
+      : (wonPct ? `<span style="color:#4ade80;font-weight:700">${wonPct}%</span>` : `<span style="color:var(--muted)">—</span>`);
     return `<tr${totStyle}>
       <td class="src-name" style="border-right:2px solid var(--border)">
         ${isTot
@@ -10934,13 +10939,14 @@ function renderSourceFunnel() {
       <td class="src-num" ${clickCell(srcLabel+' — Won', r.wonIds)}>${num(r.won, r.wonIds, '#4ade80')}</td>
       <td class="src-num">${pct(sqlWon)}</td>
       <td class="src-num">${arr(r.wonArr, '#4ade80')}</td>
+      <td class="src-num">${wonPctCell}</td>
     </tr>`;
   };
 
   const tbody = document.getElementById('src-funnel-tbody');
   if (tbody) tbody.innerHTML =
-    rows.map((r,i) => mkRow(r, false, i)).join('') +
-    mkRow(totals, true, 0);
+    rows.map((r,i) => mkRow(r, false, i, totals.wonArr)).join('') +
+    mkRow(totals, true, 0, totals.wonArr);
 }
 
 // ─── SDR TAB SELECTION ────────────────────────────────────────────────────────
