@@ -10821,9 +10821,17 @@ function renderSourceFunnel() {
   if (badge) badge.textContent = WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'All Time';
 
   // Build per-source stats from live data
+  // Source normalization: merge overlapping sources into single buckets
+  const normSrc = src => {
+    if (!src) return 'Unknown';
+    if (src === 'Inbound Website') return 'Marketing Organic';
+    if (src === 'Partner Channel')  return 'Referral/Partner';
+    if (src === 'Referral')         return 'Referral/Partner';
+    return src;
+  };
   const srcMap = {};
   const getOrAdd = src => {
-    const k = src || 'Unknown';
+    const k = normSrc(src);
     if (!srcMap[k]) srcMap[k] = { src:k, gen:0, genArr:0, sql:0, sqlArr:0, won:0, wonArr:0, lost:0, genIds:[], sqlIds:[], wonIds:[] };
     return srcMap[k];
   };
