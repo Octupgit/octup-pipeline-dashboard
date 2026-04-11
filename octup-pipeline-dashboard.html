@@ -11296,17 +11296,19 @@ function renderMonthlyBreakdown() {
   months.forEach(m => colTotals[m] = { count:0, arr:0 });
   let grandTotal = 0, grandArr = 0;
 
-  const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostCount=0) => {
-    if (!mDeals.length && !mWonDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
+  const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostDeals=[]) => {
+    if (!mDeals.length && !mWonDeals.length && !mLostDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
     const pipeArr  = mDeals.reduce((s,d)=>s+d[2], 0);
     // ACV = avg closed won deal size
     const wonARR   = mWonDeals.reduce((s,w)=>s+w[2], 0);
     const acv      = mWonDeals.length ? fmt$(Math.round(wonARR / mWonDeals.length)) : '—';
-    const cvrTotal = mWonDeals.length + mLostCount;
+    const cvrTotal = mWonDeals.length + mLostDeals.length;
     const cvrPct   = cvrTotal > 0 ? Math.round(mWonDeals.length / cvrTotal * 100) : null;
     const ids = JSON.stringify(mDeals.map(d=>d[0]));
+    const wonIds = JSON.stringify(mWonDeals.map(w=>w[0]));
+    const lostIds = JSON.stringify(mLostDeals.map(l=>l[0]));
     const curCls = isCurrent ? ' cur' : '';
-    return `<td data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+    return `<td data-title="${title.replace(/"/g,'&quot;')}" data-ids='${ids}' data-won-ids='${wonIds}' data-lost-ids='${lostIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids),JSON.parse(this.dataset.wonIds),JSON.parse(this.dataset.lostIds))">`+`
       <div class="mm-cell${curCls}">
         <div class="mm-pipe-row">
           <span class="mm-pipe-arr">${fmt$(pipeArr)}</span>
@@ -11367,8 +11369,8 @@ function renderMonthlyBreakdown() {
       const isCur = m === todayKey;
       const mDeals = od.filter(d => monthKey(d[5]) === m);
       const mWon = WON_DEALS.filter(w => w[4] === oid && monthKey(w[3]) === m);
-      const mLost = LOST_DEALS.filter(l => l[4] === oid && monthKey(l[3]) === m).length;
-      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon, mLost);
+      const mLostDeals = LOST_DEALS.filter(l => l[4] === oid && monthKey(l[3]) === m);
+      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon, mLostDeals);
       const arr = mDeals.reduce((s,d)=>s+d[2],0);
       rowCount += mDeals.length;
       rowArr += arr;
@@ -11381,10 +11383,12 @@ function renderMonthlyBreakdown() {
     const rowWonARR = rowWon.reduce((s,w)=>s+w[2],0);
     // ACV = avg closed won deal size
     const rowAcv = rowWon.length ? fmt$(Math.round(rowWonARR / rowWon.length)) : '—';
-    const rowLost = LOST_DEALS.filter(l => l[4] === oid && months.some(m => monthKey(l[3]) === m)).length;
-    const rowCvrTotal = rowWon.length + rowLost;
+    const rowLostDeals = LOST_DEALS.filter(l => l[4] === oid && months.some(m => monthKey(l[3]) === m));
+    const rowCvrTotal = rowWon.length + rowLostDeals.length;
     const rowCvr = rowCvrTotal > 0 ? Math.round(rowWon.length / rowCvrTotal * 100) : null;
-    html += `<td${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))"`:''}>
+    const rowWonIds = JSON.stringify(rowWon.map(w=>w[0]));
+    const rowLostIds = JSON.stringify(rowLostDeals.map(l=>l[0]));
+    html += `<td${rowCount?` data-title="${o.name} — All Months" data-ids='${rowIds}' data-won-ids='${rowWonIds}' data-lost-ids='${rowLostIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids),JSON.parse(this.dataset.wonIds),JSON.parse(this.dataset.lostIds))"`:''}>
       <div class="mm-cell${rowCount?' ':' '}">
         <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(rowArr)}</span><span class="mm-pipe-cnt">${rowCount} deals</span></div>
         <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(rowArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
@@ -11406,7 +11410,10 @@ function renderMonthlyBreakdown() {
     // ACV = avg closed won deal size
     const tAcv = mAllWon.length ? fmt$(Math.round(tWonARR / mAllWon.length)) : '—';
     const tCvr = colStats[m] && colStats[m].cvr !== null ? colStats[m].cvr : null;
-    html += `<td data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+    const mAllLost = LOST_DEALS.filter(l => monthKey(l[3]) === m && ownerList.includes(l[4]));
+    const tWonIds = JSON.stringify(mAllWon.map(w=>w[0]));
+    const tLostIds = JSON.stringify(mAllLost.map(l=>l[0]));
+    html += `<td data-title="All Owners — ${monthLabel(m)}" data-ids='${mAllIds}' data-won-ids='${tWonIds}' data-lost-ids='${tLostIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids),JSON.parse(this.dataset.wonIds),JSON.parse(this.dataset.lostIds))">
       <div class="mm-cell${isCur?' cur':''}">
         <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(t.arr)}</span><span class="mm-pipe-cnt">${t.count} deals</span></div>
         <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(t.arr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
@@ -11420,10 +11427,12 @@ function renderMonthlyBreakdown() {
   const grandWonARR = grandWon.reduce((s,w)=>s+w[2],0);
   // ACV = avg closed won deal size
   const grandAcv = grandWon.length ? fmt$(Math.round(grandWon.reduce((s,w)=>s+w[2],0) / grandWon.length)) : '—';
-  const grandLost = LOST_DEALS.filter(l => months.some(m => monthKey(l[3]) === m)).length;
-  const grandCvrTotal = grandWon.length + grandLost;
+  const grandLostDeals = LOST_DEALS.filter(l => months.some(m => monthKey(l[3]) === m));
+  const grandCvrTotal = grandWon.length + grandLostDeals.length;
   const grandCvr = grandCvrTotal > 0 ? Math.round(grandWon.length / grandCvrTotal * 100) : null;
-  html += `<td data-title="All Owners — All Months" data-ids='${allIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids))">
+  const grandWonIds = JSON.stringify(grandWon.map(w=>w[0]));
+  const grandLostIds = JSON.stringify(grandLostDeals.map(l=>l[0]));
+  html += `<td data-title="All Owners — All Months" data-ids='${allIds}' data-won-ids='${grandWonIds}' data-lost-ids='${grandLostIds}' onclick="openMonthlyModal(this.dataset.title,JSON.parse(this.dataset.ids),JSON.parse(this.dataset.wonIds),JSON.parse(this.dataset.lostIds))">
     <div class="mm-cell">
       <div class="mm-pipe-row"><span class="mm-pipe-arr">${fmt$(grandArr)}</span><span class="mm-pipe-cnt">${grandTotal} deals</span></div>
       <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(grandArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
@@ -11436,13 +11445,20 @@ function renderMonthlyBreakdown() {
   document.getElementById('monthly-table').innerHTML = html;
 }
 
-function openMonthlyModal(title, dealIds) {
-  const dealSet = DEALS.filter(d => dealIds.includes(d[0])).sort((a,b)=>b[2]-a[2]);
-  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+function openMonthlyModal(title, dealIds, wonIds=[], lostIds=[]) {
+  const openDeals = DEALS.filter(d => dealIds.includes(d[0]));
+  // Normalize won/lost to common deal array format for dealsTable
+  const wonDeals  = WON_DEALS.filter(w  => wonIds.includes(w[0])).map(w => [w[0],w[1],w[2],'WON', w[4],w[7]||w[3],w[3],'','','',w[6]]);
+  const lostDeals = LOST_DEALS.filter(l => lostIds.includes(l[0])).map(l => [l[0],l[1],l[2],'LOST',l[4],l[8]||l[3],l[3],'','','',l[7]]);
+  const allDeals  = [...openDeals, ...wonDeals, ...lostDeals].sort((a,b)=>b[2]-a[2]);
+  const openARR = openDeals.reduce((s,d)=>s+d[2],0);
+  const wonARR  = wonDeals.reduce((s,d)=>s+d[2],0);
   const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>`;
-  openModal('📅 ' + title, summary, dealsTable(dealSet));
+    <div class="modal-summary-item"><span class="modal-summary-label">Total</span><span class="modal-summary-val">${allDeals.length} deals</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Open Pipeline</span><span class="modal-summary-val">${openDeals.length} · ${fmt$(openARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label" style="color:#4ade80">Won</span><span class="modal-summary-val" style="color:#4ade80">${wonDeals.length} · ${fmt$(wonARR)}</span></div>
+    ${lostDeals.length ? `<div class="modal-summary-item"><span class="modal-summary-label" style="color:#f85149">Lost</span><span class="modal-summary-val" style="color:#f85149">${lostDeals.length}</span></div>` : ''}`;
+  openModal('📅 ' + title, summary, dealsTable(allDeals));
 }
 
 // ─── RENDER WATCHLIST ─────────────────────────────────────────────────────────
