@@ -10707,9 +10707,9 @@ function renderPulse() {
   // Update labels
   document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
-  // Open Pipeline (all active open deals, owner-filtered — snapshot, not period-filtered)
+  // Open Pipeline — filtered by createDate for the selected period (alltime = all open deals)
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]) && (selectedWeek === 'alltime' || dateInRange(d[5], selectedWeek)));
   if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
   const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
   const weightedARR    = openPipeDeals.reduce((s,d)=>s+(d[2]*(STAGE_WIN_PROB[d[3]]||0.1)),0);
