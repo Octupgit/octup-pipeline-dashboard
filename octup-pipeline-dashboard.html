@@ -593,6 +593,23 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .intel-tbl td.deal-name{font-weight:600;color:var(--text);min-width:160px}
 .intel-detail-loading{padding:32px;text-align:center;color:var(--muted);font-size:13px}
 .intel-detail-loading .spinner{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle}
+/* ── MARKETING FUNNEL ── */
+.mkt-tab{font-size:11px;padding:4px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-weight:500}
+.mkt-tab.active{background:rgba(88,166,255,.15);color:var(--accent);border-color:rgba(88,166,255,.3)}
+.mkt-funnel-wrap{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:20px;width:100%;max-width:700px}
+.mkt-stage{width:100%;display:flex;flex-direction:column;align-items:center}
+.mkt-bar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;border-radius:8px;transition:width .3s ease}
+.mkt-sname{font-size:13px;font-weight:700}
+.mkt-ssub{font-size:10px;opacity:.75;margin-top:2px}
+.mkt-scount{font-size:22px;font-weight:800;text-align:right;line-height:1}
+.mkt-spct{font-size:10px;opacity:.7;text-align:right;margin-top:2px}
+.mkt-arrow{display:flex;align-items:center;justify-content:center;height:28px;position:relative;width:100%;max-width:700px}
+.mkt-aline{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border)}
+.mkt-alabel{position:relative;z-index:1;font-size:11px;color:var(--muted);background:var(--bg);padding:0 10px;white-space:nowrap}
+.mkt-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;margin-bottom:24px;max-width:700px}
+.mkt-met{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.mkt-met-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.mkt-met-val{font-size:22px;font-weight:800;color:var(--text)}
 </style>
 </head>
 <body>
@@ -912,6 +929,32 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   </section>
 
   <!-- D: HIGH PROB DEALS (SA + Trial + CR) -->
+  <!-- MARKETING FUNNEL -->
+  <section id="section-mktfunnel">
+    <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
+      <div class="src-funnel-header" style="flex-wrap:wrap;gap:10px">
+        <div class="src-funnel-title">📣 Marketing Funnel — Paid Ads</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
+          <select id="mkt-src-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
+            <option value="all">All Sources</option>
+            <option value="google">Google Ads</option>
+            <option value="linkedin">LinkedIn Ads</option>
+            <option value="meta">Meta Ads</option>
+          </select>
+          <select id="mkt-camp-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
+            <option value="all">All Campaigns</option>
+          </select>
+          <div style="display:flex;gap:4px">
+            <button class="mkt-tab active" data-t="all" onclick="mktSwMonth(this)">All</button>
+            <button class="mkt-tab" data-t="feb" onclick="mktSwMonth(this)">Feb</button>
+            <button class="mkt-tab" data-t="mar" onclick="mktSwMonth(this)">Mar</button>
+          </div>
+        </div>
+      </div>
+      <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
+    </div>
+  </section>
+
   <section id="section-highvalue" style="display:none">
     <div class="section-subtitle" id="hv-subtitle" style="padding:0 20px 8px;font-size:11px;color:var(--muted)"></div>
     <div class="matrix-stats" id="hv-stats" style="padding:0 20px 0;border-bottom:1px solid var(--border);margin-bottom:0"></div>
@@ -13883,6 +13926,233 @@ function exportHygieneCSV() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// ─── MARKETING FUNNEL ────────────────────────────────────────────────────────
+// Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
+// Update these values with real data as campaigns run.
+const MKT_DB = {
+  all: {
+    all: {
+      all: {contacts:33,mql:2,sql:4,deals:4,deals_arr:108000,won:2,won_arr:36000},
+      feb: {contacts:14,mql:1,sql:2,deals:2,deals_arr:48000,won:1,won_arr:24000},
+      mar: {contacts:19,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
+    },
+  },
+  google: {
+    _label: 'Google Ads',
+    _campaigns: {brand:'Brand Search', industry:'Industry Keywords', competitor:'Competitor'},
+    all: {
+      all: {contacts:20,mql:2,sql:3,deals:3,deals_arr:84000,won:2,won_arr:36000},
+      feb: {contacts:8, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
+      mar: {contacts:12,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
+    },
+    brand: {
+      all: {contacts:9, mql:2,sql:2,deals:2,deals_arr:60000,won:2,won_arr:36000},
+      feb: {contacts:4, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
+      mar: {contacts:5, mql:1,sql:1,deals:1,deals_arr:36000,won:1,won_arr:12000},
+    },
+    industry: {
+      all: {contacts:8, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      feb: {contacts:3, mql:0,sql:0,deals:0,deals_arr:0,    won:0,won_arr:0},
+      mar: {contacts:5, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+    },
+    competitor: {
+      all: {contacts:3, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      feb: {contacts:1, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      mar: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+    },
+  },
+  linkedin: {
+    _label: 'LinkedIn Ads',
+    _campaigns: {awareness:'Awareness', retargeting:'Retargeting'},
+    all: {
+      all: {contacts:9, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      feb: {contacts:4, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      mar: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,    won:0,won_arr:0},
+    },
+    awareness: {
+      all: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      feb: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      mar: {contacts:3, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+    },
+    retargeting: {
+      all: {contacts:4, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      feb: {contacts:2, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      mar: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,    won:0,won_arr:0},
+    },
+  },
+  meta: {
+    _label: 'Meta Ads',
+    _campaigns: {lookalike:'Lookalike', remarketing:'Remarketing'},
+    all: {
+      all: {contacts:4, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      feb: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      mar: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+    },
+    lookalike: {
+      all: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      feb: {contacts:1, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      mar: {contacts:1, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+    },
+    remarketing: {
+      all: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      feb: {contacts:1, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      mar: {contacts:1, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+    },
+  },
+};
+
+let _mktMonth = 'all';
+
+const MKT_STAGES = [
+  {key:'contacts', label:'Contacts',    sub:'from paid ads',          color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
+  {key:'mql',      label:'MQL',         sub:'marketing qualified lead',color:'#38bdf8', bg:'rgba(56,189,248,.18)'},
+  {key:'sql',      label:'SQL',         sub:'opportunity / sales qualified', color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
+  {key:'deals',    label:'Deals',       sub:'entered pipeline',        color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
+  {key:'won',      label:'Won',         sub:'closed revenue',          color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
+];
+
+function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
+function mktCvr(a, b) { return +b === 0 ? '—' : (parseFloat(a)/parseFloat(b)*100).toFixed(0)+'%'; }
+
+function mktUpdateCampaigns() {
+  const src = document.getElementById('mkt-src-select')?.value || 'all';
+  const campSel = document.getElementById('mkt-camp-select');
+  if (!campSel) return;
+  const prevVal = campSel.value;
+  campSel.innerHTML = '<option value="all">All Campaigns</option>';
+  if (src !== 'all' && MKT_DB[src]?._campaigns) {
+    Object.entries(MKT_DB[src]._campaigns).forEach(([k,v]) => {
+      const opt = document.createElement('option');
+      opt.value = k; opt.textContent = v;
+      campSel.appendChild(opt);
+    });
+  }
+  campSel.disabled = src === 'all';
+}
+
+function mktRender() {
+  const src  = document.getElementById('mkt-src-select')?.value  || 'all';
+  const camp = document.getElementById('mkt-camp-select')?.value || 'all';
+  mktUpdateCampaigns();
+
+  const srcData = MKT_DB[src] || MKT_DB.all;
+  const campData = srcData[camp] || srcData['all'] || {};
+  const d = campData[_mktMonth] || campData['all'] || {contacts:0,mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0};
+
+  const max = d.contacts || 1;
+
+  // Build the CVR rows
+  const cvrRows = MKT_STAGES.map((s, i) => {
+    const val  = d[s.key] || 0;
+    const prev = i === 0 ? val : (d[MKT_STAGES[i-1].key] || 0);
+    const cvr  = mktCvr(val, prev);
+    const ofTotal = i === 0 ? '100%' : mktCvr(val, max);
+    const arr  = s.arrKey ? mktFmtN(d[s.arrKey]) : '';
+    const barW = max > 0 ? Math.max(2, Math.round(val / max * 100)) : 2;
+    return { s, val, cvr, ofTotal, arr, barW, prev };
+  });
+
+  // Left: funnel table
+  let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead>
+      <tr>
+        <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Stage</th>
+        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Count</th>
+        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">CVR</th>
+        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">% of Total</th>
+        <th style="text-align:right;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">ARR</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  cvrRows.forEach(({s, val, cvr, ofTotal, arr}, i) => {
+    const cvrBadge = i === 0 ? '<span style="color:var(--muted);font-size:10px">entry</span>'
+      : `<span style="color:${val===0?'var(--muted)':s.color};font-weight:700">${cvr}</span>`;
+    tableHtml += `
+      <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+        <td style="padding:10px 10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+            <div>
+              <div style="font-weight:700;color:var(--text)">${s.label}</div>
+              <div style="font-size:10px;color:var(--muted)">${s.sub}</div>
+            </div>
+          </div>
+        </td>
+        <td style="text-align:center;padding:10px;font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</td>
+        <td style="text-align:center;padding:10px">${cvrBadge}</td>
+        <td style="text-align:center;padding:10px;color:var(--muted);font-size:11px">${ofTotal}</td>
+        <td style="text-align:right;padding:10px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</td>
+      </tr>`;
+    // CVR drop arrow between rows
+    if (i < cvrRows.length - 1) {
+      const nextVal = d[MKT_STAGES[i+1].key] || 0;
+      const dropCvr = mktCvr(nextVal, val);
+      const dropColor = nextVal === 0 ? '#f87171' : nextVal < val * 0.1 ? '#f97316' : nextVal < val * 0.5 ? '#fbbf24' : '#4ade80';
+      tableHtml += `<tr><td colspan="5" style="padding:0 10px 0 26px">
+        <div style="display:flex;align-items:center;gap:6px;padding:2px 0">
+          <span style="color:var(--border);font-size:12px">↓</span>
+          <span style="font-size:10px;color:${dropColor};font-weight:600">${dropCvr} converted</span>
+          <span style="flex:1;height:1px;background:var(--border)"></span>
+        </div>
+      </td></tr>`;
+    }
+  });
+
+  tableHtml += `</tbody></table>`;
+
+  // Right: horizontal bar chart
+  let chartHtml = `<div style="display:flex;flex-direction:column;gap:10px;padding-top:4px">`;
+  cvrRows.forEach(({s, val, barW}) => {
+    chartHtml += `
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:11px;font-weight:600;color:${s.color}">${s.label}</span>
+          <span style="font-size:13px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+        </div>
+        <div style="height:28px;background:var(--bg2);border-radius:6px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${s.bg};border-radius:6px;border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:8px">
+            ${val > 0 ? `<span style="font-size:10px;font-weight:700;color:${s.color};opacity:.8">${barW}%</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Bottom metrics
+  chartHtml += `</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Contact→Deal</div>
+      <div style="font-size:18px;font-weight:800;color:var(--text)">${mktCvr(d.deals,d.contacts)}</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Pipeline ARR</div>
+      <div style="font-size:18px;font-weight:800;color:#58a6ff">${mktFmtN(d.deals_arr)}</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#4ade80;margin-bottom:4px">Won ARR</div>
+      <div style="font-size:18px;font-weight:800;color:#4ade80">${mktFmtN(d.won_arr)}</div>
+    </div>
+  </div>`;
+
+  document.getElementById('mkt-funnel-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div>${tableHtml}</div>
+      <div>${chartHtml}</div>
+    </div>`;
+}
+
+function mktSwMonth(el) {
+  document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  _mktMonth = el.dataset.t;
+  mktRender();
+}
+
+// init
+document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktUpdateCampaigns(); mktRender(); });
+mktRender();
 </script>
 </body>
 </html>
