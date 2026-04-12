@@ -223,7 +223,10 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .modal-summary-val{font-size:16px;font-weight:800;color:var(--accent)}
 .modal-body{padding:0;max-height:60vh;overflow-y:auto}
 .modal-table{width:100%;border-collapse:collapse}
-.modal-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.modal-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;cursor:pointer;user-select:none;white-space:nowrap}
+.modal-table th:hover{color:var(--text);background:rgba(88,166,255,.08)}
+.modal-table th[data-dir]::after{content:' ▲';font-size:9px;opacity:.7}
+.modal-table th[data-dir="desc"]::after{content:' ▼'}
 .modal-table td{padding:9px 14px;border-bottom:1px solid rgba(48,54,61,.5);font-size:12px;vertical-align:top}
 .modal-table tr:hover td{background:rgba(48,54,61,.4)}
 .modal-table .deal-name{font-weight:600;color:var(--text);max-width:280px}
@@ -11464,6 +11467,32 @@ function openMonthlyModal(title, dealIds, wonIds=[], lostIds=[]) {
 // ─── RENDER WATCHLIST ─────────────────────────────────────────────────────────
 
 // ─── MODALS ───────────────────────────────────────────────────────────────────
+function sortModalTable(th) {
+  const table = th.closest('table');
+  const tbody = table.querySelector('tbody');
+  const ths   = Array.from(th.parentElement.children);
+  const colIdx = ths.indexOf(th);
+  const wasAsc = th.dataset.dir === 'asc';
+  const nowDir = wasAsc ? 'desc' : 'asc';
+  ths.forEach(h => delete h.dataset.dir);
+  th.dataset.dir = nowDir;
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((a, b) => {
+    const aText = (a.children[colIdx]?.textContent || '').trim();
+    const bText = (b.children[colIdx]?.textContent || '').trim();
+    // Numeric: strip $, K, commas, 'd' suffix
+    const aNum = parseFloat(aText.replace(/[$,K]/g,'').replace('d',''));
+    const bNum = parseFloat(bText.replace(/[$,K]/g,'').replace('d',''));
+    if (!isNaN(aNum) && !isNaN(bNum)) return nowDir === 'asc' ? aNum - bNum : bNum - aNum;
+    // Date: YYYY-MM-DD or MMM 'YY
+    const aDate = Date.parse(aText);
+    const bDate = Date.parse(bText);
+    if (!isNaN(aDate) && !isNaN(bDate)) return nowDir === 'asc' ? aDate - bDate : bDate - aDate;
+    return nowDir === 'asc' ? aText.localeCompare(bText) : bText.localeCompare(aText);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
 function openModal(title, summaryHtml, contentHtml) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-summary').innerHTML = summaryHtml;
@@ -11514,15 +11543,17 @@ function dealsTable(deals, extraCols) {
   if (deals.length === 0) return '<div class="no-data">No deals to display</div>';
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
+  const mkTh = (label, title='') => `<th onclick="sortModalTable(this)" ${title?`title="${title}"`:''}>${label}</th>`;
   return `<table class="modal-table"><thead><tr>
-    <th>Deal Name</th><th>ARR</th><th>Source</th><th>Stage</th><th>Owner</th>${extraCols ? extraCols.map(c=>`<th>${c}</th>`).join('') : '<th title="Days since deal was created">Lifecycle</th><th title="Days in current stage">Stage Age</th><th>Close Date</th><th>Last Engagement</th><th>Next Step</th><th>Last Activity AI</th><th>Next Action AI</th>'}
+    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Next Step')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
   </tr></thead><tbody>${sorted.map(d => {
-    const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource] = d;
+    const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource, , srcDetail] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
     const ai = dealAISummary(d);
     const baseRow = `<td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount">${fmt$(amount)}</td>
       <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
+      <td style="white-space:nowrap;font-size:11px;color:var(--muted)">${srcDetail || '—'}</td>
       <td>${stageTag(stageId)}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>`;
     // Lifecycle = days since deal created
@@ -13105,7 +13136,7 @@ async function syncFromHubSpot() {
 
       safe(hsPaginate(token, 'deals',
         ['dealname','amount','dealstage','hubspot_owner_id','createdate','closedate',
-         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source'],
+         'next_step','hs_created_by_user_id','hs_lastmodifieddate','deal_source','event_source'],
         ownerFilterGroups(), 800)),
 
       safe(hsPaginate(token, 'calls',
@@ -13150,7 +13181,9 @@ async function syncFromHubSpot() {
           p.next_step || null,
           p.hs_created_by_user_id || '',
           (p.hs_lastmodifieddate || '').split('T')[0],
-          p.deal_source || ''
+          p.deal_source || '',
+          '',
+          p.event_source || ''
         ]);
       }
       // Lost / Disqualified / unknown stages → silently drop
