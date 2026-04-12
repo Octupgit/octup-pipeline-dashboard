@@ -633,10 +633,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div class="btn-group" id="week-btns">
         <button class="btn active" data-week="this">This Week ★</button>
         <button class="btn" data-week="last">Last Week</button>
-        <button class="btn" data-week="2w">2 Wks Ago</button>
-        <button class="btn" data-week="3w">3 Wks Ago</button>
-        <button class="btn" data-week="4w">4 Wks Ago</button>
-        <button class="btn" data-week="last9w">Last 9 Weeks</button>
+        <button class="btn" data-week="lastmonth">Last Month</button>
         <button class="btn" data-week="month">This Month</button>
         <button class="btn" data-week="lastq">Last Q</button>
         <button class="btn" data-week="quarter">This Q</button>
@@ -1003,6 +1000,8 @@ const TODAY = new Date();
   // This Month
   const mStart = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
   const mEnd   = new Date(TODAY.getFullYear(), TODAY.getMonth() + 1, 0);
+  const lmStart = new Date(TODAY.getFullYear(), TODAY.getMonth() - 1, 1);
+  const lmEnd   = new Date(TODAY.getFullYear(), TODAY.getMonth(), 0);
   // This Quarter
   const q      = Math.floor(TODAY.getMonth() / 3);
   const qStart = new Date(TODAY.getFullYear(), q * 3, 1);
@@ -1020,13 +1019,10 @@ const TODAY = new Date();
   // Last 9 weeks range: 8 Mondays ago → today
   const l9Start = new Date(mon); l9Start.setDate(mon.getDate() - 8 * 7);
   window.WEEKS = {
-    'this':    weekObj( 0, 'This Week'),
-    'last':    weekObj(-1, 'Last Week'),
-    '2w':      weekObj(-2, '2 Wks Ago'),
-    '3w':      weekObj(-3, '3 Wks Ago'),
-    '4w':      weekObj(-4, '4 Wks Ago'),
-    'last9w':  rangeObj(l9Start, TODAY, `Last 9 Weeks (${shortFmt(l9Start)}–${shortFmt(TODAY)})`),
-    'month':   rangeObj(mStart, mEnd,  `This Month (${shortFmt(mStart)}–${shortFmt(mEnd)}, ${TODAY.getFullYear()})`),
+    'this':      weekObj( 0, 'This Week'),
+    'last':      weekObj(-1, 'Last Week'),
+    'lastmonth': rangeObj(lmStart, lmEnd, `Last Month (${lmStart.toLocaleString('en-US',{month:'short'})} ${lmStart.getFullYear()})`),
+    'month':     rangeObj(mStart, mEnd,  `This Month (${shortFmt(mStart)}–${shortFmt(mEnd)}, ${TODAY.getFullYear()})`),
     'lastq':   rangeObj(lqStart, lqEnd, `Last ${qNames[lqQ]} (${shortFmt(lqStart)}–${shortFmt(lqEnd)}, ${lqYear})`),
     'quarter': rangeObj(qStart, qEnd,  `This ${qNames[q]} (${shortFmt(qStart)}–${shortFmt(qEnd)}, ${TODAY.getFullYear()})`),
     'year':    rangeObj(yStart, yEnd,  `This Year (Jan 1–Dec 31, ${TODAY.getFullYear()})`),
