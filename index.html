@@ -13980,7 +13980,7 @@ function classifyDeal(d) {
     return { key: 'good',    label: '✅ Good',             cls: 'hg-good',    action: 'On track. Continue cadence.' };
   if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25) {
     if (isAlreadyStalled)
-      return { key: 'stalled', label: '⏸ Stalled',        cls: 'hg-stalled', action: 'Decide: re-engage with a clear hook or close-lost.' };
+      return { key: 'stalled', label: '⏸ Stalled',        cls: 'hg-stalled', action: 'Re-activate back to pipeline — or move to Lost.' };
     return   { key: 'stalled', label: '⏸ Move to Stalled', cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
   }
   return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
