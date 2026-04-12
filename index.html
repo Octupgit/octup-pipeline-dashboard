@@ -13968,25 +13968,33 @@ function classifyDeal(d) {
   const dtc   = d.daysToClose;
   const hasCust = cust !== null;
   const isAlreadyStalled = d.stageId === '2918051008';
+  // Days since ANY touch (seller outbound OR customer inbound) — whichever is more recent
+  const noActionDays = Math.min(sel ?? 999, cust ?? 999);
 
-  // Already-stalled deals: only valid actions are re-activate or close-lost
+  // Already-stalled stage — actions are re-activate (Pipeline) or close-lost
   if (isAlreadyStalled) {
-    if (!hasCust && sel !== null && sel >= 60 && dtc !== null && dtc < 0)
-      return { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: 'No signal in 60d+ and overdue — move to Lost.' };
+    if (hasCust && cust <= 14)
+      return { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: 'Active discussion — re-activate back to Pipeline.' };
+    if (noActionDays >= 70)
+      return { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: `${noActionDays}d no activity — Move to Lost.` };
     return   { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: 'Re-activate back to pipeline — or move to Lost.' };
   }
 
-  // Active-stage deals
-  if (!hasCust && sel !== null && sel >= 45 && score < 15 && dtc !== null && dtc <= 30)
-    return { key: 'lost',    label: '❌ Move to Lost',     cls: 'hg-lost',    action: 'Lost or close. No customer signal.' };
+  // Hot: active customer + high score
   if (score >= 45 && hasCust && cust <= 28)
-    return { key: 'hot',     label: '🔥 Hot',              cls: 'hg-hot',     action: 'Keep momentum — follow up within 3 days.' };
+    return { key: 'hot',     label: '🔥 Hot',             cls: 'hg-hot',     action: 'Keep momentum — follow up within 3 days.' };
+  // Good: customer engaged recently
+  if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
+    return { key: 'good',    label: '✅ Good',             cls: 'hg-good',    action: 'On track. Continue cadence.' };
+  // 70+ days no action → recommend Lost
+  if (noActionDays >= 70)
+    return { key: 'lost',    label: '❌ Move to Lost',     cls: 'hg-lost',    action: `${noActionDays}d no activity — Move to Lost.` };
+  // 45+ days no action → Stalled
+  if (noActionDays >= 45)
+    return { key: 'stalled', label: '⏸ Move to Stalled',  cls: 'hg-stalled', action: 'No engagement 45d+. Move to Stalled or close.' };
+  // Act Now: high score, closing soon, no customer reply
   if (score >= 45 && !hasCust && dtc !== null && dtc <= 30)
     return { key: 'actnow',  label: '⚠️ Act Now',          cls: 'hg-actnow',  action: 'High score, no reply. Push or update close date.' };
-  if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
-    return { key: 'good',    label: '✅ Good',              cls: 'hg-good',    action: 'On track. Continue cadence.' };
-  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25)
-    return { key: 'stalled', label: '⏸ Move to Stalled',  cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
   return   { key: 'monitor', label: '👁 Monitor',           cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
 }
 
@@ -14234,7 +14242,14 @@ function renderPipeHygiene() {
   const _statusOrder = { hot:0, actnow:1, good:2, monitor:3, stalled:4, lost:5 };
   const filtered = _hgDeals
     .filter(d => {
-      if (_hgFilter !== 'all' && d.cls.key !== _hgFilter) return false;
+      if (_hgFilter === 'overdue') {
+        if (d.daysToClose === null || d.daysToClose >= 0) return false;
+      } else if (_hgFilter === 'stalled') {
+        // stalled card = At Risk: key is stalled OR lost
+        if (d.cls.key !== 'stalled' && d.cls.key !== 'lost') return false;
+      } else if (_hgFilter !== 'all') {
+        if (d.cls.key !== _hgFilter) return false;
+      }
       if (search && !d.name.toLowerCase().includes(search) && !d.owner.toLowerCase().includes(search)) return false;
       return true;
     })
@@ -14254,57 +14269,31 @@ function renderPipeHygiene() {
 
   const fmt$ = v => v >= 1000000 ? '$'+(v/1000000).toFixed(1).replace(/\.0$/,'')+'M' : v >= 1000 ? '$'+Math.round(v/1000)+'K' : '$'+v;
 
+  const mkCard = (key, val, lbl, sub, color, border, bg='') => {
+    const isActive = _hgFilter === key;
+    const activeStyle = isActive ? `box-shadow:0 0 0 2px ${color};` : '';
+    return `<div class="hygiene-card" style="cursor:pointer;${border?`border-color:${border};`:''}${bg?`background:${bg};`:''}${activeStyle}" onclick="_hgSetFilter('${key}')">
+      <div class="hygiene-card-val" style="color:${color}">${val}</div>
+      <div class="hygiene-card-lbl">${lbl}</div>
+      <div class="hygiene-card-sub">${sub}</div>
+    </div>`;
+  };
+
   const summaryHTML = `
     <div class="hygiene-summary">
-      <div class="hygiene-card">
-        <div class="hygiene-card-val">${fmt$(totalArr)}</div>
-        <div class="hygiene-card-lbl">Total Pipeline</div>
-        <div class="hygiene-card-sub">${_hgDeals.length} open deals</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(239,68,68,.3)">
-        <div class="hygiene-card-val" style="color:#f87171">${counts.hot||0}</div>
-        <div class="hygiene-card-lbl">🔥 Hot</div>
-        <div class="hygiene-card-sub">${fmt$(arrByKey.hot||0)}</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(74,222,128,.3)">
-        <div class="hygiene-card-val" style="color:#4ade80">${counts.good||0}</div>
-        <div class="hygiene-card-lbl">✅ Good</div>
-        <div class="hygiene-card-sub">${fmt$(arrByKey.good||0)}</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(56,189,248,.3)">
-        <div class="hygiene-card-val" style="color:#38bdf8">${counts.monitor||0}</div>
-        <div class="hygiene-card-lbl">👁 Monitor</div>
-        <div class="hygiene-card-sub">${fmt$(arrByKey.monitor||0)}</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(251,191,36,.3)">
-        <div class="hygiene-card-val" style="color:#fbbf24">${counts.actnow||0}</div>
-        <div class="hygiene-card-lbl">⚠️ Act Now</div>
-        <div class="hygiene-card-sub">${fmt$(arrByKey.actnow||0)}</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(156,163,175,.25)">
-        <div class="hygiene-card-val" style="color:#9ca3af">${(counts.stalled||0)+(counts.lost||0)}</div>
-        <div class="hygiene-card-lbl">⏸ / ❌ At Risk</div>
-        <div class="hygiene-card-sub">${fmt$((arrByKey.stalled||0)+(arrByKey.lost||0))}</div>
-      </div>
-      <div class="hygiene-card" style="border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.06)">
-        <div class="hygiene-card-val" style="color:#f97316">${overdueDeals.length}</div>
-        <div class="hygiene-card-lbl">📅 Overdue</div>
-        <div class="hygiene-card-sub">${fmt$(overdueArr)} · close date passed</div>
-      </div>
+      ${mkCard('all', _hgDeals.length, 'Total Pipeline', fmt$(totalArr), 'var(--text)', '', '')}
+      ${mkCard('hot', counts.hot||0, '🔥 Hot', fmt$(arrByKey.hot||0), '#f87171', 'rgba(239,68,68,.3)')}
+      ${mkCard('good', counts.good||0, '✅ Good', fmt$(arrByKey.good||0), '#4ade80', 'rgba(74,222,128,.3)')}
+      ${mkCard('monitor', counts.monitor||0, '👁 Monitor', fmt$(arrByKey.monitor||0), '#38bdf8', 'rgba(56,189,248,.3)')}
+      ${mkCard('actnow', counts.actnow||0, '⚠️ Act Now', fmt$(arrByKey.actnow||0), '#fbbf24', 'rgba(251,191,36,.3)')}
+      ${mkCard('stalled', (counts.stalled||0)+(counts.lost||0), '⏸ / ❌ At Risk', fmt$((arrByKey.stalled||0)+(arrByKey.lost||0)), '#9ca3af', 'rgba(156,163,175,.25)')}
+      ${mkCard('overdue', overdueDeals.length, '📅 Overdue', fmt$(overdueArr)+' · passed', '#f97316', 'rgba(249,115,22,.4)', 'rgba(249,115,22,.06)')}
     </div>`;
 
-  const filterBtns = [
-    ['all','All',''],['hot','🔥 Hot',''],['good','✅ Good',''],
-    ['monitor','👁 Monitor',''],['actnow','⚠️ Act Now',''],
-    ['stalled','⏸ Stalled',''],['lost','❌ → Lost',''],
-  ].map(([key,lbl]) =>
-    `<button class="hg-filter-btn${_hgFilter===key?' active':''}" onclick="_hgSetFilter('${key}')">${lbl}${key!=='all'?' ('+(_hgDeals.filter(d=>d.cls.key===key).length)+')':' ('+_hgDeals.length+')'}</button>`
-  ).join('');
-
   const filterRow = `
-    <div class="hygiene-filter-row">
-      ${filterBtns}
-      <input class="hg-search" type="text" placeholder="Search deals…" value="${_hgSearch}" oninput="_hgSetSearch(this.value)">
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0 4px">
+      <input class="hg-search" type="text" placeholder="Search deals…" value="${_hgSearch}" oninput="_hgSetSearch(this.value)" style="flex:1;max-width:300px">
+      ${_hgFilter !== 'all' ? `<button onclick="_hgSetFilter('all')" style="background:rgba(88,166,255,.15);border:1px solid rgba(88,166,255,.3);color:var(--accent);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px">✕ Clear filter</button>` : ''}
     </div>
     <div class="hygiene-legend">
       <span><span class="hg-dot hg-dot-green"></span>Active &lt;14d</span>
@@ -14333,6 +14322,7 @@ function renderPipeHygiene() {
             <a href="${hsLink}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600" title="${d.name}">${d.name}</a>
           </td>
           <td><span class="hg-badge ${d.cls.cls}">${d.cls.label}</span></td>
+          <td style="font-size:11px;color:var(--muted);max-width:200px;white-space:normal">${d.cls.action}</td>
           <td style="color:var(--muted)">${d.stage}</td>
           <td style="font-weight:600">${d.owner}</td>
           <td>${_hgDot(d.sellerDays)}${_hgAge(d.sellerDays)}</td>
@@ -14344,7 +14334,6 @@ function renderPipeHygiene() {
           <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(d.nextStep||'').replace(/"/g,"'")}">${d.nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
           <td style="text-align:center;font-weight:700;color:${d.risk?.color||'var(--muted)'}">${d.risk?.label||'—'}</td>
           <td style="text-align:center;font-weight:700;color:${d.score>=45?'#4ade80':d.score>=20?'#fbbf24':'var(--muted)'}">${d.score||'—'}</td>
-          <td style="font-size:11px;color:var(--muted);max-width:180px;white-space:normal">${d.cls.action}</td>
         </tr>`;
       }).join('');
 
@@ -14352,10 +14341,10 @@ function renderPipeHygiene() {
     <div class="hg-table-wrap">
       <table class="hygiene-table">
         <thead><tr>
-          <th>Deal</th><th>Status</th><th>Stage</th><th>Owner</th>
+          <th>Deal</th><th>Status</th><th>Action</th><th>Stage</th><th>Owner</th>
           <th>Seller Touch</th><th>Customer Reply</th>
           <th style="text-align:right">Amount</th><th>Close Date</th><th>Reengage Date</th>
-          <th>Source</th><th>Next Step</th><th>Risk</th><th style="text-align:center">Score</th><th>Action</th>
+          <th>Source</th><th>Next Step</th><th>Risk</th><th style="text-align:center">Score</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
