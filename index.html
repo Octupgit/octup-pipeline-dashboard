@@ -668,10 +668,10 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div class="card-sub" id="sub-acv"></div>
       </div>
       <div class="card">
-        <div class="card-icon">📅</div>
-        <div class="card-label">Period Range</div>
-        <div class="card-value accent" style="font-size:14px;margin-top:4px" id="val-week-range">—</div>
-        <div class="card-sub">Mon–Sat cycle</div>
+        <div class="card-icon">📂</div>
+        <div class="card-label" data-tip="Total ARR of all currently open deals (not won/lost), filtered by owner. Weighted = ARR × stage win probability.">Open Pipeline</div>
+        <div class="card-value" style="color:#e2b714" id="val-open-pipe">—</div>
+        <div class="card-sub" id="sub-open-pipe"></div>
       </div>
     </div>
 
@@ -10707,7 +10707,16 @@ function renderPulse() {
   // Update labels
   document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
-  document.getElementById('val-week-range').textContent = w.start.slice(5).replace('-','/') + ' – ' + w.end.slice(5).replace('-','/') + ' ' + w.start.slice(0,4);
+  // Open Pipeline (all active open deals, owner-filtered — snapshot, not period-filtered)
+  const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
+  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
+  const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
+  const weightedARR    = openPipeDeals.reduce((s,d)=>s+(d[2]*(STAGE_WIN_PROB[d[3]]||0.1)),0);
+  const openPipeEl  = document.getElementById('val-open-pipe');
+  const openPipeSub = document.getElementById('sub-open-pipe');
+  if (openPipeEl)  openPipeEl.textContent  = fmt$(openPipeARR);
+  if (openPipeSub) openPipeSub.textContent = 'Weighted ' + fmt$(Math.round(weightedARR)) + ' · ' + openPipeDeals.length + ' deals';
   document.getElementById('sdr-week-label').textContent = w.label;
 
   // ARR Won
