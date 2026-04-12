@@ -707,7 +707,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       </div>
       <div class="card">
         <div class="card-icon">📂</div>
-        <div class="card-label" data-tip="Total ARR of all currently open deals (not won/lost), filtered by owner. Weighted = ARR × stage win probability.">Open Pipeline</div>
+        <div class="card-label" data-tip="Total ARR of all currently open deals (not won/lost), filtered by owner only — not by time period. Weighted = ARR × stage win probability.">Open Pipeline</div>
         <div class="card-value" style="color:#e2b714" id="val-open-pipe">—</div>
         <div class="card-sub" id="sub-open-pipe"></div>
       </div>
@@ -956,7 +956,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <div class="src-funnel-header" style="flex-wrap:wrap;gap:10px">
         <div class="src-funnel-title">📣 Marketing Funnel — Paid Ads</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
-          <select id="mkt-src-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
+          <select id="mkt-src-select" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
             <option value="all">All Sources</option>
             <option value="google">Google Ads</option>
             <option value="linkedin">LinkedIn Ads</option>
@@ -10618,11 +10618,26 @@ function renderWoWChart() {
     // Mark the previous (last complete) month as "last" for summary
     if (weeks.length >= 2) weeks[weeks.length - 2].isLast = true;
   } else {
-    // Last 9 complete weeks (Mon–Sat) + current in-progress week
-    let sat = new Date();
+    // Determine anchor date: the end of the selected period (or today for this/last week)
+    const periodEnd = WEEKS[selectedWeek] ? new Date(WEEKS[selectedWeek].end + 'T12:00:00Z') : new Date();
+    const isThisWeek = selectedWeek === 'this';
+    const isLastWeek = selectedWeek === 'last';
+    const isWeekly   = isThisWeek || isLastWeek;
+
+    // Find the last complete Saturday at or before the period end
+    let sat = new Date(periodEnd);
     sat.setUTCHours(12,0,0,0);
+    // If it's exactly Saturday and we're in "this week" mode, go back one more week
     while (sat.getUTCDay() !== 6) sat = new Date(sat - DAY_MS);
-    if (new Date().toISOString().slice(0,10) === toYMD(sat)) sat = new Date(sat - 7*DAY_MS);
+    // For multi-week periods (month/quarter/year), include the anchor week even if partial
+    if (!isWeekly) {
+      // If period end is after last sat, we'll add current-week bar at end
+    } else if (isThisWeek) {
+      // For "This Week": go back one sat so current in-progress week is added after loop
+      // no-op: the in-progress week will be added below
+    }
+
+    // Build 9 complete weeks ending at/before sat
     for (let i = 8; i >= 0; i--) {
       const end   = new Date(sat - i * 7 * DAY_MS);
       const start = new Date(end  - 5 * DAY_MS);
@@ -10630,12 +10645,17 @@ function renderWoWChart() {
       const label  = start.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
       weeks.push({ label, start: toYMD(start), end: toYMD(end), isLast });
     }
-    // Add current in-progress week (this Mon → today)
+
+    // For "this week" or when period extends past last sat, add current in-progress bar
     const todayD = new Date(); todayD.setUTCHours(12,0,0,0);
-    if (toYMD(todayD) > toYMD(sat)) {
+    const periodEndStr = WEEKS[selectedWeek]?.end || toYMD(todayD);
+    if (isThisWeek || toYMD(todayD) > toYMD(sat)) {
       const cwStart = new Date(sat.getTime() + 2 * DAY_MS); // Monday after last Sat
-      const cwLabel = cwStart.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
-      weeks.push({ label: cwLabel, start: toYMD(cwStart), end: toYMD(todayD), isLast: false, isCurrent: true });
+      const cwEnd   = isThisWeek ? toYMD(todayD) : periodEndStr;
+      if (cwStart.toISOString().slice(0,10) <= cwEnd) {
+        const cwLabel = cwStart.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
+        weeks.push({ label: cwLabel, start: toYMD(cwStart), end: cwEnd, isLast: false, isCurrent: true });
+      }
     }
   }
 
@@ -10776,16 +10796,16 @@ function renderPulse() {
   // Update labels
   document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
-  // Open Pipeline — filtered by createDate for the selected period (alltime = all open deals)
+  // Open Pipeline — snapshot of ALL currently open deals (no date filter), owner-filtered only
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]) && (selectedWeek === 'alltime' || dateInRange(d[5], selectedWeek)));
+  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
   if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
   const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
   const weightedARR    = openPipeDeals.reduce((s,d)=>s+(d[2]*(STAGE_WIN_PROB[d[3]]||0.1)),0);
   const openPipeEl  = document.getElementById('val-open-pipe');
   const openPipeSub = document.getElementById('sub-open-pipe');
   if (openPipeEl)  openPipeEl.textContent  = fmt$(openPipeARR);
-  if (openPipeSub) openPipeSub.textContent = 'Weighted ' + fmt$(Math.round(weightedARR)) + ' · ' + openPipeDeals.length + ' deals';
+  if (openPipeSub) openPipeSub.textContent = 'Weighted ' + fmt$(Math.round(weightedARR)) + ' · ' + openPipeDeals.length + ' active deals';
   document.getElementById('sdr-week-label').textContent = w.label;
 
   // ARR Won
@@ -11205,7 +11225,7 @@ function renderSDR() {
 
 // ─── RENDER PIPELINE INVENTORY ────────────────────────────────────────────────
 function renderInventory() {
-  const owners = ['29896105','29422733','30284350','32023983'];
+  const owners = ['29896105','29422733'];
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
   // Apply creation-date filter from global period
@@ -11246,8 +11266,10 @@ function renderInventory() {
 
   const ownerList = selectedOwner === 'all' ? owners : [selectedOwner];
   let rows = '';
+  const _WP = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
   let totNBM=0, totINP=0, totTRIAL=0, totCR=0, totAll=0, totArrAll=0, totMtgs=0;
   let totNBMArr=0, totINPArr=0, totTRIALArr=0, totCRArr=0;
+  let totNBMWtd=0, totINPWtd=0, totTRIALWtd=0, totCRWtd=0, totWtdAll=0;
 
   ownerList.forEach(oid => {
     const o = OWNERS[oid];
@@ -11266,10 +11288,18 @@ function renderInventory() {
     totINPArr+=inp.reduce((s,d)=>s+d[2],0);
     totTRIALArr+=trial.reduce((s,d)=>s+d[2],0);
     totCRArr +=cr.reduce((s,d)=>s+d[2],0);
+    const wtdArr = od.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
+    totWtdAll += wtdArr;
+    totNBMWtd  += nbm.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
+    totINPWtd  += inp.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
+    totTRIALWtd+= trial.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
+    totCRWtd   += cr.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
 
+    const WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
     const mkCell = (subset, bucket) => {
       if (subset.length === 0) return `<span class="matrix-cell zero">—</span>`;
       const subARR = subset.reduce((s,d)=>s+d[2],0);
+      const subWtd = subset.reduce((s,d)=>s+(d[2]*(WIN_PROB[d[3]]||0.1)),0);
       const cls = bucket === 'NBM' ? 'nbm' : bucket === 'In-Progress' ? 'inp' : bucket === 'Trial' ? 'trial' : 'cr';
       const idsJson = JSON.stringify(subset.map(d=>d[0]));
       return `<span class="matrix-cell ${cls}"
@@ -11277,7 +11307,7 @@ function renderInventory() {
                onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
                  <span class="mc-count">${subset.length}</span>
                  <span class="mc-arr">${fmt$(subARR)}</span>
-                 <span class="mc-mrr">${fmtMRR(subARR)}/mo</span>
+                 <span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(subWtd))}</span>
                </span>`;
     };
 
@@ -11292,7 +11322,7 @@ function renderInventory() {
         onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
         <span class="mc-count">${od.length}</span>
         <span class="mc-arr">${fmt$(arr)}</span>
-        <span class="mc-mrr">${fmtMRR(arr)}/mo</span>
+        <span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(wtdArr))}</span>
       </span></td>
       <td style="font-weight:700;color:var(--accent);cursor:pointer"
         data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
@@ -11307,21 +11337,21 @@ function renderInventory() {
     rows += `<tr class="totals-row">
       <td class="owner-col" style="color:var(--muted)">TOTAL</td>
       <td>
-        <span class="matrix-cell nbm" onclick="openInventoryStatModal('nbm')"><span class="mc-count">${totNBM}</span><span class="mc-arr">${fmt$(totNBMArr)}</span><span class="mc-mrr">${fmtMRR(totNBMArr)}/mo</span></span>
+        <span class="matrix-cell nbm" onclick="openInventoryStatModal('nbm')"><span class="mc-count">${totNBM}</span><span class="mc-arr">${fmt$(totNBMArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totNBMWtd))}</span></span>
       </td>
       <td>
-        <span class="matrix-cell inp" onclick="openInventoryStatModal('inp')"><span class="mc-count">${totINP}</span><span class="mc-arr">${fmt$(totINPArr)}</span><span class="mc-mrr">${fmtMRR(totINPArr)}/mo</span></span>
+        <span class="matrix-cell inp" onclick="openInventoryStatModal('inp')"><span class="mc-count">${totINP}</span><span class="mc-arr">${fmt$(totINPArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totINPWtd))}</span></span>
       </td>
       <td>
-        <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span><span class="mc-mrr">${fmtMRR(totTRIALArr)}/mo</span></span>
+        <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totTRIALWtd))}</span></span>
       </td>
       <td>
-        <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span><span class="mc-mrr">${fmtMRR(totCRArr)}/mo</span></span>
+        <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totCRWtd))}</span></span>
       </td>
       <td>
-        <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span><span class="mc-mrr">${fmtMRR(totArrAll)}/mo</span></span>
+        <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totWtdAll))}</span></span>
       </td>
-      <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}<div style="font-size:9px;font-weight:400;color:var(--muted)">${fmtMRR(totArrAll)}/mo</div></td>
+      <td style="color:var(--accent);cursor:pointer" onclick="openInventoryStatModal('all')">${fmt$(totArrAll)}<div style="font-size:9px;font-weight:400;color:var(--muted)">Wtd ${fmt$(Math.round(totWtdAll))}</div></td>
       <td style="font-weight:700;color:var(--blue);text-align:center;cursor:${totMtgs>0?'pointer':'default'}"
         onclick="${totMtgs>0?`openMeetingsModal('All Reps — Meetings',window._mtgCacheAll)`:''}">${totMtgs > 0 ? totMtgs : '<span style="color:var(--muted)">—</span>'}</td>
     </tr>`;
@@ -11359,12 +11389,15 @@ function renderMonthlyBreakdown() {
     return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1] + " '" + y.slice(2);
   };
 
-  // Collect unique months from close dates
-  const monthSet = new Set();
-  const thisYear = String(TODAY.getFullYear());
-  deals.forEach(d => { const k = monthKey(d[5]); if (k && k.startsWith(thisYear)) monthSet.add(k); });
+  // Collect last 3 months of data (most recent 3 calendar months, ending with current month)
   const todayKey = monthKey(TODAY.toISOString().slice(0,10));
-  monthSet.add(todayKey);
+  const last3Months = [];
+  const _td = new Date(TODAY);
+  for (let i = 2; i >= 0; i--) {
+    const dt = new Date(Date.UTC(_td.getUTCFullYear(), _td.getUTCMonth() - i, 1));
+    last3Months.push(`${dt.getUTCFullYear()}-${String(dt.getUTCMonth()+1).padStart(2,'0')}`);
+  }
+  const monthSet = new Set(last3Months);
   const months = Array.from(monthSet).sort();
 
   const ownerList = selectedOwner === 'all' ? OWNER_LIST : [selectedOwner];
@@ -12616,24 +12649,124 @@ function generateBrief() {
       ${kpi('CR Pipeline', fmtK(crArr), `${crDeals.length} deals at stake`, '#bc8cff')}
     </div>
 
-    <div class="brief-section" style="margin-bottom:10px">
-      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap">
-        <span class="brief-section-title" style="color:#3fb950;margin-bottom:0">🏆 Won This Week</span>
-        <span style="font-size:11px;font-weight:700;color:#3fb950">${fmtK(wonTWArr)}</span>
-        <span style="font-size:10px;color:var(--muted)">${wonTW.length} deal${wonTW.length!==1?'s':''}</span>
-        <span style="color:var(--border);margin:0 4px">│</span>
-        <span class="brief-section-title" style="color:var(--muted);margin-bottom:0">Won Last Week</span>
-        <span style="font-size:11px;font-weight:700;color:var(--muted)">${fmtK(wonLWArr)}</span>
-        <span style="font-size:10px;color:var(--muted)">${wonLW.length} deal${wonLW.length!==1?'s':''}</span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div>
-          ${wonThisWeekHtml}
+    <div class="brief-section" style="margin-bottom:10px;padding:0;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:0">
+
+        <!-- WON COLUMN -->
+        <div style="padding:12px 14px;border-right:1px solid var(--border)">
+          <!-- Column header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid rgba(63,185,80,.25)">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px">🏆</span>
+              <span style="font-size:12px;font-weight:800;color:#3fb950;letter-spacing:-.2px">Won</span>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:15px;font-weight:800;color:#3fb950;line-height:1">${fmtK(wonTWArr + wonLWArr)}</div>
+              <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px">2-wk total</div>
+            </div>
+          </div>
+
+          <!-- This Week sub-section -->
+          <div style="margin-bottom:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;background:rgba(63,185,80,.1);color:#3fb950;padding:1px 7px;border-radius:8px">This Week</span>
+              <span style="font-size:11px;font-weight:700;color:#3fb950">${fmtK(wonTWArr)} <span style="color:var(--muted);font-weight:400">(${wonTW.length})</span></span>
+            </div>
+            ${wonTW.length
+              ? wonTW.map(d => `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+                  <div style="width:22px;height:22px;border-radius:50%;background:rgba(63,185,80,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                    <span style="font-size:9px;font-weight:700;color:#3fb950">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" style="font-size:12px;font-weight:600;color:var(--text);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${d[1].split(' - ')[0]}</a>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:#3fb950;flex-shrink:0">${fmtK(d[2])}</span>
+                </div>`).join('')
+              : `<div style="font-size:11px;color:var(--muted);padding:4px 0;font-style:italic">No wins this week yet</div>`}
+          </div>
+
+          <!-- Last Week sub-section -->
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(255,255,255,.07);color:var(--muted);padding:1px 7px;border-radius:8px">Last Week</span>
+              <span style="font-size:11px;font-weight:700;color:var(--text)">${fmtK(wonLWArr)} <span style="color:var(--muted);font-weight:400">(${wonLW.length})</span></span>
+            </div>
+            ${wonLW.length
+              ? wonLW.map(d => `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+                  <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                    <span style="font-size:9px;font-weight:700;color:var(--muted)">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" style="font-size:12px;font-weight:600;color:var(--text);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${d[1].split(' - ')[0]}</a>
+                  </div>
+                  <span style="font-size:12px;font-weight:700;color:var(--text);flex-shrink:0">${fmtK(d[2])}</span>
+                </div>`).join('')
+              : `<div style="font-size:11px;color:var(--muted);padding:4px 0;font-style:italic">None</div>`}
+            ${lostLW.length ? `<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#f85149;margin-top:7px;padding-top:7px;border-top:1px solid rgba(248,81,73,.15)"><span style="font-weight:700">❌ Lost LW:</span> ${lostLW.map(d=>d[1].split(' - ')[0]).join(', ')} <span style="color:var(--muted)">(${fmtK(lostLWArr)})</span></div>` : ''}
+          </div>
         </div>
-        <div>
-          ${wonLastWeekHtml}
-          ${lostLW.length ? `<div style="font-size:11px;color:#f85149;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.05)">❌ Lost: ${lostLW.map(d=>d[1].split(' - ')[0]).join(', ')} (${fmtK(lostLWArr)})</div>` : ''}
+
+        <!-- NEW PIPELINE COLUMN -->
+        <div style="padding:12px 14px">
+          <!-- Column header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid rgba(249,115,22,.25)">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px">➕</span>
+              <span style="font-size:12px;font-weight:800;color:#f97316;letter-spacing:-.2px">New Pipeline</span>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:15px;font-weight:800;color:#f97316;line-height:1">${fmtK(newTWArr + newLWArr)}</div>
+              <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px">2-wk total</div>
+            </div>
+          </div>
+
+          <!-- This Week sub-section -->
+          <div style="margin-bottom:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(249,115,22,.1);color:#f97316;padding:1px 7px;border-radius:8px">This Week</span>
+              <span style="font-size:11px;font-weight:700;color:#f97316">${fmtK(newTWArr)} <span style="color:var(--muted);font-weight:400">(${newTW.length})</span></span>
+            </div>
+            ${newTW.length
+              ? newTW.map(d => {
+                  const src = d[10] || ''; const srcD = d[12] || '';
+                  return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+                    <div style="width:22px;height:22px;border-radius:50%;background:rgba(249,115,22,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <span style="font-size:9px;font-weight:700;color:#f97316">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" style="font-size:12px;font-weight:600;color:var(--text);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${d[1].split(' - ')[0]}</a>
+                      ${src ? `<div style="font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 ${src}${srcD?' · '+srcD:''}</div>` : ''}
+                    </div>
+                    <span style="font-size:12px;font-weight:700;color:#f97316;flex-shrink:0">${fmtK(d[2])}</span>
+                  </div>`;
+                }).join('')
+              : `<div style="font-size:11px;color:var(--muted);padding:4px 0;font-style:italic">No new deals this week yet</div>`}
+          </div>
+
+          <!-- Last Week sub-section -->
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:rgba(255,255,255,.07);color:var(--muted);padding:1px 7px;border-radius:8px">Last Week</span>
+              <span style="font-size:11px;font-weight:700;color:var(--text)">${fmtK(newLWArr)} <span style="color:var(--muted);font-weight:400">(${newLW.length})</span></span>
+            </div>
+            ${newLW.length
+              ? newLW.map(d => {
+                  const src = d[10] || ''; const srcD = d[12] || '';
+                  return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+                    <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                      <span style="font-size:9px;font-weight:700;color:var(--muted)">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" style="font-size:12px;font-weight:600;color:var(--text);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${d[1].split(' - ')[0]}</a>
+                      ${src ? `<div style="font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 ${src}${srcD?' · '+srcD:''}</div>` : ''}
+                    </div>
+                    <span style="font-size:12px;font-weight:700;color:var(--text);flex-shrink:0">${fmtK(d[2])}</span>
+                  </div>`;
+                }).join('')
+              : `<div style="font-size:11px;color:var(--muted);padding:4px 0;font-style:italic">No new pipeline last week</div>`}
+          </div>
         </div>
+
       </div>
     </div>
 
@@ -12680,22 +12813,6 @@ function generateBrief() {
     <div class="brief-section" style="margin-bottom:10px">
       <div class="brief-section-title" style="color:#f85149">☠️ Qualify to Lost — ${qualifyToLost.length} candidates · <span style="font-size:10px;font-weight:400;color:var(--muted)">21d+ dark or disinterest signals</span></div>
       ${qualToLostHtml}
-    </div>
-
-    <div class="brief-section" style="margin-bottom:10px">
-      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap">
-        <span class="brief-section-title" style="color:#f97316;margin-bottom:0">➕ New Pipeline This Week</span>
-        <span style="font-size:11px;font-weight:700;color:#f97316">${fmtK(newTWArr)}</span>
-        <span style="font-size:10px;color:var(--muted)">${newTW.length} deal${newTW.length!==1?'s':''}</span>
-        <span style="color:var(--border);margin:0 4px">│</span>
-        <span class="brief-section-title" style="color:var(--muted);margin-bottom:0">Last Week</span>
-        <span style="font-size:11px;font-weight:700;color:var(--muted)">${fmtK(newLWArr)}</span>
-        <span style="font-size:10px;color:var(--muted)">${newLW.length} deal${newLW.length!==1?'s':''}</span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div>${newTWHtml}</div>
-        <div>${newLWHtml}</div>
-      </div>
     </div>
 
     <div class="brief-section">
@@ -13951,6 +14068,24 @@ function exportHygieneCSV() {
 // ─── MARKETING FUNNEL ────────────────────────────────────────────────────────
 // Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
 // Update these values with real data as campaigns run.
+// Marketing funnel contact sample data — spread across sources/campaigns
+const MKT_CONTACTS = [
+  {name:'James Fletcher',    email:'james@precisionlogistics.co', source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-03'},
+  {name:'Sarah Kovacs',      email:'sarah@rapidship3pl.com',      source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-11'},
+  {name:'Michael Torres',    email:'mtorres@swiftfulfill.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-02-18'},
+  {name:'Rachel Kim',        email:'rkim@nexthorizon3pl.com',     source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-24'},
+  {name:'Daniel Ostrovsky',  email:'dan@apexwarehouseops.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-02'},
+  {name:'Priya Nair',        email:'priya@forwardlogix.io',       source:'Google Ads',   campaign:'Competitor',      utm_medium:'cpc',     utm_source:'google',   utm_campaign:'competitor-q1', date:'2026-03-07'},
+  {name:'Brett Sullivan',    email:'brett@cornerstone3pl.com',    source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-03-14'},
+  {name:'Olivia Hecht',      email:'ohecht@syncopex.com',         source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-21'},
+  {name:'Tom Nakamura',      email:'tnakamura@velocity3pl.com',   source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-06'},
+  {name:'Lena Schwartz',     email:'lena@corecargo.net',          source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-19'},
+  {name:'Ahmed Khalil',      email:'ahmed@meridianwms.com',       source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-09'},
+  {name:'Courtney Blaine',   email:'cblaine@harbourlogistics.com',source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-17'},
+  {name:'Felix Grant',       email:'felix@primeshippers.co',      source:'Meta Ads',     campaign:'Lookalike',       utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'lookalike-3pl', date:'2026-02-14'},
+  {name:'Diana Rossi',       email:'diana@globalchain3pl.com',    source:'Meta Ads',     campaign:'Remarketing',     utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'remarketing-q1',date:'2026-03-05'},
+];
+
 const MKT_DB = {
   all: {
     all: {
@@ -14036,6 +14171,125 @@ const MKT_STAGES = [
 function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
 function mktCvr(a, b) { return +b === 0 ? '—' : (parseFloat(a)/parseFloat(b)*100).toFixed(0)+'%'; }
 
+// Map source key → HubSpot dealSource strings for filtering
+const MKT_SOURCE_MAP = {
+  'google':   'Marketing Paid',
+  'linkedin': 'Marketing Paid',
+  'meta':     'Marketing Paid',
+  'all':      'Marketing Paid',
+};
+
+// Map source key → contact source label used in MKT_CONTACTS
+const MKT_CONTACT_SRC_MAP = {
+  'google':   'Google Ads',
+  'linkedin': 'LinkedIn Ads',
+  'meta':     'Meta Ads',
+  'all':      null, // all contacts
+};
+
+// Map campaign key → campaign label
+function mktGetCampaignLabel(src, camp) {
+  if (camp === 'all' || !camp) return null;
+  return (MKT_DB[src]?._campaigns?.[camp]) || camp;
+}
+
+// Filter helper: does a deal's createDate fall in the selected mkt month?
+function mktMatchMonth(dateStr) {
+  if (_mktMonth === 'all') return true;
+  if (!dateStr) return false;
+  const month = dateStr.slice(0, 7); // 'YYYY-MM'
+  if (_mktMonth === 'feb') return month === '2026-02';
+  if (_mktMonth === 'mar') return month === '2026-03';
+  return true;
+}
+
+// Bug A fix: show contacts table modal with UTM fields
+function mktShowContactsModal(src) {
+  const campKey = document.getElementById('mkt-camp-select')?.value || 'all';
+  const contactSrc = MKT_CONTACT_SRC_MAP[src];
+  const campLabel  = mktGetCampaignLabel(src, campKey);
+
+  // Filter contacts
+  let contacts = MKT_CONTACTS;
+  if (contactSrc) contacts = contacts.filter(c => c.source === contactSrc);
+  if (campLabel)  contacts = contacts.filter(c => c.campaign === campLabel);
+  if (_mktMonth !== 'all') {
+    const prefix = _mktMonth === 'feb' ? '2026-02' : _mktMonth === 'mar' ? '2026-03' : null;
+    if (prefix) contacts = contacts.filter(c => c.date.startsWith(prefix));
+  }
+
+  const srcLabel  = contactSrc || 'All Sources';
+  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
+  const title = `👥 Contacts — ${srcLabel}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${srcLabel}</span></div>
+    ${campLabel ? `<div class="modal-summary-item"><span class="modal-summary-label">Campaign</span><span class="modal-summary-val">${campLabel}</span></div>` : ''}
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val">${contacts.length}</span></div>`;
+
+  const tableHtml = contacts.length === 0
+    ? `<div class="no-data">No contacts match these filters</div>`
+    : `<table class="modal-table"><thead><tr>
+        <th>Name</th><th>Email</th><th>Source</th><th>Campaign</th><th>UTM Medium</th><th>UTM Source</th><th>UTM Campaign</th><th>Date</th>
+      </tr></thead><tbody>
+      ${contacts.map(c => `<tr>
+        <td style="font-weight:600;color:var(--text)">${c.name}</td>
+        <td style="color:var(--muted);font-size:11px">${c.email}</td>
+        <td><span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span></td>
+        <td style="font-size:11px;color:var(--muted)">${c.campaign}</td>
+        <td style="font-size:11px;color:var(--accent)">${c.utm_medium}</td>
+        <td style="font-size:11px;color:var(--muted)">${c.utm_source}</td>
+        <td style="font-size:10px;color:var(--muted)">${c.utm_campaign}</td>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
+      </tr>`).join('')}
+      </tbody></table>`;
+
+  openModal(title, summary, tableHtml);
+}
+
+// Bug B fix: filter deals by source + month correctly
+function mktShowDealsModal(type, src) {
+  const campKey  = document.getElementById('mkt-camp-select')?.value || 'all';
+  const campLabel = mktGetCampaignLabel(src, campKey);
+  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
+
+  let deals, title, summary;
+
+  // Source matching: 'all' = any Marketing Paid/Organic; specific = match by source key
+  function matchSource(dealSrc) {
+    if (!dealSrc) return false;
+    const s = dealSrc.toLowerCase();
+    if (src === 'all') return s.includes('marketing');
+    if (src === 'google')   return s.includes('google') || (s.includes('marketing') && s.includes('paid'));
+    if (src === 'linkedin') return s.includes('linkedin');
+    if (src === 'meta')     return s.includes('meta') || s.includes('facebook');
+    return s.includes('marketing');
+  }
+
+  if (type === 'won') {
+    deals = WON_DEALS.filter(d => matchSource(d[6]));
+    deals = deals.filter(d => mktMatchMonth(d[3])); // d[3] = closeDate for won
+    title = `🏆 Won Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">Won</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+    const wonNorm = deals.map(w => [w[0],w[1],w[2],'WON',w[4],w[7]||w[3],w[3],'','','',w[6]]);
+    openModal(title, summary, dealsTable(wonNorm));
+  } else {
+    // Open pipeline deals
+    deals = DEALS.filter(d => matchSource(d[10]));
+    deals = deals.filter(d => mktMatchMonth(d[5])); // d[5] = createDate
+    title = `➕ Pipeline Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+    openModal(title, summary, dealsTable(deals));
+  }
+}
+
 function mktUpdateCampaigns() {
   const src = document.getElementById('mkt-src-select')?.value || 'all';
   const campSel = document.getElementById('mkt-camp-select');
@@ -14054,8 +14308,8 @@ function mktUpdateCampaigns() {
 
 function mktRender() {
   const src  = document.getElementById('mkt-src-select')?.value  || 'all';
-  const camp = document.getElementById('mkt-camp-select')?.value || 'all';
   mktUpdateCampaigns();
+  const camp = document.getElementById('mkt-camp-select')?.value || 'all';
 
   const srcData = MKT_DB[src] || MKT_DB.all;
   const campData = srcData[camp] || srcData['all'] || {};
@@ -14090,6 +14344,20 @@ function mktRender() {
   cvrRows.forEach(({s, val, cvr, ofTotal, arr}, i) => {
     const cvrBadge = i === 0 ? '<span style="color:var(--muted);font-size:10px">entry</span>'
       : `<span style="color:${val===0?'var(--muted)':s.color};font-weight:700">${cvr}</span>`;
+    // Build click handler for count cell
+    const mktSrc = document.getElementById('mkt-src-select')?.value || 'all';
+    let countClick = '';
+    let countStyle = `text-align:center;padding:10px;font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}`;
+    if (s.key === 'deals' || s.key === 'won') {
+      countStyle += ';cursor:pointer;text-decoration:underline dotted';
+      countClick = `onclick="mktShowDealsModal('${s.key}','${mktSrc}')"`;
+    } else if (s.key === 'contacts' && val > 0) {
+      countStyle += ';cursor:pointer;text-decoration:underline dotted';
+      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
+    } else if (val > 0) {
+      countStyle += ';cursor:pointer;text-decoration:underline dotted';
+      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
+    }
     tableHtml += `
       <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
         <td style="padding:10px 10px">
@@ -14101,7 +14369,7 @@ function mktRender() {
             </div>
           </div>
         </td>
-        <td style="text-align:center;padding:10px;font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</td>
+        <td style="${countStyle}" ${countClick}>${val}</td>
         <td style="text-align:center;padding:10px">${cvrBadge}</td>
         <td style="text-align:center;padding:10px;color:var(--muted);font-size:11px">${ofTotal}</td>
         <td style="text-align:right;padding:10px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</td>
@@ -14172,7 +14440,7 @@ function mktSwMonth(el) {
 }
 
 // init
-document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktUpdateCampaigns(); mktRender(); });
+document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktRender(); });
 mktRender();
 </script>
 
