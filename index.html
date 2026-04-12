@@ -13969,21 +13969,25 @@ function classifyDeal(d) {
   const hasCust = cust !== null;
   const isAlreadyStalled = d.stageId === '2918051008';
 
-  // Priority order
-  if (!hasCust && sel !== null && sel >= 45 && score < 15 && dtc !== null && dtc <= 30)
-    return { key: 'lost',    label: '❌ Move to Lost',    cls: 'hg-lost',    action: 'Lost or close. No customer signal.' };
-  if (score >= 45 && hasCust && cust <= 28)
-    return { key: 'hot',     label: '🔥 Hot',             cls: 'hg-hot',     action: 'Keep momentum — follow up within 3 days.' };
-  if (score >= 45 && !hasCust && dtc !== null && dtc <= 30)
-    return { key: 'actnow',  label: '⚠️ Act Now',         cls: 'hg-actnow',  action: 'High score, no reply. Push or update close date.' };
-  if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
-    return { key: 'good',    label: '✅ Good',             cls: 'hg-good',    action: 'On track. Continue cadence.' };
-  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25) {
-    if (isAlreadyStalled)
-      return { key: 'stalled', label: '⏸ Stalled',        cls: 'hg-stalled', action: 'Re-activate back to pipeline — or move to Lost.' };
-    return   { key: 'stalled', label: '⏸ Move to Stalled', cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
+  // Already-stalled deals: only valid actions are re-activate or close-lost
+  if (isAlreadyStalled) {
+    if (!hasCust && sel !== null && sel >= 60 && dtc !== null && dtc < 0)
+      return { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: 'No signal in 60d+ and overdue — move to Lost.' };
+    return   { key: 'stalled', label: '⏸ Stalled', cls: 'hg-stalled', action: 'Re-activate back to pipeline — or move to Lost.' };
   }
-  return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
+
+  // Active-stage deals
+  if (!hasCust && sel !== null && sel >= 45 && score < 15 && dtc !== null && dtc <= 30)
+    return { key: 'lost',    label: '❌ Move to Lost',     cls: 'hg-lost',    action: 'Lost or close. No customer signal.' };
+  if (score >= 45 && hasCust && cust <= 28)
+    return { key: 'hot',     label: '🔥 Hot',              cls: 'hg-hot',     action: 'Keep momentum — follow up within 3 days.' };
+  if (score >= 45 && !hasCust && dtc !== null && dtc <= 30)
+    return { key: 'actnow',  label: '⚠️ Act Now',          cls: 'hg-actnow',  action: 'High score, no reply. Push or update close date.' };
+  if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
+    return { key: 'good',    label: '✅ Good',              cls: 'hg-good',    action: 'On track. Continue cadence.' };
+  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25)
+    return { key: 'stalled', label: '⏸ Move to Stalled',  cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
+  return   { key: 'monitor', label: '👁 Monitor',           cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
 }
 
 function classifyNextStepRisk(nextStep) {
@@ -14292,7 +14296,7 @@ function renderPipeHygiene() {
   const filterBtns = [
     ['all','All',''],['hot','🔥 Hot',''],['good','✅ Good',''],
     ['monitor','👁 Monitor',''],['actnow','⚠️ Act Now',''],
-    ['stalled','⏸ → Stalled',''],['lost','❌ → Lost',''],
+    ['stalled','⏸ Stalled',''],['lost','❌ → Lost',''],
   ].map(([key,lbl]) =>
     `<button class="hg-filter-btn${_hgFilter===key?' active':''}" onclick="_hgSetFilter('${key}')">${lbl}${key!=='all'?' ('+(_hgDeals.filter(d=>d.cls.key===key).length)+')':' ('+_hgDeals.length+')'}</button>`
   ).join('');
