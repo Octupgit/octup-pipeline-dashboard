@@ -11867,12 +11867,12 @@ function renderHighValue() {
 
     const score = Math.round(s1n*0.25 + s2n*0.20 + s3n*0.30 + s4n*0.15 + s5n*0.10) + wmsBonus;
 
-    // ── Tier assignment — inbound responsiveness is REQUIRED ─────────────────
-    // Tier 1: SA/Trial + customer replied within 7d + 2+ meetings
-    const isT1 = stagePct >= 50 && emlAgo <= 7 && mc >= 2;
-    // Tier 2: customer replied within 9d + (good stage OR closing very soon) + at least 1 meeting
-    const isT2 = !isT1 && customerResponsive && mc >= 1 &&
-                 (stagePct >= 40 || (daysToClose !== null && daysToClose <= 7));
+    // ── Tier assignment ───────────────────────────────────────────────────────
+    // Tier 1: SA/Trial stage + strong score or closing soon
+    const isT1 = stagePct >= 50 && (score >= 45 || (daysToClose !== null && daysToClose <= 21)) && mc >= 1;
+    // Tier 2: decent stage + moderate score or closing within 45d
+    const isT2 = !isT1 && stagePct >= 20 && mc >= 1 &&
+                 (score >= 30 || (daysToClose !== null && daysToClose <= 45));
 
     return { d, id, score, stagePct, isT1, isT2, customerResponsive, dealMeetings, dealEmails,
              mtgAgo, emlAgo, lastContactDays, daysToClose, mc, hasInbound, allContacts, hasWMS };
@@ -13427,6 +13427,7 @@ function classifyDeal(d) {
   const score = d.score || 0;
   const dtc   = d.daysToClose;
   const hasCust = cust !== null;
+  const isAlreadyStalled = d.stageId === '2918051008';
 
   // Priority order
   if (!hasCust && sel !== null && sel >= 45 && score < 15 && dtc !== null && dtc <= 30)
@@ -13437,8 +13438,11 @@ function classifyDeal(d) {
     return { key: 'actnow',  label: '⚠️ Act Now',         cls: 'hg-actnow',  action: 'High score, no reply. Push or update close date.' };
   if (hasCust && cust <= 14 && (sel === null || sel <= 28) && score >= 20)
     return { key: 'good',    label: '✅ Good',             cls: 'hg-good',    action: 'On track. Continue cadence.' };
-  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25)
-    return { key: 'stalled', label: '⏸ Move to Stalled',  cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
+  if ((!hasCust || cust >= 28) && (sel === null || sel >= 28) && score < 25) {
+    if (isAlreadyStalled)
+      return { key: 'stalled', label: '⏸ Stalled',        cls: 'hg-stalled', action: 'Decide: re-engage with a clear hook or close-lost.' };
+    return   { key: 'stalled', label: '⏸ Move to Stalled', cls: 'hg-stalled', action: 'No engagement. Move to Stalled or close.' };
+  }
   return { key: 'monitor',   label: '👁 Monitor',          cls: 'hg-monitor', action: 'Watch. Re-engage customer this week.' };
 }
 
@@ -13508,7 +13512,7 @@ function loadPipeHygieneStatic() {
       emailFrom:    null,
       meetingTitle: null,
       reengageDate,
-      cls:  classifyDeal({ sellerDays, customerDays, score, daysToClose }),
+      cls:  classifyDeal({ sellerDays, customerDays, score, daysToClose, stageId }),
       risk: classifyNextStepRisk(nextStep),
     };
   });
@@ -13639,7 +13643,7 @@ async function loadPipeHygiene() {
       const daysToClose  = closeDate ? Math.ceil((new Date(closeDate) - Date.now()) / 86400000) : null;
       const amount       = parseFloat(p.amount) || 0;
 
-      const cls = classifyDeal({ sellerDays, customerDays, score, daysToClose });
+      const cls = classifyDeal({ sellerDays, customerDays, score, daysToClose, stageId: p.dealstage });
 
       return {
         id:          did,
