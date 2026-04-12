@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Octup | RevOps Pipeline Dashboard</title>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
 :root {
   --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
@@ -613,6 +614,26 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 </style>
 </head>
 <body>
+
+<!-- ── GOOGLE AUTH GATE ─────────────────────────────────────────────────── -->
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#0d1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+    <div style="width:40px;height:40px;background:#f59e0b;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#000">O</div>
+    <div>
+      <div style="font-size:20px;font-weight:700;color:#e6edf3">Octup RevOps</div>
+      <div style="font-size:12px;color:#8b949e">Pipeline Dashboard</div>
+    </div>
+  </div>
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:32px 40px;text-align:center;max-width:360px;width:90%">
+    <div style="font-size:15px;font-weight:600;color:#e6edf3;margin-bottom:6px">Sign in to continue</div>
+    <div style="font-size:12px;color:#8b949e;margin-bottom:24px">Access restricted to Octup team members</div>
+    <div id="g_signin_btn" style="display:flex;justify-content:center"></div>
+    <div id="auth-error" style="display:none;margin-top:16px;font-size:12px;color:#f85149;background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.3);border-radius:8px;padding:8px 12px"></div>
+  </div>
+  <div style="font-size:11px;color:#484f58">Only @octup.com accounts are permitted</div>
+</div>
+
+<div id="app-content" style="display:none">
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
@@ -14153,6 +14174,79 @@ function mktSwMonth(el) {
 // init
 document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktUpdateCampaigns(); mktRender(); });
 mktRender();
+</script>
+
+</div><!-- /#app-content -->
+
+<!-- ── GOOGLE AUTH ──────────────────────────────────────────────────────── -->
+<script>
+(function() {
+  const CLIENT_ID = '666004421830-n6a34dfepqgudfmrtjo8beckpd86bbh2.apps.googleusercontent.com';
+  const ALLOWED_DOMAIN = 'octup.com';
+  const SESSION_KEY = 'octup_auth_email';
+
+  function showApp() {
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+  }
+
+  function showLogin() {
+    document.getElementById('auth-overlay').style.display = 'flex';
+    document.getElementById('app-content').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('auth-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function parseJwt(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    } catch(e) { return null; }
+  }
+
+  function handleCredential(response) {
+    const payload = parseJwt(response.credential);
+    if (!payload) { showError('Invalid token. Please try again.'); return; }
+    const email = payload.email || '';
+    const domain = email.split('@')[1] || '';
+    if (domain !== ALLOWED_DOMAIN) {
+      showError(`Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed.`);
+      sessionStorage.removeItem(SESSION_KEY);
+      return;
+    }
+    sessionStorage.setItem(SESSION_KEY, email);
+    showApp();
+  }
+
+  function init() {
+    // Check existing session
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (saved && saved.endsWith('@' + ALLOWED_DOMAIN)) {
+      showApp();
+      return;
+    }
+    showLogin();
+    window.google?.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: handleCredential,
+      auto_select: false,
+    });
+    window.google?.accounts.id.renderButton(
+      document.getElementById('g_signin_btn'),
+      { theme: 'filled_black', size: 'large', shape: 'rectangular', width: 280 }
+    );
+  }
+
+  // Wait for GSI script to load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(init, 300));
+  } else {
+    setTimeout(init, 300);
+  }
+})();
 </script>
 </body>
 </html>
