@@ -211,7 +211,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .empty-state{text-align:center;padding:40px;color:var(--muted);font-size:13px}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:6000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px)}
 .modal-overlay.hidden{display:none}
 .modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:100%;max-width:1400px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .modal-header{background:var(--bg3);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
@@ -646,6 +646,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <div class="header-right">
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
       <div class="live-badge">Auto-synced 4×/day</div>
+      <button onclick="openHelpDict()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Metrics Dictionary">📖 Help</button>
     </div>
     <div style="margin-top:6px" id="sync-timestamp"></div>
   </div>
@@ -953,24 +954,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <!-- MARKETING FUNNEL -->
   <section id="section-mktfunnel">
     <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-      <div class="src-funnel-header" style="flex-wrap:wrap;gap:10px">
-        <div class="src-funnel-title">📣 Marketing Funnel — Paid Ads</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
-          <select id="mkt-src-select" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
-            <option value="all">All Sources</option>
-            <option value="google">Google Ads</option>
-            <option value="linkedin">LinkedIn Ads</option>
-            <option value="meta">Meta Ads</option>
-          </select>
-          <select id="mkt-camp-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
-            <option value="all">All Campaigns</option>
-          </select>
-          <div style="display:flex;gap:4px">
-            <button class="mkt-tab active" data-t="all" onclick="mktSwMonth(this)">All</button>
-            <button class="mkt-tab" data-t="feb" onclick="mktSwMonth(this)">Feb</button>
-            <button class="mkt-tab" data-t="mar" onclick="mktSwMonth(this)">Mar</button>
-          </div>
-        </div>
+      <div class="src-funnel-header">
+        <div class="src-funnel-title">📣 Marketing Funnel — Demo Requests</div>
+        <div style="font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px;margin-left:auto">📅 Synced to dashboard timeframe</div>
       </div>
       <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
     </div>
@@ -1094,88 +1080,88 @@ const TODAY = new Date();
   };
 })();
 const PORTAL = '26004468';
-const LAST_SYNC_UTC = '2026-04-12T10:18:15Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
+const LAST_SYNC_UTC = '2026-04-13T10:09:03Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
 
 // ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
 // [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource, reengageDate]
 const DEALS = [
-  ['154487611634','ShipBots - 3PL Partner',48000,'2918051008','29422733','2025-03-14','2026-03-28','Call Payam 1/15 and reference email and shed light on pricing model + most importantly updates to the platform.','69626301','2026-03-11','',''],
-  ['275759382720','PipShip',36000,'2918051008','29422733','2025-07-30','2026-03-27','Need Meeting with Claudia / Jeff & Avery. Claudia is Avery\'s Wife, Jeff is a brand and investor in pipship. See emails.','29422733','2026-04-11','','2026-07-01'],
-  ['296064239860','HyperNile Fulfillment',12000,'2918051008','29896105','2025-08-26','2026-05-31','1/15 connected via call. Open to have convo in Q2 due to other software priorities','29896105','2026-03-31','Outbound Sales','2026-04-01'],
-  ['296064239865','Hero Fulfillment',30000,'2918051007','30284350','2025-08-26','2026-03-31','Currently ghosting after booking a meeting','29896105','2026-02-04','Outbound SDR',''],
-  ['311147104455','Barrett Distribution Centers',120000,'2918051008','29896105','2025-09-18','2026-05-29','Reached out to Jordan to see if he connected to Brian at GPA','29896105','2026-03-25','Outbound Sales','2026-04-06'],
-  ['321305284846','Crocodile Fulfillment - 3PL',24000,'2918051008','29422733','2025-10-01','2026-04-30','Matt shared they have to iron out other items before revisiting this with Octup.','29422733','2026-03-11','Referral',''],
-  ['322792814794','Broadrange Logistics',24000,'2918051008','29422733','2025-10-06','2025-12-05','- Sent new pricing update with no luck via phone. If no response by 1/16, kill deal.','30228375','2026-03-11','Outbound Sales',''],
-  ['329121454290','Razr/BWT Logistics - 3PL Partner',36000,'2918051007','29422733','2025-10-10','2026-04-17','1/19 - Connection made with Mike Griffin, scheduling NBM','29422733','2026-01-23','Outbound Sales',''],
-  ['347229675723','OpsEngine',24000,'2918051008','29896105','2025-10-28','2026-03-31','Stalled/Delayed due to WMS transition, not willing to take on more software onboarding during this time','29422733','2026-03-31','Outbound Sales','2026-05-18'],
-  ['356797053159','Verde Fulfillment - 3PL',60000,'2918051008','29422733','2025-11-01','2026-05-22','Pete Haggerty is hiring two additional staff members and what\'s 1 of them to lead the effort looking into Octup. He\'s asking for a regroup in 60 days. 3/18/26','30228375','2026-03-11','Outbound Sales','2026-05-18'],
-  ['367595752685','AP Express',120000,'2918051008','29422733','2025-11-09','2026-06-27','Dan wants to punt this to Q2 and loop in CIO. Currently consolidating systems.','30228375','2026-03-27','Outbound Sales','2026-04-20'],
-  ['370749058247','Kwiksave Logistics - 3PL Partner',30000,'2918051007','30284350','2025-11-12','2026-01-11','1/7 - NBM Scheduled','30284350','2026-03-20','Outbound SDR',''],
-  ['373932429521','Green Fulfilment - 3PL Partner',30000,'2918051007','30284350','2025-11-13','2026-01-12','1/14 - Intro Call','30284350','2026-03-20','Outbound SDR',''],
-  ['373924524263','Accurate Transport - 3PL Partner',30000,'2918051007','29422733','2025-11-13','2026-02-28','Rebooked for 2/2 by Chanan','30284350','2026-03-10','Outbound Sales',''],
-  ['374103853256','3DM Group - 3PL Partner',30000,'2918051007','29896105','2025-11-14','2026-05-14','5/1 - NBM Scheduled. Try and engage prior','30284350','2025-11-14','Outbound Sales',''],
-  ['374574725350','NEXgistics - 3PL Partner',30000,'2918051007','29422733','2025-11-14','2026-04-10','Confirm time with Sean & Head of CS for Demo','30284350','2026-04-11','Outbound Sales',''],
-  ['375009107158','Pack\'N',12000,'2918051008','29896105','2025-11-17','2026-03-31','Commercials communicated. Deal delayed due to WMS migration + Account Manager hire. Latest March implementation','29896105','2026-02-06','Outbound Sales',''],
-  ['378594107601','3PL Winner | CapEc - 3PL Partner',24000,'2918051008','29422733','2025-11-19','2026-03-28','1/30 reconnect w/Leena','30284350','2026-03-18','Outbound Sales',''],
-  ['378240498937','Creative Fulfillment',18000,'2918051008','29896105','2025-11-19','2026-03-06','Tanner shared he needs to delay evaluation. Blake to check in periodically','29896105','2026-03-13','Outbound Sales','2026-04-20'],
-  ['385415697648','One circle Logistics',30000,'2918051007','29896105','2025-11-24','2026-06-26','Asked for mid-April follow up.','30284350','2026-03-20','Outbound SDR',''],
-  ['386781338821','Product Fulfillment Solutions - 3PL Partner',30000,'2918051008','29422733','2025-11-25','2026-03-20','Bill / Dan - unresponsive last few weeks.','30284350','2026-03-04','Outbound Sales','2026-04-06'],
-  ['388158166241','Carter Distribution - 3PL Partner',30000,'608286675','29896105','2025-11-26','2026-05-29','COO requested month delay. Does not have time to dive deeper in month of March','30284350','2026-03-04','Outbound Sales',''],
-  ['395434951886','Walker Logistics - 3PL Partner',66000,'608286675','29896105','2025-12-02','2026-04-24','Demo to be scheduled for week of 3/23. Charlie rounding up team','30284350','2026-04-10','Outbound Sales',''],
-  ['395616403694','MSL COPACK + ECOMM - 3PL Partner',30000,'2918051007','29896105','2025-12-02','2026-05-29','sent back to Chanan to schedule with Jeremy','30284350','2026-03-20','Outbound SDR',''],
-  ['397125735624','Ironlink Logistics - 3PL Partner',30000,'2918051007','29422733','2025-12-04','2026-05-29','F/U Q2 - completing move to Extensiv WMS from Davinci','30284350','2026-04-10','Outbound Sales',''],
-  ['398470018272','HD Logistics & Warehousing Solutions - 3PL Partner',30000,'2918051007','29896105','2025-12-04','2026-05-29','Meeting confirmed for Manifest 2/10 @ 9am with Jay','30284350','2026-03-24','Outbound Sales',''],
-  ['399702182089','E Shipper Plus',24000,'2918051008','29896105','2025-12-05','2026-07-31','Get final yes - Docusign sent','30284350','2026-02-17','Outbound Sales',''],
-  ['405224989943','James Cargo Services - 3PL Partner',84000,'2918051007','29896105','2025-12-11','2026-06-26','4/20 - NBM rescheduled','30284350','2026-03-19','Outbound SDR',''],
-  ['406329249978','R&S Logistics - 3PL Partner',36000,'2918051008','29422733','2025-12-12','2026-05-01','1. Get API Docs from Brighton 2. Set Demo Date with Aaron','30284350','2026-03-12','Outbound Sales',''],
-  ['411340706014','Global Freight Solutions - 3PL Partner',48000,'2918051007','30284350','2025-12-17','2026-04-25','Changed ownership to Chanan to re book','30284350','2026-03-19','Outbound SDR',''],
-  ['411341426928','Nautical Manufacturing and Fulfillment - 3PL Partner',60000,'2918051008','29422733','2025-12-17','2026-05-29','-Will agreed to intro Alexander and Alex','29422733','2026-03-18','Referral',''],
-  ['411385661666','Prolog Fulfilment - 3PL Partner',54000,'2918051007','29896105','2025-12-17','2026-06-27','Deal too far out. Re engage for closer to','30284350','2026-03-19','Outbound SDR',''],
-  ['411341444307','Fulfillment Plus - 3PL Partner',36000,'2918051007','29896105','2025-12-17','2026-03-27','3/2 NBM','30284350','2026-04-02','Outbound SDR',''],
-  ['417001074931','Think Logistics - 3PL Partner',30000,'2918051007','29422733','2025-12-23','2026-04-24','','30284350','2025-12-23','Outbound SDR',''],
-  ['426737647808','BoxFort Commerce - 3PL Partner',30000,'608286675','29422733','2026-01-07','2026-05-29','Sent note to Benn about meeting with Alon (fellow Brand owner).','29422733','2026-04-11','Marketing Organic',''],
-  ['427713702126','TOC Logistics - 3PL Partner',30000,'608286675','29422733','2026-01-08','2026-05-29','NBM scheduled for 3/4','30284350','2026-03-24','Outbound SDR',''],
-  ['451425591533','e53fulfillment - 3PL Partner',12000,'608286675','29422733','2026-01-27','2026-03-27','2/24 - note update sent o Ammar. Checking pulse on realness of this.','29422733','2026-02-24','Outbound Sales',''],
-  ['451126015174','Jack Richards & Son - 3PL Partner',30000,'2918051007','29422733','2026-01-27','2026-03-27','','30284350','2026-02-18','Outbound Sales',''],
-  ['452137009352','EWorld Fulfillment - 3PL Partner',54000,'608286676','29422733','2026-01-27','2026-04-24','Asher now has all material requested to review with CEO and schedule next call based on CEO availability. 3/4 - he shared he\'d be OOO for 1 week and wants to pick back up upon his return.','30284350','2026-04-07','Outbound Sales',''],
-  ['459497499890','Customized Distribution Services',84000,'608286675','29422733','2026-02-04','2026-05-29','Randall has been unresponsive since meeting with Alon and I. Left him a vmail 3/19 (again).','29896105','2026-03-19','Referral',''],
-  ['461107103961','M&w distribution services, inc. - 3PL Partner',20000,'2918051007','29422733','2026-02-05','2026-04-06','','30284350','2026-02-11','Outbound SDR',''],
-  ['474120071396','G&B Fulfillment',24000,'2918051008','29896105','2026-02-19','2026-04-24','Working w/ Jay & Alon to re engage. No response to anyone. Follow up again next week','29896105','2026-03-19','Event or Webinar','2026-04-01'],
-  ['473452158169','Alom',66000,'740160705','29896105','2026-02-19','2026-04-24','4/9 - integration call & technical needs; blake to check with Mikey as GPA needs Mantis integration','29896105','2026-04-09','Event or Webinar',''],
-  ['474056691933','Supply Chain Warehouses',24000,'740160705','29896105','2026-02-19','2026-04-24','Follow up call w/ Alon pushed out by a month due to other priorities 3/24','29896105','2026-04-10','Event or Webinar',''],
-  ['473541862644','Baja Fulfillment',36000,'2918051007','29422733','2026-02-19','2026-04-20','NBM - Insert date','29896105','2026-03-09','Event or Webinar',''],
-  ['474608465119','FREIGHTLEAD - 3PL Partner',15000,'2918051008','29422733','2026-02-19','2026-03-31','putting to stalled/delayed: ShipBob to overcome challenges with owner.','29422733','2026-02-23','Partner Channel',''],
-  ['474457379063','Fetch Fulfillment - Manifest Trial',24000,'4988070119','29422733','2026-02-20','2026-03-28','Trial Kickoff 2/20','29422733','2026-03-15','Event or Webinar',''],
-  ['475675551947','Precision 3PL - 3PL Partner',24000,'608286677','29422733','2026-02-23','2026-04-30','Deeper Discussion 2/23 (recap + pricing with McKenna)','31058660','2026-03-31','Event or Webinar',''],
-  ['477756852439','Lateral Fulfillement',12000,'2918051007','29896105','2026-02-23','2026-05-23','','31058660','2026-03-09','Event or Webinar',''],
-  ['477912008924','Shipsalot - FKA Dollar Fulfillment',30000,'2918051007','29422733','2026-02-23','2026-04-24','Get them back on the phone. Great conversation at Manifest, and nothing since.','31058660','2026-03-09','Event or Webinar',''],
-  ['477764106470','Priority Fulfillment',40000,'608286676','29896105','2026-02-23','2026-04-24','Commercials meeting 3/27 to try and close before quarter end','31058660','2026-04-06','Event or Webinar',''],
-  ['477905091779','List Logistics',30000,'2918051007','29422733','2026-02-23','2026-06-26','Kyrene asked that we delay till May. Still working through WMS/OMS deployment & learnings.','31058660','2026-04-09','Event or Webinar',''],
-  ['477916308702','Argents Express',36000,'2918051007','29422733','2026-02-23','2026-04-24','','31058660','2026-03-05','Event or Webinar',''],
-  ['477922067703','Cirro Fulfillment',102000,'608286676','29896105','2026-02-23','2026-05-29','4/8 - Sindy to sign MNDA once w9 from Hagai provided.','32023983','2026-04-01','Event or Webinar',''],
-  ['478124890347','Your Logistics Corp',54000,'608286675','29896105','2026-02-23','2026-04-30','Blake & Jay to reach out to Hossein early next week w/ pilot plan and set next steps','29422733','2026-04-06','Event or Webinar',''],
-  ['477992997065','eGourmet Solutions Inc. - Manifest Trial',48000,'608286676','29422733','2026-02-23','2026-04-24','4/10 - Meeting with Aaron and Germain, looping mikey in to review ask questions of the data sets provided.','29422733','2026-04-10','Event or Webinar',''],
-  ['481871055094','Saia Logistics (fka LinkX)',60000,'2918051008','29896105','2026-02-27','2026-04-28','Steve reached out and said SAIA President said to put this on hold. No other info given. Nurture accordingly','29896105','2026-03-18','Marketing Organic','2026-04-27'],
-  ['481189626047','AMZ Prep',36000,'2918051008','29896105','2026-02-27','2026-04-28','Thomas responded this is not the focus right now. Pushed back for hopeful re engagement but likely move to stalled/delayed','29896105','2026-03-16','Marketing Organic','2026-05-01'],
-  ['481449860294','Fulfillment House',24000,'2918051008','29896105','2026-02-27','2026-06-30','No interest in moving quicker to implement. Likely to consider new solution in July','29896105','2026-04-10','Event or Webinar','2026-07-01'],
-  ['481710229706','Tactical Logistic Solutions',48000,'2918051008','29896105','2026-02-27','2026-04-28','Tactical Team wants to delay. Blake going to try and push for urgency before accepting delay','29896105','2026-03-04','Referral','2026-04-13'],
-  ['485120763085','InSync Fulfillment',30000,'608286676','29422733','2026-03-03','2026-04-30','3/12 - per Linas (spoke with him 3/11 on the phoen), he\'s meeting with Joe (biz partner) on Octup.','29422733','2026-04-07','Event or Webinar',''],
-  ['486004873438','Weber Logistics',84000,'740160705','29422733','2026-03-03','2026-05-02','Steven asked to rescheduled due to high priority items (3/10)','29422733','2026-03-16','Referral',''],
-  ['488034107600','Mobix - 3PL Partner',36000,'740160705','29422733','2026-03-05','2026-04-30','Sent Summary and now up to David/Nathan on how that internal conversation goes.','29422733','2026-04-07','Outbound Sales',''],
-  ['492304500976','ParcelPlanet',42000,'608286677','29896105','2026-03-09','2026-04-24','Commercials/Pilot Review 3/26','29896105','2026-04-08','Outbound Sales',''],
-  ['493033828577','Blue Logistics - 3PL Partner',30000,'2918051007','29896105','2026-03-10','2026-05-09','No show to NBM on 3/17','30284350','2026-04-07','Outbound Sales',''],
-  ['493035264210','CROSSFIRE LOGISTICS INC - 3PL Partner',30000,'608286675','29896105','2026-03-10','2026-06-30','Follow up set for late April. Going through leadership changes.','30284350','2026-03-18','Outbound Sales',''],
-  ['493677246687','Shipping Butler',36000,'2918051007','29896105','2026-03-12','2026-04-30','Was hot and heavy, then called to cancel meeting (really sick with bronchitis), need to reschedule (he\'s been ghosting).','29896105','2026-03-12','Marketing Organic',''],
-  ['494473543890','Shipping Butler',30000,'2918051007','29422733','2026-03-18','2026-05-17','schedule NBM (rescheduled Neil was sick last thursday)','29422733','2026-04-07','Marketing Organic',''],
-  ['495370596574','Left Brain Logistics, LLC - 3PL',48000,'608286676','29896105','2026-03-25','2026-04-30','4/8 - Solution review & commercial overview','29422733','2026-04-09','Marketing Paid',''],
-  ['497060057310','Las Vegas Warehousing',36000,'2918051007','29896105','2026-04-03','2026-05-16','NBM - 4/7','29896105','2026-04-07','Event or Webinar',''],
-  ['497060777182','Givens Inc',36000,'2918051007','29896105','2026-04-03','2026-06-02','NO SHOW - REBOOK NBM - 4/6','29896105','2026-04-06','Event or Webinar',''],
-  ['497054297300','Distribution Alternatives',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/8','29896105','2026-04-08','Event or Webinar',''],
-  ['497062216951','Bay Logistics, Inc.',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/20','29896105','2026-04-03','Event or Webinar',''],
-  ['497053577436','Interchange group',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/7','29896105','2026-04-07','Event or Webinar',''],
-  ['497457729756','ProShipper - 3PL',36000,'608286676','29422733','2026-04-07','2026-04-30','F/U meeting set 4/13','29422733','2026-04-09','Marketing Organic',''],
-  ['497261533419','Ottawa Logistics - 3PL',60000,'2918051007','29422733','2026-04-07','2026-05-01','set nbm with sophie 4/10','29422733','2026-04-10','Event or Webinar',''],
-  ['498313569503','Customer Impact (Eagle Support Services) - 3PL',30000,'2918051007','29422733','2026-04-09','2026-06-08','4/13 - nbm scheduled','29422733','2026-04-09','Referral','']
+  ['154487611634','ShipBots - 3PL Partner',48000,'2918051008','29422733','2025-03-14','2026-03-28','Call Payam 1/15 and reference email and shed light on pricing model + most importantly updates to the platform.','69626301','2026-03-11','','','LOW'],
+  ['275759382720','PipShip',36000,'2918051008','29422733','2025-07-30','2026-03-27','Need Meeting with Claudia / Jeff & Avery. Claudia is Avery\'s Wife, Jeff is a brand and investor in pipship. See emails.','29422733','2026-04-12','','2026-07-01','LOW'],
+  ['296064239860','HyperNile Fulfillment',12000,'2918051008','29896105','2025-08-26','2026-05-31','1/15 connected via call. Open to have convo in Q2 due to other software priorities','29896105','2026-03-31','Outbound Sales','2026-04-01','MEDIUM'],
+  ['296064239865','Hero Fulfillment',30000,'2918051007','30284350','2025-08-26','2026-03-31','Currently ghosting after booking a meeting','29896105','2026-02-04','Outbound SDR','','MEDIUM'],
+  ['311147104455','Barrett Distribution Centers',120000,'2918051008','29896105','2025-09-18','2026-05-29','Reached out to Jordan to see if he connected to Brian at GPA','29896105','2026-03-25','Outbound Sales','2026-04-06','MEDIUM'],
+  ['321305284846','Crocodile Fulfillment - 3PL',24000,'2918051008','29422733','2025-10-01','2026-04-30','Matt shared they have to iron out other items before revisiting this with Octup.','29422733','2026-03-11','Referral','','LOW'],
+  ['322792814794','Broadrange Logistics',24000,'2918051008','29422733','2025-10-06','2025-12-05','- Sent new pricing update with no luck via phone. If no response by 1/16, kill deal.','30228375','2026-03-11','Outbound Sales','','LOW'],
+  ['329121454290','Razr/BWT Logistics - 3PL Partner',36000,'2918051007','29422733','2025-10-10','2026-04-17','1/19 - Connection made with Mike Griffin, scheduling NBM','29422733','2026-01-23','Outbound Sales','','LOW'],
+  ['347229675723','OpsEngine',24000,'2918051008','29896105','2025-10-28','2026-03-31','Stalled/Delayed due to WMS transition, not willing to take on more software onboarding during this time','29422733','2026-03-31','Outbound Sales','2026-05-18','MEDIUM'],
+  ['356797053159','Verde Fulfillment - 3PL',60000,'2918051008','29422733','2025-11-01','2026-05-22','Pete Haggerty is hiring two additional staff members and what\'s 1 of them to lead the effort looking into Octup. He\'s asking for a regroup in 60 days. 3/18/26','30228375','2026-03-11','Outbound Sales','2026-05-18',''],
+  ['367595752685','AP Express',120000,'2918051008','29422733','2025-11-09','2026-06-27','Dan wants to punt this to Q2 and loop in CIO. Currently consolidating systems.','30228375','2026-03-27','Outbound Sales','2026-04-20',''],
+  ['370749058247','Kwiksave Logistics - 3PL Partner',30000,'2918051007','30284350','2025-11-12','2026-01-11','1/7 - NBM Scheduled','30284350','2026-03-20','Outbound SDR','',''],
+  ['373932429521','Green Fulfilment - 3PL Partner',30000,'2918051007','30284350','2025-11-13','2026-01-12','1/14 - Intro Call','30284350','2026-03-20','Outbound SDR','',''],
+  ['373924524263','Accurate Transport - 3PL Partner',30000,'2918051007','29422733','2025-11-13','2026-02-28','Rebooked for 2/2 by Chanan','30284350','2026-03-10','Outbound Sales','',''],
+  ['374103853256','3DM Group - 3PL Partner',30000,'2918051007','29896105','2025-11-14','2026-05-14','5/1 - NBM Scheduled. Try and engage prior','30284350','2025-11-14','Outbound Sales','',''],
+  ['374574725350','NEXgistics - 3PL Partner',30000,'2918051007','29422733','2025-11-14','2026-04-10','Confirm time with Sean & Head of CS for Demo','30284350','2026-04-12','Outbound Sales','',''],
+  ['375009107158','Pack\'N',12000,'2918051008','29896105','2025-11-17','2026-03-31','Commercials communicated. Deal delayed due to WMS migration + Account Manager hire. Latest March implementation','29896105','2026-02-06','Outbound Sales','','MEDIUM'],
+  ['378594107601','3PL Winner | CapEc - 3PL Partner',24000,'2918051008','29422733','2025-11-19','2026-03-28','1/30 reconnect w/Leena','30284350','2026-03-18','Outbound Sales','',''],
+  ['378240498937','Creative Fulfillment',18000,'2918051008','29896105','2025-11-19','2026-03-06','Tanner shared he needs to delay evaluation. Blake to check in periodically','29896105','2026-03-13','Outbound Sales','2026-04-20',''],
+  ['385415697648','One circle Logistics',30000,'2918051007','29896105','2025-11-24','2026-06-26','Asked for mid-April follow up.','30284350','2026-03-20','Outbound SDR','',''],
+  ['386781338821','Product Fulfillment Solutions - 3PL Partner',30000,'2918051008','29422733','2025-11-25','2026-03-20','Bill / Dan - unresponsive last few weeks.','30284350','2026-03-04','Outbound Sales','2026-04-06',''],
+  ['388158166241','Carter Distribution - 3PL Partner',30000,'608286675','29896105','2025-11-26','2026-05-29','COO requested month delay. Does not have time to dive deeper in month of March','30284350','2026-03-04','Outbound Sales','',''],
+  ['395434951886','Walker Logistics - 3PL Partner',66000,'608286675','29896105','2025-12-02','2026-04-24','Demo to be scheduled for week of 3/23. Charlie rounding up team','30284350','2026-04-10','Outbound Sales','',''],
+  ['395616403694','MSL COPACK + ECOMM - 3PL Partner',30000,'2918051007','29896105','2025-12-02','2026-05-29','sent back to Chanan to schedule with Jeremy','30284350','2026-03-20','Outbound SDR','',''],
+  ['397125735624','Ironlink Logistics - 3PL Partner',30000,'2918051007','29422733','2025-12-04','2026-05-29','F/U Q2 - completing move to Extensiv WMS from Davinci','30284350','2026-04-10','Outbound Sales','',''],
+  ['398470018272','HD Logistics & Warehousing Solutions - 3PL Partner',30000,'2918051007','29896105','2025-12-04','2026-05-29','Meeting confirmed for Manifest 2/10 @ 9am with Jay','30284350','2026-03-24','Outbound Sales','',''],
+  ['399702182089','E Shipper Plus',24000,'2918051008','29896105','2025-12-05','2026-07-31','Get final yes - Docusign sent','30284350','2026-02-17','Outbound Sales','','MEDIUM'],
+  ['405224989943','James Cargo Services - 3PL Partner',84000,'2918051007','29896105','2025-12-11','2026-06-26','4/20 - NBM rescheduled','30284350','2026-03-19','Outbound SDR','','MEDIUM'],
+  ['406329249978','R&S Logistics - 3PL Partner',36000,'2918051008','29422733','2025-12-12','2026-05-01','1. Get API Docs from Brighton 2. Set Demo Date with Aaron','30284350','2026-03-12','Outbound Sales','',''],
+  ['411340706014','Global Freight Solutions - 3PL Partner',48000,'2918051007','30284350','2025-12-17','2026-04-25','Changed ownership to Chanan to re book','30284350','2026-03-19','Outbound SDR','',''],
+  ['411341426928','Nautical Manufacturing and Fulfillment - 3PL Partner',60000,'2918051008','29422733','2025-12-17','2026-05-29','-Will agreed to intro Alexander and Alex','29422733','2026-03-18','Referral','',''],
+  ['411385661666','Prolog Fulfilment - 3PL Partner',54000,'2918051007','29896105','2025-12-17','2026-06-27','Deal too far out. Re engage for closer to','30284350','2026-03-19','Outbound SDR','',''],
+  ['411341444307','Fulfillment Plus - 3PL Partner',36000,'2918051007','29896105','2025-12-17','2026-03-27','3/2 NBM','30284350','2026-04-02','Outbound SDR','',''],
+  ['417001074931','Think Logistics - 3PL Partner',30000,'2918051007','29422733','2025-12-23','2026-04-24','','30284350','2025-12-23','Outbound SDR','',''],
+  ['426737647808','BoxFort Commerce - 3PL Partner',30000,'608286675','29422733','2026-01-07','2026-05-29','Sent note to Benn about meeting with Alon (fellow Brand owner).','29422733','2026-04-11','Marketing Organic','',''],
+  ['427713702126','TOC Logistics - 3PL Partner',30000,'608286675','29422733','2026-01-08','2026-05-29','NBM scheduled for 3/4','30284350','2026-03-24','Outbound SDR','',''],
+  ['451425591533','e53fulfillment - 3PL Partner',12000,'608286675','29422733','2026-01-27','2026-03-27','2/24 - note update sent o Ammar. Checking pulse on realness of this.','29422733','2026-02-24','Outbound Sales','','MEDIUM'],
+  ['451126015174','Jack Richards & Son - 3PL Partner',30000,'2918051007','29422733','2026-01-27','2026-03-27','','30284350','2026-02-18','Outbound Sales','',''],
+  ['452137009352','EWorld Fulfillment - 3PL Partner',54000,'608286676','29422733','2026-01-27','2026-04-24','Asher now has all material requested to review with CEO and schedule next call based on CEO availability. 3/4 - he shared he\'d be OOO for 1 week and wants to pick back up upon his return.','30284350','2026-04-07','Outbound Sales','','MEDIUM'],
+  ['459497499890','Customized Distribution Services',84000,'608286675','29422733','2026-02-04','2026-05-29','Randall has been unresponsive since meeting with Alon and I. Left him a vmail 3/19 (again).','29896105','2026-03-19','Referral','',''],
+  ['461107103961','M&w distribution services, inc. - 3PL Partner',20000,'2918051007','29422733','2026-02-05','2026-04-06','','30284350','2026-02-11','Outbound SDR','',''],
+  ['474120071396','G&B Fulfillment',24000,'2918051008','29896105','2026-02-19','2026-04-24','Working w/ Jay & Alon to re engage. No response to anyone. Follow up again next week','29896105','2026-03-19','Event or Webinar','2026-04-01','MEDIUM'],
+  ['473452158169','Alom',66000,'740160705','29896105','2026-02-19','2026-04-24','4/9 - integration call & technical needs; blake to check with Mikey as GPA needs Mantis integration','29896105','2026-04-09','Event or Webinar','','HIGH'],
+  ['474056691933','Supply Chain Warehouses',24000,'740160705','29896105','2026-02-19','2026-04-24','Follow up call w/ Alon pushed out by a month due to other priorities 3/24','29896105','2026-04-10','Event or Webinar','',''],
+  ['473541862644','Baja Fulfillment',36000,'2918051007','29422733','2026-02-19','2026-04-20','NBM - Insert date','29896105','2026-03-09','Event or Webinar','',''],
+  ['474608465119','FREIGHTLEAD - 3PL Partner',15000,'2918051008','29422733','2026-02-19','2026-03-31','putting to stalled/delayed: ShipBob to overcome challenges with owner.','29422733','2026-02-23','Partner Channel','',''],
+  ['474457379063','Fetch Fulfillment - Manifest Trial',24000,'4988070119','29422733','2026-02-20','2026-03-28','Trial Kickoff 2/20','29422733','2026-03-15','Event or Webinar','','MEDIUM'],
+  ['475675551947','Precision 3PL - 3PL Partner',24000,'608286677','29422733','2026-02-23','2026-04-30','Deeper Discussion 2/23 (recap + pricing with McKenna)','31058660','2026-03-31','Event or Webinar','','HIGH'],
+  ['477756852439','Lateral Fulfillement',12000,'2918051007','29896105','2026-02-23','2026-05-23','','31058660','2026-03-09','Event or Webinar','',''],
+  ['477912008924','Shipsalot - FKA Dollar Fulfillment',30000,'2918051007','29422733','2026-02-23','2026-04-24','Get them back on the phone. Great conversation at Manifest, and nothing since.','31058660','2026-03-09','Event or Webinar','',''],
+  ['477764106470','Priority Fulfillment',40000,'608286676','29896105','2026-02-23','2026-04-24','Commercials meeting 3/27 to try and close before quarter end','31058660','2026-04-06','Event or Webinar','',''],
+  ['477905091779','List Logistics',30000,'2918051007','29422733','2026-02-23','2026-06-26','Kyrene asked that we delay till May. Still working through WMS/OMS deployment & learnings.','31058660','2026-04-09','Event or Webinar','',''],
+  ['477916308702','Argents Express',36000,'2918051007','29422733','2026-02-23','2026-04-24','','31058660','2026-03-05','Event or Webinar','',''],
+  ['477922067703','Cirro Fulfillment',102000,'608286676','29896105','2026-02-23','2026-05-29','4/8 - Sindy to sign MNDA once w9 from Hagai provided.','32023983','2026-04-01','Event or Webinar','','MEDIUM'],
+  ['478124890347','Your Logistics Corp',54000,'608286675','29896105','2026-02-23','2026-04-30','Blake & Jay to reach out to Hossein early next week w/ pilot plan and set next steps','29422733','2026-04-06','Event or Webinar','','HIGH'],
+  ['477992997065','eGourmet Solutions Inc. - Manifest Trial',48000,'608286676','29422733','2026-02-23','2026-04-24','4/10 - Meeting with Aaron and Germain, looping mikey in to review ask questions of the data sets provided.','29422733','2026-04-10','Event or Webinar','','HIGH'],
+  ['481871055094','Saia Logistics (fka LinkX)',60000,'2918051008','29896105','2026-02-27','2026-04-28','Steve reached out and said SAIA President said to put this on hold. No other info given. Nurture accordingly','29896105','2026-03-18','Marketing Organic','2026-04-27',''],
+  ['481189626047','AMZ Prep',36000,'2918051008','29896105','2026-02-27','2026-04-28','Thomas responded this is not the focus right now. Pushed back for hopeful re engagement but likely move to stalled/delayed','29896105','2026-03-16','Marketing Organic','2026-05-01',''],
+  ['481449860294','Fulfillment House',24000,'2918051008','29896105','2026-02-27','2026-06-30','No interest in moving quicker to implement. Likely to consider new solution in July','29896105','2026-04-10','Event or Webinar','2026-07-01',''],
+  ['481710229706','Tactical Logistic Solutions',48000,'2918051008','29896105','2026-02-27','2026-04-28','Tactical Team wants to delay. Blake going to try and push for urgency before accepting delay','29896105','2026-03-04','Referral','2026-04-13',''],
+  ['485120763085','InSync Fulfillment',30000,'608286676','29422733','2026-03-03','2026-04-30','3/12 - per Linas (spoke with him 3/11 on the phoen), he\'s meeting with Joe (biz partner) on Octup.','29422733','2026-04-07','Event or Webinar','','HIGH'],
+  ['486004873438','Weber Logistics',84000,'740160705','29422733','2026-03-03','2026-05-02','Steven asked to rescheduled due to high priority items (3/10)','29422733','2026-03-16','Referral','',''],
+  ['488034107600','Mobix - 3PL Partner',36000,'740160705','29422733','2026-03-05','2026-04-30','Sent Summary and now up to David/Nathan on how that internal conversation goes.','29422733','2026-04-07','Outbound Sales','',''],
+  ['492304500976','ParcelPlanet',42000,'608286677','29896105','2026-03-09','2026-04-24','Commercials/Pilot Review 3/26','29896105','2026-04-08','Outbound Sales','','HIGH'],
+  ['493033828577','Blue Logistics - 3PL Partner',30000,'2918051007','29896105','2026-03-10','2026-05-09','No show to NBM on 3/17','30284350','2026-04-07','Outbound Sales','',''],
+  ['493035264210','CROSSFIRE LOGISTICS INC - 3PL Partner',30000,'608286675','29896105','2026-03-10','2026-06-30','Follow up set for late April. Going through leadership changes.','30284350','2026-03-18','Outbound Sales','',''],
+  ['493677246687','Shipping Butler',36000,'2918051007','29896105','2026-03-12','2026-04-30','Was hot and heavy, then called to cancel meeting (really sick with bronchitis), need to reschedule (he\'s been ghosting).','29896105','2026-03-12','Marketing Organic','',''],
+  ['494473543890','Shipping Butler',30000,'2918051007','29422733','2026-03-18','2026-05-17','schedule NBM (rescheduled Neil was sick last thursday)','29422733','2026-04-07','Marketing Organic','',''],
+  ['495370596574','Left Brain Logistics, LLC - 3PL',48000,'608286676','29896105','2026-03-25','2026-04-30','4/8 - Solution review & commercial overview','29422733','2026-04-09','Marketing Paid','','HIGH'],
+  ['497060057310','Las Vegas Warehousing',36000,'2918051007','29896105','2026-04-03','2026-05-16','NBM - 4/7','29896105','2026-04-07','Event or Webinar','',''],
+  ['497060777182','Givens Inc',36000,'2918051007','29896105','2026-04-03','2026-06-02','NO SHOW - REBOOK NBM - 4/6','29896105','2026-04-06','Event or Webinar','',''],
+  ['497054297300','Distribution Alternatives',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/8','29896105','2026-04-08','Event or Webinar','',''],
+  ['497062216951','Bay Logistics, Inc.',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/20','29896105','2026-04-03','Event or Webinar','',''],
+  ['497053577436','Interchange group',36000,'2918051007','29896105','2026-04-03','2026-06-02','NBM - 4/7','29896105','2026-04-07','Event or Webinar','',''],
+  ['497457729756','ProShipper - 3PL',36000,'608286676','29422733','2026-04-07','2026-04-30','F/U meeting set 4/13','29422733','2026-04-09','Marketing Organic','','HIGH'],
+  ['497261533419','Ottawa Logistics - 3PL',60000,'2918051007','29422733','2026-04-07','2026-05-01','set nbm with sophie 4/10','29422733','2026-04-10','Event or Webinar','','HIGH'],
+  ['498313569503','Customer Impact (Eagle Support Services) - 3PL',30000,'2918051007','29422733','2026-04-09','2026-06-08','4/13 - nbm scheduled','29422733','2026-04-09','Referral','','']
 ];
 
 // ─── STAGE ENTRY DATES (from HubSpot hs_v2_date_entered_current_stage) ───────
@@ -1479,14 +1465,12 @@ const MEETINGS = [
   {id:'470148383940',type:'MEETING',title:'Octup <> GPA Recurring Project Update',timestamp:'2026-02-18',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'442513873116',type:'MEETING',title:'WAF x Octup: Weekly Checkin',timestamp:'2026-03-18',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'434518691054',type:'MEETING',title:'Peter & Jay at Octup',timestamp:'2026-02-18',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["451126015174"]},
-  {id:'435100310733',type:'MEETING',title:'Chris Cummings @ Holman | Michael Woolfson @ Octup | Meet at Booth 1776 - Manifest',timestamp:'2026-02-11',outcome:'',ownerId:'31610755',dealIds:[]},
   {id:'435258751168',type:'MEETING',title:'Prolific <> Octup - Demo',timestamp:'2026-02-13',outcome:'RESCHEDULED',ownerId:'29422733',dealIds:["450739243206"]},
   {id:'436555957459',type:'MEETING',title:'Blake (Octup) x Adam (Abstrakt) - Touch Base / Placeholder - Reschedule',timestamp:'2026-02-26',outcome:'CANCELED',ownerId:'29896105',dealIds:["362827060453"]},
   {id:'436706996453',type:'MEETING',title:'Russ & Jay at Octup',timestamp:'2026-02-18',outcome:'SCHEDULED',ownerId:'29422733',dealIds:[]},
   {id:'442427822324',type:'MEETING',title:'SmartShipped x Octup | Updates',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'30860443',dealIds:["330494515413"]},
   {id:'443536948468',type:'MEETING',title:'Piyush & Jay at Octup',timestamp:'2026-02-13',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["411341444307"]},
   {id:'444550248682',type:'MEETING',title:'Taylor & Jay at Octup',timestamp:'2026-02-17',outcome:'NO_SHOW',ownerId:'29422733',dealIds:[]},
-  {id:'444684194002',type:'MEETING',title:'Reid & Jay at Octup',timestamp:'2026-02-11',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["461107103961"]},
   {id:'444875224277',type:'MEETING',title:'Deliverzen <> Octup - Billing',timestamp:'2026-02-12',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'445903345908',type:'MEETING',title:'Gilbert International × Octup',timestamp:'2026-02-13',outcome:'SCHEDULED',ownerId:'31610755',dealIds:[]},
   {id:'446033244394',type:'MEETING',title:'Placeholder (can adjust if needed) - Octup x Carter Distribution Cont.',timestamp:'2026-02-20',outcome:'NO_SHOW',ownerId:'29896105',dealIds:["388158166241"]},
@@ -1497,7 +1481,6 @@ const MEETINGS = [
   {id:'449010169035',type:'MEETING',title:'GrowthSpoke Billing+ Analytics Sync',timestamp:'2026-02-12',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'449044446418',type:'MEETING',title:'GrowthSpoke Weekly Billing + Analytics Sync',timestamp:'2026-02-18',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'449049902266',type:'MEETING',title:'Jeff Uherek and Salomé Valderrama',timestamp:'2026-02-19',outcome:'COMPLETED',ownerId:'78746883',dealIds:["436176818420"]},
-  {id:'450072253662',type:'MEETING',title:'Deliverzen | Platform walkthrough',timestamp:'2026-02-11',outcome:'',ownerId:'30860443',dealIds:[]},
   {id:'450153192657',type:'MEETING',title:'Octup Kickoff - ShipHype',timestamp:'2026-02-12',outcome:'COMPLETED',ownerId:'29896105',dealIds:["378158106855"]},
   {id:'450076057835',type:'MEETING',title:'Custom goods <> Octup',timestamp:'2026-02-18',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'458725778660',type:'MEETING',title:'Octup <> G&B - Manifest Follow Up',timestamp:'2026-02-19',outcome:'',ownerId:'1285136351',dealIds:[]},
@@ -1509,18 +1492,13 @@ const MEETINGS = [
   {id:'450244684020',type:'MEETING',title:'David & Jay at Octup',timestamp:'2026-02-18',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["477916308702"]},
   {id:'454038522046',type:'MEETING',title:'SCW x Octup - Billing Automation',timestamp:'2026-02-23',outcome:'COMPLETED',ownerId:'29896105',dealIds:["474056691933"]},
   {id:'459260310770',type:'MEETING',title:'InSync <> Octup',timestamp:'2026-02-23',outcome:'COMPLETED',ownerId:'29422733',dealIds:["201637341425"]},
-  {id:'450349072583',type:'MEETING',title:'Octup <> GPA Recurring Project Update',timestamp:'2026-02-11',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'450659677383',type:'MEETING',title:'Meet with Octup',timestamp:'2026-02-13',outcome:'SCHEDULED',ownerId:'29422733',dealIds:[]},
-  {id:'450741741784',type:'MEETING',title:'Canceled: WAF x Octup: Weekly Checkin',timestamp:'2026-02-11',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'451229169870',type:'MEETING',title:'MFALS <> OCTUP',timestamp:'2026-02-19',outcome:'COMPLETED',ownerId:'29422733',dealIds:["416151683321"]},
   {id:'451295286518',type:'MEETING',title:'The fulfillment house - Octup',timestamp:'2026-02-20',outcome:'COMPLETED',ownerId:'29974968',dealIds:[]},
-  {id:'451301171436',type:'MEETING',title:'Fathom summary for Deliverzen | Platform walkthrough',timestamp:'2026-02-11',outcome:'COMPLETED',ownerId:'30860443',dealIds:["326794049777"]},
   {id:'451137928384',type:'MEETING',title:'Nish & Jay at Octup',timestamp:'2026-02-20',outcome:'COMPLETED',ownerId:'29422733',dealIds:["474457379063"]},
   {id:'451200494796',type:'MEETING',title:'Gourmet Solutions <> Octup - ops/financial intelligence',timestamp:'2026-02-20',outcome:'COMPLETED',ownerId:'29422733',dealIds:["477992997065"]},
-  {id:'450890333379',type:'MEETING',title:'Fathom summary for GPA Recurring Project Update',timestamp:'2026-02-11',outcome:'COMPLETED',ownerId:'78746883',dealIds:[]},
   {id:'457954308304',type:'MEETING',title:'Lab 3 LLC <> Octup - Manifest Follow Up',timestamp:'2026-02-18',outcome:'COMPLETED',ownerId:'1285136351',dealIds:["473840252145"]},
   {id:'451113040093',type:'MEETING',title:'TOC <> Octup - Manifest Follow up',timestamp:'2026-03-04',outcome:'',ownerId:'1285136351',dealIds:[]},
-  {id:'451224280300',type:'MEETING',title:'Fathom summary for GPA - Favy x Salo VAS',timestamp:'2026-02-11',outcome:'COMPLETED',ownerId:'78746883',dealIds:[]},
   {id:'452899731704',type:'MEETING',title:'Octup x Boxhero',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:[]},
   {id:'458827640011',type:'MEETING',title:'Precision <> Octup - Intro Meeting (from Manifest)',timestamp:'2026-02-20',outcome:'',ownerId:'1285136351',dealIds:["475675551947"]},
   {id:'451253455060',type:'MEETING',title:'Octup x Logystico - Demo of Octup Billing',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:["466796030149"]},
@@ -1979,7 +1957,8 @@ const MEETINGS = [
   {id:'484564753617',type:'MEETING',title:'Delta - VAS Discussion',timestamp:'2026-04-21',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'484534842592',type:'MEETING',title:'Fathom summary for Logystico',timestamp:'2026-04-10',outcome:'COMPLETED',ownerId:'30860443',dealIds:["466796030149"]},
   {id:'484706321627',type:'MEETING',title:'Fathom summary for MFALS <> Octup - Daily Sync',timestamp:'2026-04-10',outcome:'COMPLETED',ownerId:'1285136351',dealIds:["416151683321"]},
-  {id:'484713995503',type:'MEETING',title:'Tondo: Billing Review',timestamp:'2026-04-13',outcome:'',ownerId:'78746883',dealIds:[]}
+  {id:'484713995503',type:'MEETING',title:'Tondo: Billing Review',timestamp:'2026-04-13',outcome:'',ownerId:'78746883',dealIds:[]},
+  {id:'484798604494',type:'MEETING',title:'Evobox x Octup: Exec Checkin',timestamp:'2026-04-25',outcome:'',ownerId:'78746883',dealIds:[]}
 ];
 
 // ─── CALLS ────────────────────────────────────────────────────────────────────
@@ -1988,136 +1967,6 @@ const MEETINGS = [
 // 13 entries have real contact names (page 1 of HubSpot filtered view);
 // remaining 45 use outcome-based titles; company names pending HubSpot lookup
 const CALLS = [
-  {id:'451091128535',title:'Call with Amber Romando',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451222436051',title:'Call with Appolinaire',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451198915824',title:'Call with Bowen Smith',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451222769884',title:'Call with Stefan Freeman',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451198936309',title:'Call with Dave',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451090631892',title:'Call with Ian Maudsley',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451198955757',title:'Call with Jon Sparks',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451222516966',title:'Call with Zach Romano',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451199920316',title:'Call with Michelle Bailey',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451222535383',title:'Call with Matt Brzica',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451090677987',title:'Call with Pierre Lutfy',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451199045840',title:'Call with Young Park',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451199994102',title:'Call with Jeremy Van puffelen',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451090733248',title:'Call with Jeff Hiott',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451090751701',title:'Call with Doug Malcolm',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451090758843',title:'Call with Saranjit Kaur',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451200796884',title:'Call with Matt Koch',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451199190254',title:'Call with Aashik Prabhakar',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451221642467',title:'Call with Alex De Grossi',timestamp:'2026-02-11',ownerId:'30284350',dealIds:[]},
-  {id:'451224184028',title:'Call with Nicole Figueroa',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451541187819',title:'Call with Hal Altman',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450755418300',title:'Call with Scott Fusco',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451581351148',title:'Call with Hal Altman',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451522945267',title:'Call with Nicole Figueroa',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451216536798',title:'Call with Jeremy Smollen',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572229330',title:'Call with Scott Fusco',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451553714376',title:'Call with Darlene Levko',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572374720',title:'Call with Hal Altman',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451581351160',title:'Call with Dennis Steele',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570341085',title:'Call with Karl Siebrecht',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579555029',title:'Call with Justin Gilkes',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451553714396',title:'Call with Suhas Godkhindi',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451413507276',title:'Call with Karl Siebrecht',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451112970464',title:'Call with Dennis Steele',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451526023386',title:'Call with Elliott Berens',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451417273554',title:'Call with Kody Kolker',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451358040305',title:'Call with Nikki Bahl',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451245842681',title:'Call with Corey Blankenhorn',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451247628476',title:'Call with Lourdes Da Costa-Pereira',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570346173',title:'Call with Mike Gowing',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570349278',title:'Call with Max Levin',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572237539',title:'Call with Mike Albert',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451417276640',title:'Call with Sarah Whitfield',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451526029554',title:'Call with Laurie Ashford',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451247631558',title:'Call with Kevin Six',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451533592793',title:'Call with Cheryl Nataren',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572096188',title:'Call with Rachel Drumheller',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451413513429',title:'Call with James Robinson',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451245846717',title:'Call with Adam Epting',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451527956711',title:'Call with Veronica Galvan',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450755424460',title:'Call with Christy Wyckoff',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451557309655',title:'Call with Jordan Cleveland',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451152627937',title:'Call with Mike Ellis',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451526030542',title:'Call with Adam Epting',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451229502676',title:'Call with Shannon Dubbs',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451525881079',title:'Call with Razak Salifu',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451544767701',title:'Call with Mike Ellis',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572384996',title:'Call with Curt Davis',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451216546010',title:'Call with Jordan Cleveland',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451419196625',title:'Call with Jordan Oppelt',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450768131272',title:'Call with Janet Watchmaker',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451152628925',title:'Call with Nicholas Sparks',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572096241',title:'Call with Josh Gitter',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570350320',title:'Call with Maggie Smith',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451358046407',title:'Call with Jay O\'Neill',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451525882054',title:'Call with TJ Anderson',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570157787',title:'Call with David Tavener',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450890452180',title:'Call with David Miao',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451525882062',title:'Call with Mike Clark',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451417278672',title:'Call with Lisa Waters',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579566292',title:'Call with Norma Solis',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451526033646',title:'Call with Bridger Hyatt',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451526033649',title:'Call with Todd Weiss',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451577777365',title:'Call with Jorge Boza',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451586834649',title:'Call with Andrew Holmes',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451152640202',title:'Call with Judd Rosenberg',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451413526730',title:'Call with Nicholas Sanders',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451112988874',title:'Call with Christopher Gore',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451253183680',title:'Call with James Palmer',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451557318856',title:'Call with Jamaal Williams',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451586839772',title:'Call with Claudia Thomas',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451584944346',title:'Call with Justin Gessert',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451557320934',title:'Call with Clinton Henderson',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451211107545',title:'Call with Jose Gomez',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579575537',title:'Call with Jodi Obregon',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579575540',title:'Call with Meghan Meyer',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450755437797',title:'Call with Steve Rodgers',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451577786613',title:'Call with Noah Corrigan',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570171120',title:'Call with Riyo Liamsithisack',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451533610217',title:'Call with Jamie Sager',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579576560',title:'Call with Boris Bekic',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451229521096',title:'Call with Mannix De Leon',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451584945342',title:'Call with Jacob Gothier',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451138109666',title:'Call with Jack C',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570171129',title:'Call with Scott Richey',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451224208591',title:'Call with Tim Green',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451577787591',title:'Call with Koz Hara',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572398289',title:'Call with Chris Monica',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450890466509',title:'Call with Carlos Chavez',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451557321967',title:'Call with Monique Green',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451535675610',title:'Call with Matthew Meyer',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451579579584',title:'Call with Mike Sisco',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572258037',title:'Call with Logan Jensen',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451584945356',title:'Call with Tony Altman',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451535539411',title:'Call with Anna Johnson',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451247646949',title:'Call with Tim Harmann',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451572259007',title:'Call with Ruqayyah Abdullah',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451529875697',title:'Call with Rosalind Hoenig',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451544788174',title:'Call with Timothy Rose',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451586702537',title:'Call with Matthew Herald',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451527976155',title:'Call with Molly McDonald',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450720015553',title:'Call with Tony Chiu',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451581373668',title:'Call with Ruqayyah Abdullah',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451229523164',title:'Call with Christopher L',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451229523169',title:'Call with Peter Waldinger',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451112997050',title:'Call with Leslie Garcia',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451559319785',title:'Call with George Harasimowicz',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451584948433',title:'Call with Nan Webber',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451586703566',title:'Call with Andrew Segarini',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451559319788',title:'Call with Gregg McClure',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451247649999',title:'Call with Dave Tu',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451525895402',title:'Call with Marc Unrein',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450890467568',title:'Call with Kyle Strudwick',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451570174191',title:'Call with Dottie Weaks',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450881598679',title:'Call with Patrick Murphy',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451541215456',title:'Call with Ryan Harris',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450890468547',title:'Call with Rebecca Nelson',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'450720016591',title:'Call with Amy Barnes',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451546588354',title:'Call with unknown contact',timestamp:'2026-02-11',ownerId:'31610755',dealIds:[]},
-  {id:'451307909368',title:'Call with Aaron Powell',timestamp:'2026-02-11',ownerId:'29422733',dealIds:["406329249978"]},
   {id:'452531138798',title:'Call with Stefan Freeman',timestamp:'2026-02-12',ownerId:'30284350',dealIds:[]},
   {id:'452527684796',title:'Call with Anthony Rolfi',timestamp:'2026-02-12',ownerId:'30284350',dealIds:[]},
   {id:'452531837159',title:'Call with Greg Bralczyk',timestamp:'2026-02-12',ownerId:'30284350',dealIds:[]},
@@ -3634,7 +3483,6 @@ const CALLS = [
 // isInternal: true = only @octup.com people involved (excluded from SDR external view)
 // Chanan last week (Feb 22-28, 2026): 44 total — verified in HubSpot Mar 3 2026
 const EMAILS = [
-  {id:'389131025609',subject:'Re: Octup <> Two Boxes',timestamp:'2025-12-13',ownerId:'29422733',dealIds:[],direction:'EMAIL'},
   {id:'390052270294',subject:'Re: Octup x Delta Fulfillment Intro Recap',timestamp:'2025-12-14',ownerId:'29422733',dealIds:["21754029791"],direction:'EMAIL'},
   {id:'390110824669',subject:'Re: Meet with Octup',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["378594137292"],direction:'EMAIL'},
   {id:'390167392465',subject:'Re: Octup <> 3PL Winner - Accessorial Challenge',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["378594107601"],direction:'EMAIL'},
@@ -10323,7 +10171,22 @@ const EMAILS = [
   {id:'484718935229',subject:'Marketing Plan for 2026',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
   {id:'484793454830',subject:'Re: Yotam|Ava 4/9',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
   {id:'484721305805',subject:'any reason we have 2 deals for shipping butler?',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
-  {id:'484780740846',subject:'Re: Clients Integration - Status',timestamp:'2026-04-12',ownerId:'29140485',dealIds:[],direction:'EMAIL'}
+  {id:'484780740846',subject:'Re: Clients Integration - Status',timestamp:'2026-04-12',ownerId:'29140485',dealIds:[],direction:'EMAIL'},
+  {id:'484787254503',subject:'Re: Meeting Summary - Sales Weekly April 7',timestamp:'2026-04-12',ownerId:'33033873',dealIds:[],direction:'EMAIL'},
+  {id:'484767330544',subject:'Re: Warematch Partnership',timestamp:'2026-04-12',ownerId:'33033873',dealIds:[],direction:'EMAIL'},
+  {id:'484721432818',subject:'Re: Budget/Mesh Card Approvals Needed',timestamp:'2026-04-12',ownerId:'33033873',dealIds:[],direction:'EMAIL'},
+  {id:'484782567649',subject:'q1 31/3 Snapshot',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484794778854',subject:'Re: Octup Demo for Fulfill.com',timestamp:'2026-04-12',ownerId:'33033873',dealIds:[],direction:'EMAIL'},
+  {id:'484787277039',subject:'Accepted: Catch up',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484719046857',subject:'Re: Yotam|Ava 4/9',timestamp:'2026-04-12',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'484782870763',subject:'Re: Yotam|Ava 4/9',timestamp:'2026-04-12',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'484725106937',subject:'Accepted: Sales Update Meeting',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484709838033',subject:'Re: Yotam|Ava 4/9',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484796729563',subject:'Fw: Reporting Alignment for Octup',timestamp:'2026-04-12',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'484725162230',subject:'Re: Reporting Alignment for Octup',timestamp:'2026-04-12',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484797830377',subject:'Re: Octup Demo for Fulfill.com',timestamp:'2026-04-12',ownerId:'33033873',dealIds:[],direction:'EMAIL'},
+  {id:'484832617661',subject:'TAM',timestamp:'2026-04-13',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484833337563',subject:'Re: MFALS - Internal Update & Next Steps',timestamp:'2026-04-13',ownerId:'29140485',dealIds:[],direction:'EMAIL'}
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -10618,8 +10481,9 @@ function renderWoWChart() {
     // Mark the previous (last complete) month as "last" for summary
     if (weeks.length >= 2) weeks[weeks.length - 2].isLast = true;
   } else {
-    // Determine anchor date: the end of the selected period (or today for this/last week)
-    const periodEnd = WEEKS[selectedWeek] ? new Date(WEEKS[selectedWeek].end + 'T12:00:00Z') : new Date();
+    // Determine anchor date: the end of the selected period, capped at today
+    const _rawPeriodEnd = WEEKS[selectedWeek] ? new Date(WEEKS[selectedWeek].end + 'T12:00:00Z') : new Date();
+    const periodEnd = _rawPeriodEnd > new Date() ? new Date() : _rawPeriodEnd;
     const isThisWeek = selectedWeek === 'this';
     const isLastWeek = selectedWeek === 'last';
     const isWeekly   = isThisWeek || isLastWeek;
@@ -10738,10 +10602,18 @@ function renderWoWChart() {
       `<div style="flex:1"></div><div class="wow-stat-item" style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.6">${periodLabel}</div><div style="font-size:10px;color:var(--muted)">${weeks[0].label} → ${weeks[weeks.length-1].label}</div></div>`;
   }
 
+  // Store deals per week for click-through modal
+  window._wowWeekDeals = {};
+  data.forEach(w => {
+    const wDeals = ownerDeals.filter(d => d[5] && d[5] >= w.start && d[5] <= w.end);
+    window._wowWeekDeals[w.label] = wDeals;
+  });
+
   // Render bars
   container.innerHTML = data.map(w => {
     const fillPct = w.total ? (w.total / maxTotal) * 100 : 0;
     const isHighlight = w.isLast || w.isCurrent;
+    const hasDeals = w.total > 0;
     // Segments: reversed so NBM renders at bottom (flex-end stacking)
     const segs = [...GROUPS].reverse().map(g => {
       const c = w.counts[g.id];
@@ -10753,8 +10625,10 @@ function renderWoWChart() {
 
     const arrTop = w.totalArr >= 1000000 ? '$'+(w.totalArr/1000000).toFixed(1).replace(/\.0$/,'')+'M' : w.totalArr >= 1000 ? '$'+Math.round(w.totalArr/1000)+'K' : '';
     const thisWeekBadge = w.isCurrent ? `<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.3px;text-transform:uppercase;line-height:1;margin-bottom:1px">This Week</div>` : '';
-    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}">
-      ${thisWeekBadge}<div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
+    const clickStyle = hasDeals ? 'cursor:pointer;' : '';
+    const clickAttr  = hasDeals ? `onclick="openWoWWeekModal('${w.label}')"` : '';
+    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}" style="${clickStyle}" ${clickAttr}>
+      ${thisWeekBadge}<div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}" style="${hasDeals?'color:var(--accent);text-decoration:underline dotted;text-underline-offset:2px':''}">${w.total || ''}</div>
       ${w.total && arrTop ? `<div style="font-size:9px;font-weight:600;color:var(--muted);letter-spacing:-.2px;line-height:1;margin-bottom:1px">${arrTop}</div>` : '<div style="min-height:11px"></div>'}
       <div class="wow-bar-stack" style="height:${BAR_H}px" data-wow-week="${w.label}" data-wow-total="${w.total}">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
@@ -11616,6 +11490,104 @@ function handleOverlayClick(e) {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSectionPanel(); } });
 
+// ─── HELP DICTIONARY ─────────────────────────────────────────────────────────
+function openHelpDict() {
+  const sections = [
+    {
+      title: '📊 Top Metric Cards',
+      items: [
+        { term: 'ARR Won (Gross)', def: 'Annual Recurring Revenue from deals marked Closed Won. Gross = full contract value before discounts. Timeframe: based on the selected period filter (e.g. "This Week" = close date within this Mon–Sun).', color: '#3fb950' },
+        { term: 'Deals Lost', def: 'Count of deals marked Closed Lost in the selected timeframe, based on close date. ARR = total value of lost deals.', color: '#f85149' },
+        { term: 'New Pipeline', def: 'Deals created (entered the pipeline) in the selected timeframe, based on deal create date. Not necessarily won — these are new opportunities.', color: '#58a6ff' },
+        { term: 'Avg Deal (ACV)', def: 'Average Contract Value = total ARR ÷ number of deals. Shows all-time average when no wins in the selected period.', color: '#c084fc' },
+        { term: 'Open Pipeline', def: 'All currently active deals (not Won or Lost) for the selected owner. Shows total ARR + Weighted ARR. Not time-filtered — always a live snapshot.', color: '#e2b714' },
+      ]
+    },
+    {
+      title: '📅 Timeframe Filters',
+      items: [
+        { term: 'This Week', def: 'Mon–Sun of the current calendar week.' },
+        { term: 'Last Week', def: 'Mon–Sun of the previous calendar week.' },
+        { term: 'Last Month', def: 'Full previous calendar month (e.g. March 1–31).' },
+        { term: 'This Month', def: 'From the 1st of the current month through today.' },
+        { term: 'Last Q', def: 'Previous quarter (Q1 = Jan–Mar, Q2 = Apr–Jun, etc.).' },
+        { term: 'This Q', def: 'Current quarter from its start through today.' },
+        { term: 'This Y', def: 'Jan 1 of current year through today.' },
+        { term: 'All Time', def: 'No date filter — shows all deals ever created.' },
+      ]
+    },
+    {
+      title: '🏗️ Pipeline Stages',
+      items: [
+        { term: 'NBM (New Business Meeting)', def: 'First qualifying meeting stage. Deal is awaiting or just completed its first intro call. Win probability: 10%.', color: '#f59e0b' },
+        { term: 'Discovery', def: 'AE is actively exploring the prospect\'s needs, pain points, and fit. Win probability: 20%.', color: '#38bdf8' },
+        { term: 'Solution Alignment (SA)', def: 'Prospect has seen the solution and is aligned. Deep evaluation in progress. Win probability: 60%.', color: '#818cf8' },
+        { term: 'Trial', def: 'Prospect is actively using the product in a trial/POC. Win probability: 70%.', color: '#fbbf24' },
+        { term: 'Commercial Review (CR)', def: 'Final stage — contract, legal, or pricing review before close. Win probability: 80%.', color: '#06b6d4' },
+        { term: 'Stalled', def: 'Deal has gone dark or is on hold. No meaningful progress. Win probability: 5%.', color: '#4b5563' },
+      ]
+    },
+    {
+      title: '⚖️ Weighted ARR',
+      items: [
+        { term: 'Weighted ARR', def: 'Expected revenue = ARR × stage win probability. Example: $100K deal in SA = $100K × 60% = $60K weighted. Gives a more realistic forecast than raw pipeline.', color: '#e2b714' },
+        { term: 'Stage Win Probabilities', def: 'NBM 10% · Discovery 20% · SA 60% · Trial 70% · CR 80% · Stalled 5%' },
+      ]
+    },
+    {
+      title: '🎯 Deal Desk — Monthly Goal',
+      items: [
+        { term: 'Monthly Revenue Goal', def: 'Team target of $400K ARR closed won per month. Progress bar = Closed ARR ÷ $400K.', color: '#3fb950' },
+        { term: 'Closed ARR — [Month]', def: 'ARR from deals won this calendar month (close date in current month).', color: '#3fb950' },
+        { term: 'Open Pipeline ARR — [Month]', def: 'ARR of active deals created this month that are still open (not won/lost).', color: '#58a6ff' },
+        { term: 'Weighted ARR — [Month]', def: 'Open pipeline ARR × each deal\'s stage probability. Best estimate of revenue likely to close from this month\'s pipeline.', color: '#e2b714' },
+      ]
+    },
+    {
+      title: '🧹 Pipe Hygiene',
+      items: [
+        { term: 'Hot 🔥', def: 'Deals with strong recent signals: meeting or inbound reply within 7 days.' },
+        { term: 'Warm', def: 'Some recent activity but no strong signal. Last contact 8–21 days ago.' },
+        { term: 'Cold', def: 'No meaningful contact in 21+ days. Needs immediate outreach.' },
+        { term: 'Overdue', def: 'Close date has passed and deal is still open. Needs close date update or action.' },
+        { term: 'Stalled', def: 'Deals in Stalled stage OR 45+ days with no action. Recommend: re-engage or move to lost.' },
+        { term: 'Action Needed', def: 'No next step defined or next step is stale. AE needs to log a concrete next action.' },
+        { term: 'Seller Touch', def: 'Last outbound activity from the AE (email sent or meeting held).' },
+        { term: 'Customer Reply', def: 'Last inbound signal from the prospect (reply email or meeting accepted/attended).' },
+      ]
+    },
+    {
+      title: '📣 Marketing Funnel',
+      items: [
+        { term: 'Contacts', def: 'Total people captured from paid ad campaigns (form fills, landing pages).' },
+        { term: 'MQL (Marketing Qualified Lead)', def: 'Contact that has shown enough engagement to pass to sales for review.' },
+        { term: 'SQL (Sales Qualified Lead)', def: 'Contact accepted by sales as a genuine opportunity — also called Opportunity.' },
+        { term: 'Deals', def: 'SQLs that became active pipeline deals in HubSpot.' },
+        { term: 'Won', def: 'Deals from this source that were closed won.' },
+        { term: 'CVR (Conversion Rate)', def: 'Percentage that moved from one stage to the next. E.g. 20% CVR from Contacts→MQL means 1 in 5 contacts became an MQL.' },
+        { term: 'Contact→Deal', def: 'Overall funnel conversion: how many contacts ultimately became pipeline deals.' },
+      ]
+    },
+  ];
+
+  const content = sections.map(s => `
+    <div style="margin-bottom:20px">
+      <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">${s.title}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        ${s.items.map(it => `
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+            <td style="padding:8px 10px 8px 0;font-weight:700;color:${it.color||'var(--accent)'};white-space:nowrap;vertical-align:top;min-width:160px">${it.term}</td>
+            <td style="padding:8px 0;color:var(--muted);line-height:1.5">${it.def}</td>
+          </tr>`).join('')}
+      </table>
+    </div>`).join('');
+
+  openModal('📖 Metrics Dictionary', `
+    <div class="modal-summary-item"><span class="modal-summary-label">Sections</span><span class="modal-summary-val">${sections.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total Terms</span><span class="modal-summary-val">${sections.reduce((s,sec)=>s+sec.items.length,0)}</span></div>
+    <div class="modal-summary-item" style="flex:1"><span class="modal-summary-label" style="color:var(--muted);font-size:10px">Hover over any metric label in the dashboard to see its tooltip</span></div>`, content);
+}
+
 // ─── LAST CONTACT ACTIVITY HELPER ────────────────────────────────────────────
 // Returns the last customer signal: INBOUND email or COMPLETED meeting.
 // Uses the global ACTIVITY_MAP built from all MEETINGS / EMAILS / CALLS.
@@ -11701,6 +11673,39 @@ function openBucketModal(ownerId, bucket, dealIds) {
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${bucket}</span></div>`;
   openModal(title, summary, dealsTable(dealSet));
+}
+
+function openWoWWeekModal(weekLabel) {
+  const dealSet = (window._wowWeekDeals?.[weekLabel] || []).sort((a,b) => b[2]-a[2]);
+  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+  const title = `New Pipeline — ${weekLabel} (${dealSet.length} deal${dealSet.length!==1?'s':''})`;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">New Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Deal</span><span class="modal-summary-val">${dealSet.length ? fmt$(Math.round(totalARR/dealSet.length)) : '—'}</span></div>`;
+  openModal(title, summary, dealsTable(dealSet));
+}
+
+function openHighPriModal() {
+  const WP2 = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
+  const pool = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  let deals = pool.filter(d => (d[12] || '').toUpperCase() === 'HIGH');
+  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+  deals.sort((a,b) => b[2]-a[2]);
+  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+  const wtdARR   = deals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Weighted ARR</span><span class="modal-summary-val">${fmt$(Math.round(wtdARR))}</span></div>`;
+  const body = deals.length
+    ? dealsTable(deals)
+    : `<div style="padding:30px;text-align:center;color:var(--muted)">
+        <div style="font-size:28px;margin-bottom:10px">🔥</div>
+        <div style="font-weight:700;margin-bottom:6px">No deals marked High Priority</div>
+        <div style="font-size:12px">Mark deals as <b>Priority = High</b> in HubSpot,<br>then run the sync to see them here.</div>
+      </div>`;
+  openModal('🔥 High Priority Deals', summary, body);
 }
 
 function openWonModal() {
@@ -12638,15 +12643,66 @@ function generateBrief() {
       + (qualifyToLost.length > 6 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${qualifyToLost.length-6} more candidates</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No qualify-to-lost candidates 🟢</div>`;
 
+  // ── Monthly goal calculations ─────────────────────────────────────────────
+  const MONTHLY_GOAL = 400000;
+  const goalPct = Math.min(100, Math.round(wonMonthArr / MONTHLY_GOAL * 100));
+  const goalRemaining = Math.max(0, MONTHLY_GOAL - wonMonthArr);
+  // Open pipeline with close date in current month (forecast view)
+  const monthEndStr = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth() + 1, 0)).toISOString().slice(0,10);
+  const monthStartStr = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), 1)).toISOString().slice(0,10);
+  let openMonthDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]) && d[6] && d[6] >= monthStartStr && d[6] <= monthEndStr);
+  if (selectedOwner !== 'all') openMonthDeals = openMonthDeals.filter(d => d[4] === selectedOwner);
+  const openMonthARR = openMonthDeals.reduce((s,d)=>s+d[2],0);
+  const WP2 = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
+  const weightedMonthARR = openMonthDeals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+  const goalBarColor = goalPct >= 100 ? '#3fb950' : goalPct >= 70 ? '#fbbf24' : '#f97316';
+  // High Priority open deals — uses hs_priority=HIGH field (d[12]) from HubSpot
+  let highPriDeals = pool.filter(d => d[12] === 'HIGH');
+  if (selectedOwner !== 'all') highPriDeals = highPriDeals.filter(d => d[4] === selectedOwner);
+  const highPriARR = highPriDeals.reduce((s,d)=>s+d[2],0);
+  const highPriWtd = highPriDeals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+  const highPriSynced = DEALS.some(d => d[12] === 'HIGH');
+
   const html = `
     <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">${dateStr}${repLbl}</div>
 
-    <div class="brief-kpi-row">
-      ${kpi('Won This Week', fmtK(wonTWArr), `${wonTW.length} deal${wonTW.length!==1?'s':''}`, '#3fb950')}
-      ${kpi(`Won ${monthLabel}`, fmtK(wonMonthArr), `${wonMonth.length} deals`, '#3fb950')}
-      ${kpi('Won This Year', fmtK(wonQArr), `${wonQ.length} deals`, '#58a6ff')}
-      ${kpi('New Pipeline LW', fmtK(newLWArr), `${newLW.length} deals created`, '#f97316')}
-      ${kpi('CR Pipeline', fmtK(crArr), `${crDeals.length} deals at stake`, '#bc8cff')}
+    <!-- Monthly Goal Card -->
+    <div class="brief-section" style="margin-bottom:10px;background:linear-gradient(135deg,rgba(63,185,80,.08) 0%,var(--bg2) 100%);border:2px solid rgba(63,185,80,.35);border-radius:12px">
+      <!-- Header banner -->
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(63,185,80,.12);border-radius:8px 8px 0 0;margin:-12px -14px 12px;padding:8px 14px;border-bottom:1px solid rgba(63,185,80,.2)">
+        <span style="font-size:14px">🎯</span>
+        <span style="font-size:11px;font-weight:800;color:#3fb950;text-transform:uppercase;letter-spacing:.6px">Monthly Revenue Goal — ${monthLabel}</span>
+        <span style="margin-left:auto;font-size:10px;background:rgba(63,185,80,.15);color:#3fb950;padding:2px 8px;border-radius:8px;font-weight:700">Target: ${fmtK(MONTHLY_GOAL)} ARR</span>
+      </div>
+      <!-- Progress -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;color:var(--muted)">Progress toward ${monthLabel} goal</div>
+        <div style="font-size:22px;font-weight:900;color:${goalBarColor}">${goalPct}% <span style="font-size:11px;font-weight:500;color:var(--muted)">${goalRemaining > 0 ? '· '+fmtK(goalRemaining)+' ARR to go' : '· 🎉 Goal hit!'}</span></div>
+      </div>
+      <div style="height:10px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:14px">
+        <div style="height:100%;width:${goalPct}%;background:${goalBarColor};border-radius:99px;transition:width .4s ease;box-shadow:0 0 8px ${goalBarColor}66"></div>
+      </div>
+      <!-- 3 metrics row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg3);border:1px solid rgba(63,185,80,.3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#3fb950;margin-bottom:3px">✅ Closed ARR — ${monthLabel}</div>
+          <div style="font-size:17px;font-weight:800;color:#3fb950">${fmtK(wonMonthArr)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${wonMonth.length} deal${wonMonth.length!==1?'s':''} won this month</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#58a6ff;margin-bottom:3px">📂 Open Pipeline — Closing ${monthLabel}</div>
+          <div style="font-size:17px;font-weight:800;color:#58a6ff">${fmtK(openMonthARR)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">Wtd ${fmtK(Math.round(weightedMonthARR))} · ${openMonthDeals.length} deals due this month</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid rgba(248,81,73,.3);border-radius:8px;padding:10px 12px;cursor:pointer" onclick="openHighPriModal()">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#f85149;margin-bottom:3px">🔥 High Priority Deals</div>
+          ${highPriSynced
+            ? `<div style="font-size:17px;font-weight:800;color:#f85149">${fmtK(highPriARR)}</div>
+               <div style="font-size:10px;color:var(--muted);margin-top:1px">Wtd ${fmtK(Math.round(highPriWtd))} · ${highPriDeals.length} deals</div>`
+            : `<div style="font-size:14px;font-weight:700;color:var(--muted)">Click to load</div>
+               <div style="font-size:10px;color:var(--muted);margin-top:1px">Live from HubSpot →</div>`}
+        </div>
+      </div>
     </div>
 
     <div class="brief-section" style="margin-bottom:10px;padding:0;overflow:hidden">
@@ -13173,6 +13229,7 @@ function render() {
   renderPulse();
   renderInventory();
   renderHighValue();
+  if (window._mktReady) mktRender();
 }
 
 // ─── SECTION PANEL OVERLAY ────────────────────────────────────────────────────
@@ -14069,27 +14126,90 @@ function exportHygieneCSV() {
 // Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
 // Update these values with real data as campaigns run.
 // Marketing funnel contact sample data — spread across sources/campaigns
+// Real HubSpot contacts who booked a demo (via demo-page meeting link)
+// Synced from HubSpot view 154243004 — 73 total contacts
 const MKT_CONTACTS = [
-  {name:'James Fletcher',    email:'james@precisionlogistics.co', source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-03'},
-  {name:'Sarah Kovacs',      email:'sarah@rapidship3pl.com',      source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-11'},
-  {name:'Michael Torres',    email:'mtorres@swiftfulfill.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-02-18'},
-  {name:'Rachel Kim',        email:'rkim@nexthorizon3pl.com',     source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-24'},
-  {name:'Daniel Ostrovsky',  email:'dan@apexwarehouseops.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-02'},
-  {name:'Priya Nair',        email:'priya@forwardlogix.io',       source:'Google Ads',   campaign:'Competitor',      utm_medium:'cpc',     utm_source:'google',   utm_campaign:'competitor-q1', date:'2026-03-07'},
-  {name:'Brett Sullivan',    email:'brett@cornerstone3pl.com',    source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-03-14'},
-  {name:'Olivia Hecht',      email:'ohecht@syncopex.com',         source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-21'},
-  {name:'Tom Nakamura',      email:'tnakamura@velocity3pl.com',   source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-06'},
-  {name:'Lena Schwartz',     email:'lena@corecargo.net',          source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-19'},
-  {name:'Ahmed Khalil',      email:'ahmed@meridianwms.com',       source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-09'},
-  {name:'Courtney Blaine',   email:'cblaine@harbourlogistics.com',source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-17'},
-  {name:'Felix Grant',       email:'felix@primeshippers.co',      source:'Meta Ads',     campaign:'Lookalike',       utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'lookalike-3pl', date:'2026-02-14'},
-  {name:'Diana Rossi',       email:'diana@globalchain3pl.com',    source:'Meta Ads',     campaign:'Remarketing',     utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'remarketing-q1',date:'2026-03-05'},
+  // Google Ads — Brand Search (sw: a1 brand)
+  {name:'Adam Brown',               email:'abrown@instawork.com',               source:'Google Ads', campaign:'Brand Search',    date:'2026-02-24', last_activity:'2026-02-24 · Demo booked'},
+  {name:'Elor Kahalany',            email:'eli@logystico.com',                  source:'Google Ads', campaign:'Brand Search',    date:'2026-02-09', last_activity:'2026-02-09 · Demo booked'},
+  {name:'Joel Wilson',              email:'jwilson@infopluscommerce.com',        source:'Google Ads', campaign:'Brand Search',    date:'2026-02-17', last_activity:'2026-02-17 · Demo booked'},
+  // Google Ads — Conquest (sw: a1 conquest)
+  {name:'Catherine Weis',           email:'catherine@bestowegifting.com',        source:'Google Ads', campaign:'Conquest',        date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
+  {name:'Ryan Foster',              email:'ryan@biolongevitylabs.com',           source:'Google Ads', campaign:'Conquest',        date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
+  // Google Ads — Performance Max (sw: performance max)
+  {name:'Sayidali Abdille',         email:'sayidaliibraahim@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Anisa Hassan',             email:'anisahassan@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Maranatha Momplaisir',     email:'maranathamomplaisir5@gmail.com',      source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Said Khalif',              email:'saciidmoha2020@icloud.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
+  {name:'Fanuel Kahsay',            email:'fanieltesfalem89@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
+  {name:'Hadgu Hagos',              email:'hadgutesfahiwet9@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-20', last_activity:'2026-03-20 · Demo booked'},
+  {name:'Bernide Saint Phat',       email:'saintphatbernide13@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-03-18', last_activity:'2026-03-18 · Demo booked'},
+  {name:'Ndiogou Seck',             email:'ndiogous@856gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-16', last_activity:'2026-03-16 · Demo booked'},
+  {name:'Abdifatah Ali Ahmed',      email:'kumbiabdifatah18@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-15', last_activity:'2026-03-15 · Demo booked'},
+  {name:'Suleman Sharaf',           email:'sulemansharaf01@gmail.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
+  {name:'Charles Phillips',         email:'phillips53@gmail.com',                source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
+  {name:'Jean Guy Desbiens',        email:'tiguy_111@hotmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-10', last_activity:'2026-03-10 · Demo booked'},
+  {name:'Ahmat Mahamat Senoussi',   email:'ahmatmahamattahirsenossi@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-03-08', last_activity:'2026-03-08 · Demo booked'},
+  {name:'Anureet Kaur Bains',       email:'anureet2626@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-05', last_activity:'2026-03-05 · Demo booked'},
+  {name:'Vedwattie',                email:'babitaramcharran@hotmail.com',         source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
+  {name:'Tamel Foster',             email:'tamelfoster22@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
+  {name:'Alimatou Wague',           email:'alimawague@icloud.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-02-21', last_activity:'2026-02-21 · Demo booked'},
+  {name:'Lavon Vines',              email:'ltvines34@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-16', last_activity:'2026-02-16 · Demo booked'},
+  {name:'Eguiberto Santos',         email:'eguibertosantosrodrigues@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-02-14', last_activity:'2026-02-14 · Demo booked'},
+  {name:'Carlos Grey',              email:'carlosgrey1971@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
+  {name:'Zarina Sikandari',         email:'07sikandari.zarina@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
+  {name:'Appolinaire',              email:'aptouomou@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
+  {name:'Khamis Belkoe',            email:'belkoekhamis9@icloud.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-07', last_activity:'2026-02-07 · Demo booked'},
+  {name:'Desrosiers Ygor',          email:'desrosiersygor@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-06', last_activity:'2026-02-06 · Demo booked'},
+  {name:'Riyad Ahmad Aliy',         email:'riyadahmed633@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-31', last_activity:'2026-01-31 · Demo booked'},
+  {name:'Cedric Malilo',            email:'sedrickmalilo@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-26', last_activity:'2026-01-26 · Demo booked'},
+  // Direct Traffic — website visitors who booked demo
+  {name:'Gavin Green',              email:'gavin@proshipper.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-04-01', last_activity:'2026-04-01 · Demo booked'},
+  {name:'Bryan Costa',              email:'bryan@leftbrainlogistics.com',        source:'Direct',     campaign:'octup.com/pricing',   date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
+  {name:'Ryan Andrews',             email:'ryan.andrews@portless.com',           source:'Direct',     campaign:'octup.com',           date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
+  {name:'Cynncere Powell',          email:'cynncerepowell613@gmail.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-03-12', last_activity:'2026-03-12 · Demo booked'},
+  {name:'Jack',                     email:'jack@scrumbles.co.uk',                source:'Direct',     campaign:'octup.com/features',  date:'2026-03-09', last_activity:'2026-03-09 · Demo booked'},
+  {name:'Devin Greene',             email:'dgreene@parcelplanet.com',            source:'Direct',     campaign:'partner.octup.com',   date:'2026-03-06', last_activity:'2026-03-06 · Demo booked'},
+  {name:'Kunal Singh',              email:'kunalsingh.workz@gmail.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-26', last_activity:'2026-02-26 · Demo booked'},
+  {name:'Tony Carney',              email:'bigtcarney@gmail.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-15', last_activity:'2026-02-15 · Demo booked'},
+  {name:'Matt Bragg',               email:'matt@whitehouse-solutions.co.uk',     source:'Direct',     campaign:'octup.com',           date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
+  {name:'Ricardo Landa',            email:'ricardo.landa@directemailuniverse.us',source:'Direct',     campaign:'octup.com',           date:'2026-01-28', last_activity:'2026-01-28 · Demo booked'},
+  {name:'Aaron Martinez',           email:'aaron@myprolificbrands.com',          source:'Direct',     campaign:'octup.com/pricing',   date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
+  {name:'Andy Kaye',                email:'andy@onncom.com',                     source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
+  {name:'Matt Lee',                 email:'mlee@lmwarehousing.com',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-21', last_activity:'2026-01-21 · Demo booked'},
+  {name:'Andrew Wilson',            email:'andrew@shipscience.com',              source:'Direct',     campaign:'octup.com/partners',  date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
+  {name:'Sam Phillips',             email:'sam@wavefulfil.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-19', last_activity:'2026-01-19 · Demo booked'},
+  {name:'Josep Arpa Mendez',        email:'logistics@windmilloperations.com',    source:'Direct',     campaign:'octup.com',           date:'2026-01-15', last_activity:'2026-04-07 · Demo booked'},
+  {name:'Ciaran O\'Kane',           email:'ciaran@contactmarketing.co.uk',       source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-14', last_activity:'2026-01-14 · Demo booked'},
+  {name:'Mubarak Alosaimi',         email:'mubarak@units.sa',                   source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-09', last_activity:'2026-01-09 · Demo booked'},
+  {name:'Benn Mendelsohn',          email:'benn@boxfortcommerce.com',            source:'Direct',     campaign:'octup.com',           date:'2026-01-06', last_activity:'2026-01-06 · Demo booked'},
+  {name:'Joshua Pavel',             email:'joshua.pavel@lumana.ai',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
+  {name:'Amanda Purchon',           email:'amanda@aaryaship.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
+  {name:'Ginny Kaur',               email:'ginny@amzprep.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-16', last_activity:'2025-12-16 · Demo booked'},
+  {name:'Josep Arpa',               email:'josep@amphoralogistics.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-10', last_activity:'2025-12-10 · Demo booked'},
+  {name:'Juan Pablo',               email:'jps@prova-mexico.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-27', last_activity:'2025-11-27 · Demo booked'},
+  {name:'Mark Hance',               email:'mark.hance@baseleaddata.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-18', last_activity:'2025-11-18 · Demo booked'},
+  {name:'Stephen Wolff',            email:'stephen.wolff@tupack.co.uk',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-17', last_activity:'2025-11-17 · Demo booked'},
+  {name:'Kevin McCandrew',          email:'kevin@relaydistro.com',               source:'Direct',     campaign:'octup.com',           date:'2025-10-15', last_activity:'2025-10-15 · Demo booked'},
+  {name:'Ben Adams',                email:'ben@advoc8.com',                      source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-10-14', last_activity:'2025-10-14 · Demo booked'},
+  {name:'Jake Milner',              email:'jmilner@whiteriverfulfillment.com',   source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-01-12', last_activity:'2026-02-13 · Demo booked'},
+  // Email Marketing
+  {name:'Neil Mahoney',             email:'neil@shippingbutler.com',             source:'Email',      campaign:'HubSpot Email',       date:'2026-03-11', last_activity:'2026-03-11 · Demo booked'},
+  {name:'Steve Burr',               email:'sburr@saia.com',                      source:'Email',      campaign:'HubSpot Email',       date:'2026-02-25', last_activity:'2026-02-25 · Demo booked'},
+  {name:'Dennis Melgert',           email:'dennis@lpxpartners.com',              source:'Email',      campaign:'HubSpot Email',       date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
+  {name:'Arsen Janikyan',           email:'team@opsengine.co',                   source:'Email',      campaign:'HubSpot Email',       date:'2025-10-18', last_activity:'2025-10-18 · Demo booked'},
+  // LinkedIn / Social
+  {name:'Accounting Team',          email:'accounting@advtransolution.com',      source:'LinkedIn',   campaign:'Organic',             date:'2026-02-13', last_activity:'2026-02-13 · Demo booked'},
+  // Organic Search
+  {name:'Viktor Kapustin',          email:'viktor@shopmiko.com',                 source:'Organic',    campaign:'Google Search',       date:'2026-01-25', last_activity:'2026-01-25 · Demo booked'},
+  // Other
+  {name:'Luca Marano',              email:'luca.marano@shiporo.com',             source:'Other',      campaign:'LinkedIn Campaign',   date:'2025-10-23', last_activity:'2025-10-23 · Demo booked'},
 ];
 
 const MKT_DB = {
   all: {
     all: {
-      all: {contacts:33,mql:2,sql:4,deals:4,deals_arr:108000,won:2,won_arr:36000},
+      all: {contacts:35,mql:2,sql:4,deals:4,deals_arr:108000,won:2,won_arr:36000},
       feb: {contacts:14,mql:1,sql:2,deals:2,deals_arr:48000,won:1,won_arr:24000},
       mar: {contacts:19,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
     },
@@ -14098,12 +14218,12 @@ const MKT_DB = {
     _label: 'Google Ads',
     _campaigns: {brand:'Brand Search', industry:'Industry Keywords', competitor:'Competitor'},
     all: {
-      all: {contacts:20,mql:2,sql:3,deals:3,deals_arr:84000,won:2,won_arr:36000},
+      all: {contacts:21,mql:2,sql:3,deals:3,deals_arr:84000,won:2,won_arr:36000},
       feb: {contacts:8, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
       mar: {contacts:12,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
     },
     brand: {
-      all: {contacts:9, mql:2,sql:2,deals:2,deals_arr:60000,won:2,won_arr:36000},
+      all: {contacts:10,mql:2,sql:2,deals:2,deals_arr:60000,won:2,won_arr:36000},
       feb: {contacts:4, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
       mar: {contacts:5, mql:1,sql:1,deals:1,deals_arr:36000,won:1,won_arr:12000},
     },
@@ -14122,12 +14242,12 @@ const MKT_DB = {
     _label: 'LinkedIn Ads',
     _campaigns: {awareness:'Awareness', retargeting:'Retargeting'},
     all: {
-      all: {contacts:9, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      all: {contacts:10,mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
       feb: {contacts:4, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
       mar: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,    won:0,won_arr:0},
     },
     awareness: {
-      all: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      all: {contacts:6, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
       feb: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
       mar: {contacts:3, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
     },
@@ -14158,14 +14278,11 @@ const MKT_DB = {
   },
 };
 
-let _mktMonth = 'all';
-
 const MKT_STAGES = [
-  {key:'contacts', label:'Contacts',    sub:'from paid ads',          color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
-  {key:'mql',      label:'MQL',         sub:'marketing qualified lead',color:'#38bdf8', bg:'rgba(56,189,248,.18)'},
-  {key:'sql',      label:'SQL',         sub:'opportunity / sales qualified', color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
-  {key:'deals',    label:'Deals',       sub:'entered pipeline',        color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
-  {key:'won',      label:'Won',         sub:'closed revenue',          color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
+  {key:'contacts', label:'Demo Requests', sub:'booked a demo · all sources',         color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
+  {key:'deals',    label:'Pipeline',      sub:'open deals from marketing sources',   color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
+  {key:'sql',      label:'SQL',           sub:'advanced to SA / Trial / CR stage',   color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
+  {key:'won',      label:'Won',           sub:'closed revenue',                      color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
 ];
 
 function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
@@ -14193,254 +14310,269 @@ function mktGetCampaignLabel(src, camp) {
   return (MKT_DB[src]?._campaigns?.[camp]) || camp;
 }
 
-// Filter helper: does a deal's createDate fall in the selected mkt month?
+// Filter helper: does a date fall in the current selectedWeek period?
 function mktMatchMonth(dateStr) {
-  if (_mktMonth === 'all') return true;
   if (!dateStr) return false;
-  const month = dateStr.slice(0, 7); // 'YYYY-MM'
-  if (_mktMonth === 'feb') return month === '2026-02';
-  if (_mktMonth === 'mar') return month === '2026-03';
-  return true;
+  if (selectedWeek === 'alltime') return true;
+  return dateInRange(dateStr, selectedWeek);
 }
 
-// Bug A fix: show contacts table modal with UTM fields
-function mktShowContactsModal(src) {
-  const campKey = document.getElementById('mkt-camp-select')?.value || 'all';
-  const contactSrc = MKT_CONTACT_SRC_MAP[src];
-  const campLabel  = mktGetCampaignLabel(src, campKey);
+// MQL/SQL are platform-level metrics — show info modal with correct count
+function mktShowPlatformModal(stage, count, src) {
+  const stageLabel = stage === 'mql' ? 'MQL (Marketing Qualified Lead)' : 'SQL (Sales Qualified Lead / Opportunity)';
+  const srcLabel = src === 'all' ? 'All Sources' : MKT_DB[src]?._label || src;
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || selectedWeek);
+  openModal(`📊 ${stageLabel}`,
+    `<div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${count}</span></div>
+     <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${srcLabel}</span></div>
+     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`,
+    `<div style="padding:20px 0;text-align:center">
+      <div style="font-size:48px;font-weight:900;color:var(--accent);margin-bottom:8px">${count}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">${stageLabel}s</div>
+      <div style="font-size:12px;color:var(--muted);max-width:400px;margin:0 auto;line-height:1.6">
+        ${stage === 'mql'
+          ? 'MQLs are contacts from ad campaigns that reached lead-scoring thresholds in your marketing automation platform (e.g. HubSpot). Individual contact records are tracked in the <b>Contacts</b> row above.'
+          : 'SQLs are leads accepted by sales as real opportunities. They transition from marketing to the sales pipeline. Pipeline deal records are shown in the <b>Deals</b> row below.'}
+      </div>
+    </div>`);
+}
 
-  // Filter contacts
+// Show contacts modal filtered by current time period
+function mktShowContactsModal() {
   let contacts = MKT_CONTACTS;
-  if (contactSrc) contacts = contacts.filter(c => c.source === contactSrc);
-  if (campLabel)  contacts = contacts.filter(c => c.campaign === campLabel);
-  if (_mktMonth !== 'all') {
-    const prefix = _mktMonth === 'feb' ? '2026-02' : _mktMonth === 'mar' ? '2026-03' : null;
-    if (prefix) contacts = contacts.filter(c => c.date.startsWith(prefix));
+  if (selectedWeek !== 'alltime') {
+    contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
   }
 
-  const srcLabel  = contactSrc || 'All Sources';
-  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
-  const title = `👥 Contacts — ${srcLabel}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+  const title = `👥 Demo Requests · ${periodLbl}`;
 
   const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${srcLabel}</span></div>
-    ${campLabel ? `<div class="modal-summary-item"><span class="modal-summary-label">Campaign</span><span class="modal-summary-val">${campLabel}</span></div>` : ''}
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val">${contacts.length}</span></div>`;
 
   const tableHtml = contacts.length === 0
-    ? `<div class="no-data">No contacts match these filters</div>`
+    ? `<div style="padding:24px;text-align:center;color:var(--muted)">No contacts match these filters for the selected period.<br><span style="font-size:11px">Try switching to <b>All Time</b> to see all contacts.</span></div>`
     : `<table class="modal-table"><thead><tr>
-        <th>Name</th><th>Email</th><th>Source</th><th>Campaign</th><th>UTM Medium</th><th>UTM Source</th><th>UTM Campaign</th><th>Date</th>
+        <th>Contact</th><th>Source · Campaign</th><th>Captured</th><th>Last Activity</th>
       </tr></thead><tbody>
-      ${contacts.map(c => `<tr>
-        <td style="font-weight:600;color:var(--text)">${c.name}</td>
-        <td style="color:var(--muted);font-size:11px">${c.email}</td>
-        <td><span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span></td>
-        <td style="font-size:11px;color:var(--muted)">${c.campaign}</td>
-        <td style="font-size:11px;color:var(--accent)">${c.utm_medium}</td>
-        <td style="font-size:11px;color:var(--muted)">${c.utm_source}</td>
-        <td style="font-size:10px;color:var(--muted)">${c.utm_campaign}</td>
-        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
-      </tr>`).join('')}
+      ${contacts.map(c => {
+        const actParts = (c.last_activity || '—').split(' · ');
+        const actDate = actParts[0] || '';
+        const actType = actParts[1] || '—';
+        const actColor = actType.includes('reply') || actType.includes('booked') || actType.includes('completed') || actType.includes('submitted') || actType.includes('message') ? '#4ade80' : actType.includes('sent') ? '#fbbf24' : 'var(--muted)';
+        const actIcon = actType.includes('reply') || actType.includes('message') ? '✉️' : actType.includes('booked') ? '📅' : actType.includes('completed') || actType.includes('submitted') ? '✅' : actType.includes('sent') ? '📤' : '—';
+        return `<tr>
+          <td>
+            <div style="font-weight:700;color:var(--text);font-size:12px">${c.name}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.email}</div>
+          </td>
+          <td>
+            <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.campaign}</div>
+          </td>
+          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
+          <td style="white-space:nowrap">
+            <span style="font-size:10px;color:${actColor};font-weight:600">${actIcon} ${actType}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
+          </td>
+        </tr>`;
+      }).join('')}
       </tbody></table>`;
 
   openModal(title, summary, tableHtml);
 }
 
-// Bug B fix: filter deals by source + month correctly
-function mktShowDealsModal(type, src) {
-  const campKey  = document.getElementById('mkt-camp-select')?.value || 'all';
-  const campLabel = mktGetCampaignLabel(src, campKey);
-  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
-
-  let deals, title, summary;
-
-  // Source matching: 'all' = any Marketing Paid/Organic; specific = match by source key
-  function matchSource(dealSrc) {
-    if (!dealSrc) return false;
-    const s = dealSrc.toLowerCase();
-    if (src === 'all') return s.includes('marketing');
-    if (src === 'google')   return s.includes('google') || (s.includes('marketing') && s.includes('paid'));
-    if (src === 'linkedin') return s.includes('linkedin');
-    if (src === 'meta')     return s.includes('meta') || s.includes('facebook');
-    return s.includes('marketing');
-  }
+// Show deals modal for marketing funnel (pipeline or won)
+function mktShowDealsModal(type) {
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
 
   if (type === 'won') {
-    deals = WON_DEALS.filter(d => matchSource(d[6]));
-    deals = deals.filter(d => mktMatchMonth(d[3])); // d[3] = closeDate for won
-    title = `🏆 Won Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    let deals = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[3]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
-    summary = `
+    const summary = `
       <div class="modal-summary-item"><span class="modal-summary-label">Won</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
     const wonNorm = deals.map(w => [w[0],w[1],w[2],'WON',w[4],w[7]||w[3],w[3],'','','',w[6]]);
-    openModal(title, summary, dealsTable(wonNorm));
-  } else {
-    // Open pipeline deals
-    deals = DEALS.filter(d => matchSource(d[10]));
-    deals = deals.filter(d => mktMatchMonth(d[5])); // d[5] = createDate
-    title = `➕ Pipeline Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    openModal('🏆 Won Deals — Marketing · ' + periodLbl, summary, dealsTable(wonNorm));
+  } else if (type === 'sql') {
+    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]) && SQL_STAGES.has(d[3]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
-    summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
+    const summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">SQL Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
-    openModal(title, summary, dealsTable(deals));
+    openModal('🔥 SQL Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
+  } else {
+    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
+    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    const summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+    openModal('➕ Pipeline Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
   }
-}
-
-function mktUpdateCampaigns() {
-  const src = document.getElementById('mkt-src-select')?.value || 'all';
-  const campSel = document.getElementById('mkt-camp-select');
-  if (!campSel) return;
-  const prevVal = campSel.value;
-  campSel.innerHTML = '<option value="all">All Campaigns</option>';
-  if (src !== 'all' && MKT_DB[src]?._campaigns) {
-    Object.entries(MKT_DB[src]._campaigns).forEach(([k,v]) => {
-      const opt = document.createElement('option');
-      opt.value = k; opt.textContent = v;
-      campSel.appendChild(opt);
-    });
-  }
-  campSel.disabled = src === 'all';
 }
 
 function mktRender() {
-  const src  = document.getElementById('mkt-src-select')?.value  || 'all';
-  mktUpdateCampaigns();
-  const camp = document.getElementById('mkt-camp-select')?.value || 'all';
+  // Contacts: from MKT_CONTACTS filtered by period
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
+  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
 
-  const srcData = MKT_DB[src] || MKT_DB.all;
-  const campData = srcData[camp] || srcData['all'] || {};
-  const d = campData[_mktMonth] || campData['all'] || {contacts:0,mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0};
+  let mktContacts = MKT_CONTACTS;
+  if (selectedWeek !== 'alltime') mktContacts = mktContacts.filter(c => dateInRange(c.date, selectedWeek));
+  const contactCount = selectedWeek === 'alltime' ? 73 : mktContacts.length;
 
+  // Deals/SQL/Won: computed live from DEALS/WON_DEALS
+  let mktDeals = DEALS.filter(d => MKT_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
+  let mktWon   = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
+  if (selectedWeek !== 'alltime') {
+    mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));
+    mktWon   = mktWon.filter(d => dateInRange(d[3], selectedWeek));
+  }
+  const dealsArr = mktDeals.reduce((s,d)=>s+d[2],0);
+  const sqlCount = mktDeals.filter(d => SQL_STAGES.has(d[3])).length;
+  const wonArr   = mktWon.reduce((s,d)=>s+d[2],0);
+
+  const d = {
+    contacts: contactCount,
+    deals: mktDeals.length,
+    deals_arr: dealsArr,
+    sql: sqlCount,
+    won: mktWon.length,
+    won_arr: wonArr
+  };
   const max = d.contacts || 1;
 
-  // Build the CVR rows
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+
+  // ── KPI cards (TOP) ────────────────────────────────────────────────────────
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Contact → Deal CVR</div>
+        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1">${mktCvr(d.deals,d.contacts)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.contacts} contacts · ${d.deals} deals</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#58a6ff;margin-bottom:4px">Pipeline ARR</div>
+        <div style="font-size:22px;font-weight:900;color:#58a6ff;line-height:1">${mktFmtN(d.deals_arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.deals} deals in pipeline</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#4ade80;margin-bottom:4px">Won ARR</div>
+        <div style="font-size:22px;font-weight:900;color:#4ade80;line-height:1">${mktFmtN(d.won_arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.won} deal${d.won!==1?'s':''} closed won</div>
+      </div>
+    </div>`;
+
+  // ── Build CVR rows ─────────────────────────────────────────────────────────
   const cvrRows = MKT_STAGES.map((s, i) => {
-    const val  = d[s.key] || 0;
-    const prev = i === 0 ? val : (d[MKT_STAGES[i-1].key] || 0);
-    const cvr  = mktCvr(val, prev);
+    const val     = d[s.key] || 0;
+    const prev    = i === 0 ? val : (d[MKT_STAGES[i-1].key] || 0);
+    const cvr     = mktCvr(val, prev);
     const ofTotal = i === 0 ? '100%' : mktCvr(val, max);
-    const arr  = s.arrKey ? mktFmtN(d[s.arrKey]) : '';
-    const barW = max > 0 ? Math.max(2, Math.round(val / max * 100)) : 2;
+    const arr     = s.arrKey ? mktFmtN(d[s.arrKey]) : '';
+    const barW    = max > 0 ? Math.max(2, Math.round(val / max * 100)) : 2;
     return { s, val, cvr, ofTotal, arr, barW, prev };
   });
 
-  // Left: funnel table
+  // ── Left: funnel table ─────────────────────────────────────────────────────
   let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px">
     <thead>
-      <tr>
-        <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Stage</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Count</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">CVR</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">% of Total</th>
-        <th style="text-align:right;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">ARR</th>
+      <tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Stage</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Count</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Step CVR</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">% of Top</th>
+        <th style="text-align:right;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">ARR</th>
       </tr>
-    </thead>
-    <tbody>`;
+    </thead><tbody>`;
 
   cvrRows.forEach(({s, val, cvr, ofTotal, arr}, i) => {
-    const cvrBadge = i === 0 ? '<span style="color:var(--muted);font-size:10px">entry</span>'
-      : `<span style="color:${val===0?'var(--muted)':s.color};font-weight:700">${cvr}</span>`;
-    // Build click handler for count cell
-    const mktSrc = document.getElementById('mkt-src-select')?.value || 'all';
-    let countClick = '';
-    let countStyle = `text-align:center;padding:10px;font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}`;
-    if (s.key === 'deals' || s.key === 'won') {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowDealsModal('${s.key}','${mktSrc}')"`;
+    const cvrBadge = i === 0
+      ? `<span style="font-size:10px;color:var(--muted)">entry</span>`
+      : `<span style="font-size:11px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${cvr}</span>`;
+
+    // Click handlers
+    let countClick = '', clickable = '';
+    if ((s.key === 'deals' || s.key === 'won' || s.key === 'sql') && val > 0) {
+      countClick = `onclick="mktShowDealsModal('${s.key}')"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     } else if (s.key === 'contacts' && val > 0) {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
-    } else if (val > 0) {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
+      countClick = `onclick="mktShowContactsModal()"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
+
     tableHtml += `
       <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-        <td style="padding:10px 10px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+        <td style="padding:9px 8px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:7px;height:7px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
             <div>
-              <div style="font-weight:700;color:var(--text)">${s.label}</div>
-              <div style="font-size:10px;color:var(--muted)">${s.sub}</div>
+              <div style="font-weight:700;font-size:12px;color:var(--text)">${s.label}</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:1px">${s.sub}</div>
             </div>
           </div>
         </td>
-        <td style="${countStyle}" ${countClick}>${val}</td>
-        <td style="text-align:center;padding:10px">${cvrBadge}</td>
-        <td style="text-align:center;padding:10px;color:var(--muted);font-size:11px">${ofTotal}</td>
-        <td style="text-align:right;padding:10px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</td>
+        <td style="text-align:center;padding:9px 8px;${clickable}" ${countClick}>
+          <span style="font-size:15px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+        </td>
+        <td style="text-align:center;padding:9px 8px">${cvrBadge}</td>
+        <td style="text-align:center;padding:9px 8px">
+          <span style="font-size:10px;color:var(--muted)">${ofTotal}</span>
+        </td>
+        <td style="text-align:right;padding:9px 8px">
+          <span style="font-size:11px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</span>
+        </td>
       </tr>`;
-    // CVR drop arrow between rows
+
     if (i < cvrRows.length - 1) {
-      const nextVal = d[MKT_STAGES[i+1].key] || 0;
-      const dropCvr = mktCvr(nextVal, val);
+      const nextVal  = d[MKT_STAGES[i+1].key] || 0;
+      const dropCvr  = mktCvr(nextVal, val);
       const dropColor = nextVal === 0 ? '#f87171' : nextVal < val * 0.1 ? '#f97316' : nextVal < val * 0.5 ? '#fbbf24' : '#4ade80';
-      tableHtml += `<tr><td colspan="5" style="padding:0 10px 0 26px">
-        <div style="display:flex;align-items:center;gap:6px;padding:2px 0">
-          <span style="color:var(--border);font-size:12px">↓</span>
+      tableHtml += `<tr><td colspan="5" style="padding:0 8px 0 22px">
+        <div style="display:flex;align-items:center;gap:5px;padding:1px 0">
+          <span style="color:var(--border);font-size:11px">↓</span>
           <span style="font-size:10px;color:${dropColor};font-weight:600">${dropCvr} converted</span>
           <span style="flex:1;height:1px;background:var(--border)"></span>
-        </div>
-      </td></tr>`;
+        </div></td></tr>`;
     }
   });
-
   tableHtml += `</tbody></table>`;
 
-  // Right: horizontal bar chart
-  let chartHtml = `<div style="display:flex;flex-direction:column;gap:10px;padding-top:4px">`;
+  // ── Right: horizontal bar chart ────────────────────────────────────────────
+  let chartHtml = `<div style="display:flex;flex-direction:column;gap:12px">`;
   cvrRows.forEach(({s, val, barW}) => {
     chartHtml += `
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
           <span style="font-size:11px;font-weight:600;color:${s.color}">${s.label}</span>
-          <span style="font-size:13px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+          <span style="font-size:12px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${val}</span>
         </div>
-        <div style="height:28px;background:var(--bg2);border-radius:6px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${s.bg};border-radius:6px;border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:8px">
-            ${val > 0 ? `<span style="font-size:10px;font-weight:700;color:${s.color};opacity:.8">${barW}%</span>` : ''}
+        <div style="height:20px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${s.bg};border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:6px">
+            ${val > 0 ? `<span style="font-size:9px;font-weight:700;color:${s.color};opacity:.9">${barW}%</span>` : ''}
           </div>
         </div>
       </div>`;
   });
+  chartHtml += `</div>`;
 
-  // Bottom metrics
-  chartHtml += `</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Contact→Deal</div>
-      <div style="font-size:18px;font-weight:800;color:var(--text)">${mktCvr(d.deals,d.contacts)}</div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Pipeline ARR</div>
-      <div style="font-size:18px;font-weight:800;color:#58a6ff">${mktFmtN(d.deals_arr)}</div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#4ade80;margin-bottom:4px">Won ARR</div>
-      <div style="font-size:18px;font-weight:800;color:#4ade80">${mktFmtN(d.won_arr)}</div>
-    </div>
-  </div>`;
-
-  document.getElementById('mkt-funnel-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+  document.getElementById('mkt-funnel-content').innerHTML = kpiHtml + `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
       <div>${tableHtml}</div>
       <div>${chartHtml}</div>
     </div>`;
 }
 
-function mktSwMonth(el) {
-  document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  _mktMonth = el.dataset.t;
-  mktRender();
-}
+function mktSwMonth(el) { mktRender(); } // kept for backwards compat
 
 // init
-document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktRender(); });
+window._mktReady = true;
 mktRender();
 </script>
 

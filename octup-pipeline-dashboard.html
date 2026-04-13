@@ -954,20 +954,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <!-- MARKETING FUNNEL -->
   <section id="section-mktfunnel">
     <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
-      <div class="src-funnel-header" style="flex-wrap:wrap;gap:10px">
-        <div class="src-funnel-title">📣 Marketing Funnel — Paid Ads</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto">
-          <select id="mkt-src-select" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
-            <option value="all">All Sources</option>
-            <option value="google">Google Ads</option>
-            <option value="linkedin">LinkedIn Ads</option>
-            <option value="meta">Meta Ads</option>
-          </select>
-          <select id="mkt-camp-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
-            <option value="all">All Campaigns</option>
-          </select>
-          <div style="font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px">📅 Synced to dashboard timeframe</div>
-        </div>
+      <div class="src-funnel-header">
+        <div class="src-funnel-title">📣 Marketing Funnel — Demo Requests</div>
+        <div style="font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px;margin-left:auto">📅 Synced to dashboard timeframe</div>
       </div>
       <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
     </div>
@@ -14147,49 +14136,84 @@ function exportHygieneCSV() {
 // Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
 // Update these values with real data as campaigns run.
 // Marketing funnel contact sample data — spread across sources/campaigns
+// Real HubSpot contacts who booked a demo (via demo-page meeting link)
+// Synced from HubSpot view 154243004 — 73 total contacts
 const MKT_CONTACTS = [
-  // Google Ads — Brand Search (9 total)
-  {name:'James Fletcher',    email:'james@precisionlogistics.co',  source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-03', last_activity:'2026-02-10 · Email reply'},
-  {name:'Sarah Kovacs',      email:'sarah@rapidship3pl.com',       source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-11', last_activity:'2026-02-18 · Meeting booked'},
-  {name:'Rachel Kim',        email:'rkim@nexthorizon3pl.com',      source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-24', last_activity:'2026-03-01 · Email reply'},
-  {name:'Brett Sullivan',    email:'brett@cornerstone3pl.com',     source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-14', last_activity:'2026-03-20 · Demo completed'},
-  {name:'Kevin Park',        email:'kpark@maplefulfillment.com',   source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-18', last_activity:'2026-03-24 · Email sent'},
-  {name:'Nina Goldberg',     email:'nina@eliteshipping.co',        source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-22', last_activity:'2026-03-28 · No reply'},
-  {name:'Derek Walsh',       email:'dwalsh@truelogix.com',         source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-25', last_activity:'2026-04-01 · Email reply'},
-  {name:'Tara Bloom',        email:'tbloom@northstar3pl.com',      source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-02', last_activity:'2026-04-07 · Meeting booked'},
-  {name:'Marcus Leon',       email:'mleon@suncoastlogistics.com',  source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-05', last_activity:'2026-04-09 · Email sent'},
-  {name:'Jordan Hayes',      email:'jhayes@apexfulfillco.com',    source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-13', last_activity:'2026-04-13 · Form submitted'},
-  // Google Ads — Industry Keywords (8 total)
-  {name:'Michael Torres',    email:'mtorres@swiftfulfill.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-18', last_activity:'2026-02-25 · No reply'},
-  {name:'Daniel Ostrovsky',  email:'dan@apexwarehouseops.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-02', last_activity:'2026-03-09 · Email reply'},
-  {name:'Olivia Hecht',      email:'ohecht@syncopex.com',          source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-21', last_activity:'2026-03-28 · No reply'},
-  {name:'Ryan Cheng',        email:'rcheng@pacificops.io',         source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-26', last_activity:'2026-04-01 · Email sent'},
-  {name:'Allison Marsh',     email:'amarsh@terralogistics.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-04-01', last_activity:'2026-04-06 · No reply'},
-  {name:'Jake Petrov',       email:'jpetrov@hub3plgroup.com',      source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-07', last_activity:'2026-02-12 · Email reply'},
-  {name:'Samantha Wu',       email:'swu@bridgewayfulfill.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-28', last_activity:'2026-03-05 · No reply'},
-  {name:'Chris Dunbar',      email:'cdunbar@peakvault3pl.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-15', last_activity:'2026-03-20 · Email sent'},
-  // Google Ads — Competitor (3 total)
-  {name:'Priya Nair',        email:'priya@forwardlogix.io',        source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-03-07', last_activity:'2026-03-12 · No reply'},
-  {name:'Howard Finch',      email:'hfinch@directfulfill.net',     source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-02-13', last_activity:'2026-02-18 · No reply'},
-  {name:'Megan Russo',       email:'mrusso@alphashipping.co',      source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-03-19', last_activity:'2026-03-24 · Email sent'},
-  // LinkedIn Ads — Retargeting (4 total)
-  {name:'Tom Nakamura',      email:'tnakamura@velocity3pl.com',    source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-feb',   date:'2026-02-06', last_activity:'2026-02-13 · LinkedIn reply'},
-  {name:'Lena Schwartz',     email:'lena@corecargo.net',           source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-feb',   date:'2026-02-19', last_activity:'2026-02-26 · Meeting booked'},
-  {name:'Paul Ingram',       email:'pingram@logicwms.com',         source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-mar',   date:'2026-03-03', last_activity:'2026-03-10 · No reply'},
-  {name:'Jasmine Cole',      email:'jcole@trustedfreight.io',      source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-mar',   date:'2026-03-27', last_activity:'2026-04-02 · Email reply'},
-  // LinkedIn Ads — Awareness (5 total)
-  {name:'Ahmed Khalil',      email:'ahmed@meridianwms.com',        source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-09', last_activity:'2026-03-15 · No reply'},
-  {name:'Courtney Blaine',   email:'cblaine@harbourlogistics.com', source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-17', last_activity:'2026-03-22 · No reply'},
-  {name:'Isaac Morgan',      email:'imorgan@redwoodops.com',       source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-02-10', last_activity:'2026-02-16 · Email sent'},
-  {name:'Fatima Al-Sayed',   email:'fatima@cloudlogistics.ae',     source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-02-22', last_activity:'2026-02-28 · No reply'},
-  {name:'Grant Ellison',     email:'gellison@fulfilledge.com',     source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-30', last_activity:'2026-04-05 · Email reply'},
-  {name:'Maya Rodriguez',    email:'maya@nextstep3pl.com',         source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-04-14', last_activity:'2026-04-14 · LinkedIn message'},
-  // Meta Ads — Lookalike (2 total)
-  {name:'Felix Grant',       email:'felix@primeshippers.co',       source:'Meta Ads',     campaign:'Lookalike',        utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'lookalike-3pl',  date:'2026-02-14', last_activity:'2026-02-20 · No reply'},
-  {name:'Vanessa Pierce',    email:'vpierce@rapidstore3pl.com',    source:'Meta Ads',     campaign:'Lookalike',        utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'lookalike-3pl',  date:'2026-03-11', last_activity:'2026-03-17 · No reply'},
-  // Meta Ads — Remarketing (2 total)
-  {name:'Diana Rossi',       email:'diana@globalchain3pl.com',     source:'Meta Ads',     campaign:'Remarketing',      utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'remarketing-q1', date:'2026-03-05', last_activity:'2026-03-11 · Email sent'},
-  {name:'Brendan Holt',      email:'bholt@coastalwms.net',         source:'Meta Ads',     campaign:'Remarketing',      utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'remarketing-q1', date:'2026-02-25', last_activity:'2026-03-02 · No reply'},
+  // Google Ads — Brand Search (sw: a1 brand)
+  {name:'Adam Brown',               email:'abrown@instawork.com',               source:'Google Ads', campaign:'Brand Search',    date:'2026-02-24', last_activity:'2026-02-24 · Demo booked'},
+  {name:'Elor Kahalany',            email:'eli@logystico.com',                  source:'Google Ads', campaign:'Brand Search',    date:'2026-02-09', last_activity:'2026-02-09 · Demo booked'},
+  {name:'Joel Wilson',              email:'jwilson@infopluscommerce.com',        source:'Google Ads', campaign:'Brand Search',    date:'2026-02-17', last_activity:'2026-02-17 · Demo booked'},
+  // Google Ads — Conquest (sw: a1 conquest)
+  {name:'Catherine Weis',           email:'catherine@bestowegifting.com',        source:'Google Ads', campaign:'Conquest',        date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
+  {name:'Ryan Foster',              email:'ryan@biolongevitylabs.com',           source:'Google Ads', campaign:'Conquest',        date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
+  // Google Ads — Performance Max (sw: performance max)
+  {name:'Sayidali Abdille',         email:'sayidaliibraahim@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Anisa Hassan',             email:'anisahassan@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Maranatha Momplaisir',     email:'maranathamomplaisir5@gmail.com',      source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
+  {name:'Said Khalif',              email:'saciidmoha2020@icloud.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
+  {name:'Fanuel Kahsay',            email:'fanieltesfalem89@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
+  {name:'Hadgu Hagos',              email:'hadgutesfahiwet9@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-20', last_activity:'2026-03-20 · Demo booked'},
+  {name:'Bernide Saint Phat',       email:'saintphatbernide13@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-03-18', last_activity:'2026-03-18 · Demo booked'},
+  {name:'Ndiogou Seck',             email:'ndiogous@856gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-16', last_activity:'2026-03-16 · Demo booked'},
+  {name:'Abdifatah Ali Ahmed',      email:'kumbiabdifatah18@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-15', last_activity:'2026-03-15 · Demo booked'},
+  {name:'Suleman Sharaf',           email:'sulemansharaf01@gmail.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
+  {name:'Charles Phillips',         email:'phillips53@gmail.com',                source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
+  {name:'Jean Guy Desbiens',        email:'tiguy_111@hotmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-10', last_activity:'2026-03-10 · Demo booked'},
+  {name:'Ahmat Mahamat Senoussi',   email:'ahmatmahamattahirsenossi@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-03-08', last_activity:'2026-03-08 · Demo booked'},
+  {name:'Anureet Kaur Bains',       email:'anureet2626@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-05', last_activity:'2026-03-05 · Demo booked'},
+  {name:'Vedwattie',                email:'babitaramcharran@hotmail.com',         source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
+  {name:'Tamel Foster',             email:'tamelfoster22@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
+  {name:'Alimatou Wague',           email:'alimawague@icloud.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-02-21', last_activity:'2026-02-21 · Demo booked'},
+  {name:'Lavon Vines',              email:'ltvines34@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-16', last_activity:'2026-02-16 · Demo booked'},
+  {name:'Eguiberto Santos',         email:'eguibertosantosrodrigues@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-02-14', last_activity:'2026-02-14 · Demo booked'},
+  {name:'Carlos Grey',              email:'carlosgrey1971@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
+  {name:'Zarina Sikandari',         email:'07sikandari.zarina@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
+  {name:'Appolinaire',              email:'aptouomou@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
+  {name:'Khamis Belkoe',            email:'belkoekhamis9@icloud.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-07', last_activity:'2026-02-07 · Demo booked'},
+  {name:'Desrosiers Ygor',          email:'desrosiersygor@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-06', last_activity:'2026-02-06 · Demo booked'},
+  {name:'Riyad Ahmad Aliy',         email:'riyadahmed633@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-31', last_activity:'2026-01-31 · Demo booked'},
+  {name:'Cedric Malilo',            email:'sedrickmalilo@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-26', last_activity:'2026-01-26 · Demo booked'},
+  // Direct Traffic — website visitors who booked demo
+  {name:'Gavin Green',              email:'gavin@proshipper.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-04-01', last_activity:'2026-04-01 · Demo booked'},
+  {name:'Bryan Costa',              email:'bryan@leftbrainlogistics.com',        source:'Direct',     campaign:'octup.com/pricing',   date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
+  {name:'Ryan Andrews',             email:'ryan.andrews@portless.com',           source:'Direct',     campaign:'octup.com',           date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
+  {name:'Cynncere Powell',          email:'cynncerepowell613@gmail.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-03-12', last_activity:'2026-03-12 · Demo booked'},
+  {name:'Jack',                     email:'jack@scrumbles.co.uk',                source:'Direct',     campaign:'octup.com/features',  date:'2026-03-09', last_activity:'2026-03-09 · Demo booked'},
+  {name:'Devin Greene',             email:'dgreene@parcelplanet.com',            source:'Direct',     campaign:'partner.octup.com',   date:'2026-03-06', last_activity:'2026-03-06 · Demo booked'},
+  {name:'Kunal Singh',              email:'kunalsingh.workz@gmail.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-26', last_activity:'2026-02-26 · Demo booked'},
+  {name:'Tony Carney',              email:'bigtcarney@gmail.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-15', last_activity:'2026-02-15 · Demo booked'},
+  {name:'Matt Bragg',               email:'matt@whitehouse-solutions.co.uk',     source:'Direct',     campaign:'octup.com',           date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
+  {name:'Ricardo Landa',            email:'ricardo.landa@directemailuniverse.us',source:'Direct',     campaign:'octup.com',           date:'2026-01-28', last_activity:'2026-01-28 · Demo booked'},
+  {name:'Aaron Martinez',           email:'aaron@myprolificbrands.com',          source:'Direct',     campaign:'octup.com/pricing',   date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
+  {name:'Andy Kaye',                email:'andy@onncom.com',                     source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
+  {name:'Matt Lee',                 email:'mlee@lmwarehousing.com',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-21', last_activity:'2026-01-21 · Demo booked'},
+  {name:'Andrew Wilson',            email:'andrew@shipscience.com',              source:'Direct',     campaign:'octup.com/partners',  date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
+  {name:'Sam Phillips',             email:'sam@wavefulfil.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-19', last_activity:'2026-01-19 · Demo booked'},
+  {name:'Josep Arpa Mendez',        email:'logistics@windmilloperations.com',    source:'Direct',     campaign:'octup.com',           date:'2026-01-15', last_activity:'2026-04-07 · Demo booked'},
+  {name:'Ciaran O\'Kane',           email:'ciaran@contactmarketing.co.uk',       source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-14', last_activity:'2026-01-14 · Demo booked'},
+  {name:'Mubarak Alosaimi',         email:'mubarak@units.sa',                   source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-09', last_activity:'2026-01-09 · Demo booked'},
+  {name:'Benn Mendelsohn',          email:'benn@boxfortcommerce.com',            source:'Direct',     campaign:'octup.com',           date:'2026-01-06', last_activity:'2026-01-06 · Demo booked'},
+  {name:'Joshua Pavel',             email:'joshua.pavel@lumana.ai',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
+  {name:'Amanda Purchon',           email:'amanda@aaryaship.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
+  {name:'Ginny Kaur',               email:'ginny@amzprep.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-16', last_activity:'2025-12-16 · Demo booked'},
+  {name:'Josep Arpa',               email:'josep@amphoralogistics.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-10', last_activity:'2025-12-10 · Demo booked'},
+  {name:'Juan Pablo',               email:'jps@prova-mexico.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-27', last_activity:'2025-11-27 · Demo booked'},
+  {name:'Mark Hance',               email:'mark.hance@baseleaddata.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-18', last_activity:'2025-11-18 · Demo booked'},
+  {name:'Stephen Wolff',            email:'stephen.wolff@tupack.co.uk',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-17', last_activity:'2025-11-17 · Demo booked'},
+  {name:'Kevin McCandrew',          email:'kevin@relaydistro.com',               source:'Direct',     campaign:'octup.com',           date:'2025-10-15', last_activity:'2025-10-15 · Demo booked'},
+  {name:'Ben Adams',                email:'ben@advoc8.com',                      source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-10-14', last_activity:'2025-10-14 · Demo booked'},
+  {name:'Jake Milner',              email:'jmilner@whiteriverfulfillment.com',   source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-01-12', last_activity:'2026-02-13 · Demo booked'},
+  // Email Marketing
+  {name:'Neil Mahoney',             email:'neil@shippingbutler.com',             source:'Email',      campaign:'HubSpot Email',       date:'2026-03-11', last_activity:'2026-03-11 · Demo booked'},
+  {name:'Steve Burr',               email:'sburr@saia.com',                      source:'Email',      campaign:'HubSpot Email',       date:'2026-02-25', last_activity:'2026-02-25 · Demo booked'},
+  {name:'Dennis Melgert',           email:'dennis@lpxpartners.com',              source:'Email',      campaign:'HubSpot Email',       date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
+  {name:'Arsen Janikyan',           email:'team@opsengine.co',                   source:'Email',      campaign:'HubSpot Email',       date:'2025-10-18', last_activity:'2025-10-18 · Demo booked'},
+  // LinkedIn / Social
+  {name:'Accounting Team',          email:'accounting@advtransolution.com',      source:'LinkedIn',   campaign:'Organic',             date:'2026-02-13', last_activity:'2026-02-13 · Demo booked'},
+  // Organic Search
+  {name:'Viktor Kapustin',          email:'viktor@shopmiko.com',                 source:'Organic',    campaign:'Google Search',       date:'2026-01-25', last_activity:'2026-01-25 · Demo booked'},
+  // Other
+  {name:'Luca Marano',              email:'luca.marano@shiporo.com',             source:'Other',      campaign:'LinkedIn Campaign',   date:'2025-10-23', last_activity:'2025-10-23 · Demo booked'},
 ];
 
 const MKT_DB = {
@@ -14265,11 +14289,10 @@ const MKT_DB = {
 };
 
 const MKT_STAGES = [
-  {key:'contacts', label:'Contacts',    sub:'from paid ads',          color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
-  {key:'mql',      label:'MQL',         sub:'marketing qualified lead',color:'#38bdf8', bg:'rgba(56,189,248,.18)'},
-  {key:'sql',      label:'SQL',         sub:'opportunity / sales qualified', color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
-  {key:'deals',    label:'Deals',       sub:'entered pipeline',        color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
-  {key:'won',      label:'Won',         sub:'closed revenue',          color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
+  {key:'contacts', label:'Demo Requests', sub:'booked a demo · all sources',         color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
+  {key:'deals',    label:'Pipeline',      sub:'open deals from marketing sources',   color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
+  {key:'sql',      label:'SQL',           sub:'advanced to SA / Trial / CR stage',   color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
+  {key:'won',      label:'Won',           sub:'closed revenue',                      color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
 ];
 
 function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
@@ -14324,28 +14347,17 @@ function mktShowPlatformModal(stage, count, src) {
     </div>`);
 }
 
-// Bug A fix: show contacts table modal with UTM fields
-function mktShowContactsModal(src) {
-  const campKey = document.getElementById('mkt-camp-select')?.value || 'all';
-  const contactSrc = MKT_CONTACT_SRC_MAP[src];
-  const campLabel  = mktGetCampaignLabel(src, campKey);
-
-  // Filter contacts
+// Show contacts modal filtered by current time period
+function mktShowContactsModal() {
   let contacts = MKT_CONTACTS;
-  if (contactSrc) contacts = contacts.filter(c => c.source === contactSrc);
-  if (campLabel)  contacts = contacts.filter(c => c.campaign === campLabel);
-  // Filter by selectedWeek timeframe
   if (selectedWeek !== 'alltime') {
     contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
   }
 
-  const srcLabel  = contactSrc || 'All Sources';
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
-  const title = `👥 Contacts — ${srcLabel}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+  const title = `👥 Demo Requests · ${periodLbl}`;
 
   const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${srcLabel}</span></div>
-    ${campLabel ? `<div class="modal-summary-item"><span class="modal-summary-label">Campaign</span><span class="modal-summary-val">${campLabel}</span></div>` : ''}
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val">${contacts.length}</span></div>`;
 
@@ -14381,87 +14393,68 @@ function mktShowContactsModal(src) {
   openModal(title, summary, tableHtml);
 }
 
-// Bug B fix: filter deals by source + month correctly
-function mktShowDealsModal(type, src) {
-  const campKey  = document.getElementById('mkt-camp-select')?.value || 'all';
-  const campLabel = mktGetCampaignLabel(src, campKey);
+// Show deals modal for marketing funnel (pipeline or won)
+function mktShowDealsModal(type) {
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
-
-  let deals, title, summary;
-
-  // Source matching: 'all' = any Marketing Paid/Organic; specific = match by source key
-  function matchSource(dealSrc) {
-    if (!dealSrc) return false;
-    const s = dealSrc.toLowerCase();
-    if (src === 'all') return s.includes('marketing');
-    if (src === 'google')   return s.includes('google') || (s.includes('marketing') && s.includes('paid'));
-    if (src === 'linkedin') return s.includes('linkedin');
-    if (src === 'meta')     return s.includes('meta') || s.includes('facebook');
-    return s.includes('marketing');
-  }
+  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
 
   if (type === 'won') {
-    deals = WON_DEALS.filter(d => matchSource(d[6]));
-    deals = deals.filter(d => mktMatchMonth(d[3])); // d[3] = closeDate for won
-    title = `🏆 Won Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    let deals = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[3]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
-    summary = `
+    const summary = `
       <div class="modal-summary-item"><span class="modal-summary-label">Won</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
     const wonNorm = deals.map(w => [w[0],w[1],w[2],'WON',w[4],w[7]||w[3],w[3],'','','',w[6]]);
-    openModal(title, summary, dealsTable(wonNorm));
-  } else {
-    // Open pipeline deals
-    deals = DEALS.filter(d => matchSource(d[10]));
-    // Filter by period createDate; if none match fall back to all-time for this source
-    const dealsInPeriod = deals.filter(d => mktMatchMonth(d[5]));
-    const fallback = dealsInPeriod.length === 0 && selectedWeek !== 'alltime';
-    deals = fallback ? deals : dealsInPeriod;
-    const effectivePeriod = fallback ? 'All Time (no deals in selected period)' : periodLbl;
-    title = `➕ Pipeline Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${effectivePeriod}`;
+    openModal('🏆 Won Deals — Marketing · ' + periodLbl, summary, dealsTable(wonNorm));
+  } else if (type === 'sql') {
+    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]) && SQL_STAGES.has(d[3]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
-    summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
-      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${effectivePeriod}</span></div>
-      <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${src === 'all' ? 'All Marketing' : MKT_DB[src]?._label || src}</span></div>`;
-    openModal(title, summary, dealsTable(deals));
+    const summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">SQL Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+    openModal('🔥 SQL Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
+  } else {
+    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
+    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    const summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+    openModal('➕ Pipeline Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
   }
-}
-
-function mktUpdateCampaigns() {
-  const src = document.getElementById('mkt-src-select')?.value || 'all';
-  const campSel = document.getElementById('mkt-camp-select');
-  if (!campSel) return;
-  const prevVal = campSel.value;
-  campSel.innerHTML = '<option value="all">All Campaigns</option>';
-  if (src !== 'all' && MKT_DB[src]?._campaigns) {
-    Object.entries(MKT_DB[src]._campaigns).forEach(([k,v]) => {
-      const opt = document.createElement('option');
-      opt.value = k; opt.textContent = v;
-      campSel.appendChild(opt);
-    });
-  }
-  campSel.disabled = src === 'all';
 }
 
 function mktRender() {
-  const src  = document.getElementById('mkt-src-select')?.value  || 'all';
-  mktUpdateCampaigns();
-  const camp = document.getElementById('mkt-camp-select')?.value || 'all';
+  // Contacts: from MKT_CONTACTS filtered by period
+  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
+  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
 
-  const srcData  = MKT_DB[src] || MKT_DB.all;
-  const campData = srcData[camp] || srcData['all'] || {};
-  // Map selectedWeek to MKT_DB month key
-  const _mktPeriodKey = (() => {
-    if (selectedWeek === 'alltime') return 'all';
-    const w = WEEKS[selectedWeek];
-    if (!w) return 'all';
-    const endMonth = w.end?.slice(0,7);
-    if (endMonth === '2026-02') return 'feb';
-    if (endMonth === '2026-03') return 'mar';
-    return 'all'; // for this week (Apr), last month etc — fall back to all
-  })();
-  const d = campData[_mktPeriodKey] || campData['all'] || {contacts:0,mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0};
+  let mktContacts = MKT_CONTACTS;
+  if (selectedWeek !== 'alltime') mktContacts = mktContacts.filter(c => dateInRange(c.date, selectedWeek));
+  const contactCount = selectedWeek === 'alltime' ? 73 : mktContacts.length;
+
+  // Deals/SQL/Won: computed live from DEALS/WON_DEALS
+  let mktDeals = DEALS.filter(d => MKT_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
+  let mktWon   = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
+  if (selectedWeek !== 'alltime') {
+    mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));
+    mktWon   = mktWon.filter(d => dateInRange(d[3], selectedWeek));
+  }
+  const dealsArr = mktDeals.reduce((s,d)=>s+d[2],0);
+  const sqlCount = mktDeals.filter(d => SQL_STAGES.has(d[3])).length;
+  const wonArr   = mktWon.reduce((s,d)=>s+d[2],0);
+
+  const d = {
+    contacts: contactCount,
+    deals: mktDeals.length,
+    deals_arr: dealsArr,
+    sql: sqlCount,
+    won: mktWon.length,
+    won_arr: wonArr
+  };
   const max = d.contacts || 1;
 
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
@@ -14516,14 +14509,11 @@ function mktRender() {
 
     // Click handlers
     let countClick = '', clickable = '';
-    if ((s.key === 'deals' || s.key === 'won') && val > 0) {
-      countClick = `onclick="mktShowDealsModal('${s.key}','${src}')"`;
+    if ((s.key === 'deals' || s.key === 'won' || s.key === 'sql') && val > 0) {
+      countClick = `onclick="mktShowDealsModal('${s.key}')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     } else if (s.key === 'contacts' && val > 0) {
-      countClick = `onclick="mktShowContactsModal('${src}')"`;
-      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
-    } else if ((s.key === 'mql' || s.key === 'sql') && val > 0) {
-      countClick = `onclick="mktShowPlatformModal('${s.key}',${val},'${src}')"`;
+      countClick = `onclick="mktShowContactsModal()"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
 
@@ -14593,7 +14583,6 @@ function mktSwMonth(el) { mktRender(); } // kept for backwards compat
 
 // init
 window._mktReady = true;
-document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktRender(); });
 mktRender();
 </script>
 
