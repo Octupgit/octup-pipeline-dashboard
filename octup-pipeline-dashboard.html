@@ -646,6 +646,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <div class="header-right">
     <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
       <div class="live-badge">Auto-synced 4×/day</div>
+      <button onclick="openHelpDict()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Metrics Dictionary">📖 Help</button>
     </div>
     <div style="margin-top:6px" id="sync-timestamp"></div>
   </div>
@@ -965,11 +966,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
           <select id="mkt-camp-select" onchange="mktRender()" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;outline:none">
             <option value="all">All Campaigns</option>
           </select>
-          <div style="display:flex;gap:4px">
-            <button class="mkt-tab active" data-t="all" onclick="mktSwMonth(this)">All</button>
-            <button class="mkt-tab" data-t="feb" onclick="mktSwMonth(this)">Feb</button>
-            <button class="mkt-tab" data-t="mar" onclick="mktSwMonth(this)">Mar</button>
-          </div>
+          <div style="font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px">📅 Synced to dashboard timeframe</div>
         </div>
       </div>
       <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
@@ -10493,8 +10490,9 @@ function renderWoWChart() {
     // Mark the previous (last complete) month as "last" for summary
     if (weeks.length >= 2) weeks[weeks.length - 2].isLast = true;
   } else {
-    // Determine anchor date: the end of the selected period (or today for this/last week)
-    const periodEnd = WEEKS[selectedWeek] ? new Date(WEEKS[selectedWeek].end + 'T12:00:00Z') : new Date();
+    // Determine anchor date: the end of the selected period, capped at today
+    const _rawPeriodEnd = WEEKS[selectedWeek] ? new Date(WEEKS[selectedWeek].end + 'T12:00:00Z') : new Date();
+    const periodEnd = _rawPeriodEnd > new Date() ? new Date() : _rawPeriodEnd;
     const isThisWeek = selectedWeek === 'this';
     const isLastWeek = selectedWeek === 'last';
     const isWeekly   = isThisWeek || isLastWeek;
@@ -10613,10 +10611,18 @@ function renderWoWChart() {
       `<div style="flex:1"></div><div class="wow-stat-item" style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;line-height:1.6">${periodLabel}</div><div style="font-size:10px;color:var(--muted)">${weeks[0].label} → ${weeks[weeks.length-1].label}</div></div>`;
   }
 
+  // Store deals per week for click-through modal
+  window._wowWeekDeals = {};
+  data.forEach(w => {
+    const wDeals = ownerDeals.filter(d => d[5] && d[5] >= w.start && d[5] <= w.end);
+    window._wowWeekDeals[w.label] = wDeals;
+  });
+
   // Render bars
   container.innerHTML = data.map(w => {
     const fillPct = w.total ? (w.total / maxTotal) * 100 : 0;
     const isHighlight = w.isLast || w.isCurrent;
+    const hasDeals = w.total > 0;
     // Segments: reversed so NBM renders at bottom (flex-end stacking)
     const segs = [...GROUPS].reverse().map(g => {
       const c = w.counts[g.id];
@@ -10628,8 +10634,10 @@ function renderWoWChart() {
 
     const arrTop = w.totalArr >= 1000000 ? '$'+(w.totalArr/1000000).toFixed(1).replace(/\.0$/,'')+'M' : w.totalArr >= 1000 ? '$'+Math.round(w.totalArr/1000)+'K' : '';
     const thisWeekBadge = w.isCurrent ? `<div style="font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.3px;text-transform:uppercase;line-height:1;margin-bottom:1px">This Week</div>` : '';
-    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}">
-      ${thisWeekBadge}<div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}">${w.total || ''}</div>
+    const clickStyle = hasDeals ? 'cursor:pointer;' : '';
+    const clickAttr  = hasDeals ? `onclick="openWoWWeekModal('${w.label}')"` : '';
+    return `<div class="wow-bar-col${isHighlight ? ' wow-bar-current' : ''}" data-wow-week="${w.label}" data-wow-total="${w.total}" data-wow-arr="${w.totalArr}" style="${clickStyle}" ${clickAttr}>
+      ${thisWeekBadge}<div class="${w.total ? 'wow-bar-count' : 'wow-bar-count-empty'}" style="${hasDeals?'color:var(--accent);text-decoration:underline dotted;text-underline-offset:2px':''}">${w.total || ''}</div>
       ${w.total && arrTop ? `<div style="font-size:9px;font-weight:600;color:var(--muted);letter-spacing:-.2px;line-height:1;margin-bottom:1px">${arrTop}</div>` : '<div style="min-height:11px"></div>'}
       <div class="wow-bar-stack" style="height:${BAR_H}px" data-wow-week="${w.label}" data-wow-total="${w.total}">
         ${fillPct ? `<div class="wow-bar-inner" style="height:${fillPct.toFixed(1)}%">${segs}</div>` : ''}
@@ -11491,6 +11499,104 @@ function handleOverlayClick(e) {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSectionPanel(); } });
 
+// ─── HELP DICTIONARY ─────────────────────────────────────────────────────────
+function openHelpDict() {
+  const sections = [
+    {
+      title: '📊 Top Metric Cards',
+      items: [
+        { term: 'ARR Won (Gross)', def: 'Annual Recurring Revenue from deals marked Closed Won. Gross = full contract value before discounts. Timeframe: based on the selected period filter (e.g. "This Week" = close date within this Mon–Sun).', color: '#3fb950' },
+        { term: 'Deals Lost', def: 'Count of deals marked Closed Lost in the selected timeframe, based on close date. ARR = total value of lost deals.', color: '#f85149' },
+        { term: 'New Pipeline', def: 'Deals created (entered the pipeline) in the selected timeframe, based on deal create date. Not necessarily won — these are new opportunities.', color: '#58a6ff' },
+        { term: 'Avg Deal (ACV)', def: 'Average Contract Value = total ARR ÷ number of deals. Shows all-time average when no wins in the selected period.', color: '#c084fc' },
+        { term: 'Open Pipeline', def: 'All currently active deals (not Won or Lost) for the selected owner. Shows total ARR + Weighted ARR. Not time-filtered — always a live snapshot.', color: '#e2b714' },
+      ]
+    },
+    {
+      title: '📅 Timeframe Filters',
+      items: [
+        { term: 'This Week', def: 'Mon–Sun of the current calendar week.' },
+        { term: 'Last Week', def: 'Mon–Sun of the previous calendar week.' },
+        { term: 'Last Month', def: 'Full previous calendar month (e.g. March 1–31).' },
+        { term: 'This Month', def: 'From the 1st of the current month through today.' },
+        { term: 'Last Q', def: 'Previous quarter (Q1 = Jan–Mar, Q2 = Apr–Jun, etc.).' },
+        { term: 'This Q', def: 'Current quarter from its start through today.' },
+        { term: 'This Y', def: 'Jan 1 of current year through today.' },
+        { term: 'All Time', def: 'No date filter — shows all deals ever created.' },
+      ]
+    },
+    {
+      title: '🏗️ Pipeline Stages',
+      items: [
+        { term: 'NBM (New Business Meeting)', def: 'First qualifying meeting stage. Deal is awaiting or just completed its first intro call. Win probability: 10%.', color: '#f59e0b' },
+        { term: 'Discovery', def: 'AE is actively exploring the prospect\'s needs, pain points, and fit. Win probability: 20%.', color: '#38bdf8' },
+        { term: 'Solution Alignment (SA)', def: 'Prospect has seen the solution and is aligned. Deep evaluation in progress. Win probability: 60%.', color: '#818cf8' },
+        { term: 'Trial', def: 'Prospect is actively using the product in a trial/POC. Win probability: 70%.', color: '#fbbf24' },
+        { term: 'Commercial Review (CR)', def: 'Final stage — contract, legal, or pricing review before close. Win probability: 80%.', color: '#06b6d4' },
+        { term: 'Stalled', def: 'Deal has gone dark or is on hold. No meaningful progress. Win probability: 5%.', color: '#4b5563' },
+      ]
+    },
+    {
+      title: '⚖️ Weighted ARR',
+      items: [
+        { term: 'Weighted ARR', def: 'Expected revenue = ARR × stage win probability. Example: $100K deal in SA = $100K × 60% = $60K weighted. Gives a more realistic forecast than raw pipeline.', color: '#e2b714' },
+        { term: 'Stage Win Probabilities', def: 'NBM 10% · Discovery 20% · SA 60% · Trial 70% · CR 80% · Stalled 5%' },
+      ]
+    },
+    {
+      title: '🎯 Deal Desk — Monthly Goal',
+      items: [
+        { term: 'Monthly Revenue Goal', def: 'Team target of $400K ARR closed won per month. Progress bar = Closed ARR ÷ $400K.', color: '#3fb950' },
+        { term: 'Closed ARR — [Month]', def: 'ARR from deals won this calendar month (close date in current month).', color: '#3fb950' },
+        { term: 'Open Pipeline ARR — [Month]', def: 'ARR of active deals created this month that are still open (not won/lost).', color: '#58a6ff' },
+        { term: 'Weighted ARR — [Month]', def: 'Open pipeline ARR × each deal\'s stage probability. Best estimate of revenue likely to close from this month\'s pipeline.', color: '#e2b714' },
+      ]
+    },
+    {
+      title: '🧹 Pipe Hygiene',
+      items: [
+        { term: 'Hot 🔥', def: 'Deals with strong recent signals: meeting or inbound reply within 7 days.' },
+        { term: 'Warm', def: 'Some recent activity but no strong signal. Last contact 8–21 days ago.' },
+        { term: 'Cold', def: 'No meaningful contact in 21+ days. Needs immediate outreach.' },
+        { term: 'Overdue', def: 'Close date has passed and deal is still open. Needs close date update or action.' },
+        { term: 'Stalled', def: 'Deals in Stalled stage OR 45+ days with no action. Recommend: re-engage or move to lost.' },
+        { term: 'Action Needed', def: 'No next step defined or next step is stale. AE needs to log a concrete next action.' },
+        { term: 'Seller Touch', def: 'Last outbound activity from the AE (email sent or meeting held).' },
+        { term: 'Customer Reply', def: 'Last inbound signal from the prospect (reply email or meeting accepted/attended).' },
+      ]
+    },
+    {
+      title: '📣 Marketing Funnel',
+      items: [
+        { term: 'Contacts', def: 'Total people captured from paid ad campaigns (form fills, landing pages).' },
+        { term: 'MQL (Marketing Qualified Lead)', def: 'Contact that has shown enough engagement to pass to sales for review.' },
+        { term: 'SQL (Sales Qualified Lead)', def: 'Contact accepted by sales as a genuine opportunity — also called Opportunity.' },
+        { term: 'Deals', def: 'SQLs that became active pipeline deals in HubSpot.' },
+        { term: 'Won', def: 'Deals from this source that were closed won.' },
+        { term: 'CVR (Conversion Rate)', def: 'Percentage that moved from one stage to the next. E.g. 20% CVR from Contacts→MQL means 1 in 5 contacts became an MQL.' },
+        { term: 'Contact→Deal', def: 'Overall funnel conversion: how many contacts ultimately became pipeline deals.' },
+      ]
+    },
+  ];
+
+  const content = sections.map(s => `
+    <div style="margin-bottom:20px">
+      <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">${s.title}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        ${s.items.map(it => `
+          <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+            <td style="padding:8px 10px 8px 0;font-weight:700;color:${it.color||'var(--accent)'};white-space:nowrap;vertical-align:top;min-width:160px">${it.term}</td>
+            <td style="padding:8px 0;color:var(--muted);line-height:1.5">${it.def}</td>
+          </tr>`).join('')}
+      </table>
+    </div>`).join('');
+
+  openModal('📖 Metrics Dictionary', `
+    <div class="modal-summary-item"><span class="modal-summary-label">Sections</span><span class="modal-summary-val">${sections.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total Terms</span><span class="modal-summary-val">${sections.reduce((s,sec)=>s+sec.items.length,0)}</span></div>
+    <div class="modal-summary-item" style="flex:1"><span class="modal-summary-label" style="color:var(--muted);font-size:10px">Hover over any metric label in the dashboard to see its tooltip</span></div>`, content);
+}
+
 // ─── LAST CONTACT ACTIVITY HELPER ────────────────────────────────────────────
 // Returns the last customer signal: INBOUND email or COMPLETED meeting.
 // Uses the global ACTIVITY_MAP built from all MEETINGS / EMAILS / CALLS.
@@ -11575,6 +11681,17 @@ function openBucketModal(ownerId, bucket, dealIds) {
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${dealSet.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${bucket}</span></div>`;
+  openModal(title, summary, dealsTable(dealSet));
+}
+
+function openWoWWeekModal(weekLabel) {
+  const dealSet = (window._wowWeekDeals?.[weekLabel] || []).sort((a,b) => b[2]-a[2]);
+  const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
+  const title = `New Pipeline — ${weekLabel} (${dealSet.length} deal${dealSet.length!==1?'s':''})`;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">New Deals</span><span class="modal-summary-val">${dealSet.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Deal</span><span class="modal-summary-val">${dealSet.length ? fmt$(Math.round(totalARR/dealSet.length)) : '—'}</span></div>`;
   openModal(title, summary, dealsTable(dealSet));
 }
 
@@ -12513,15 +12630,57 @@ function generateBrief() {
       + (qualifyToLost.length > 6 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${qualifyToLost.length-6} more candidates</div>` : '')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No qualify-to-lost candidates 🟢</div>`;
 
+  // ── Monthly goal calculations ─────────────────────────────────────────────
+  const MONTHLY_GOAL = 400000;
+  const goalPct = Math.min(100, Math.round(wonMonthArr / MONTHLY_GOAL * 100));
+  const goalRemaining = Math.max(0, MONTHLY_GOAL - wonMonthArr);
+  // Open pipeline with close date in current month (forecast view)
+  const monthEndStr = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth() + 1, 0)).toISOString().slice(0,10);
+  const monthStartStr = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), 1)).toISOString().slice(0,10);
+  let openMonthDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]) && d[6] && d[6] >= monthStartStr && d[6] <= monthEndStr);
+  if (selectedOwner !== 'all') openMonthDeals = openMonthDeals.filter(d => d[4] === selectedOwner);
+  const openMonthARR = openMonthDeals.reduce((s,d)=>s+d[2],0);
+  const WP2 = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
+  const weightedMonthARR = openMonthDeals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+  const goalBarColor = goalPct >= 100 ? '#3fb950' : goalPct >= 70 ? '#fbbf24' : '#f97316';
+
   const html = `
     <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">${dateStr}${repLbl}</div>
 
-    <div class="brief-kpi-row">
-      ${kpi('Won This Week', fmtK(wonTWArr), `${wonTW.length} deal${wonTW.length!==1?'s':''}`, '#3fb950')}
-      ${kpi(`Won ${monthLabel}`, fmtK(wonMonthArr), `${wonMonth.length} deals`, '#3fb950')}
-      ${kpi('Won This Year', fmtK(wonQArr), `${wonQ.length} deals`, '#58a6ff')}
-      ${kpi('New Pipeline LW', fmtK(newLWArr), `${newLW.length} deals created`, '#f97316')}
-      ${kpi('CR Pipeline', fmtK(crArr), `${crDeals.length} deals at stake`, '#bc8cff')}
+    <!-- Monthly Goal Card -->
+    <div class="brief-section" style="margin-bottom:10px;background:linear-gradient(135deg,rgba(63,185,80,.08) 0%,var(--bg2) 100%);border:2px solid rgba(63,185,80,.35);border-radius:12px">
+      <!-- Header banner -->
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(63,185,80,.12);border-radius:8px 8px 0 0;margin:-12px -14px 12px;padding:8px 14px;border-bottom:1px solid rgba(63,185,80,.2)">
+        <span style="font-size:14px">🎯</span>
+        <span style="font-size:11px;font-weight:800;color:#3fb950;text-transform:uppercase;letter-spacing:.6px">Monthly Revenue Goal — ${monthLabel}</span>
+        <span style="margin-left:auto;font-size:10px;background:rgba(63,185,80,.15);color:#3fb950;padding:2px 8px;border-radius:8px;font-weight:700">Target: ${fmtK(MONTHLY_GOAL)} ARR</span>
+      </div>
+      <!-- Progress -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;color:var(--muted)">Progress toward ${monthLabel} goal</div>
+        <div style="font-size:22px;font-weight:900;color:${goalBarColor}">${goalPct}% <span style="font-size:11px;font-weight:500;color:var(--muted)">${goalRemaining > 0 ? '· '+fmtK(goalRemaining)+' ARR to go' : '· 🎉 Goal hit!'}</span></div>
+      </div>
+      <div style="height:10px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:14px">
+        <div style="height:100%;width:${goalPct}%;background:${goalBarColor};border-radius:99px;transition:width .4s ease;box-shadow:0 0 8px ${goalBarColor}66"></div>
+      </div>
+      <!-- 3 metrics row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg3);border:1px solid rgba(63,185,80,.3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#3fb950;margin-bottom:3px">✅ Closed ARR — ${monthLabel}</div>
+          <div style="font-size:17px;font-weight:800;color:#3fb950">${fmtK(wonMonthArr)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${wonMonth.length} deal${wonMonth.length!==1?'s':''} won this month</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#58a6ff;margin-bottom:3px">📂 Open Pipeline — Closing ${monthLabel}</div>
+          <div style="font-size:17px;font-weight:800;color:#58a6ff">${fmtK(openMonthARR)}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">Wtd ${fmtK(Math.round(weightedMonthARR))} · ${openMonthDeals.length} deals due this month</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid rgba(226,183,20,.3);border-radius:8px;padding:10px 12px">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#e2b714;margin-bottom:3px">⚖️ Weighted ARR — ${monthLabel}</div>
+          <div style="font-size:17px;font-weight:800;color:#e2b714">${fmtK(Math.round(weightedMonthARR))}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">ARR × stage win probability</div>
+        </div>
+      </div>
     </div>
 
     <div class="brief-section" style="margin-bottom:10px;padding:0;overflow:hidden">
@@ -13048,6 +13207,7 @@ function render() {
   renderPulse();
   renderInventory();
   renderHighValue();
+  if (window._mktReady) mktRender();
 }
 
 // ─── SECTION PANEL OVERLAY ────────────────────────────────────────────────────
@@ -13945,26 +14105,54 @@ function exportHygieneCSV() {
 // Update these values with real data as campaigns run.
 // Marketing funnel contact sample data — spread across sources/campaigns
 const MKT_CONTACTS = [
-  {name:'James Fletcher',    email:'james@precisionlogistics.co', source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-03'},
-  {name:'Sarah Kovacs',      email:'sarah@rapidship3pl.com',      source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-11'},
-  {name:'Michael Torres',    email:'mtorres@swiftfulfill.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-02-18'},
-  {name:'Rachel Kim',        email:'rkim@nexthorizon3pl.com',     source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-02-24'},
-  {name:'Daniel Ostrovsky',  email:'dan@apexwarehouseops.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-02'},
-  {name:'Priya Nair',        email:'priya@forwardlogix.io',       source:'Google Ads',   campaign:'Competitor',      utm_medium:'cpc',     utm_source:'google',   utm_campaign:'competitor-q1', date:'2026-03-07'},
-  {name:'Brett Sullivan',    email:'brett@cornerstone3pl.com',    source:'Google Ads',   campaign:'Brand Search',    utm_medium:'cpc',     utm_source:'google',   utm_campaign:'brand-q1',      date:'2026-03-14'},
-  {name:'Olivia Hecht',      email:'ohecht@syncopex.com',         source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',    utm_source:'google',   utm_campaign:'industry-3pl',  date:'2026-03-21'},
-  {name:'Tom Nakamura',      email:'tnakamura@velocity3pl.com',   source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-06'},
-  {name:'Lena Schwartz',     email:'lena@corecargo.net',          source:'LinkedIn Ads', campaign:'Retargeting',     utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'retarget-feb',  date:'2026-02-19'},
-  {name:'Ahmed Khalil',      email:'ahmed@meridianwms.com',       source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-09'},
-  {name:'Courtney Blaine',   email:'cblaine@harbourlogistics.com',source:'LinkedIn Ads', campaign:'Awareness',       utm_medium:'paidsocial',utm_source:'linkedin',utm_campaign:'awareness-q1',  date:'2026-03-17'},
-  {name:'Felix Grant',       email:'felix@primeshippers.co',      source:'Meta Ads',     campaign:'Lookalike',       utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'lookalike-3pl', date:'2026-02-14'},
-  {name:'Diana Rossi',       email:'diana@globalchain3pl.com',    source:'Meta Ads',     campaign:'Remarketing',     utm_medium:'paidsocial',utm_source:'meta',    utm_campaign:'remarketing-q1',date:'2026-03-05'},
+  // Google Ads — Brand Search (9 total)
+  {name:'James Fletcher',    email:'james@precisionlogistics.co',  source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-03', last_activity:'2026-02-10 · Email reply'},
+  {name:'Sarah Kovacs',      email:'sarah@rapidship3pl.com',       source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-11', last_activity:'2026-02-18 · Meeting booked'},
+  {name:'Rachel Kim',        email:'rkim@nexthorizon3pl.com',      source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-02-24', last_activity:'2026-03-01 · Email reply'},
+  {name:'Brett Sullivan',    email:'brett@cornerstone3pl.com',     source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-14', last_activity:'2026-03-20 · Demo completed'},
+  {name:'Kevin Park',        email:'kpark@maplefulfillment.com',   source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-18', last_activity:'2026-03-24 · Email sent'},
+  {name:'Nina Goldberg',     email:'nina@eliteshipping.co',        source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-22', last_activity:'2026-03-28 · No reply'},
+  {name:'Derek Walsh',       email:'dwalsh@truelogix.com',         source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-03-25', last_activity:'2026-04-01 · Email reply'},
+  {name:'Tara Bloom',        email:'tbloom@northstar3pl.com',      source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-02', last_activity:'2026-04-07 · Meeting booked'},
+  {name:'Marcus Leon',       email:'mleon@suncoastlogistics.com',  source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-05', last_activity:'2026-04-09 · Email sent'},
+  {name:'Jordan Hayes',      email:'jhayes@apexfulfillco.com',    source:'Google Ads',   campaign:'Brand Search',     utm_medium:'cpc',      utm_source:'google',   utm_campaign:'brand-q1',       date:'2026-04-13', last_activity:'2026-04-13 · Form submitted'},
+  // Google Ads — Industry Keywords (8 total)
+  {name:'Michael Torres',    email:'mtorres@swiftfulfill.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-18', last_activity:'2026-02-25 · No reply'},
+  {name:'Daniel Ostrovsky',  email:'dan@apexwarehouseops.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-02', last_activity:'2026-03-09 · Email reply'},
+  {name:'Olivia Hecht',      email:'ohecht@syncopex.com',          source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-21', last_activity:'2026-03-28 · No reply'},
+  {name:'Ryan Cheng',        email:'rcheng@pacificops.io',         source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-26', last_activity:'2026-04-01 · Email sent'},
+  {name:'Allison Marsh',     email:'amarsh@terralogistics.com',    source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-04-01', last_activity:'2026-04-06 · No reply'},
+  {name:'Jake Petrov',       email:'jpetrov@hub3plgroup.com',      source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-07', last_activity:'2026-02-12 · Email reply'},
+  {name:'Samantha Wu',       email:'swu@bridgewayfulfill.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-02-28', last_activity:'2026-03-05 · No reply'},
+  {name:'Chris Dunbar',      email:'cdunbar@peakvault3pl.com',     source:'Google Ads',   campaign:'Industry Keywords',utm_medium:'cpc',      utm_source:'google',   utm_campaign:'industry-3pl',   date:'2026-03-15', last_activity:'2026-03-20 · Email sent'},
+  // Google Ads — Competitor (3 total)
+  {name:'Priya Nair',        email:'priya@forwardlogix.io',        source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-03-07', last_activity:'2026-03-12 · No reply'},
+  {name:'Howard Finch',      email:'hfinch@directfulfill.net',     source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-02-13', last_activity:'2026-02-18 · No reply'},
+  {name:'Megan Russo',       email:'mrusso@alphashipping.co',      source:'Google Ads',   campaign:'Competitor',       utm_medium:'cpc',      utm_source:'google',   utm_campaign:'competitor-q1',  date:'2026-03-19', last_activity:'2026-03-24 · Email sent'},
+  // LinkedIn Ads — Retargeting (4 total)
+  {name:'Tom Nakamura',      email:'tnakamura@velocity3pl.com',    source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-feb',   date:'2026-02-06', last_activity:'2026-02-13 · LinkedIn reply'},
+  {name:'Lena Schwartz',     email:'lena@corecargo.net',           source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-feb',   date:'2026-02-19', last_activity:'2026-02-26 · Meeting booked'},
+  {name:'Paul Ingram',       email:'pingram@logicwms.com',         source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-mar',   date:'2026-03-03', last_activity:'2026-03-10 · No reply'},
+  {name:'Jasmine Cole',      email:'jcole@trustedfreight.io',      source:'LinkedIn Ads', campaign:'Retargeting',      utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'retarget-mar',   date:'2026-03-27', last_activity:'2026-04-02 · Email reply'},
+  // LinkedIn Ads — Awareness (5 total)
+  {name:'Ahmed Khalil',      email:'ahmed@meridianwms.com',        source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-09', last_activity:'2026-03-15 · No reply'},
+  {name:'Courtney Blaine',   email:'cblaine@harbourlogistics.com', source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-17', last_activity:'2026-03-22 · No reply'},
+  {name:'Isaac Morgan',      email:'imorgan@redwoodops.com',       source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-02-10', last_activity:'2026-02-16 · Email sent'},
+  {name:'Fatima Al-Sayed',   email:'fatima@cloudlogistics.ae',     source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-02-22', last_activity:'2026-02-28 · No reply'},
+  {name:'Grant Ellison',     email:'gellison@fulfilledge.com',     source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-03-30', last_activity:'2026-04-05 · Email reply'},
+  {name:'Maya Rodriguez',    email:'maya@nextstep3pl.com',         source:'LinkedIn Ads', campaign:'Awareness',        utm_medium:'paidsocial',utm_source:'linkedin', utm_campaign:'awareness-q1',   date:'2026-04-14', last_activity:'2026-04-14 · LinkedIn message'},
+  // Meta Ads — Lookalike (2 total)
+  {name:'Felix Grant',       email:'felix@primeshippers.co',       source:'Meta Ads',     campaign:'Lookalike',        utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'lookalike-3pl',  date:'2026-02-14', last_activity:'2026-02-20 · No reply'},
+  {name:'Vanessa Pierce',    email:'vpierce@rapidstore3pl.com',    source:'Meta Ads',     campaign:'Lookalike',        utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'lookalike-3pl',  date:'2026-03-11', last_activity:'2026-03-17 · No reply'},
+  // Meta Ads — Remarketing (2 total)
+  {name:'Diana Rossi',       email:'diana@globalchain3pl.com',     source:'Meta Ads',     campaign:'Remarketing',      utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'remarketing-q1', date:'2026-03-05', last_activity:'2026-03-11 · Email sent'},
+  {name:'Brendan Holt',      email:'bholt@coastalwms.net',         source:'Meta Ads',     campaign:'Remarketing',      utm_medium:'paidsocial',utm_source:'meta',     utm_campaign:'remarketing-q1', date:'2026-02-25', last_activity:'2026-03-02 · No reply'},
 ];
 
 const MKT_DB = {
   all: {
     all: {
-      all: {contacts:33,mql:2,sql:4,deals:4,deals_arr:108000,won:2,won_arr:36000},
+      all: {contacts:35,mql:2,sql:4,deals:4,deals_arr:108000,won:2,won_arr:36000},
       feb: {contacts:14,mql:1,sql:2,deals:2,deals_arr:48000,won:1,won_arr:24000},
       mar: {contacts:19,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
     },
@@ -13973,12 +14161,12 @@ const MKT_DB = {
     _label: 'Google Ads',
     _campaigns: {brand:'Brand Search', industry:'Industry Keywords', competitor:'Competitor'},
     all: {
-      all: {contacts:20,mql:2,sql:3,deals:3,deals_arr:84000,won:2,won_arr:36000},
+      all: {contacts:21,mql:2,sql:3,deals:3,deals_arr:84000,won:2,won_arr:36000},
       feb: {contacts:8, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
       mar: {contacts:12,mql:1,sql:2,deals:2,deals_arr:60000,won:1,won_arr:12000},
     },
     brand: {
-      all: {contacts:9, mql:2,sql:2,deals:2,deals_arr:60000,won:2,won_arr:36000},
+      all: {contacts:10,mql:2,sql:2,deals:2,deals_arr:60000,won:2,won_arr:36000},
       feb: {contacts:4, mql:1,sql:1,deals:1,deals_arr:24000,won:1,won_arr:24000},
       mar: {contacts:5, mql:1,sql:1,deals:1,deals_arr:36000,won:1,won_arr:12000},
     },
@@ -13997,12 +14185,12 @@ const MKT_DB = {
     _label: 'LinkedIn Ads',
     _campaigns: {awareness:'Awareness', retargeting:'Retargeting'},
     all: {
-      all: {contacts:9, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
+      all: {contacts:10,mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
       feb: {contacts:4, mql:0,sql:1,deals:1,deals_arr:24000,won:0,won_arr:0},
       mar: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,    won:0,won_arr:0},
     },
     awareness: {
-      all: {contacts:5, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
+      all: {contacts:6, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
       feb: {contacts:2, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
       mar: {contacts:3, mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0},
     },
@@ -14032,8 +14220,6 @@ const MKT_DB = {
     },
   },
 };
-
-let _mktMonth = 'all';
 
 const MKT_STAGES = [
   {key:'contacts', label:'Contacts',    sub:'from paid ads',          color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
@@ -14068,14 +14254,31 @@ function mktGetCampaignLabel(src, camp) {
   return (MKT_DB[src]?._campaigns?.[camp]) || camp;
 }
 
-// Filter helper: does a deal's createDate fall in the selected mkt month?
+// Filter helper: does a date fall in the current selectedWeek period?
 function mktMatchMonth(dateStr) {
-  if (_mktMonth === 'all') return true;
   if (!dateStr) return false;
-  const month = dateStr.slice(0, 7); // 'YYYY-MM'
-  if (_mktMonth === 'feb') return month === '2026-02';
-  if (_mktMonth === 'mar') return month === '2026-03';
-  return true;
+  if (selectedWeek === 'alltime') return true;
+  return dateInRange(dateStr, selectedWeek);
+}
+
+// MQL/SQL are platform-level metrics — show info modal with correct count
+function mktShowPlatformModal(stage, count, src) {
+  const stageLabel = stage === 'mql' ? 'MQL (Marketing Qualified Lead)' : 'SQL (Sales Qualified Lead / Opportunity)';
+  const srcLabel = src === 'all' ? 'All Sources' : MKT_DB[src]?._label || src;
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || selectedWeek);
+  openModal(`📊 ${stageLabel}`,
+    `<div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${count}</span></div>
+     <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${srcLabel}</span></div>
+     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`,
+    `<div style="padding:20px 0;text-align:center">
+      <div style="font-size:48px;font-weight:900;color:var(--accent);margin-bottom:8px">${count}</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">${stageLabel}s</div>
+      <div style="font-size:12px;color:var(--muted);max-width:400px;margin:0 auto;line-height:1.6">
+        ${stage === 'mql'
+          ? 'MQLs are contacts from ad campaigns that reached lead-scoring thresholds in your marketing automation platform (e.g. HubSpot). Individual contact records are tracked in the <b>Contacts</b> row above.'
+          : 'SQLs are leads accepted by sales as real opportunities. They transition from marketing to the sales pipeline. Pipeline deal records are shown in the <b>Deals</b> row below.'}
+      </div>
+    </div>`);
 }
 
 // Bug A fix: show contacts table modal with UTM fields
@@ -14088,13 +14291,13 @@ function mktShowContactsModal(src) {
   let contacts = MKT_CONTACTS;
   if (contactSrc) contacts = contacts.filter(c => c.source === contactSrc);
   if (campLabel)  contacts = contacts.filter(c => c.campaign === campLabel);
-  if (_mktMonth !== 'all') {
-    const prefix = _mktMonth === 'feb' ? '2026-02' : _mktMonth === 'mar' ? '2026-03' : null;
-    if (prefix) contacts = contacts.filter(c => c.date.startsWith(prefix));
+  // Filter by selectedWeek timeframe
+  if (selectedWeek !== 'alltime') {
+    contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
   }
 
   const srcLabel  = contactSrc || 'All Sources';
-  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
   const title = `👥 Contacts — ${srcLabel}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
 
   const summary = `
@@ -14104,20 +14307,32 @@ function mktShowContactsModal(src) {
     <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val">${contacts.length}</span></div>`;
 
   const tableHtml = contacts.length === 0
-    ? `<div class="no-data">No contacts match these filters</div>`
+    ? `<div style="padding:24px;text-align:center;color:var(--muted)">No contacts match these filters for the selected period.<br><span style="font-size:11px">Try switching to <b>All Time</b> to see all contacts.</span></div>`
     : `<table class="modal-table"><thead><tr>
-        <th>Name</th><th>Email</th><th>Source</th><th>Campaign</th><th>UTM Medium</th><th>UTM Source</th><th>UTM Campaign</th><th>Date</th>
+        <th>Contact</th><th>Source · Campaign</th><th>Captured</th><th>Last Activity</th>
       </tr></thead><tbody>
-      ${contacts.map(c => `<tr>
-        <td style="font-weight:600;color:var(--text)">${c.name}</td>
-        <td style="color:var(--muted);font-size:11px">${c.email}</td>
-        <td><span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span></td>
-        <td style="font-size:11px;color:var(--muted)">${c.campaign}</td>
-        <td style="font-size:11px;color:var(--accent)">${c.utm_medium}</td>
-        <td style="font-size:11px;color:var(--muted)">${c.utm_source}</td>
-        <td style="font-size:10px;color:var(--muted)">${c.utm_campaign}</td>
-        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
-      </tr>`).join('')}
+      ${contacts.map(c => {
+        const actParts = (c.last_activity || '—').split(' · ');
+        const actDate = actParts[0] || '';
+        const actType = actParts[1] || '—';
+        const actColor = actType.includes('reply') || actType.includes('booked') || actType.includes('completed') || actType.includes('submitted') || actType.includes('message') ? '#4ade80' : actType.includes('sent') ? '#fbbf24' : 'var(--muted)';
+        const actIcon = actType.includes('reply') || actType.includes('message') ? '✉️' : actType.includes('booked') ? '📅' : actType.includes('completed') || actType.includes('submitted') ? '✅' : actType.includes('sent') ? '📤' : '—';
+        return `<tr>
+          <td>
+            <div style="font-weight:700;color:var(--text);font-size:12px">${c.name}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.email}</div>
+          </td>
+          <td>
+            <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.campaign}</div>
+          </td>
+          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
+          <td style="white-space:nowrap">
+            <span style="font-size:10px;color:${actColor};font-weight:600">${actIcon} ${actType}</span>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
+          </td>
+        </tr>`;
+      }).join('')}
       </tbody></table>`;
 
   openModal(title, summary, tableHtml);
@@ -14127,7 +14342,7 @@ function mktShowContactsModal(src) {
 function mktShowDealsModal(type, src) {
   const campKey  = document.getElementById('mkt-camp-select')?.value || 'all';
   const campLabel = mktGetCampaignLabel(src, campKey);
-  const periodLbl = _mktMonth === 'all' ? 'All Time' : _mktMonth === 'feb' ? 'Feb 2026' : 'Mar 2026';
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
 
   let deals, title, summary;
 
@@ -14155,12 +14370,17 @@ function mktShowDealsModal(type, src) {
   } else {
     // Open pipeline deals
     deals = DEALS.filter(d => matchSource(d[10]));
-    deals = deals.filter(d => mktMatchMonth(d[5])); // d[5] = createDate
-    title = `➕ Pipeline Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${periodLbl}`;
+    // Filter by period createDate; if none match fall back to all-time for this source
+    const dealsInPeriod = deals.filter(d => mktMatchMonth(d[5]));
+    const fallback = dealsInPeriod.length === 0 && selectedWeek !== 'alltime';
+    deals = fallback ? deals : dealsInPeriod;
+    const effectivePeriod = fallback ? 'All Time (no deals in selected period)' : periodLbl;
+    title = `➕ Pipeline Deals — Marketing${src !== 'all' ? ' · ' + (MKT_DB[src]?._label || src) : ''}${campLabel ? ' · ' + campLabel : ''} · ${effectivePeriod}`;
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
     summary = `
       <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
-      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
+      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${effectivePeriod}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val">${src === 'all' ? 'All Marketing' : MKT_DB[src]?._label || src}</span></div>`;
     openModal(title, summary, dealsTable(deals));
   }
 }
@@ -14186,135 +14406,150 @@ function mktRender() {
   mktUpdateCampaigns();
   const camp = document.getElementById('mkt-camp-select')?.value || 'all';
 
-  const srcData = MKT_DB[src] || MKT_DB.all;
+  const srcData  = MKT_DB[src] || MKT_DB.all;
   const campData = srcData[camp] || srcData['all'] || {};
-  const d = campData[_mktMonth] || campData['all'] || {contacts:0,mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0};
-
+  // Map selectedWeek to MKT_DB month key
+  const _mktPeriodKey = (() => {
+    if (selectedWeek === 'alltime') return 'all';
+    const w = WEEKS[selectedWeek];
+    if (!w) return 'all';
+    const endMonth = w.end?.slice(0,7);
+    if (endMonth === '2026-02') return 'feb';
+    if (endMonth === '2026-03') return 'mar';
+    return 'all'; // for this week (Apr), last month etc — fall back to all
+  })();
+  const d = campData[_mktPeriodKey] || campData['all'] || {contacts:0,mql:0,sql:0,deals:0,deals_arr:0,won:0,won_arr:0};
   const max = d.contacts || 1;
 
-  // Build the CVR rows
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+
+  // ── KPI cards (TOP) ────────────────────────────────────────────────────────
+  const kpiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Contact → Deal CVR</div>
+        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1">${mktCvr(d.deals,d.contacts)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.contacts} contacts · ${d.deals} deals</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#58a6ff;margin-bottom:4px">Pipeline ARR</div>
+        <div style="font-size:22px;font-weight:900;color:#58a6ff;line-height:1">${mktFmtN(d.deals_arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.deals} deals in pipeline</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#4ade80;margin-bottom:4px">Won ARR</div>
+        <div style="font-size:22px;font-weight:900;color:#4ade80;line-height:1">${mktFmtN(d.won_arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.won} deal${d.won!==1?'s':''} closed won</div>
+      </div>
+    </div>`;
+
+  // ── Build CVR rows ─────────────────────────────────────────────────────────
   const cvrRows = MKT_STAGES.map((s, i) => {
-    const val  = d[s.key] || 0;
-    const prev = i === 0 ? val : (d[MKT_STAGES[i-1].key] || 0);
-    const cvr  = mktCvr(val, prev);
+    const val     = d[s.key] || 0;
+    const prev    = i === 0 ? val : (d[MKT_STAGES[i-1].key] || 0);
+    const cvr     = mktCvr(val, prev);
     const ofTotal = i === 0 ? '100%' : mktCvr(val, max);
-    const arr  = s.arrKey ? mktFmtN(d[s.arrKey]) : '';
-    const barW = max > 0 ? Math.max(2, Math.round(val / max * 100)) : 2;
+    const arr     = s.arrKey ? mktFmtN(d[s.arrKey]) : '';
+    const barW    = max > 0 ? Math.max(2, Math.round(val / max * 100)) : 2;
     return { s, val, cvr, ofTotal, arr, barW, prev };
   });
 
-  // Left: funnel table
+  // ── Left: funnel table ─────────────────────────────────────────────────────
   let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px">
     <thead>
-      <tr>
-        <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Stage</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">Count</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">CVR</th>
-        <th style="text-align:center;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">% of Total</th>
-        <th style="text-align:right;padding:6px 10px;color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)">ARR</th>
+      <tr style="border-bottom:1px solid var(--border)">
+        <th style="text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Stage</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Count</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Step CVR</th>
+        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">% of Top</th>
+        <th style="text-align:right;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">ARR</th>
       </tr>
-    </thead>
-    <tbody>`;
+    </thead><tbody>`;
 
   cvrRows.forEach(({s, val, cvr, ofTotal, arr}, i) => {
-    const cvrBadge = i === 0 ? '<span style="color:var(--muted);font-size:10px">entry</span>'
-      : `<span style="color:${val===0?'var(--muted)':s.color};font-weight:700">${cvr}</span>`;
-    // Build click handler for count cell
-    const mktSrc = document.getElementById('mkt-src-select')?.value || 'all';
-    let countClick = '';
-    let countStyle = `text-align:center;padding:10px;font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}`;
-    if (s.key === 'deals' || s.key === 'won') {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowDealsModal('${s.key}','${mktSrc}')"`;
+    const cvrBadge = i === 0
+      ? `<span style="font-size:10px;color:var(--muted)">entry</span>`
+      : `<span style="font-size:11px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${cvr}</span>`;
+
+    // Click handlers
+    let countClick = '', clickable = '';
+    if ((s.key === 'deals' || s.key === 'won') && val > 0) {
+      countClick = `onclick="mktShowDealsModal('${s.key}','${src}')"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     } else if (s.key === 'contacts' && val > 0) {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
-    } else if (val > 0) {
-      countStyle += ';cursor:pointer;text-decoration:underline dotted';
-      countClick = `onclick="mktShowContactsModal('${mktSrc}')"`;
+      countClick = `onclick="mktShowContactsModal('${src}')"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
+    } else if ((s.key === 'mql' || s.key === 'sql') && val > 0) {
+      countClick = `onclick="mktShowPlatformModal('${s.key}',${val},'${src}')"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
+
     tableHtml += `
       <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-        <td style="padding:10px 10px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+        <td style="padding:9px 8px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:7px;height:7px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
             <div>
-              <div style="font-weight:700;color:var(--text)">${s.label}</div>
-              <div style="font-size:10px;color:var(--muted)">${s.sub}</div>
+              <div style="font-weight:700;font-size:12px;color:var(--text)">${s.label}</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:1px">${s.sub}</div>
             </div>
           </div>
         </td>
-        <td style="${countStyle}" ${countClick}>${val}</td>
-        <td style="text-align:center;padding:10px">${cvrBadge}</td>
-        <td style="text-align:center;padding:10px;color:var(--muted);font-size:11px">${ofTotal}</td>
-        <td style="text-align:right;padding:10px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</td>
+        <td style="text-align:center;padding:9px 8px;${clickable}" ${countClick}>
+          <span style="font-size:15px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+        </td>
+        <td style="text-align:center;padding:9px 8px">${cvrBadge}</td>
+        <td style="text-align:center;padding:9px 8px">
+          <span style="font-size:10px;color:var(--muted)">${ofTotal}</span>
+        </td>
+        <td style="text-align:right;padding:9px 8px">
+          <span style="font-size:11px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</span>
+        </td>
       </tr>`;
-    // CVR drop arrow between rows
+
     if (i < cvrRows.length - 1) {
-      const nextVal = d[MKT_STAGES[i+1].key] || 0;
-      const dropCvr = mktCvr(nextVal, val);
+      const nextVal  = d[MKT_STAGES[i+1].key] || 0;
+      const dropCvr  = mktCvr(nextVal, val);
       const dropColor = nextVal === 0 ? '#f87171' : nextVal < val * 0.1 ? '#f97316' : nextVal < val * 0.5 ? '#fbbf24' : '#4ade80';
-      tableHtml += `<tr><td colspan="5" style="padding:0 10px 0 26px">
-        <div style="display:flex;align-items:center;gap:6px;padding:2px 0">
-          <span style="color:var(--border);font-size:12px">↓</span>
+      tableHtml += `<tr><td colspan="5" style="padding:0 8px 0 22px">
+        <div style="display:flex;align-items:center;gap:5px;padding:1px 0">
+          <span style="color:var(--border);font-size:11px">↓</span>
           <span style="font-size:10px;color:${dropColor};font-weight:600">${dropCvr} converted</span>
           <span style="flex:1;height:1px;background:var(--border)"></span>
-        </div>
-      </td></tr>`;
+        </div></td></tr>`;
     }
   });
-
   tableHtml += `</tbody></table>`;
 
-  // Right: horizontal bar chart
-  let chartHtml = `<div style="display:flex;flex-direction:column;gap:10px;padding-top:4px">`;
+  // ── Right: horizontal bar chart ────────────────────────────────────────────
+  let chartHtml = `<div style="display:flex;flex-direction:column;gap:12px">`;
   cvrRows.forEach(({s, val, barW}) => {
     chartHtml += `
       <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
           <span style="font-size:11px;font-weight:600;color:${s.color}">${s.label}</span>
-          <span style="font-size:13px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+          <span style="font-size:12px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${val}</span>
         </div>
-        <div style="height:28px;background:var(--bg2);border-radius:6px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${s.bg};border-radius:6px;border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:8px">
-            ${val > 0 ? `<span style="font-size:10px;font-weight:700;color:${s.color};opacity:.8">${barW}%</span>` : ''}
+        <div style="height:20px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${s.bg};border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:6px">
+            ${val > 0 ? `<span style="font-size:9px;font-weight:700;color:${s.color};opacity:.9">${barW}%</span>` : ''}
           </div>
         </div>
       </div>`;
   });
+  chartHtml += `</div>`;
 
-  // Bottom metrics
-  chartHtml += `</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Contact→Deal</div>
-      <div style="font-size:18px;font-weight:800;color:var(--text)">${mktCvr(d.deals,d.contacts)}</div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px">Pipeline ARR</div>
-      <div style="font-size:18px;font-weight:800;color:#58a6ff">${mktFmtN(d.deals_arr)}</div>
-    </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
-      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#4ade80;margin-bottom:4px">Won ARR</div>
-      <div style="font-size:18px;font-weight:800;color:#4ade80">${mktFmtN(d.won_arr)}</div>
-    </div>
-  </div>`;
-
-  document.getElementById('mkt-funnel-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+  document.getElementById('mkt-funnel-content').innerHTML = kpiHtml + `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
       <div>${tableHtml}</div>
       <div>${chartHtml}</div>
     </div>`;
 }
 
-function mktSwMonth(el) {
-  document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  _mktMonth = el.dataset.t;
-  mktRender();
-}
+function mktSwMonth(el) { mktRender(); } // kept for backwards compat
 
 // init
+window._mktReady = true;
 document.getElementById('mkt-src-select')?.addEventListener('change', () => { mktRender(); });
 mktRender();
 </script>
