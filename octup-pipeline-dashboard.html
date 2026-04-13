@@ -11695,23 +11695,84 @@ function openWoWWeekModal(weekLabel) {
   openModal(title, summary, dealsTable(dealSet));
 }
 
-function openHighPriModal() {
+async function openHighPriModal() {
   const WP2 = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  const HIGH_PRIORITY_STAGES = ['608286676','4988070119','608286677'];
-  const pool = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
-  let deals = pool.filter(d => d[12] === 'HIGH');
-  if (deals.length === 0) deals = pool.filter(d => HIGH_PRIORITY_STAGES.includes(d[3]));
-  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
-  deals.sort((a,b) => b[2]-a[2]);
-  const totalARR = deals.reduce((s,d)=>s+d[2],0);
-  const wtdARR   = deals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
-  const usingProxy = DEALS.every(d => !d[12] || d[12] === '');
-  const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Weighted ARR</span><span class="modal-summary-val">${fmt$(Math.round(wtdARR))}</span></div>
-    ${usingProxy ? '<div class="modal-summary-item"><span class="modal-summary-label">Note</span><span class="modal-summary-val" style="color:#fbbf24">Showing SA/Trial/CR (priority sync pending)</span></div>' : ''}`;
-  openModal('🔥 High Priority Deals', summary, dealsTable(deals));
+  const STAGE_LABEL = {'2918051007':'NBM','608286675':'Discovery','740160705':'Pres/Demo','608286676':'SA','4988070119':'Trial','608286677':'CR','2918051008':'Stalled'};
+
+  // Show loading state immediately
+  openModal('🔥 High Priority Deals', '<div class="modal-summary-item"><span class="modal-summary-label">Status</span><span class="modal-summary-val">Loading from HubSpot…</span></div>',
+    '<div style="text-align:center;padding:30px;color:var(--muted)">⏳ Fetching live priority data…</div>');
+
+  const token = getHsToken();
+  if (!token) {
+    // No token — prompt
+    document.getElementById('modal-summary').innerHTML = '<div class="modal-summary-item"><span class="modal-summary-label">Status</span><span class="modal-summary-val" style="color:#f85149">No HubSpot token</span></div>';
+    document.getElementById('modal-content').innerHTML = `
+      <div style="padding:20px;text-align:center">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:14px">Enter your HubSpot Private App token to load live priority data:</div>
+        <input id="hipri-token-input" type="password" placeholder="pat-eu1-…" style="width:100%;max-width:380px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-size:12px;margin-bottom:10px">
+        <br>
+        <button onclick="(function(){const t=document.getElementById('hipri-token-input').value.trim();if(t){saveHsToken(t);openHighPriModal();}else{alert('Please enter a token');}})()"
+          style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer">Connect & Load</button>
+      </div>`;
+    return;
+  }
+
+  try {
+    // Fetch open deals with hs_priority = HIGH from HubSpot
+    const PIPELINE_ID = '16980816';
+    const ACTIVE_STAGES = ['2918051007','608286675','740160705','608286676','4988070119','608286677','2918051008'];
+    const data = await hsPost(token, '/crm/v3/objects/deals/search', {
+      filterGroups: [{
+        filters: [
+          { propertyName: 'hs_priority',  operator: 'EQ', value: 'high' },
+          { propertyName: 'pipeline',     operator: 'EQ', value: PIPELINE_ID },
+          { propertyName: 'dealstage',    operator: 'IN', values: ACTIVE_STAGES },
+        ]
+      }],
+      properties: ['dealname','amount','dealstage','hubspot_owner_id','closedate','hs_next_step','deal_source'],
+      limit: 200,
+    });
+
+    const raw = data.results || [];
+    let deals = raw.map(d => {
+      const p = d.properties;
+      return [
+        d.id,
+        p.dealname || '',
+        parseFloat(p.amount || 0),
+        p.dealstage || '',
+        p.hubspot_owner_id || '',
+        '',
+        p.closedate ? p.closedate.slice(0,10) : '',
+        p.hs_next_step || '',
+        '', '', p.deal_source || '', '', 'HIGH'
+      ];
+    });
+
+    if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+    deals.sort((a,b) => b[2]-a[2]);
+
+    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    const wtdARR   = deals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+
+    const summary = `
+      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} high priority</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Weighted ARR</span><span class="modal-summary-val">${fmt$(Math.round(wtdARR))}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Source</span><span class="modal-summary-val" style="color:#4ade80">🟢 Live from HubSpot</span></div>`;
+
+    document.getElementById('modal-title').innerText = '🔥 High Priority Deals';
+    document.getElementById('modal-summary').innerHTML = summary;
+    document.getElementById('modal-content').innerHTML = deals.length
+      ? dealsTable(deals)
+      : '<div style="padding:24px;text-align:center;color:var(--muted)">No open deals marked as High Priority in HubSpot.</div>';
+
+  } catch(err) {
+    document.getElementById('modal-summary').innerHTML = `<div class="modal-summary-item"><span class="modal-summary-label">Error</span><span class="modal-summary-val" style="color:#f85149">${err.message}</span></div>`;
+    document.getElementById('modal-content').innerHTML = `<div style="padding:20px;text-align:center;color:#f85149">Failed to fetch from HubSpot.<br><span style="font-size:11px;color:var(--muted)">${err.message}</span><br><br>
+      <button onclick="saveHsToken('');openHighPriModal()" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--muted);font-size:11px;cursor:pointer">Reset token & retry</button></div>`;
+  }
 }
 
 function openWonModal() {
@@ -12662,13 +12723,12 @@ function generateBrief() {
   const WP2 = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
   const weightedMonthARR = openMonthDeals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
   const goalBarColor = goalPct >= 100 ? '#3fb950' : goalPct >= 70 ? '#fbbf24' : '#f97316';
-  // High Priority open deals — uses hs_priority field (d[12]); falls back to SA/Trial/CR stages
-  const HIGH_PRIORITY_STAGES = ['608286676','4988070119','608286677']; // SA, Trial, CR
+  // High Priority open deals — uses hs_priority=HIGH field (d[12]) from HubSpot
   let highPriDeals = pool.filter(d => d[12] === 'HIGH');
-  if (highPriDeals.length === 0) highPriDeals = pool.filter(d => HIGH_PRIORITY_STAGES.includes(d[3]));
   if (selectedOwner !== 'all') highPriDeals = highPriDeals.filter(d => d[4] === selectedOwner);
   const highPriARR = highPriDeals.reduce((s,d)=>s+d[2],0);
   const highPriWtd = highPriDeals.reduce((s,d)=>s+(d[2]*(WP2[d[3]]||0.1)),0);
+  const highPriSynced = DEALS.some(d => d[12] === 'HIGH');
 
   const html = `
     <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">${dateStr}${repLbl}</div>
@@ -12703,8 +12763,11 @@ function generateBrief() {
         </div>
         <div style="background:var(--bg3);border:1px solid rgba(248,81,73,.3);border-radius:8px;padding:10px 12px;cursor:pointer" onclick="openHighPriModal()">
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#f85149;margin-bottom:3px">🔥 High Priority Deals</div>
-          <div style="font-size:17px;font-weight:800;color:#f85149">${fmtK(highPriARR)}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:1px">Wtd ${fmtK(Math.round(highPriWtd))} · ${highPriDeals.length} deals</div>
+          ${highPriSynced
+            ? `<div style="font-size:17px;font-weight:800;color:#f85149">${fmtK(highPriARR)}</div>
+               <div style="font-size:10px;color:var(--muted);margin-top:1px">Wtd ${fmtK(Math.round(highPriWtd))} · ${highPriDeals.length} deals</div>`
+            : `<div style="font-size:14px;font-weight:700;color:var(--muted)">Click to load</div>
+               <div style="font-size:10px;color:var(--muted);margin-top:1px">Live from HubSpot →</div>`}
         </div>
       </div>
     </div>
