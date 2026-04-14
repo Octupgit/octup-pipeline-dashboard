@@ -959,11 +959,24 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
   <section id="section-mktfunnel">
     <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
       <div class="src-funnel-header">
-        <div class="src-funnel-title">📣 Marketing Funnel — Demo Requests</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
-          <span onclick="window._mktCh='all';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(88,166,255,.2);color:var(--accent);border-color:rgba(88,166,255,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="background:rgba(88,166,255,.2);color:var(--accent);border-color:rgba(88,166,255,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid">All</span>
-          <span onclick="window._mktCh='paid';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(251,191,36,.2);color:#fbbf24;border-color:rgba(251,191,36,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Paid</span>
-          <span onclick="window._mktCh='organic';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(74,222,128,.2);color:#4ade80;border-color:rgba(74,222,128,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
+        <div class="src-funnel-title">📣 Marketing Funnel</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end">
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:10px;color:var(--muted);margin-right:2px">Channel</span>
+            <span id="mktch-all"     onclick="window._mktCh='all';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" data-on="1" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(88,166,255,.4);background:rgba(88,166,255,.2);color:var(--accent)">All</span>
+            <span id="mktch-paid"    onclick="window._mktCh='paid';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Paid</span>
+            <span id="mktch-organic" onclick="window._mktCh='organic';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <span style="font-size:10px;color:var(--muted);margin-right:2px">Source</span>
+            <span id="mktsrc-all"      onclick="window._mktSrc='all';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" data-on="1" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(88,166,255,.4);background:rgba(88,166,255,.2);color:var(--accent)">All</span>
+            <span id="mktsrc-google"   onclick="window._mktSrc='google';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Google Ads</span>
+            <span id="mktsrc-linkedin" onclick="window._mktSrc='linkedin';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">LinkedIn</span>
+            <span id="mktsrc-direct"   onclick="window._mktSrc='direct';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Direct</span>
+            <span id="mktsrc-email"    onclick="window._mktSrc='email';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Email</span>
+            <span id="mktsrc-organic"  onclick="window._mktSrc='organic';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
+            <span id="mktsrc-other"    onclick="window._mktSrc='other';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Other</span>
+          </div>
           <span style="font-size:10px;color:var(--muted);padding:3px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px">📅 Synced</span>
         </div>
       </div>
@@ -14479,7 +14492,7 @@ const MKT_DB = {
 const MKT_STAGES = [
   {key:'mql',  label:'MQL',            sub:'submitted demo or pricing request',  color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
   {key:'sql',  label:'SQL',            sub:'demo meeting booked with sales',      color:'#60a5fa', bg:'rgba(96,165,250,.18)'},
-  {key:'opp',  label:'Opportunity',    sub:'open deal created from marketing',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
+  {key:'opp',  label:'Opportunity',    sub:'all deals that entered pipeline (open · won · lost)',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
   {key:'won',  label:'Account Active', sub:'closed won · active customer',       color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
 ];
 
@@ -14538,13 +14551,22 @@ function mktShowPlatformModal(stage, count, src) {
 // Show contacts modal — stage: 'mql' (all) | 'sql' (Demo Meeting only)
 function mktShowContactsModal(stage) {
   const initForm = stage === 'sql' ? 'Demo Meeting' : 'all';
-  window._mktCF = {src:'all', form:initForm, deal:'all'}; // contact filter state
+  const mktCh = window._mktCh || 'all';
+  const mktSrc = window._mktSrc || 'all';
+  // Pre-select source chip from main view's source filter
+  const initSrc = mktSrc !== 'all' ? mktSrc : 'all';
+  window._mktCF = {src:initSrc, form:initForm, deal:'all'}; // contact filter state
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+  const PAID_KEYS    = ['google','meta','linkedin'];
+  const ORGANIC_KEYS = ['organic','direct','email','other'];
 
   function buildTable() {
     const f = window._mktCF;
     let contacts = MKT_CONTACTS;
     if (selectedWeek !== 'alltime') contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
+    // Apply channel filter from main view (paid/organic)
+    if (mktCh === 'paid')    contacts = contacts.filter(c => PAID_KEYS.includes(c.source_key));
+    if (mktCh === 'organic') contacts = contacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
     if (f.src  !== 'all') contacts = contacts.filter(c => c.source_key === f.src);
     if (f.form !== 'all') contacts = contacts.filter(c => c.form === f.form);
     if (f.deal === 'deal')   contacts = contacts.filter(c => c.has_deal);
@@ -14637,7 +14659,10 @@ function mktShowContactsModal(stage) {
       <span class="mkt-chip-src" onclick="window._mktSetCF('src','other',this)"    style="${cs}">Other</span>
     </div>`;
 
-  const allContacts = selectedWeek === 'alltime' ? MKT_CONTACTS : MKT_CONTACTS.filter(c => dateInRange(c.date, selectedWeek));
+  let allContacts = selectedWeek === 'alltime' ? MKT_CONTACTS : MKT_CONTACTS.filter(c => dateInRange(c.date, selectedWeek));
+  if (mktCh === 'paid')    allContacts = allContacts.filter(c => PAID_KEYS.includes(c.source_key));
+  if (mktCh === 'organic') allContacts = allContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
+  if (mktSrc !== 'all')    allContacts = allContacts.filter(c => c.source_key === mktSrc);
   const dealCount = allContacts.filter(c => c.has_deal).length;
 
   const summary = `
@@ -14663,13 +14688,15 @@ function mktShowContactsModal(stage) {
 }
 
 // Show deals modal for marketing funnel — type: 'opp' | 'won'
+// MUST mirror the exact same filters as mktRender() so modal count === funnel count
 function mktShowDealsModal(type) {
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
-  const MKT_SRC = ['Marketing Paid', 'Marketing Organic'];
+  const mktCh = window._mktCh || 'all';
+  const DEAL_SRC = mktCh === 'paid' ? ['Marketing Paid'] : mktCh === 'organic' ? ['Marketing Organic'] : ['Marketing Paid', 'Marketing Organic'];
 
   if (type === 'won') {
-    let deals = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
-    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[3]));
+    let deals = WON_DEALS.filter(d => DEAL_SRC.includes(d[6]));
+    if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[7], selectedWeek)); // create date, not close date
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
     const summary = `
       <div class="modal-summary-item"><span class="modal-summary-label">Account Active</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
@@ -14677,14 +14704,25 @@ function mktShowDealsModal(type) {
     const wonNorm = deals.map(w => [w[0],w[1],w[2],'WON',w[4],w[7]||w[3],w[3],'','','',w[6]]);
     openModal('🏆 Account Active — Marketing · ' + periodLbl, summary, dealsTable(wonNorm));
   } else {
-    // 'opp' = open pipeline deals
-    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
-    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
-    const totalARR = deals.reduce((s,d)=>s+d[2],0);
+    // 'opp' = all deals that entered pipeline (open + won + lost) — matches mktRender oppCount
+    let mktDeals = DEALS.filter(d => DEAL_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
+    let mktWon   = WON_DEALS.filter(d => DEAL_SRC.includes(d[6]));
+    let mktLost  = LOST_DEALS.filter(d => DEAL_SRC.includes(d[7]));
+    if (selectedWeek !== 'alltime') {
+      mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));  // create date
+      mktWon   = mktWon.filter(d => dateInRange(d[7], selectedWeek));    // create date
+      mktLost  = mktLost.filter(d => dateInRange(d[8], selectedWeek));   // create date
+    }
+    // Normalize all three into DEALS format for dealsTable
+    const wonNorm  = mktWon.map(w => [w[0],w[1],w[2],'608286678',w[4],w[7]||w[3],w[3],'Closed Won','','',w[6]]);
+    const lostNorm = mktLost.map(l => [l[0],l[1],l[2],'608286679',l[4],l[8]||l[3],l[3],'Closed Lost','','',l[7]]);
+    const allDeals = [...mktDeals, ...wonNorm, ...lostNorm];
+    const totalARR = mktDeals.reduce((s,d)=>s+d[2],0) + mktWon.reduce((s,d)=>s+d[2],0);
     const summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">Opportunity</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Opportunity</span><span class="modal-summary-val">${allDeals.length} deals · ${fmt$(totalARR)} pipeline</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Breakdown</span><span class="modal-summary-val">${mktDeals.length} open · ${mktWon.length} won · ${mktLost.length} lost</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
-    openModal('📊 Opportunities — Marketing · ' + periodLbl, summary, dealsTable(deals));
+    openModal('📊 Opportunities — Marketing · ' + periodLbl, summary, dealsTable(allDeals));
   }
 }
 
@@ -14697,11 +14735,15 @@ function mktRender() {
   const PAID_KEYS    = ['google','meta','linkedin'];
   const ORGANIC_KEYS = ['organic','direct','email','other'];
 
+  // Source filter: 'all' | 'google' | 'linkedin' | 'direct' | 'email' | 'organic' | 'other'
+  const mktSrc = window._mktSrc || 'all';
+
   // MQL = all contacts who submitted a demo/pricing request
   let mktContacts = MKT_CONTACTS;
   if (selectedWeek !== 'alltime') mktContacts = mktContacts.filter(c => dateInRange(c.date, selectedWeek));
   if (mktCh === 'paid')    mktContacts = mktContacts.filter(c => PAID_KEYS.includes(c.source_key));
   if (mktCh === 'organic') mktContacts = mktContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
+  if (mktSrc !== 'all')    mktContacts = mktContacts.filter(c => c.source_key === mktSrc);
   const mqlCount = mktContacts.length;
 
   // SQL = MQL who booked a demo meeting with sales
@@ -14713,9 +14755,9 @@ function mktRender() {
   let mktWon   = WON_DEALS.filter(d => DEAL_SRC.includes(d[6]));
   let mktLost  = LOST_DEALS.filter(d => DEAL_SRC.includes(d[7]));
   if (selectedWeek !== 'alltime') {
-    mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));
-    mktWon   = mktWon.filter(d => dateInRange(d[3], selectedWeek));
-    mktLost  = mktLost.filter(d => dateInRange(d[3], selectedWeek));
+    mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));  // create date
+    mktWon   = mktWon.filter(d => dateInRange(d[7], selectedWeek));    // create date (not close)
+    mktLost  = mktLost.filter(d => dateInRange(d[8], selectedWeek));   // create date (not close)
   }
   const oppArr = mktDeals.reduce((s,d)=>s+d[2],0) + mktWon.reduce((s,d)=>s+d[2],0);
   const wonArr = mktWon.reduce((s,d)=>s+d[2],0);
@@ -14727,6 +14769,9 @@ function mktRender() {
     sql:     sqlCount,
     opp:     oppCount,
     opp_arr: oppArr,
+    opp_open: mktDeals.length,
+    opp_won:  mktWon.length,
+    opp_lost: mktLost.length,
     won:     mktWon.length,
     won_arr: wonArr,
   };
@@ -14821,6 +14866,7 @@ function mktRender() {
         </td>
         <td style="text-align:center;padding:9px 8px;${clickable}" ${countClick}>
           <span style="font-size:15px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
+          ${s.key === 'opp' && val > 0 ? `<div style="font-size:9px;color:var(--muted);margin-top:2px">${d.opp_open} open · ${d.opp_won} won · ${d.opp_lost} lost</div>` : ''}
         </td>
         <td style="text-align:center;padding:9px 8px">${cvrBadge}</td>
         <td style="text-align:center;padding:9px 8px">
