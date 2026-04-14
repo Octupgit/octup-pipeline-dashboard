@@ -16,12 +16,14 @@
   --nbm: #f59e0b; --inp: #58a6ff; --cr: #3fb950;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;min-height:100vh;padding-top:72px}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;min-height:100vh;padding-top:108px}
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 
 /* HEADER */
-.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(8px)}
+.header{background:linear-gradient(135deg,#1a1f2e 0%,#0d1117 60%);border-bottom:1px solid var(--border);padding:10px 24px 8px;display:flex;flex-direction:column;gap:8px;position:fixed;top:0;left:0;right:0;z-index:200;backdrop-filter:blur(8px)}
+.header-top{display:flex;align-items:center;justify-content:space-between}
+.header-filters{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .header-left{display:flex;align-items:center;gap:12px}
 .logo{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#000}
 .header-title{font-size:18px;font-weight:700;letter-spacing:-.3px}
@@ -636,48 +638,50 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 <div id="app-content" style="display:none">
 <!-- HEADER -->
 <div class="header">
-  <div class="header-left">
-    <div class="logo">O</div>
-    <div>
-      <div class="header-title">Octup RevOps Pipeline</div>
-      <div class="header-sub">3PL Partner Pipeline · Portal 26004468</div>
+  <div class="header-top">
+    <div class="header-left">
+      <img src="data:image/png;base64,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" alt="Octup" style="height:30px;width:auto;filter:brightness(1.1)">
+      <div style="margin-left:4px">
+        <div class="header-sub" style="margin-top:0">RevOps Pipeline · 3PL Partner</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+        <div class="live-badge">Auto-synced 4×/day</div>
+        <button onclick="openHelpDict()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Metrics Dictionary">📖 Help</button>
+      </div>
+      <div style="margin-top:4px" id="sync-timestamp"></div>
     </div>
   </div>
-  <div class="header-right">
-    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
-      <div class="live-badge">Auto-synced 4×/day</div>
-      <button onclick="openHelpDict()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:700;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:4px" title="Metrics Dictionary">📖 Help</button>
+  <div class="header-filters">
+    <div class="btn-group" id="owner-btns">
+      <button class="btn btn-owner active" data-owner="all">All</button>
+      <button class="btn btn-owner" data-owner="29896105"><span class="owner-dot oc-blake"></span>Blake</button>
+      <button class="btn btn-owner" data-owner="29422733"><span class="owner-dot oc-jay"></span>Jay</button>
+      <button class="btn btn-owner" data-owner="30284350"><span class="owner-dot oc-chanan"></span>Chanan</button>
     </div>
-    <div style="margin-top:6px" id="sync-timestamp"></div>
+    <div class="btn-group" id="week-btns">
+      <button class="btn active" data-week="this">This Week ★</button>
+      <button class="btn" data-week="last">Last Week</button>
+      <button class="btn" data-week="lastmonth">Last Month</button>
+      <button class="btn" data-week="month">This Month</button>
+      <button class="btn" data-week="lastq">Last Q</button>
+      <button class="btn" data-week="quarter">This Q</button>
+      <button class="btn" data-week="year">This Y</button>
+      <button class="btn" data-week="alltime">All Time</button>
+    </div>
   </div>
 </div>
-
 <div id="week-label" style="display:none"></div>
 
 <main>
   <!-- A: WEEKLY PULSE -->
   <section id="section-pulse">
-    <div class="pulse-controls-row">
-      <div class="btn-group" id="owner-btns">
-        <button class="btn btn-owner active" data-owner="all">All</button>
-        <button class="btn btn-owner" data-owner="29896105"><span class="owner-dot oc-blake"></span>Blake</button>
-        <button class="btn btn-owner" data-owner="29422733"><span class="owner-dot oc-jay"></span>Jay</button>
-        <button class="btn btn-owner" data-owner="30284350"><span class="owner-dot oc-chanan"></span>Chanan</button>
-      </div>
+    <div class="pulse-controls-row" style="justify-content:center">
       <div class="pulse-controls-center">
         <div class="section-title">📊 Weekly Pulse</div>
         <div class="section-badge" id="pulse-week-badge">Last Week</div>
         <div class="section-subtitle" id="pulse-date-range"></div>
-      </div>
-      <div class="btn-group" id="week-btns">
-        <button class="btn active" data-week="this">This Week ★</button>
-        <button class="btn" data-week="last">Last Week</button>
-        <button class="btn" data-week="lastmonth">Last Month</button>
-        <button class="btn" data-week="month">This Month</button>
-        <button class="btn" data-week="lastq">Last Q</button>
-        <button class="btn" data-week="quarter">This Q</button>
-        <button class="btn" data-week="year">This Y</button>
-        <button class="btn" data-week="alltime">All Time</button>
       </div>
     </div>
 
@@ -956,7 +960,12 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
       <div class="src-funnel-header">
         <div class="src-funnel-title">📣 Marketing Funnel — Demo Requests</div>
-        <div style="font-size:10px;color:var(--muted);padding:4px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px;margin-left:auto">📅 Synced to dashboard timeframe</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+          <span onclick="window._mktCh='all';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(88,166,255,.2);color:var(--accent);border-color:rgba(88,166,255,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="background:rgba(88,166,255,.2);color:var(--accent);border-color:rgba(88,166,255,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid">All</span>
+          <span onclick="window._mktCh='paid';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(251,191,36,.2);color:#fbbf24;border-color:rgba(251,191,36,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Paid</span>
+          <span onclick="window._mktCh='organic';this.parentElement.querySelectorAll('span').forEach(s=>s.style.cssText='');this.style.cssText='background:rgba(74,222,128,.2);color:#4ade80;border-color:rgba(74,222,128,.4);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid';mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
+          <span style="font-size:10px;color:var(--muted);padding:3px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px">📅 Synced</span>
+        </div>
       </div>
       <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
     </div>
@@ -1080,7 +1089,7 @@ const TODAY = new Date();
   };
 })();
 const PORTAL = '26004468';
-const LAST_SYNC_UTC = '2026-04-13T17:27:14Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
+const LAST_SYNC_UTC = '2026-04-14T07:22:07Z'; // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py // AUTO-SYNC:TIMESTAMP — updated by refresh_data.py
 
 // ─── OPEN PIPELINE DEALS ──────────────────────────────────────────────────────
 // [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, createdById, lastMod, dealSource, reengageDate]
@@ -1161,7 +1170,7 @@ const DEALS = [
   ['497053577436','Interchange group',36000,'608286675','29896105','2026-04-03','2026-06-02','This is a tier 1 WMS. Likely outside our ICP. Matt wanted to review internally before pursuing a demo and was also only interested in VAS as opposed to full end to end billing','29896105','2026-04-07','Event or Webinar','',''],
   ['497457729756','ProShipper - 3PL',36000,'608286676','29422733','2026-04-07','2026-04-30','F/U meeting set 4/13','29422733','2026-04-13','Marketing Organic','','HIGH'],
   ['497261533419','Ottawa Logistics - 3PL',60000,'608286675','29422733','2026-04-07','2026-05-01','set nbm with sophie 4/10','29422733','2026-04-10','Event or Webinar','','HIGH'],
-  ['498313569503','Customer Impact (Eagle Support Services) - 3PL',30000,'2918051007','29422733','2026-04-09','2026-06-08','4/13 - nbm scheduled','29422733','2026-04-09','Referral','','']
+  ['498313569503','Customer Impact (Eagle Support Services) - 3PL',30000,'2918051007','29422733','2026-04-09','2026-06-08','4/13 - nbm scheduled','29422733','2026-04-13','Referral','','']
 ];
 
 // ─── STAGE ENTRY DATES (from HubSpot hs_v2_date_entered_current_stage) ───────
@@ -1471,7 +1480,6 @@ const MEETINGS = [
   {id:'442427822324',type:'MEETING',title:'SmartShipped x Octup | Updates',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'30860443',dealIds:["330494515413"]},
   {id:'443536948468',type:'MEETING',title:'Piyush & Jay at Octup',timestamp:'2026-02-13',outcome:'SCHEDULED',ownerId:'29422733',dealIds:["411341444307"]},
   {id:'444550248682',type:'MEETING',title:'Taylor & Jay at Octup',timestamp:'2026-02-17',outcome:'NO_SHOW',ownerId:'29422733',dealIds:[]},
-  {id:'444875224277',type:'MEETING',title:'Deliverzen <> Octup - Billing',timestamp:'2026-02-12',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'445903345908',type:'MEETING',title:'Gilbert International × Octup',timestamp:'2026-02-13',outcome:'SCHEDULED',ownerId:'31610755',dealIds:[]},
   {id:'446033244394',type:'MEETING',title:'Placeholder (can adjust if needed) - Octup x Carter Distribution Cont.',timestamp:'2026-02-20',outcome:'NO_SHOW',ownerId:'29896105',dealIds:["388158166241"]},
   {id:'446015401201',type:'MEETING',title:'Octup x iLogistics Cont',timestamp:'2026-02-13',outcome:'CANCELED',ownerId:'29896105',dealIds:["447161156805"]},
@@ -1480,7 +1488,6 @@ const MEETINGS = [
   {id:'449058811108',type:'MEETING',title:'FCF <> Octup - Kick Off Call',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'1285136351',dealIds:["242860442836", "442980746468"]},
   {id:'449044446418',type:'MEETING',title:'GrowthSpoke Weekly Billing + Analytics Sync',timestamp:'2026-02-18',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'449049902266',type:'MEETING',title:'Jeff Uherek and Salomé Valderrama',timestamp:'2026-02-19',outcome:'COMPLETED',ownerId:'78746883',dealIds:["436176818420"]},
-  {id:'450153192657',type:'MEETING',title:'Octup Kickoff - ShipHype',timestamp:'2026-02-12',outcome:'COMPLETED',ownerId:'29896105',dealIds:["378158106855"]},
   {id:'450076057835',type:'MEETING',title:'Custom goods <> Octup',timestamp:'2026-02-18',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'458725778660',type:'MEETING',title:'Octup <> G&B - Manifest Follow Up',timestamp:'2026-02-19',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'450359312572',type:'MEETING',title:'🟢 ACROCARGO x Octup',timestamp:'2026-02-18',outcome:'SCHEDULED',ownerId:'31610755',dealIds:[]},
@@ -1503,7 +1510,6 @@ const MEETINGS = [
   {id:'451253455060',type:'MEETING',title:'Octup x Logystico - Demo of Octup Billing',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:["466796030149"]},
   {id:'452148711664',type:'MEETING',title:'Tony & Jay at Octup',timestamp:'2026-02-17',outcome:'SCHEDULED',ownerId:'29422733',dealIds:[]},
   {id:'452564894946',type:'MEETING',title:'Deliverzen & Octup',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'30860443',dealIds:["10169373890", "326794049777"]},
-  {id:'452567057619',type:'MEETING',title:'Fathom summary for Deliverzen - Billing',timestamp:'2026-02-12',outcome:'COMPLETED',ownerId:'30860443',dealIds:[]},
   {id:'453734711519',type:'MEETING',title:'Fathom summary for Meet with Octup',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:[]},
   {id:'453861899453',type:'MEETING',title:'Octup Cont Discussion',timestamp:'2026-02-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:[]},
   {id:'454049523898',type:'MEETING',title:'WAF x Octup: Weekly Checkin',timestamp:'2026-02-18',outcome:'',ownerId:'78746883',dealIds:[]},
@@ -1939,11 +1945,11 @@ const MEETINGS = [
   {id:'484200661189',type:'MEETING',title:'Octup x Left Brain Logistics - Commercials + Implmentation Review',timestamp:'2026-04-15',outcome:'',ownerId:'29896105',dealIds:["495370596574"]},
   {id:'484355683530',type:'MEETING',title:'Fathom summary for Tu Pack & Octup | Check In',timestamp:'2026-04-09',outcome:'COMPLETED',ownerId:'30860443',dealIds:["378594137292"]},
   {id:'484398740668',type:'MEETING',title:'ShipNomad & Octup',timestamp:'2026-04-10',outcome:'',ownerId:'30860443',dealIds:[]},
-  {id:'484323179711',type:'MEETING',title:'Jaxon Rasmussen and Salomé Valderrama',timestamp:'2026-04-13',outcome:'SCHEDULED',ownerId:'78746883',dealIds:[]},
+  {id:'484323179711',type:'MEETING',title:'Jaxon Rasmussen and Salomé Valderrama',timestamp:'2026-04-13',outcome:'COMPLETED',ownerId:'78746883',dealIds:["292089159924"]},
   {id:'484383846648',type:'MEETING',title:'Sunny <> Nissan, Billing Product Opportunity at Octup',timestamp:'2026-04-13',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'484383849664',type:'MEETING',title:'Tamas <> Nissan, Billing Product Opportunity at Octup',timestamp:'2026-04-13',outcome:'',ownerId:'1285136351',dealIds:[]},
   {id:'484400822513',type:'MEETING',title:'Fathom summary for GOSS & Octup | Check In',timestamp:'2026-04-09',outcome:'COMPLETED',ownerId:'30860443',dealIds:["177966571757", "403391945935"]},
-  {id:'484399267018',type:'MEETING',title:'Octup <> Customer Impact - Intro call',timestamp:'2026-04-13',outcome:'',ownerId:'29422733',dealIds:["498313569503"]},
+  {id:'484399267018',type:'MEETING',title:'Octup <> Customer Impact - Intro call',timestamp:'2026-04-13',outcome:'COMPLETED',ownerId:'29422733',dealIds:["498313569503"]},
   {id:'484339670247',type:'MEETING',title:'SCW x Octup - Technical Session / Integration Scoping',timestamp:'2026-04-15',outcome:'',ownerId:'29896105',dealIds:["474056691933"]},
   {id:'484369106127',type:'MEETING',title:'Fathom summary for Biolongevity & Octup',timestamp:'2026-04-09',outcome:'COMPLETED',ownerId:'30860443',dealIds:["495866858729"]},
   {id:'484319957241',type:'MEETING',title:'Canceled: Tondo x Octup: Billing & Analytics Sync',timestamp:'2026-04-09',outcome:'',ownerId:'78746883',dealIds:[]},
@@ -1958,7 +1964,13 @@ const MEETINGS = [
   {id:'484798604494',type:'MEETING',title:'Evobox x Octup: Exec Checkin',timestamp:'2026-04-25',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'484922842337',type:'MEETING',title:'Ship Essential x Octup: Billing & Analytics Sync',timestamp:'2026-04-14',outcome:'',ownerId:'78746883',dealIds:[]},
   {id:'484936363194',type:'MEETING',title:'Fathom summary for Octup shipping label resale discussion',timestamp:'2026-04-13',outcome:'COMPLETED',ownerId:'29896105',dealIds:[]},
-  {id:'484941227214',type:'MEETING',title:'Lab 3 - Billing Processes Check In',timestamp:'2026-04-14',outcome:'',ownerId:'30860443',dealIds:[]}
+  {id:'484941227214',type:'MEETING',title:'Lab 3 - Billing Processes Check In',timestamp:'2026-04-14',outcome:'',ownerId:'30860443',dealIds:[]},
+  {id:'484959531221',type:'MEETING',title:'GOSS & Octup | Check In',timestamp:'2026-04-16',outcome:'',ownerId:'30860443',dealIds:[]},
+  {id:'484975570148',type:'MEETING',title:'Fathom summary for MFALS <> Octup - Daily Sync',timestamp:'2026-04-13',outcome:'COMPLETED',ownerId:'1285136351',dealIds:["416151683321"]},
+  {id:'484987662540',type:'MEETING',title:'Tondo x Octup: Billing & Analytics Sync',timestamp:'2026-04-17',outcome:'',ownerId:'78746883',dealIds:[]},
+  {id:'484987087063',type:'MEETING',title:'Fathom summary for Tondo: Billing Review',timestamp:'2026-04-13',outcome:'COMPLETED',ownerId:'78746883',dealIds:["473941481711"]},
+  {id:'484999656679',type:'MEETING',title:'Relentless <> Octup - Go live',timestamp:'2026-04-14',outcome:'',ownerId:'1285136351',dealIds:[]},
+  {id:'485002817782',type:'MEETING',title:'Octup <> Delta - Carrier questions',timestamp:'2026-04-15',outcome:'',ownerId:'1285136351',dealIds:[]}
 ];
 
 // ─── CALLS ────────────────────────────────────────────────────────────────────
@@ -1967,77 +1979,6 @@ const MEETINGS = [
 // 13 entries have real contact names (page 1 of HubSpot filtered view);
 // remaining 45 use outcome-based titles; company names pending HubSpot lookup
 const CALLS = [
-  {id:'452149239007',title:'Call with Karl Siebrecht',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452454034633',title:'Call with Dennis Steele',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452854068431',title:'Call with Suhas Godkhindi',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452515946695',title:'Call with Corey Blankenhorn',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452565176551',title:'Call with Karl Siebrecht',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452844726459',title:'Call with Corey Blankenhorn',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452557778146',title:'Call with Dennis Steele',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452630003930',title:'Call with Suhas Godkhindi',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452568753362',title:'Call with Elliott Berens',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452628110536',title:'Call with Mike Gowing',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452455834848',title:'Call with Lourdes Da Costa-Pereira',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452857656531',title:'Call with Nikki Bahl',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452559619260',title:'Call with Mike Ellis',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452455834862',title:'Call with Curt Davis',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452848621770',title:'Call with Shannon Dubbs',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452455835840',title:'Call with Mike Ellis',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452196906212',title:'Call with Curt Davis',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452543266029',title:'Call with Shannon Dubbs',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452470464755',title:'Call with David Tavener',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452628110578',title:'Call with Mike Clark',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452196906218',title:'Call with David Miao',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452844732622',title:'Call with Lisa Waters',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452667703509',title:'Call with Razak Salifu',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452543270100',title:'Call with Andrew Holmes',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452191320263',title:'Call with Jorge Boza',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452364994749',title:'Call with Todd Weiss',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452848627909',title:'Call with Christopher Gore',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452557788360',title:'Call with Claudia Thomas',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452543271142',title:'Call with James Palmer',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452665913562',title:'Call with Todd Weiss',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452149255408',title:'Call with Bridger Hyatt',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452555831505',title:'Call with Jacob Gothier',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452352303299',title:'Call with Tim Green',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452455848166',title:'Call with Scott Richey',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452653246658',title:'Call with Ruqayyah Abdullah',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452855874806',title:'Call with Jamaal Williams',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452352307437',title:'Call with Jack C',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452559635685',title:'Call with Molly McDonald',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452855879903',title:'Call with Tony Chiu',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452848641255',title:'Call with Lauren Aslatei',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452543284411',title:'Call with Liesel Borovsky',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452555836657',title:'Call with Kirk Williams',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452454059230',title:'Call with Lori Gorman',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452667719877',title:'Call with Liesel Borovsky',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452653250800',title:'Call with John Vannewkirk',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452566973654',title:'Call with Linda Amiro',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452611782897',title:'Call with Larry Bontempo',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452515972316',title:'Call with Steve Alderman',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452901141702',title:'Call with Paul Ferrata',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452220384505',title:'Call with Lisa Vesely',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452559636687',title:'Call with Ben Burich',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452857673967',title:'Call with Kevin Diers',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452191334620',title:'Call with Eulalia Barr',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452475929806',title:'Call with Teresa Ronquillo',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452628132067',title:'Call with Jonathan Williams',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452653253851',title:'Call with Travis Wells',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452470487255',title:'Call with Steve Dew',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452559638763',title:'Call with Brian Stewart',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452901144792',title:'Call with Jay Probasco',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452844754167',title:'Call with Morgan Thompson',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452630028528',title:'Call with Lori Grim',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452539613417',title:'Call with Alison Reed',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452539613430',title:'Call with Lori Grim',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452890327262',title:'Call with Helia Maritato',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452515975417',title:'Call with Roger Gallegos',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452844755179',title:'Call with Tanner Holland',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452510253268',title:'Call with Paula Stadler',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452555844808',title:'Call with Colton Anderson',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452780236994',title:'Call with Joseph Gilbert',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452642192586',title:'Call with Zarina Sikandari',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
-  {id:'452646696179',title:'Call with Joseph Gilbert',timestamp:'2026-02-12',ownerId:'31610755',dealIds:[]},
   {id:'453655696607',title:'Call with Michelle Pelizza',timestamp:'2026-02-13',ownerId:'30284350',dealIds:[]},
   {id:'453741972725',title:'Call with Federico Frau',timestamp:'2026-02-13',ownerId:'30284350',dealIds:[]},
   {id:'453742986453',title:'Call with Wook Cho',timestamp:'2026-02-13',ownerId:'30284350',dealIds:[]},
@@ -3451,12 +3392,6 @@ const CALLS = [
 // isInternal: true = only @octup.com people involved (excluded from SDR external view)
 // Chanan last week (Feb 22-28, 2026): 44 total — verified in HubSpot Mar 3 2026
 const EMAILS = [
-  {id:'390052270294',subject:'Re: Octup x Delta Fulfillment Intro Recap',timestamp:'2025-12-14',ownerId:'29422733',dealIds:["21754029791"],direction:'EMAIL'},
-  {id:'390110824669',subject:'Re: Meet with Octup',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["378594137292"],direction:'EMAIL'},
-  {id:'390167392465',subject:'Re: Octup <> 3PL Winner - Accessorial Challenge',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["378594107601"],direction:'EMAIL'},
-  {id:'390190925008',subject:'Re: Reconnecting on Octup & ShipBots',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["154487611634"],direction:'EMAIL'},
-  {id:'390321568972',subject:'Re: Meeting Availability for Next Week',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["307902473430"],direction:'EMAIL'},
-  {id:'389696114898',subject:'Octup <> Reconnect',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["284946321654"],direction:'EMAIL'},
   {id:'390644251896',subject:'Re: Octup x Delta Fulfillment Intro Recap',timestamp:'2025-12-15',ownerId:'29422733',dealIds:["21754029791"],direction:'EMAIL'},
   {id:'391016434880',subject:'Re: Alon Partuk and Steven J Edelstein',timestamp:'2025-12-15',ownerId:'29422733',dealIds:[],direction:'EMAIL'},
   {id:'391052266688',subject:'Re: Alon Partuk and Steven J Edelstein',timestamp:'2025-12-15',ownerId:'29422733',dealIds:[],direction:'EMAIL'},
@@ -10196,7 +10131,24 @@ const EMAILS = [
   {id:'484952233157',subject:'Re: Quick Need - Mantis WMS On Prem',timestamp:'2026-04-13',ownerId:'29140485',dealIds:[],direction:'EMAIL'},
   {id:'484955986117',subject:'Accepted: Symple Deep Dive',timestamp:'2026-04-13',ownerId:'30860443',dealIds:[],direction:'EMAIL'},
   {id:'484950130900',subject:'Next Meet',timestamp:'2026-04-13',ownerId:'30860443',dealIds:[],direction:'EMAIL'},
-  {id:'484955637996',subject:'Re: Quick Recap from this mornings Conversation w/Octup + EGS',timestamp:'2026-04-13',ownerId:'32126513',dealIds:["477992997065"],direction:'EMAIL'}
+  {id:'484955637996',subject:'Re: Quick Recap from this mornings Conversation w/Octup + EGS',timestamp:'2026-04-13',ownerId:'32126513',dealIds:["477992997065"],direction:'EMAIL'},
+  {id:'484967915750',subject:'Marketing Plan',timestamp:'2026-04-13',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484965934326',subject:'Re: Q1 deals per rep',timestamp:'2026-04-13',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484959777983',subject:'Meeting Summary - Sales Weekly April 13',timestamp:'2026-04-13',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'484967952631',subject:'GOSS & Octup | Check In',timestamp:'2026-04-13',ownerId:'30860443',dealIds:[],direction:'EMAIL'},
+  {id:'484956050634',subject:'Re: Next Meet',timestamp:'2026-04-13',ownerId:'30860443',dealIds:[],direction:'EMAIL'},
+  {id:'484972725438',subject:'Re: Marketing Plan',timestamp:'2026-04-13',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'484976287985',subject:'Go-live plan and next steps',timestamp:'2026-04-13',ownerId:'30860443',dealIds:[],direction:'EMAIL'},
+  {id:'484987750592',subject:'Octup <> ProShipper',timestamp:'2026-04-13',ownerId:'29422733',dealIds:["497457729756"],direction:'EMAIL'},
+  {id:'484976203973',subject:'Tondo x Octup: Billing & Analytics Sync',timestamp:'2026-04-13',ownerId:'78746883',dealIds:[],direction:'EMAIL'},
+  {id:'484987402467',subject:'Ship Essential x Octup: Billing & Analytics Sync',timestamp:'2026-04-13',ownerId:'78746883',dealIds:[],direction:'EMAIL'},
+  {id:'484977482957',subject:'Ship Essential x Octup: Billing & Analytics Sync',timestamp:'2026-04-13',ownerId:'78746883',dealIds:[],direction:'EMAIL'},
+  {id:'484994719983',subject:'Re: Accounting integrations',timestamp:'2026-04-13',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'484989756606',subject:'Re: Octup Fontana go-live',timestamp:'2026-04-13',ownerId:'78746883',dealIds:[],direction:'EMAIL'},
+  {id:'485013812425',subject:'Re: FellowShip Warehousing & Logistics',timestamp:'2026-04-14',ownerId:'1285136351',dealIds:[],direction:'EMAIL'},
+  {id:'485001699557',subject:'Intent leads',timestamp:'2026-04-14',ownerId:'29974968',dealIds:[],direction:'EMAIL'},
+  {id:'485005389031',subject:'Fw: Your receipt from Clay Labs Inc #2036-8757',timestamp:'2026-04-14',ownerId:'32126513',dealIds:[],direction:'EMAIL'},
+  {id:'485008178400',subject:'Re: Your receipt from Clay Labs Inc #2036-8757',timestamp:'2026-04-14',ownerId:'30769886',dealIds:[],direction:'EMAIL'}
 ];
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -12597,13 +12549,18 @@ function generateBrief() {
     ? newLW.map(d => newDealRow(d)).join('')
     : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No new pipeline last week</div>`;
 
-  // ── Stage transitions last week (entered current stage last week) ──────────
+  // ── Stage transitions (last week + this week) ────────────────────────────
   const STAGE_PIPE_ORDER = ['2918051008','2918051007','608286675','740160705','608286676','4988070119','608286677'];
   // Stalled → NBM → Discovery → Pres → SA → Trial → CR
   const stageTransitionsLW = pool.filter(d => {
     const entered = STAGE_ENTERED[d[0]];
     if (!entered) return false;
     return dateInRange(entered, 'last'); // entered current stage last week
+  }).sort((a,b) => b[2] - a[2]);
+  const stageTransitionsTW = pool.filter(d => {
+    const entered = STAGE_ENTERED[d[0]];
+    if (!entered) return false;
+    return dateInRange(entered, 'this'); // entered current stage this week
   }).sort((a,b) => b[2] - a[2]);
   // Keep dealsChangedLW as alias so existing code below still compiles
   const dealsChangedLW = stageTransitionsLW;
@@ -12842,40 +12799,101 @@ function generateBrief() {
     </div>
 
     <div class="brief-section" style="margin-bottom:10px">
+      <div class="brief-section-title" style="color:#58a6ff">🔀 Stage Transitions</div>
+      ${(()=>{
+        const lwFwd = stageTransitionsLW.filter(d => STAGE_PIPE_ORDER.indexOf(d[3]) > 0);
+        const lwBck = stageTransitionsLW.filter(d => STAGE_PIPE_ORDER.indexOf(d[3]) <= 0);
+        const twFwd = stageTransitionsTW.filter(d => STAGE_PIPE_ORDER.indexOf(d[3]) > 0);
+        const twBck = stageTransitionsTW.filter(d => STAGE_PIPE_ORDER.indexOf(d[3]) <= 0);
+        const lwFwdArr = lwFwd.reduce((s,d)=>s+d[2],0);
+        const lwBckArr = lwBck.reduce((s,d)=>s+d[2],0);
+        const twFwdArr = twFwd.reduce((s,d)=>s+d[2],0);
+        const twBckArr = twBck.reduce((s,d)=>s+d[2],0);
+        const pill = (n,arr,color,sign) => n > 0
+          ? `<span style="background:${color}18;color:${color};border:1px solid ${color}33;border-radius:12px;padding:2px 8px;font-size:10px;font-weight:700">${sign}${n} deal${n>1?'s':''} · ${sign}${fmtK(arr)}</span>`
+          : '';
+        return `<div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Last Wk</span>
+            ${pill(lwFwd.length,lwFwdArr,'#4ade80','+')}
+            ${pill(lwBck.length,lwBckArr,'#f87171','−')}
+            ${!lwFwd.length&&!lwBck.length ? '<span style="font-size:10px;color:var(--muted)">No transitions</span>' : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">This Wk</span>
+            ${pill(twFwd.length,twFwdArr,'#4ade80','+')}
+            ${pill(twBck.length,twBckArr,'#f87171','−')}
+            ${!twFwd.length&&!twBck.length ? '<span style="font-size:10px;color:var(--muted)">None yet</span>' : ''}
+          </div>
+        </div>`;
+      })()}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0">
+        <!-- Last Week column -->
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">Last Week — ${stageTransitionsLW.length} deals</div>
+          ${stageTransitionsLW.length ? stageTransitionsLW.slice(0,6).map(d => {
+            const toStageId = d[3];
+            const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
+            const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
+            const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
+            const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
+            const arrowColor = toIdx >= 0 ? '#4ade80' : '#f87171';
+            const enteredDate = STAGE_ENTERED[d[0]] || '';
+            const isForwardMove = toIdx > 0; // moved forward in pipeline
+            const sign = isForwardMove ? '+' : '−';
+            const signColor = isForwardMove ? '#4ade80' : '#f87171';
+            return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
+                <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
+                <span style="font-size:11px;font-weight:600;color:${signColor};flex-shrink:0">${sign}${fmtK(d[2])}</span>
+              </div>
+              <div style="font-size:10px;margin-top:2px;display:flex;align-items:center;gap:3px">
+                <span style="color:var(--muted)">${fromLabel}</span>
+                <span style="color:${arrowColor};font-weight:700">→</span>
+                <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
+                ${enteredDate ? `<span style="color:var(--muted);margin-left:3px">${enteredDate}</span>` : ''}
+              </div>
+            </div>`;
+          }).join('') + (stageTransitionsLW.length > 6 ? `<div style="font-size:10px;color:var(--muted);padding:4px 0">+${stageTransitionsLW.length-6} more</div>` : '')
+          : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None last week</div>`}
+        </div>
+        <!-- This Week column -->
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(74,222,128,.25)">This Week — ${stageTransitionsTW.length} deals</div>
+          ${stageTransitionsTW.length ? stageTransitionsTW.slice(0,6).map(d => {
+            const toStageId = d[3];
+            const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
+            const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
+            const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
+            const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
+            const arrowColor = toIdx >= 0 ? '#4ade80' : '#f87171';
+            const enteredDate = STAGE_ENTERED[d[0]] || '';
+            const isForwardMove = toIdx > 0; // moved forward in pipeline
+            const sign = isForwardMove ? '+' : '−';
+            const signColor = isForwardMove ? '#4ade80' : '#f87171';
+            return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
+                <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
+                <span style="font-size:11px;font-weight:600;color:${signColor};flex-shrink:0">${sign}${fmtK(d[2])}</span>
+              </div>
+              <div style="font-size:10px;margin-top:2px;display:flex;align-items:center;gap:3px">
+                <span style="color:var(--muted)">${fromLabel}</span>
+                <span style="color:${arrowColor};font-weight:700">→</span>
+                <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
+                ${enteredDate ? `<span style="color:var(--muted);margin-left:3px">${enteredDate}</span>` : ''}
+              </div>
+            </div>`;
+          }).join('') + (stageTransitionsTW.length > 6 ? `<div style="font-size:10px;color:var(--muted);padding:4px 0">+${stageTransitionsTW.length-6} more</div>` : '')
+          : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None this week yet</div>`}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="brief-section" style="margin-bottom:10px">
       <div class="brief-section-title" style="color:#fbbf24">⏳ Awaiting Customer Response</div>
       ${awaitHtml}
     </div>
-
-    <div class="brief-section" style="margin-bottom:10px">
-      <div class="brief-section-title" style="color:#58a6ff">🔀 Stage Transitions Last Week — ${stageTransitionsLW.length} deals</div>
-      ${stageTransitionsLW.length ? stageTransitionsLW.slice(0,8).map(d => {
-        const toStageId = d[3];
-        const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
-        const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
-        const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
-        const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
-        const isForward = toIdx >= 0;
-        const arrowColor = isForward ? '#4ade80' : '#f87171';
-        const enteredDate = STAGE_ENTERED[d[0]] || '';
-        return `<div class="brief-deal-row" style="flex-wrap:wrap;gap:2px">
-          <div style="flex:1;min-width:0">
-            <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
-            <div style="font-size:11px;margin-top:2px">
-              <span style="color:var(--muted)">${fromLabel}</span>
-              <span style="color:${arrowColor};font-weight:700;margin:0 4px">→</span>
-              <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
-              ${enteredDate ? `<span style="color:var(--muted);font-size:10px;margin-left:6px">${enteredDate}</span>` : ''}
-            </div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-            <span class="brief-deal-meta">${oShort(d[4])}</span>
-            <span class="brief-deal-arr">${fmtK(d[2])}</span>
-          </div>
-        </div>`;
-      }).join('') + (stageTransitionsLW.length > 8 ? `<div style="font-size:11px;color:var(--muted);padding:4px 0">+${stageTransitionsLW.length-8} more transitions</div>` : '')
-      : `<div style="color:var(--muted);font-size:12px;padding:4px 0">No stage transitions last week</div>`}
-    </div>
-
     <div class="brief-section" style="margin-bottom:10px">
       <div class="brief-section-title" style="color:#f85149">☠️ Qualify to Lost — ${qualifyToLost.length} candidates · <span style="font-size:10px;font-weight:400;color:var(--muted)">21d+ dark or disinterest signals</span></div>
       ${qualToLostHtml}
@@ -14135,86 +14153,248 @@ function exportHygieneCSV() {
 // ─── MARKETING FUNNEL ────────────────────────────────────────────────────────
 // Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
 // Update these values with real data as campaigns run.
-// Marketing funnel contact sample data — spread across sources/campaigns
-// Real HubSpot contacts who booked a demo (via demo-page meeting link)
-// Synced from HubSpot view 154243004 — 73 total contacts
+// Real HubSpot contacts from view 154243004 (73 total) — 3 form types, filtered/sortable
 const MKT_CONTACTS = [
-  // Google Ads — Brand Search (sw: a1 brand)
-  {name:'Adam Brown',               email:'abrown@instawork.com',               source:'Google Ads', campaign:'Brand Search',    date:'2026-02-24', last_activity:'2026-02-24 · Demo booked'},
-  {name:'Elor Kahalany',            email:'eli@logystico.com',                  source:'Google Ads', campaign:'Brand Search',    date:'2026-02-09', last_activity:'2026-02-09 · Demo booked'},
-  {name:'Joel Wilson',              email:'jwilson@infopluscommerce.com',        source:'Google Ads', campaign:'Brand Search',    date:'2026-02-17', last_activity:'2026-02-17 · Demo booked'},
-  // Google Ads — Conquest (sw: a1 conquest)
-  {name:'Catherine Weis',           email:'catherine@bestowegifting.com',        source:'Google Ads', campaign:'Conquest',        date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
-  {name:'Ryan Foster',              email:'ryan@biolongevitylabs.com',           source:'Google Ads', campaign:'Conquest',        date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
-  // Google Ads — Performance Max (sw: performance max)
-  {name:'Sayidali Abdille',         email:'sayidaliibraahim@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
-  {name:'Anisa Hassan',             email:'anisahassan@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
-  {name:'Maranatha Momplaisir',     email:'maranathamomplaisir5@gmail.com',      source:'Google Ads', campaign:'Performance Max', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked'},
-  {name:'Said Khalif',              email:'saciidmoha2020@icloud.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
-  {name:'Fanuel Kahsay',            email:'fanieltesfalem89@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked'},
-  {name:'Hadgu Hagos',              email:'hadgutesfahiwet9@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-20', last_activity:'2026-03-20 · Demo booked'},
-  {name:'Bernide Saint Phat',       email:'saintphatbernide13@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-03-18', last_activity:'2026-03-18 · Demo booked'},
-  {name:'Ndiogou Seck',             email:'ndiogous@856gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-16', last_activity:'2026-03-16 · Demo booked'},
-  {name:'Abdifatah Ali Ahmed',      email:'kumbiabdifatah18@gmail.com',          source:'Google Ads', campaign:'Performance Max', date:'2026-03-15', last_activity:'2026-03-15 · Demo booked'},
-  {name:'Suleman Sharaf',           email:'sulemansharaf01@gmail.com',           source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
-  {name:'Charles Phillips',         email:'phillips53@gmail.com',                source:'Google Ads', campaign:'Performance Max', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked'},
-  {name:'Jean Guy Desbiens',        email:'tiguy_111@hotmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-10', last_activity:'2026-03-10 · Demo booked'},
-  {name:'Ahmat Mahamat Senoussi',   email:'ahmatmahamattahirsenossi@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-03-08', last_activity:'2026-03-08 · Demo booked'},
-  {name:'Anureet Kaur Bains',       email:'anureet2626@gmail.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-03-05', last_activity:'2026-03-05 · Demo booked'},
-  {name:'Vedwattie',                email:'babitaramcharran@hotmail.com',         source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
-  {name:'Tamel Foster',             email:'tamelfoster22@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-03-03', last_activity:'2026-03-03 · Demo booked'},
-  {name:'Alimatou Wague',           email:'alimawague@icloud.com',               source:'Google Ads', campaign:'Performance Max', date:'2026-02-21', last_activity:'2026-02-21 · Demo booked'},
-  {name:'Lavon Vines',              email:'ltvines34@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-16', last_activity:'2026-02-16 · Demo booked'},
-  {name:'Eguiberto Santos',         email:'eguibertosantosrodrigues@gmail.com',  source:'Google Ads', campaign:'Performance Max', date:'2026-02-14', last_activity:'2026-02-14 · Demo booked'},
-  {name:'Carlos Grey',              email:'carlosgrey1971@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
-  {name:'Zarina Sikandari',         email:'07sikandari.zarina@gmail.com',        source:'Google Ads', campaign:'Performance Max', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked'},
-  {name:'Appolinaire',              email:'aptouomou@gmail.com',                 source:'Google Ads', campaign:'Performance Max', date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
-  {name:'Khamis Belkoe',            email:'belkoekhamis9@icloud.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-07', last_activity:'2026-02-07 · Demo booked'},
-  {name:'Desrosiers Ygor',          email:'desrosiersygor@gmail.com',            source:'Google Ads', campaign:'Performance Max', date:'2026-02-06', last_activity:'2026-02-06 · Demo booked'},
-  {name:'Riyad Ahmad Aliy',         email:'riyadahmed633@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-31', last_activity:'2026-01-31 · Demo booked'},
-  {name:'Cedric Malilo',            email:'sedrickmalilo@gmail.com',             source:'Google Ads', campaign:'Performance Max', date:'2026-01-26', last_activity:'2026-01-26 · Demo booked'},
-  // Direct Traffic — website visitors who booked demo
-  {name:'Gavin Green',              email:'gavin@proshipper.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-04-01', last_activity:'2026-04-01 · Demo booked'},
-  {name:'Bryan Costa',              email:'bryan@leftbrainlogistics.com',        source:'Direct',     campaign:'octup.com/pricing',   date:'2026-03-25', last_activity:'2026-03-25 · Demo booked'},
-  {name:'Ryan Andrews',             email:'ryan.andrews@portless.com',           source:'Direct',     campaign:'octup.com',           date:'2026-03-24', last_activity:'2026-03-24 · Demo booked'},
-  {name:'Cynncere Powell',          email:'cynncerepowell613@gmail.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-03-12', last_activity:'2026-03-12 · Demo booked'},
-  {name:'Jack',                     email:'jack@scrumbles.co.uk',                source:'Direct',     campaign:'octup.com/features',  date:'2026-03-09', last_activity:'2026-03-09 · Demo booked'},
-  {name:'Devin Greene',             email:'dgreene@parcelplanet.com',            source:'Direct',     campaign:'partner.octup.com',   date:'2026-03-06', last_activity:'2026-03-06 · Demo booked'},
-  {name:'Kunal Singh',              email:'kunalsingh.workz@gmail.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-26', last_activity:'2026-02-26 · Demo booked'},
-  {name:'Tony Carney',              email:'bigtcarney@gmail.com',                source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-02-15', last_activity:'2026-02-15 · Demo booked'},
-  {name:'Matt Bragg',               email:'matt@whitehouse-solutions.co.uk',     source:'Direct',     campaign:'octup.com',           date:'2026-02-11', last_activity:'2026-02-11 · Demo booked'},
-  {name:'Ricardo Landa',            email:'ricardo.landa@directemailuniverse.us',source:'Direct',     campaign:'octup.com',           date:'2026-01-28', last_activity:'2026-01-28 · Demo booked'},
-  {name:'Aaron Martinez',           email:'aaron@myprolificbrands.com',          source:'Direct',     campaign:'octup.com/pricing',   date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
-  {name:'Andy Kaye',                email:'andy@onncom.com',                     source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-23', last_activity:'2026-01-23 · Demo booked'},
-  {name:'Matt Lee',                 email:'mlee@lmwarehousing.com',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-21', last_activity:'2026-01-21 · Demo booked'},
-  {name:'Andrew Wilson',            email:'andrew@shipscience.com',              source:'Direct',     campaign:'octup.com/partners',  date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
-  {name:'Sam Phillips',             email:'sam@wavefulfil.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-19', last_activity:'2026-01-19 · Demo booked'},
-  {name:'Josep Arpa Mendez',        email:'logistics@windmilloperations.com',    source:'Direct',     campaign:'octup.com',           date:'2026-01-15', last_activity:'2026-04-07 · Demo booked'},
-  {name:'Ciaran O\'Kane',           email:'ciaran@contactmarketing.co.uk',       source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-14', last_activity:'2026-01-14 · Demo booked'},
-  {name:'Mubarak Alosaimi',         email:'mubarak@units.sa',                   source:'Direct',     campaign:'octup.com/get-demo',  date:'2026-01-09', last_activity:'2026-01-09 · Demo booked'},
-  {name:'Benn Mendelsohn',          email:'benn@boxfortcommerce.com',            source:'Direct',     campaign:'octup.com',           date:'2026-01-06', last_activity:'2026-01-06 · Demo booked'},
-  {name:'Joshua Pavel',             email:'joshua.pavel@lumana.ai',              source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
-  {name:'Amanda Purchon',           email:'amanda@aaryaship.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-30', last_activity:'2025-12-30 · Demo booked'},
-  {name:'Ginny Kaur',               email:'ginny@amzprep.com',                  source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-16', last_activity:'2025-12-16 · Demo booked'},
-  {name:'Josep Arpa',               email:'josep@amphoralogistics.com',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-12-10', last_activity:'2025-12-10 · Demo booked'},
-  {name:'Juan Pablo',               email:'jps@prova-mexico.com',               source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-27', last_activity:'2025-11-27 · Demo booked'},
-  {name:'Mark Hance',               email:'mark.hance@baseleaddata.com',         source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-18', last_activity:'2025-11-18 · Demo booked'},
-  {name:'Stephen Wolff',            email:'stephen.wolff@tupack.co.uk',          source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-11-17', last_activity:'2025-11-17 · Demo booked'},
-  {name:'Kevin McCandrew',          email:'kevin@relaydistro.com',               source:'Direct',     campaign:'octup.com',           date:'2025-10-15', last_activity:'2025-10-15 · Demo booked'},
-  {name:'Ben Adams',                email:'ben@advoc8.com',                      source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-10-14', last_activity:'2025-10-14 · Demo booked'},
-  {name:'Jake Milner',              email:'jmilner@whiteriverfulfillment.com',   source:'Direct',     campaign:'octup.com/get-demo',  date:'2025-01-12', last_activity:'2026-02-13 · Demo booked'},
-  // Email Marketing
-  {name:'Neil Mahoney',             email:'neil@shippingbutler.com',             source:'Email',      campaign:'HubSpot Email',       date:'2026-03-11', last_activity:'2026-03-11 · Demo booked'},
-  {name:'Steve Burr',               email:'sburr@saia.com',                      source:'Email',      campaign:'HubSpot Email',       date:'2026-02-25', last_activity:'2026-02-25 · Demo booked'},
-  {name:'Dennis Melgert',           email:'dennis@lpxpartners.com',              source:'Email',      campaign:'HubSpot Email',       date:'2026-01-20', last_activity:'2026-01-20 · Demo booked'},
-  {name:'Arsen Janikyan',           email:'team@opsengine.co',                   source:'Email',      campaign:'HubSpot Email',       date:'2025-10-18', last_activity:'2025-10-18 · Demo booked'},
-  // LinkedIn / Social
-  {name:'Accounting Team',          email:'accounting@advtransolution.com',      source:'LinkedIn',   campaign:'Organic',             date:'2026-02-13', last_activity:'2026-02-13 · Demo booked'},
-  // Organic Search
-  {name:'Viktor Kapustin',          email:'viktor@shopmiko.com',                 source:'Organic',    campaign:'Google Search',       date:'2026-01-25', last_activity:'2026-01-25 · Demo booked'},
-  // Other
-  {name:'Luca Marano',              email:'luca.marano@shiporo.com',             source:'Other',      campaign:'LinkedIn Campaign',   date:'2025-10-23', last_activity:'2025-10-23 · Demo booked'},
+  // ── Google Ads — Brand Search ─────────────────────────────────────────────
+  {name:'Adam Brown',             email:'abrown@instawork.com',               company:'Instawork',              source:'Google Ads', source_key:'google', campaign:'Brand Search',    traffic_source:'sw: a1 brand',       form:'Demo Meeting', date:'2026-02-24', last_activity:'2026-02-24 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Elor Kahalany',          email:'eli@logystico.com',                  company:'Logystico',              source:'Google Ads', source_key:'google', campaign:'Brand Search',    traffic_source:'sw: a1 brand',       form:'Demo Meeting', date:'2026-02-09', last_activity:'2026-02-09 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Joel Wilson',            email:'jwilson@infopluscommerce.com',       company:'InfoPlus Commerce',      source:'Google Ads', source_key:'google', campaign:'Brand Search',    traffic_source:'sw: a1 brand',       form:'Demo Meeting', date:'2026-02-17', last_activity:'2026-02-17 · Demo booked', has_deal:false, deal_count:0},
+  // ── Google Ads — Conquest ─────────────────────────────────────────────────
+  {name:'Catherine Weis',         email:'catherine@bestowegifting.com',       company:'Bestowe Gifting',        source:'Google Ads', source_key:'google', campaign:'Conquest',        traffic_source:'sw: a1 conquest',    form:'Demo Meeting', date:'2026-03-25', last_activity:'2026-03-25 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Ryan Foster',            email:'ryan@biolongevitylabs.com',          company:'F2 Nutrition LLC',       source:'Google Ads', source_key:'google', campaign:'Conquest',        traffic_source:'sw: a1 conquest',    form:'Demo Meeting', date:'2026-03-24', last_activity:'2026-03-24 · Demo booked', has_deal:true,  deal_count:1},
+  // ── Google Ads — Performance Max — Demo Meeting ───────────────────────────
+  {name:'Sayidali Abdille',       email:'sayidaliibraahim@gmail.com',         company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-03-22', last_activity:'2026-03-22 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Said Khalif',            email:'saciidmoha2020@icloud.com',          company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-03-21', last_activity:'2026-03-21 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Hadgu Hagos',            email:'hadgutesfahiwet9@gmail.com',         company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-03-20', last_activity:'2026-03-20 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Suleman Sharaf',         email:'sulemansharaf01@gmail.com',          company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-03-14', last_activity:'2026-03-14 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Anureet Kaur Bains',     email:'anureet2626@gmail.com',              company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-03-05', last_activity:'2026-03-05 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Lavon Vines',            email:'ltvines34@gmail.com',                company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-02-16', last_activity:'2026-02-16 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Zarina Sikandari',       email:'07sikandari.zarina@gmail.com',       company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Meeting', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Zarina Sikandari',       email:'07sikandari@gmail.com',             company:'—',                      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo',  form:'Demo Meeting', date:'2026-02-12', last_activity:'2026-02-12 · Demo booked', has_deal:false, deal_count:0},
+  // ── Google Ads — Performance Max — Demo Form (submitted form, no meeting) ─
+  {name:'Anisa Hassan',           email:'anisahassan@gmail.com',              company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-22', last_activity:'2026-03-22 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Maranatha Momplaisir',   email:'maranathamomplaisir5@gmail.com',     company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-22', last_activity:'2026-03-22 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Fanuel Kahsay',          email:'fanieltesfalem89@gmail.com',         company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-21', last_activity:'2026-03-21 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Bernide Saint Phat',     email:'saintphatbernide13@gmail.com',       company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-18', last_activity:'2026-03-18 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Ndiogou Seck',           email:'ndiogous@856gmail.com',              company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-16', last_activity:'2026-03-16 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Abdifatah Ali Ahmed',    email:'kumbiabdifatah18@gmail.com',         company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-15', last_activity:'2026-03-15 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Charles Phillips',       email:'phillips53@gmail.com',               company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-14', last_activity:'2026-03-14 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Jean Guy Desbiens',      email:'tiguy_111@hotmail.com',              company:'Encan TIGUY',            source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-10', last_activity:'2026-03-10 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Ahmat Mahamat Senoussi', email:'ahmatmahamattahirsenossi@gmail.com', company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-08', last_activity:'2026-03-08 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Vedwattie',              email:'babitaramcharran@hotmail.com',        company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-03', last_activity:'2026-03-03 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Tamel Foster',           email:'tamelfoster22@gmail.com',            company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-03-03', last_activity:'2026-03-03 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Alimatou Wague',         email:'alimawague@icloud.com',              company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-21', last_activity:'2026-02-21 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Eguiberto Santos',       email:'eguibertosantosrodrigues@gmail.com', company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-14', last_activity:'2026-02-14 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Carlos Grey',            email:'carlosgrey1971@gmail.com',           company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-12', last_activity:'2026-02-12 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Appolinaire',            email:'aptouomou@gmail.com',                company:'Liftow',                 source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-11', last_activity:'2026-02-11 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Khamis Belkoe',          email:'belkoekhamis9@icloud.com',           company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-07', last_activity:'2026-02-07 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Desrosiers Ygor',        email:'desrosiersygor@gmail.com',           company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-02-06', last_activity:'2026-02-06 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Riyad Ahmad Aliy',       email:'riyadahmed633@gmail.com',            company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-01-31', last_activity:'2026-01-31 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Cedric Malilo',          email:'sedrickmalilo@gmail.com',            company:'—',                      source:'Google Ads', source_key:'google', campaign:'Performance Max', traffic_source:'sw: performance max', form:'Demo Form',    date:'2026-01-26', last_activity:'2026-01-26 · Form submitted', has_deal:false, deal_count:0},
+  // ── Google Ads — Warehouse — Pricing Form ────────────────────────────────
+  {name:'Sha',                    email:'kattor78@aol.com',                   company:'Kulkarni',               source:'Google Ads', source_key:'google', campaign:'Warehouse',       traffic_source:'sw: warehouse',      form:'Pricing Form', date:'2026-03-12', last_activity:'2026-03-12 · Pricing form', has_deal:false, deal_count:0},
+  // ── Direct Traffic — Demo Meeting ────────────────────────────────────────
+  {name:'Gavin Green',            email:'gavin@proshipper.com',               company:'ProShipper',             source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-04-01', last_activity:'2026-04-01 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Bryan Costa',            email:'bryan@leftbrainlogistics.com',       company:'Left Brain Logistics',   source:'Direct',     source_key:'direct', campaign:'octup.com/pricing',  traffic_source:'octup.com/pricing',  form:'Demo Meeting', date:'2026-03-25', last_activity:'2026-03-25 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Ryan Andrews',           email:'ryan.andrews@portless.com',          company:'Portless',               source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Meeting', date:'2026-03-24', last_activity:'2026-03-24 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Cynncere Powell',        email:'cynncerepowell613@gmail.com',        company:'—',                      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-03-12', last_activity:'2026-03-12 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Hildana Gebreegziabher', email:'hildana43@icloud.com',              company:'—',                      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-03-10', last_activity:'2026-03-10 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Devin Greene',           email:'dgreene@parcelplanet.com',           company:'ParcelPlanet',           source:'Direct',     source_key:'direct', campaign:'partner.octup.com',  traffic_source:'partner.octup.com',  form:'Demo Meeting', date:'2026-03-06', last_activity:'2026-03-06 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Tony Carney',            email:'bigtcarney@gmail.com',               company:'—',                      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-02-15', last_activity:'2026-02-15 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Matt Bragg',             email:'matt@whitehouse-solutions.co.uk',    company:'Whitehouse Solutions',   source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Meeting', date:'2026-02-11', last_activity:'2026-02-11 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Aaron Martinez',         email:'aaron@myprolificbrands.com',         company:'Prolific Brands',        source:'Direct',     source_key:'direct', campaign:'octup.com/pricing',  traffic_source:'octup.com/pricing',  form:'Demo Meeting', date:'2026-01-23', last_activity:'2026-01-23 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Andy Kaye',              email:'andy@onncom.com',                    company:'Onncom',                 source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-01-23', last_activity:'2026-01-23 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Matt Lee',               email:'mlee@lmwarehousing.com',             company:'L&M Warehousing',        source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-01-21', last_activity:'2026-01-21 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Andrew Wilson',          email:'andrew@shipscience.com',             company:'ShipScience',            source:'Direct',     source_key:'direct', campaign:'octup.com/partners', traffic_source:'octup.com/partners', form:'Demo Meeting', date:'2026-01-20', last_activity:'2026-01-20 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Sam Phillips',           email:'sam@wavefulfil.com',                 company:'WaveFulfil',             source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-01-19', last_activity:'2026-01-19 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Josep Arpa Mendez',      email:'logistics@windmilloperations.com',   company:'Windmill Operations',    source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Meeting', date:'2026-01-15', last_activity:'2026-04-07 · Demo booked', has_deal:false, deal_count:0},
+  {name:"Ciaran O'Kane",          email:'ciaran@contactmarketing.co.uk',      company:'Contact Marketing NI',   source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-01-14', last_activity:'2026-01-14 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Mubarak Alosaimi',       email:'mubarak@units.sa',                   company:'UNITS',                  source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2026-01-09', last_activity:'2026-01-09 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Benn Mendelsohn',        email:'benn@boxfortcommerce.com',           company:'Boxfort Commerce',       source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Meeting', date:'2026-01-06', last_activity:'2026-01-06 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Joshua Pavel',           email:'joshua.pavel@lumana.ai',             company:'Lumana',                 source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2025-12-30', last_activity:'2025-12-30 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Amanda Purchon',         email:'amanda@aaryaship.com',               company:'Aarya Logistics',        source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2025-12-30', last_activity:'2025-12-30 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Ginny Kaur',             email:'ginny@amzprep.com',                  company:'Amz prep',               source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2025-12-16', last_activity:'2025-12-16 · Demo booked', has_deal:true,  deal_count:2},
+  {name:'Stephen Wolff',          email:'stephen.wolff@tupack.co.uk',         company:'Tu Pack',                source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2025-11-17', last_activity:'2025-11-17 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Kevin McCandrew',        email:'kevin@relaydistro.com',              company:'Relay Distro',           source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Meeting', date:'2025-10-15', last_activity:'2025-10-15 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Jake Milner',            email:'jmilner@whiteriverfulfillment.com',  company:'White River Fulfillment',source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Meeting', date:'2025-01-12', last_activity:'2026-02-13 · Demo booked', has_deal:true,  deal_count:3},
+  // ── Direct Traffic — Demo Form ────────────────────────────────────────────
+  {name:'Jack',                   email:'jack@scrumbles.co.uk',               company:'Scrumbles Pet',          source:'Direct',     source_key:'direct', campaign:'octup.com/features', traffic_source:'octup.com/features', form:'Demo Form',    date:'2026-03-09', last_activity:'2026-03-09 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Kunal Singh',            email:'kunalsingh.workz@gmail.com',         company:'Parola',                 source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2026-02-26', last_activity:'2026-02-26 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Ricardo Landa',          email:'ricardo.landa@directemailuniverse.us',company:'B2B Email List',        source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Demo Form',    date:'2026-01-28', last_activity:'2026-01-28 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Andrew (Channel)',       email:'andrew.s5@channelpartnersnetwork.com',company:'Channel Partners',      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2025-12-18', last_activity:'2025-12-18 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Josep Arpa',             email:'josep@amphoralogistics.com',          company:'Amphora Logistics',      source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2025-12-10', last_activity:'2025-12-10 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Juan Pablo',             email:'jps@prova-mexico.com',               company:'PROVA',                  source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2025-11-27', last_activity:'2025-11-27 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Mark Hance',             email:'mark.hance@baseleaddata.com',         company:'Base Lead Data',         source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2025-11-18', last_activity:'2025-11-18 · Form submitted', has_deal:false, deal_count:0},
+  {name:'Ben Adams',              email:'ben@advoc8.com',                     company:'&drop',                  source:'Direct',     source_key:'direct', campaign:'octup.com/get-demo', traffic_source:'octup.com/get-demo', form:'Demo Form',    date:'2025-10-14', last_activity:'2025-10-14 · Form submitted', has_deal:false, deal_count:0},
+  // ── Direct Traffic — Pricing Form ─────────────────────────────────────────
+  {name:'Scott Rasak',            email:'scott@jocordistro.com',              company:'Jocor Distro',           source:'Direct',     source_key:'direct', campaign:'octup.com/pricing',  traffic_source:'octup.com/pricing',  form:'Pricing Form', date:'2026-02-25', last_activity:'2026-02-25 · Pricing form', has_deal:false, deal_count:0},
+  {name:'Martin Gale',            email:'mgale@onelineage.com',               company:'Lineage',                source:'Direct',     source_key:'direct', campaign:'octup.com',          traffic_source:'octup.com',          form:'Pricing Form', date:'2026-02-11', last_activity:'2026-02-11 · Pricing form', has_deal:false, deal_count:0},
+  // ── Email Marketing ────────────────────────────────────────────────────────
+  {name:'Neil Mahoney',           email:'neil@shippingbutler.com',            company:'Shipping Butler',        source:'Email',      source_key:'email',  campaign:'HubSpot Email',      traffic_source:'hs_email',           form:'Demo Meeting', date:'2026-03-11', last_activity:'2026-03-11 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Steve Burr',             email:'sburr@saia.com',                     company:'SAIA Logistics',         source:'Email',      source_key:'email',  campaign:'HubSpot Email',      traffic_source:'hs_email',           form:'Demo Meeting', date:'2026-02-25', last_activity:'2026-02-25 · Demo booked', has_deal:true,  deal_count:1},
+  {name:'Dennis Melgert',         email:'dennis@lpxpartners.com',             company:'LPX Partners',           source:'Email',      source_key:'email',  campaign:'HubSpot Email',      traffic_source:'hs_email',           form:'Demo Meeting', date:'2026-01-20', last_activity:'2026-01-20 · Demo booked', has_deal:false, deal_count:0},
+  {name:'Arsen Janikyan',         email:'team@opsengine.co',                  company:'OpsEngine',              source:'Email',      source_key:'email',  campaign:'HubSpot Email',      traffic_source:'hs_email',           form:'Demo Meeting', date:'2025-10-18', last_activity:'2025-10-18 · Demo booked', has_deal:true,  deal_count:1},
+  // ── LinkedIn / Social ──────────────────────────────────────────────────────
+  {name:'Accounting Team',        email:'accounting@advtransolution.com',     company:'ATS',                    source:'LinkedIn',   source_key:'linkedin',campaign:'Organic',           traffic_source:'LinkedIn',           form:'Demo Form',    date:'2026-02-13', last_activity:'2026-02-13 · Form submitted', has_deal:false, deal_count:0},
+  // ── Organic Search ─────────────────────────────────────────────────────────
+  {name:'Viktor Kapustin',        email:'viktor@shopmiko.com',                company:'ShopMiko',               source:'Organic',    source_key:'organic', campaign:'Google Search',     traffic_source:'Unknown keywords',   form:'Demo Meeting', date:'2026-01-25', last_activity:'2026-01-25 · Demo booked', has_deal:false, deal_count:0},
+  // ── Other Campaigns ────────────────────────────────────────────────────────
+  {name:'Luca Marano',            email:'luca.marano@shiporo.com',            company:'Shiporo',                source:'Other',      source_key:'other',  campaign:'LinkedIn Campaign',  traffic_source:'peak season',        form:'Demo Meeting', date:'2025-10-23', last_activity:'2025-10-23 · Demo booked', has_deal:true,  deal_count:1},
 ];
+
+// HubSpot contact IDs (keyed by email, fetched live 2026-04-14)
+const MKT_CONTACT_IDS = {
+  "abrown@instawork.com":                    "711403665646",
+  "eli@logystico.com":                       "690019043547",
+  "jwilson@infopluscommerce.com":            "100985753824",
+  "catherine@bestowegifting.com":            "743784978622",
+  "ryan@biolongevitylabs.com":               "743550037187",
+  "sayidaliibraahim@gmail.com":              "741834604752",
+  "saciidmoha2020@icloud.com":               "741458341079",
+  "hadgutesfahiwet9@gmail.com":              "740381092045",
+  "sulemansharaf01@gmail.com":               "736884128990",
+  "anureet2626@gmail.com":                   "727232039159",
+  "ltvines34@gmail.com":                     "701284903153",
+  "07sikandari.zarina@gmail.com":            "692375482588",
+  "07sikandari@gmail.com":                  "695739524297",
+  "anisahassan@gmail.com":                   "741721500871",
+  "maranathamomplaisir5@gmail.com":          "741709427908",
+  "fanieltesfalem89@gmail.com":              "741271351512",
+  "saintphatbernide13@gmail.com":            "738848966875",
+  "ndiogous@856gmail.com":                   "737347720408",
+  "kumbiabdifatah18@gmail.com":              "737151399139",
+  "phillips53@gmail.com":                    "736742951117",
+  "tiguy_111@hotmail.com":                   "734053040377",
+  "ahmatmahamattahirsenossi@gmail.com":      "730574280894",
+  "babitaramcharran@hotmail.com":            "723367611620",
+  "tamelfoster22@gmail.com":                 "721637691596",
+  "alimawague@icloud.com":                   "708567481593",
+  "eguibertosantosrodrigues@gmail.com":      "698891701487",
+  "carlosgrey1971@gmail.com":                "696984185036",
+  "aptouomou@gmail.com":                     "693571571915",
+  "belkoekhamis9@icloud.com":                "686592514266",
+  "desrosiersygor@gmail.com":                "683644802248",
+  "riyadahmed633@gmail.com":                 "673950354620",
+  "sedrickmalilo@gmail.com":                 "664835660992",
+  "kattor78@aol.com":                        "735165436097",
+  "gavin@proshipper.com":                    "749502792909",
+  "bryan@leftbrainlogistics.com":            "744220958943",
+  "ryan.andrews@portless.com":               "743695100107",
+  "cynncerepowell613@gmail.com":             "735678679281",
+  "hildana43@icloud.com": "733990162645",
+  "dgreene@parcelplanet.com":                "728251680996",
+  "bigtcarney@gmail.com":                    "700186484936",
+  "matt@whitehouse-solutions.co.uk":         "692650038484",
+  "aaron@myprolificbrands.com":              "659346211026",
+  "andy@onncom.com":                         "659213673658",
+  "mlee@lmwarehousing.com":                  "657204275432",
+  "andrew@shipscience.com":                  "655333771510",
+  "sam@wavefulfil.com":                      "652422163683",
+  "logistics@windmilloperations.com":        "646889850074",
+  "ciaran@contactmarketing.co.uk":           "643275777236",
+  "mubarak@units.sa":                        "633133853907",
+  "benn@boxfortcommerce.com":                "626632730872",
+  "joshua.pavel@lumana.ai":                  "617879491771",
+  "amanda@aaryaship.com":                    "617617532115",
+  "ginny@amzprep.com":                       "600656653532",
+  "stephen.wolff@tupack.co.uk":              "547362473202",
+  "kevin@relaydistro.com":                   "485993562360",
+  "jmilner@whiteriverfulfillment.com":       "161246142665",
+  "jack@scrumbles.co.uk":                    "731683979513",
+  "kunalsingh.workz@gmail.com":              "714827221236",
+  "ricardo.landa@directemailuniverse.us":    "669528728800",
+  "andrew.s5@channelpartnersnetwork.com":    "603951304916",
+  "josep@amphoralogistics.com":              "589927953634",
+  "jps@prova-mexico.com":                    "568224402638",
+  "mark.hance@baseleaddata.com":             "550261883089",
+  "ben@advoc8.com":                          "483163974881",
+  "scott@jocordistro.com":                   "712930037959",
+  "mgale@onelineage.com":                    "694137115839",
+  "neil@shippingbutler.com":                 "735100619982",
+  "sburr@saia.com":                          "712828095680",
+  "dennis@lpxpartners.com":                  "655342563537",
+  "team@opsengine.co":                       "9734699984",
+  "accounting@advtransolution.com":          "698617112764",
+  "viktor@shopmiko.com":                     "664501223660",
+  "luca.marano@shiporo.com":                 "496712243435",
+};
+
+// HubSpot COMPANY lifecycle stage per contact email (fetched live 2026-04-14)
+const MKT_STAGE_MAP = {
+  "abrown@instawork.com":                    "Prospect",
+  "eli@logystico.com":                       "Account Active",
+  "jwilson@infopluscommerce.com":            "For Review",
+  "catherine@bestowegifting.com":            "Prospect",
+  "ryan@biolongevitylabs.com":               "Account Active",
+  "sayidaliibraahim@gmail.com":              "MQL",
+  "saciidmoha2020@icloud.com":               "Unqualified",
+  "hadgutesfahiwet9@gmail.com":              "MQL",
+  "sulemansharaf01@gmail.com":               "Unqualified",
+  "anureet2626@gmail.com":                   "MQL",
+  "ltvines34@gmail.com":                     "Unqualified",
+  "07sikandari.zarina@gmail.com":            "Unqualified",
+  "07sikandari@gmail.com":                  "Unqualified",
+  "anisahassan@gmail.com":                   "MQL",
+  "maranathamomplaisir5@gmail.com":          "MQL",
+  "fanieltesfalem89@gmail.com":              "MQL",
+  "saintphatbernide13@gmail.com":            "MQL",
+  "ndiogous@856gmail.com":                   "MQL",
+  "kumbiabdifatah18@gmail.com":              "MQL",
+  "phillips53@gmail.com":                    "Unqualified",
+  "tiguy_111@hotmail.com":                   "MQL",
+  "ahmatmahamattahirsenossi@gmail.com":      "MQL",
+  "babitaramcharran@hotmail.com":            "MQL",
+  "tamelfoster22@gmail.com":                 "MQL",
+  "alimawague@icloud.com":                   "MQL",
+  "eguibertosantosrodrigues@gmail.com":      "Unqualified",
+  "carlosgrey1971@gmail.com":                "Unqualified",
+  "aptouomou@gmail.com":                     "MQL",
+  "belkoekhamis9@icloud.com":                "MQL",
+  "desrosiersygor@gmail.com":                "MQL",
+  "riyadahmed633@gmail.com":                 "Unqualified",
+  "sedrickmalilo@gmail.com":                 "Unqualified",
+  "kattor78@aol.com":                        "MQL",
+  "gavin@proshipper.com":                    "Opportunity",
+  "bryan@leftbrainlogistics.com":            "Opportunity",
+  "ryan.andrews@portless.com":               "Opportunity",
+  "cynncerepowell613@gmail.com":             "Unqualified",
+  "dgreene@parcelplanet.com":                "Opportunity",
+  "bigtcarney@gmail.com":                    "MQL",
+  "matt@whitehouse-solutions.co.uk":         "Opportunity",
+  "aaron@myprolificbrands.com":              "Opportunity",
+  "andy@onncom.com":                         "Opportunity",
+  "mlee@lmwarehousing.com":                  "Opportunity",
+  "andrew@shipscience.com":                  "For Review",
+  "sam@wavefulfil.com":                      "For Review",
+  "logistics@windmilloperations.com":        "For Review",
+  "ciaran@contactmarketing.co.uk":           "Opportunity",
+  "mubarak@units.sa":                        "Opportunity",
+  "benn@boxfortcommerce.com":                "Opportunity",
+  "joshua.pavel@lumana.ai":                  "For Review",
+  "amanda@aaryaship.com":                    "Opportunity",
+  "ginny@amzprep.com":                       "Opportunity",
+  "stephen.wolff@tupack.co.uk":              "Account Active",
+  "kevin@relaydistro.com":                   "Opportunity",
+  "jmilner@whiteriverfulfillment.com":       "Account Active",
+  "jack@scrumbles.co.uk":                    "MQL",
+  "kunalsingh.workz@gmail.com":              "MQL",
+  "ricardo.landa@directemailuniverse.us":    "Unqualified",
+  "andrew.s5@channelpartnersnetwork.com":    "For Review",
+  "josep@amphoralogistics.com":              "For Review",
+  "jps@prova-mexico.com":                    "For Review",
+  "mark.hance@baseleaddata.com":             "For Review",
+  "ben@advoc8.com":                          "MQL",
+  "scott@jocordistro.com":                   "MQL",
+  "mgale@onelineage.com":                    "MQL",
+  "neil@shippingbutler.com":                 "Opportunity",
+  "sburr@saia.com":                          "For Review",
+  "dennis@lpxpartners.com":                  "For Review",
+  "team@opsengine.co":                       "Opportunity",
+  "accounting@advtransolution.com":          "MQL",
+  "viktor@shopmiko.com":                     "Unqualified",
+  "luca.marano@shiporo.com":                 "Opportunity",
+  "hildana43@icloud.com": "MQL",       // No company associated
+};
 
 const MKT_DB = {
   all: {
@@ -14289,10 +14469,10 @@ const MKT_DB = {
 };
 
 const MKT_STAGES = [
-  {key:'contacts', label:'Demo Requests', sub:'booked a demo · all sources',         color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
-  {key:'deals',    label:'Pipeline',      sub:'open deals from marketing sources',   color:'#58a6ff', bg:'rgba(88,166,255,.25)', arrKey:'deals_arr'},
-  {key:'sql',      label:'SQL',           sub:'advanced to SA / Trial / CR stage',   color:'#fbbf24', bg:'rgba(251,191,36,.18)'},
-  {key:'won',      label:'Won',           sub:'closed revenue',                      color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
+  {key:'mql',  label:'MQL',            sub:'submitted demo or pricing request',  color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
+  {key:'sql',  label:'SQL',            sub:'demo meeting booked with sales',      color:'#60a5fa', bg:'rgba(96,165,250,.18)'},
+  {key:'opp',  label:'Opportunity',    sub:'open deal created from marketing',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
+  {key:'won',  label:'Account Active', sub:'closed won · active customer',       color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
 ];
 
 function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
@@ -14347,135 +14527,251 @@ function mktShowPlatformModal(stage, count, src) {
     </div>`);
 }
 
-// Show contacts modal filtered by current time period
-function mktShowContactsModal() {
-  let contacts = MKT_CONTACTS;
-  if (selectedWeek !== 'alltime') {
-    contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
+// Show contacts modal — stage: 'mql' (all) | 'sql' (Demo Meeting only)
+function mktShowContactsModal(stage) {
+  const initForm = stage === 'sql' ? 'Demo Meeting' : 'all';
+  window._mktCF = {src:'all', form:initForm, deal:'all'}; // contact filter state
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+
+  function buildTable() {
+    const f = window._mktCF;
+    let contacts = MKT_CONTACTS;
+    if (selectedWeek !== 'alltime') contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
+    if (f.src  !== 'all') contacts = contacts.filter(c => c.source_key === f.src);
+    if (f.form !== 'all') contacts = contacts.filter(c => c.form === f.form);
+    if (f.deal === 'deal')   contacts = contacts.filter(c => c.has_deal);
+    if (f.deal === 'nodeal') contacts = contacts.filter(c => !c.has_deal);
+
+    // update count badge
+    const badge = document.getElementById('mkt-contact-count');
+    if (badge) badge.textContent = contacts.length;
+
+    if (!contacts.length) {
+      document.getElementById('mkt-contact-tbody').innerHTML =
+        `<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--muted)">No contacts match these filters.</td></tr>`;
+      return;
+    }
+    document.getElementById('mkt-contact-tbody').innerHTML = contacts.map(c => {
+      const actParts = (c.last_activity || '').split(' · ');
+      const actDate = actParts[0] || '';
+      const actType = actParts[1] || '—';
+      const actColor = actType.includes('booked') ? '#4ade80' : actType.includes('submitted') || actType.includes('form') ? '#fbbf24' : 'var(--muted)';
+
+      const dealBadge = c.has_deal
+        ? `<span style="display:inline-block;background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3);border-radius:6px;padding:1px 7px;font-size:10px;font-weight:700">🟢 ${c.deal_count} deal${c.deal_count>1?'s':''}</span>`
+        : '';
+      const hsContactId = MKT_CONTACT_IDS[c.email];
+      const hsContactUrl = hsContactId
+        ? `https://app-eu1.hubspot.com/contacts/${PORTAL}/contact/${hsContactId}`
+        : `https://app-eu1.hubspot.com/contacts/${PORTAL}/objects/0-1/views/all/list?query=${encodeURIComponent(c.email)}`;
+      // Lifecycle stage badge
+      const stage = MKT_STAGE_MAP[c.email] || '';
+      const stageColor = stage === 'Account Active' ? '#4ade80'
+        : stage === 'Opportunity'  ? '#fbbf24'
+        : stage === 'SQL'          ? '#60a5fa'
+        : stage === 'MQL'          ? '#8b82dc'
+        : stage === 'For Review'   ? '#f97316'
+        : stage === 'Prospect'     ? '#94a3b8'
+        : stage === 'Client / Trial' ? '#2dd4bf'
+        : stage === 'Unqualified'  ? '#f87171'
+        : 'var(--muted)';
+      const stageBadge = stage
+        ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
+        : `<span style="color:var(--muted);font-size:10px">—</span>`;
+      return `<tr>
+        <td>
+          <div style="font-weight:700;font-size:12px">
+            <a href="${hsContactUrl}" target="_blank" style="color:var(--text);text-decoration:none" onmouseover="this.style.color='#8b82dc'" onmouseout="this.style.color='var(--text)'">${c.name} ↗</a>
+            ${dealBadge}
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.company !== '—' ? c.company : c.email}</div>
+        </td>
+        <td>${stageBadge}</td>
+        <td>
+          <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.traffic_source || c.campaign}</div>
+        </td>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
+        <td style="white-space:nowrap">
+          <span style="font-size:10px;color:${actColor};font-weight:600">${actType}</span>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
+        </td>
+      </tr>`;
+    }).join('');
   }
 
-  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
-  const title = `👥 Demo Requests · ${periodLbl}`;
+  window._mktSetCF = function(type, val, el) {
+    window._mktCF[type] = val;
+    // update chip highlights
+    document.querySelectorAll(`.mkt-chip-${type}`).forEach(c => {
+      c.style.background = 'rgba(255,255,255,.06)';
+      c.style.color = 'var(--muted)';
+    });
+    el.style.background = 'rgba(139,130,220,.25)';
+    el.style.color = '#8b82dc';
+    buildTable();
+  };
+
+  const chipStyle = 'display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border)';
+  const chipActiveStyle = chipStyle.replace('rgba(255,255,255,.06)','rgba(139,130,220,.25)').replace('var(--muted)','#8b82dc');
+
+  const filtersHtml = `
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;padding:12px 16px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;width:48px;flex-shrink:0">Source</span>
+        <span class="mkt-chip-src" data-val="all"     onclick="window._mktSetCF('src','all',this)"     style="${chipActiveStyle}">All</span>
+        <span class="mkt-chip-src" data-val="google"  onclick="window._mktSetCF('src','google',this)"  style="${chipStyle}">Google Ads</span>
+        <span class="mkt-chip-src" data-val="direct"  onclick="window._mktSetCF('src','direct',this)"  style="${chipStyle}">Direct</span>
+        <span class="mkt-chip-src" data-val="email"   onclick="window._mktSetCF('src','email',this)"   style="${chipStyle}">Email</span>
+        <span class="mkt-chip-src" data-val="linkedin" onclick="window._mktSetCF('src','linkedin',this)" style="${chipStyle}">LinkedIn</span>
+        <span class="mkt-chip-src" data-val="organic" onclick="window._mktSetCF('src','organic',this)" style="${chipStyle}">Organic</span>
+        <span class="mkt-chip-src" data-val="other"   onclick="window._mktSetCF('src','other',this)"   style="${chipStyle}">Other</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;width:48px;flex-shrink:0">Form</span>
+        <span class="mkt-chip-form" data-val="all"          onclick="window._mktSetCF('form','all',this)"          style="${initForm==='all'?chipActiveStyle:chipStyle}">All</span>
+        <span class="mkt-chip-form" data-val="Demo Meeting" onclick="window._mktSetCF('form','Demo Meeting',this)" style="${initForm==='Demo Meeting'?chipActiveStyle:chipStyle}">📅 Demo Meeting</span>
+        <span class="mkt-chip-form" data-val="Demo Form"    onclick="window._mktSetCF('form','Demo Form',this)"    style="${initForm==='Demo Form'?chipActiveStyle:chipStyle}">📋 Demo Form</span>
+        <span class="mkt-chip-form" data-val="Pricing Form" onclick="window._mktSetCF('form','Pricing Form',this)" style="${initForm==='Pricing Form'?chipActiveStyle:chipStyle}">💰 Pricing Form</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;width:48px;flex-shrink:0">Deals</span>
+        <span class="mkt-chip-deal" data-val="all"    onclick="window._mktSetCF('deal','all',this)"    style="${chipActiveStyle}">All</span>
+        <span class="mkt-chip-deal" data-val="deal"   onclick="window._mktSetCF('deal','deal',this)"   style="${chipStyle}">🟢 Has Deal</span>
+        <span class="mkt-chip-deal" data-val="nodeal" onclick="window._mktSetCF('deal','nodeal',this)" style="${chipStyle}">No Deal</span>
+      </div>
+    </div>`;
+
+  const allContacts = selectedWeek === 'alltime' ? MKT_CONTACTS : MKT_CONTACTS.filter(c => dateInRange(c.date, selectedWeek));
+  const dealCount = allContacts.filter(c => c.has_deal).length;
 
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val">${contacts.length}</span></div>`;
+    <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val" id="mkt-contact-count">${allContacts.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">With Deals</span><span class="modal-summary-val" style="color:#4ade80">${dealCount}</span></div>`;
 
-  const tableHtml = contacts.length === 0
-    ? `<div style="padding:24px;text-align:center;color:var(--muted)">No contacts match these filters for the selected period.<br><span style="font-size:11px">Try switching to <b>All Time</b> to see all contacts.</span></div>`
-    : `<table class="modal-table"><thead><tr>
-        <th>Contact</th><th>Source · Campaign</th><th>Captured</th><th>Last Activity</th>
-      </tr></thead><tbody>
-      ${contacts.map(c => {
-        const actParts = (c.last_activity || '—').split(' · ');
-        const actDate = actParts[0] || '';
-        const actType = actParts[1] || '—';
-        const actColor = actType.includes('reply') || actType.includes('booked') || actType.includes('completed') || actType.includes('submitted') || actType.includes('message') ? '#4ade80' : actType.includes('sent') ? '#fbbf24' : 'var(--muted)';
-        const actIcon = actType.includes('reply') || actType.includes('message') ? '✉️' : actType.includes('booked') ? '📅' : actType.includes('completed') || actType.includes('submitted') ? '✅' : actType.includes('sent') ? '📤' : '—';
-        return `<tr>
-          <td>
-            <div style="font-weight:700;color:var(--text);font-size:12px">${c.name}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.email}</div>
-          </td>
-          <td>
-            <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.campaign}</div>
-          </td>
-          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
-          <td style="white-space:nowrap">
-            <span style="font-size:10px;color:${actColor};font-weight:600">${actIcon} ${actType}</span>
-            <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
-          </td>
-        </tr>`;
-      }).join('')}
-      </tbody></table>`;
+  const tableHtml = filtersHtml + `
+    <table class="modal-table">
+      <thead><tr>
+        <th>Contact · Company</th>
+        <th>Stage</th>
+        <th>Source · Traffic</th>
+        <th>Date</th>
+        <th>Last Activity</th>
+      </tr></thead>
+      <tbody id="mkt-contact-tbody"></tbody>
+    </table>`;
 
-  openModal(title, summary, tableHtml);
+  openModal('👥 Demo Requests · ' + periodLbl, summary, tableHtml);
+  // render table after modal is open (DOM must exist)
+  setTimeout(buildTable, 0);
 }
 
-// Show deals modal for marketing funnel (pipeline or won)
+// Show deals modal for marketing funnel — type: 'opp' | 'won'
 function mktShowDealsModal(type) {
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
-  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
-  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
+  const MKT_SRC = ['Marketing Paid', 'Marketing Organic'];
 
   if (type === 'won') {
     let deals = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
     if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[3]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
     const summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">Won</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Account Active</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
     const wonNorm = deals.map(w => [w[0],w[1],w[2],'WON',w[4],w[7]||w[3],w[3],'','','',w[6]]);
-    openModal('🏆 Won Deals — Marketing · ' + periodLbl, summary, dealsTable(wonNorm));
-  } else if (type === 'sql') {
-    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]) && SQL_STAGES.has(d[3]));
-    if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
-    const totalARR = deals.reduce((s,d)=>s+d[2],0);
-    const summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">SQL Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
-      <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
-    openModal('🔥 SQL Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
+    openModal('🏆 Account Active — Marketing · ' + periodLbl, summary, dealsTable(wonNorm));
   } else {
-    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]));
+    // 'opp' = open pipeline deals
+    let deals = DEALS.filter(d => MKT_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
     if (selectedWeek !== 'alltime') deals = deals.filter(d => mktMatchMonth(d[5]));
     const totalARR = deals.reduce((s,d)=>s+d[2],0);
     const summary = `
-      <div class="modal-summary-item"><span class="modal-summary-label">Deals</span><span class="modal-summary-val">${deals.length} · ${fmt$(totalARR)}</span></div>
+      <div class="modal-summary-item"><span class="modal-summary-label">Opportunity</span><span class="modal-summary-val">${deals.length} deals · ${fmt$(totalARR)}</span></div>
       <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>`;
-    openModal('➕ Pipeline Deals — Marketing · ' + periodLbl, summary, dealsTable(deals));
+    openModal('📊 Opportunities — Marketing · ' + periodLbl, summary, dealsTable(deals));
   }
 }
 
 function mktRender() {
-  // Contacts: from MKT_CONTACTS filtered by period
-  const SQL_STAGES = new Set(['608286675','740160705','608286676','4988070119','608286677']);
-  const MKT_SRC = ['Marketing Paid', 'Inbound Website'];
+  // Lifecycle stage funnel: MQL → SQL → Opportunity → Account Active
+  const MKT_SRC = ['Marketing Paid', 'Marketing Organic'];
 
+  // Channel filter: 'all' | 'paid' | 'organic'
+  const mktCh = window._mktCh || 'all';
+  const PAID_KEYS    = ['google','meta','linkedin'];
+  const ORGANIC_KEYS = ['organic','direct','email','other'];
+
+  // MQL = all contacts who submitted a demo/pricing request
   let mktContacts = MKT_CONTACTS;
   if (selectedWeek !== 'alltime') mktContacts = mktContacts.filter(c => dateInRange(c.date, selectedWeek));
-  const contactCount = selectedWeek === 'alltime' ? 73 : mktContacts.length;
+  if (mktCh === 'paid')    mktContacts = mktContacts.filter(c => PAID_KEYS.includes(c.source_key));
+  if (mktCh === 'organic') mktContacts = mktContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
+  const mqlCount = mktContacts.length;
 
-  // Deals/SQL/Won: computed live from DEALS/WON_DEALS
-  let mktDeals = DEALS.filter(d => MKT_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
-  let mktWon   = WON_DEALS.filter(d => MKT_SRC.includes(d[6]));
+  // SQL = MQL who booked a demo meeting with sales
+  const sqlCount = mktContacts.filter(c => c.form === 'Demo Meeting').length;
+
+  // Opportunity = all deals that ever reached opportunity stage (open + won + lost)
+  const DEAL_SRC = mktCh === 'paid' ? ['Marketing Paid'] : mktCh === 'organic' ? ['Marketing Organic'] : MKT_SRC;
+  let mktDeals = DEALS.filter(d => DEAL_SRC.includes(d[10]) && !['608286678','608286679'].includes(d[3]));
+  let mktWon   = WON_DEALS.filter(d => DEAL_SRC.includes(d[6]));
+  let mktLost  = LOST_DEALS.filter(d => DEAL_SRC.includes(d[6] || d[10]));
   if (selectedWeek !== 'alltime') {
     mktDeals = mktDeals.filter(d => dateInRange(d[5], selectedWeek));
     mktWon   = mktWon.filter(d => dateInRange(d[3], selectedWeek));
+    mktLost  = mktLost.filter(d => dateInRange(d[3], selectedWeek));
   }
-  const dealsArr = mktDeals.reduce((s,d)=>s+d[2],0);
-  const sqlCount = mktDeals.filter(d => SQL_STAGES.has(d[3])).length;
-  const wonArr   = mktWon.reduce((s,d)=>s+d[2],0);
+  const oppArr = mktDeals.reduce((s,d)=>s+d[2],0) + mktWon.reduce((s,d)=>s+d[2],0);
+  const wonArr = mktWon.reduce((s,d)=>s+d[2],0);
+  // Opportunity count = open + won + lost (all deals that entered pipeline from marketing)
+  const oppCount = mktDeals.length + mktWon.length + mktLost.length;
 
   const d = {
-    contacts: contactCount,
-    deals: mktDeals.length,
-    deals_arr: dealsArr,
-    sql: sqlCount,
-    won: mktWon.length,
-    won_arr: wonArr
+    mql:     mqlCount,
+    sql:     sqlCount,
+    opp:     oppCount,
+    opp_arr: oppArr,
+    won:     mktWon.length,
+    won_arr: wonArr,
   };
-  const max = d.contacts || 1;
+  const max = d.mql || 1;
 
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
 
+
   // ── KPI cards (TOP) ────────────────────────────────────────────────────────
   const kpiHtml = `
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Contact → Deal CVR</div>
-        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1">${mktCvr(d.deals,d.contacts)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.contacts} contacts · ${d.deals} deals</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:var(--bg3);border:1px solid rgba(139,130,220,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#8b82dc;margin-bottom:6px">MQL → Account Active</div>
+        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">${mktCvr(d.won,d.mql)}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:13px;font-weight:800;color:#4ade80">${d.won} accounts</span>
+          <span style="font-size:11px;color:var(--border)">·</span>
+          <span style="font-size:13px;font-weight:800;color:#4ade80">${mktFmtN(d.won_arr)}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.mql} MQLs</div>
       </div>
-      <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.25);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#58a6ff;margin-bottom:4px">Pipeline ARR</div>
-        <div style="font-size:22px;font-weight:900;color:#58a6ff;line-height:1">${mktFmtN(d.deals_arr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.deals} deals in pipeline</div>
+      <div style="background:var(--bg3);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:6px">MQL → Opportunity</div>
+        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">${mktCvr(d.opp,d.mql)}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:13px;font-weight:800;color:#fbbf24">${d.opp} deals</span>
+          <span style="font-size:11px;color:var(--border)">·</span>
+          <span style="font-size:13px;font-weight:800;color:#fbbf24">${mktFmtN(d.opp_arr)}</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.mql} MQLs</div>
       </div>
-      <div style="background:var(--bg3);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:12px 14px">
+      <div style="background:var(--bg3);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:12px 14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:4px">Pipeline ARR</div>
+        <div style="font-size:22px;font-weight:900;color:#fbbf24;line-height:1">${mktFmtN(d.opp_arr)}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${mktDeals.length} open · ${mktWon.length} won · ${mktLost.length} lost</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:12px 14px">
         <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#4ade80;margin-bottom:4px">Won ARR</div>
         <div style="font-size:22px;font-weight:900;color:#4ade80;line-height:1">${mktFmtN(d.won_arr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.won} deal${d.won!==1?'s':''} closed won</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.won} account${d.won!==1?'s':''} active</div>
       </div>
     </div>`;
 
@@ -14507,13 +14803,13 @@ function mktRender() {
       ? `<span style="font-size:10px;color:var(--muted)">entry</span>`
       : `<span style="font-size:11px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${cvr}</span>`;
 
-    // Click handlers
+    // Click handlers — lifecycle keys
     let countClick = '', clickable = '';
-    if ((s.key === 'deals' || s.key === 'won' || s.key === 'sql') && val > 0) {
+    if ((s.key === 'opp' || s.key === 'won') && val > 0) {
       countClick = `onclick="mktShowDealsModal('${s.key}')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
-    } else if (s.key === 'contacts' && val > 0) {
-      countClick = `onclick="mktShowContactsModal()"`;
+    } else if ((s.key === 'mql' || s.key === 'sql') && val > 0) {
+      countClick = `onclick="mktShowContactsModal('${s.key}')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
 
