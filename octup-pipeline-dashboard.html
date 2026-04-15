@@ -705,16 +705,16 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div class="card-sub" id="sub-new-pipeline"></div>
       </div>
       <div class="card">
-        <div class="card-icon">💰</div>
-        <div class="card-label" data-tip="Average Contract Value of deals closed won in this period. All-time ACV shown when no wins in period.">Avg Deal (ACV)</div>
-        <div class="card-value" style="color:#c084fc" id="val-acv">—</div>
-        <div class="card-sub" id="sub-acv"></div>
-      </div>
-      <div class="card">
         <div class="card-icon">📂</div>
-        <div class="card-label" data-tip="Total ARR of all currently open deals (not won/lost), filtered by owner only — not by time period. Weighted = ARR × stage win probability.">Open Pipeline</div>
+        <div class="card-label" data-tip="Open deals created during the selected period that are still active (not won/lost). Weighted = ARR × stage probability.">Open Pipeline</div>
         <div class="card-value" style="color:#e2b714" id="val-open-pipe">—</div>
         <div class="card-sub" id="sub-open-pipe"></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div class="card-label" data-tip="Average Contract Value of deals closed won in this period.">Avg Deal (ACV)</div>
+        <div class="card-value" style="color:#c084fc" id="val-acv">—</div>
+        <div class="card-sub" id="sub-acv"></div>
       </div>
     </div>
 
@@ -960,27 +960,26 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     <div class="src-funnel-wrap" style="margin-top:0;border-radius:0;border-left:none;border-right:none;border-bottom:none">
       <div class="src-funnel-header">
         <div class="src-funnel-title">📣 Marketing Funnel</div>
-        <div style="display:flex;align-items:center;gap:12px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end">
-          <div style="display:flex;align-items:center;gap:5px">
-            <span style="font-size:10px;color:var(--muted);margin-right:2px">Channel</span>
-            <span id="mktch-all"     onclick="window._mktCh='all';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" data-on="1" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(88,166,255,.4);background:rgba(88,166,255,.2);color:var(--accent)">All</span>
-            <span id="mktch-paid"    onclick="window._mktCh='paid';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Paid</span>
-            <span id="mktch-organic" onclick="window._mktCh='organic';document.querySelectorAll('[id^=mktch-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
+        <div style="display:flex;align-items:center;gap:14px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end">
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--muted);margin-right:4px;font-weight:600">Channel</span>
+            <span class="mkt-ch-btn" data-ch="all"     onclick="window._mktCh='all';mktStyleFilters();mktRender()" style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">All</span>
+            <span class="mkt-ch-btn" data-ch="paid"    onclick="window._mktCh='paid';mktStyleFilters();mktRender()" style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Paid</span>
+            <span class="mkt-ch-btn" data-ch="organic" onclick="window._mktCh='organic';mktStyleFilters();mktRender()" style="padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Organic</span>
           </div>
-          <div style="display:flex;align-items:center;gap:5px">
-            <span style="font-size:10px;color:var(--muted);margin-right:2px">Source</span>
-            <span id="mktsrc-all"      onclick="window._mktSrc='all';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" data-on="1" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(88,166,255,.4);background:rgba(88,166,255,.2);color:var(--accent)">All</span>
-            <span id="mktsrc-google"   onclick="window._mktSrc='google';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Google Ads</span>
-            <span id="mktsrc-linkedin" onclick="window._mktSrc='linkedin';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">LinkedIn</span>
-            <span id="mktsrc-direct"   onclick="window._mktSrc='direct';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Direct</span>
-            <span id="mktsrc-email"    onclick="window._mktSrc='email';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Email</span>
-            <span id="mktsrc-organic"  onclick="window._mktSrc='organic';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Organic</span>
-            <span id="mktsrc-other"    onclick="window._mktSrc='other';document.querySelectorAll('[id^=mktsrc-]').forEach(s=>s.removeAttribute('data-on'));this.setAttribute('data-on','1');mktRender()" style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--muted)">Other</span>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--muted);margin-right:4px;font-weight:600">Source</span>
+            <span class="mkt-src-btn" data-src="all"      onclick="window._mktSrc='all';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">All</span>
+            <span class="mkt-src-btn" data-src="google"   onclick="window._mktSrc='google';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Google</span>
+            <span class="mkt-src-btn" data-src="linkedin" onclick="window._mktSrc='linkedin';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">LinkedIn</span>
+            <span class="mkt-src-btn" data-src="direct"   onclick="window._mktSrc='direct';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Direct</span>
+            <span class="mkt-src-btn" data-src="email"    onclick="window._mktSrc='email';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Email</span>
+            <span class="mkt-src-btn" data-src="organic"  onclick="window._mktSrc='organic';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Organic</span>
+            <span class="mkt-src-btn" data-src="other"    onclick="window._mktSrc='other';mktStyleFilters();mktRender()" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Other</span>
           </div>
-          <span style="font-size:10px;color:var(--muted);padding:3px 8px;background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:8px">📅 Synced</span>
         </div>
       </div>
-      <div id="mkt-funnel-content" style="padding:16px 20px 20px"></div>
+      <div id="mkt-funnel-content" style="padding:18px 24px 24px"></div>
     </div>
   </section>
 
@@ -10555,9 +10554,10 @@ function renderPulse() {
   // Update labels
   document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
-  // Open Pipeline — snapshot of ALL currently open deals (no date filter), owner-filtered only
+  // Open Pipeline — open deals created in selected period (timeframe-aware)
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
   let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  if (selectedWeek !== 'alltime') openPipeDeals = openPipeDeals.filter(d => dateInRange(d[5], selectedWeek));
   if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
   const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
   const weightedARR    = openPipeDeals.reduce((s,d)=>s+(d[2]*(STAGE_WIN_PROB[d[3]]||0.1)),0);
@@ -11385,11 +11385,11 @@ function openHelpDict() {
     {
       title: '📊 Top Metric Cards',
       items: [
-        { term: 'ARR Won (Gross)', def: 'Annual Recurring Revenue from deals marked Closed Won. Gross = full contract value before discounts. Timeframe: based on the selected period filter (e.g. "This Week" = close date within this Mon–Sun).', color: '#3fb950' },
-        { term: 'Deals Lost', def: 'Count of deals marked Closed Lost in the selected timeframe, based on close date. ARR = total value of lost deals.', color: '#f85149' },
-        { term: 'New Pipeline', def: 'Deals created (entered the pipeline) in the selected timeframe, based on deal create date. Not necessarily won — these are new opportunities.', color: '#58a6ff' },
-        { term: 'Avg Deal (ACV)', def: 'Average Contract Value = total ARR ÷ number of deals. Shows all-time average when no wins in the selected period.', color: '#c084fc' },
-        { term: 'Open Pipeline', def: 'All currently active deals (not Won or Lost) for the selected owner. Shows total ARR + Weighted ARR. Not time-filtered — always a live snapshot.', color: '#e2b714' },
+        { term: 'ARR Won (Gross)', def: 'Total Annual Recurring Revenue from deals closed won in the selected period. Based on close date.', color: '#3fb950' },
+        { term: 'Deals Lost', def: 'Number of deals moved to Closed Lost in the selected period. Shows lost ARR below.', color: '#f85149' },
+        { term: 'New Pipeline', def: 'New deals created in the selected period (based on create date). These are fresh opportunities entering the funnel.', color: '#58a6ff' },
+        { term: 'Open Pipeline', def: 'Active deals (not Won/Lost) created in the selected period. Shows Weighted ARR = ARR × stage win probability.', color: '#e2b714' },
+        { term: 'Avg Deal (ACV)', def: 'Average deal size for the selected period. Uses won deals first; falls back to new pipeline deals if no wins in period.', color: '#c084fc' },
       ]
     },
     {
@@ -11448,13 +11448,17 @@ function openHelpDict() {
     {
       title: '📣 Marketing Funnel',
       items: [
-        { term: 'Contacts', def: 'Total people captured from paid ad campaigns (form fills, landing pages).' },
-        { term: 'MQL (Marketing Qualified Lead)', def: 'Contact that has shown enough engagement to pass to sales for review.' },
-        { term: 'SQL (Sales Qualified Lead)', def: 'Contact accepted by sales as a genuine opportunity — also called Opportunity.' },
-        { term: 'Deals', def: 'SQLs that became active pipeline deals in HubSpot.' },
-        { term: 'Won', def: 'Deals from this source that were closed won.' },
-        { term: 'CVR (Conversion Rate)', def: 'Percentage that moved from one stage to the next. E.g. 20% CVR from Contacts→MQL means 1 in 5 contacts became an MQL.' },
-        { term: 'Contact→Deal', def: 'Overall funnel conversion: how many contacts ultimately became pipeline deals.' },
+        { term: 'MQL', def: 'Marketing Qualified Lead — anyone who submitted a demo or pricing request form. Entry point of the funnel.', color: '#8b82dc' },
+        { term: 'SQL', def: 'Sales Qualified Lead — MQLs who booked an actual demo meeting with sales (form = "Demo Meeting").', color: '#60a5fa' },
+        { term: 'Opportunity', def: 'All deals that entered the pipeline from marketing sources (open + won + lost). Includes Marketing Paid and Marketing Organic.', color: '#fbbf24' },
+        { term: 'Account Active', def: 'Deals from marketing that reached Closed Won — active paying customers.', color: '#4ade80' },
+        { term: 'Step CVR', def: 'Conversion rate from the previous stage. SQL CVR = SQL ÷ MQL. Opportunity CVR = Opp ÷ SQL.' },
+        { term: '% of Top', def: 'What percentage of total MQLs reached this stage. Shows overall funnel efficiency.' },
+        { term: 'Ad Spend', def: 'Total marketing ad spend for the selected period. Configured monthly in MKT_AD_SPEND. For weekly views, spend is pro-rated by days.', color: '#8b949e' },
+        { term: 'CPL (Cost Per Lead)', def: 'Ad Spend ÷ MQL count. How much it costs to generate one marketing lead.', color: '#60a5fa' },
+        { term: 'CPA (Cost Per Acquisition)', def: 'Ad Spend ÷ Won accounts. Total cost to acquire one paying customer from marketing.', color: '#f472b6' },
+        { term: 'ROI (Return on Ad Spend)', def: '(Won ARR − Ad Spend) ÷ Ad Spend × 100%. Positive = profitable. Shows green when positive, red when negative.', color: '#4ade80' },
+        { term: 'Channel Filter', def: 'Paid = Google Ads, Meta, LinkedIn. Organic = Direct, Email, Organic, Other. Filters MQLs by source and deals by dealSource.' },
       ]
     },
   ];
@@ -14084,6 +14088,14 @@ function exportHygieneCSV() {
 
 // ─── MARKETING FUNNEL ────────────────────────────────────────────────────────
 // Data: source → campaign → month → {contacts, mql, sql, deals, deals_arr, won, won_arr}
+// ── MARKETING AD SPEND (monthly, USD) ────────────────────────────────────────
+// Update monthly. Keys = YYYY-MM. Used for CPL / CPA calculations.
+const MKT_AD_SPEND = {
+  '2026-02': 8000,
+  '2026-03': 10000,
+  '2026-04': 6000,
+};
+
 // Update these values with real data as campaigns run.
 // Real HubSpot contacts from view 154243004 (73 total) — 3 form types, filtered/sortable
 const MKT_CONTACTS = [
@@ -14637,7 +14649,26 @@ function mktShowDealsModal(type) {
   }
 }
 
+function mktStyleFilters() {
+  const ch  = window._mktCh  || 'all';
+  const src = window._mktSrc || 'all';
+  document.querySelectorAll('.mkt-ch-btn').forEach(el => {
+    const on = el.dataset.ch === ch;
+    el.style.border     = on ? '1px solid rgba(245,158,11,.6)' : '1px solid var(--border)';
+    el.style.background = on ? 'rgba(245,158,11,.2)' : 'transparent';
+    el.style.color      = on ? '#f59e0b' : 'var(--muted)';
+  });
+  document.querySelectorAll('.mkt-src-btn').forEach(el => {
+    const on = el.dataset.src === src;
+    el.style.border     = on ? '1px solid rgba(88,166,255,.5)' : '1px solid var(--border)';
+    el.style.background = on ? 'rgba(88,166,255,.15)' : 'transparent';
+    el.style.color      = on ? '#58a6ff' : 'var(--muted)';
+  });
+}
+
 function mktRender() {
+  // Style filters on every render
+  mktStyleFilters();
   // Lifecycle stage funnel: MQL → SQL → Opportunity → Account Active
   const MKT_SRC = ['Marketing Paid', 'Marketing Organic'];
 
@@ -14691,39 +14722,113 @@ function mktRender() {
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
 
 
-  // ── KPI cards (TOP) ────────────────────────────────────────────────────────
-  const kpiHtml = `
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
-      <div style="background:var(--bg3);border:1px solid rgba(139,130,220,.25);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#8b82dc;margin-bottom:6px">MQL → Account Active</div>
-        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">${mktCvr(d.won,d.mql)}</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:13px;font-weight:800;color:#4ade80">${d.won} accounts</span>
-          <span style="font-size:11px;color:var(--border)">·</span>
-          <span style="font-size:13px;font-weight:800;color:#4ade80">${mktFmtN(d.won_arr)}</span>
+  // ── Ad spend for period ─────────────────────────────────────────────────────
+  // For weekly periods: use daily rate (monthly / 30) × days in period
+  // For monthly+: sum full months
+  const totalAdSpend = Object.values(MKT_AD_SPEND).reduce((s,v)=>s+v, 0);
+  let periodSpend = 0;
+  if (selectedWeek === 'alltime') {
+    periodSpend = totalAdSpend;
+  } else {
+    const wk = WEEKS[selectedWeek];
+    if (wk && wk.start && wk.end) {
+      const startMs = new Date(wk.start + 'T00:00:00Z').getTime();
+      const endMs   = new Date(wk.end   + 'T23:59:59Z').getTime();
+      const periodDays = Math.max(1, Math.round((endMs - startMs) / 86400000));
+      // For each month in MKT_AD_SPEND, calculate daily rate and apply overlap days
+      Object.entries(MKT_AD_SPEND).forEach(([ym, spend]) => {
+        const [y, m] = ym.split('-').map(Number);
+        const mStart = new Date(Date.UTC(y, m-1, 1)).getTime();
+        const mEnd   = new Date(Date.UTC(y, m, 0, 23, 59, 59)).getTime();
+        const daysInMonth = Math.round((mEnd - mStart) / 86400000) + 1;
+        const overlapStart = Math.max(startMs, mStart);
+        const overlapEnd   = Math.min(endMs, mEnd);
+        if (overlapEnd >= overlapStart) {
+          const overlapDays = Math.max(1, Math.round((overlapEnd - overlapStart) / 86400000) + 1);
+          periodSpend += Math.round(spend * overlapDays / daysInMonth);
+        }
+      });
+    } else {
+      // Fallback: match months with contacts in period
+      const monthsInPeriod = new Set();
+      mktContacts.forEach(c => { if (c.date) monthsInPeriod.add(c.date.slice(0,7)); });
+      monthsInPeriod.forEach(m => { if (MKT_AD_SPEND[m]) periodSpend += MKT_AD_SPEND[m]; });
+    }
+  }
+  const cpl = mqlCount > 0 && periodSpend > 0 ? Math.round(periodSpend / mqlCount) : null;
+  const cpa = d.won > 0 && periodSpend > 0 ? Math.round(periodSpend / d.won) : null;
+  const roi = d.won_arr > 0 && periodSpend > 0 ? Math.round((d.won_arr - periodSpend) / periodSpend * 100) : null;
+
+  // ── Pipeline breakdown data ───────────────────────────────────────────────
+  const lostArr    = mktLost.reduce((s,dl)=>s+dl[2],0);
+  const openArr    = mktDeals.reduce((s,dl)=>s+dl[2],0);
+  const genCount   = d.opp;
+  const genArr     = d.opp_arr + lostArr;  // total generated = open + won + lost
+
+  // ── Benchmarks: logistics startup ~$1M rev, typical ad spend ──────────────
+  const BM_CPL = 150;   // $150 CPL benchmark for logistics SaaS
+  const BM_CPA = 3000;  // $3,000 CPA benchmark
+  const BM_ROI = 200;   // 200% ROAS benchmark
+  const bmTag = (val, bm, lowerBetter) => {
+    if (val === null) return '';
+    const good = lowerBetter ? val <= bm : val >= bm;
+    const icon = good ? '▲' : '▼';
+    const color = good ? '#4ade80' : '#f85149';
+    const label = good ? 'Below' : 'Above';
+    const labelRoi = good ? 'Above' : 'Below';
+    return `<div style="font-size:11px;margin-top:6px;padding:3px 8px;border-radius:5px;background:${good ? 'rgba(74,222,128,.12)' : 'rgba(248,81,73,.12)'};color:${color};font-weight:700;display:inline-block">${icon} ${lowerBetter ? label : labelRoi} ${lowerBetter ? '$' : ''}${bm.toLocaleString()}${!lowerBetter ? '%' : ''} benchmark</div>`;
+  };
+
+  // ── TIER 1: Summary Cards (matches .card pattern — 26px values) ─────────
+  const isPaid = mktCh === 'paid' || mktCh === 'all';
+  const isNA   = mktCh === 'organic';
+  const spendVal = isPaid && periodSpend > 0 ? mktFmtN(periodSpend) : isNA ? 'N/A' : '—';
+  const spendSub = isPaid && totalAdSpend > 0 ? mktFmtN(totalAdSpend)+' total' : isNA ? 'Paid channel only' : 'No spend data';
+
+  const _c = (bg,bdr,lbl,val,sub,color) => `
+    <div class="card" style="padding:16px;border-left:3px solid ${color}">
+      <div class="card-label">${lbl}</div>
+      <div class="card-value" style="color:${color}">${val}</div>
+      <div class="card-sub">${sub}</div>
+    </div>`;
+
+  const tier1Html = `
+    <div class="card-row" style="grid-template-columns:1fr 1fr 1.6fr 1fr 1fr;margin-bottom:16px">
+      ${_c('','','MQL → Active', mktCvr(d.won,d.mql), d.won+' won · '+mktFmtN(d.won_arr), '#8b82dc')}
+      ${_c('','','MQL → Opportunity', mktCvr(d.opp,d.mql), d.opp+' deals · '+mktFmtN(d.opp_arr), '#fbbf24')}
+      <div class="card" style="padding:16px;border-left:3px solid #fbbf24">
+        <div class="card-label">Pipeline · ${genCount} deals · ${mktFmtN(genArr)}</div>
+        <div style="display:flex;gap:16px;margin-top:6px">
+          <div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Open</span><div style="font-size:18px;font-weight:800;color:#58a6ff;line-height:1.2">${d.opp_open} <span style="font-size:13px;font-weight:700">· ${mktFmtN(openArr)}</span></div></div>
+          <div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Won</span><div style="font-size:18px;font-weight:800;color:#4ade80;line-height:1.2">${d.opp_won} <span style="font-size:13px;font-weight:700">· ${mktFmtN(d.won_arr)}</span></div></div>
+          <div><span style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Lost</span><div style="font-size:18px;font-weight:800;color:#f85149;line-height:1.2">${d.opp_lost} <span style="font-size:13px;font-weight:700">· ${mktFmtN(lostArr)}</span></div></div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.mql} MQLs</div>
       </div>
-      <div style="background:var(--bg3);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:6px">MQL → Opportunity</div>
-        <div style="font-size:22px;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">${mktCvr(d.opp,d.mql)}</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:13px;font-weight:800;color:#fbbf24">${d.opp} deals</span>
-          <span style="font-size:11px;color:var(--border)">·</span>
-          <span style="font-size:13px;font-weight:800;color:#fbbf24">${mktFmtN(d.opp_arr)}</span>
-        </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.mql} MQLs</div>
-      </div>
-      <div style="background:var(--bg3);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#fbbf24;margin-bottom:4px">Pipeline ARR</div>
-        <div style="font-size:22px;font-weight:900;color:#fbbf24;line-height:1">${mktFmtN(d.opp_arr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${mktDeals.length} open · ${mktWon.length} won · ${mktLost.length} lost</div>
-      </div>
-      <div style="background:var(--bg3);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:12px 14px">
-        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#4ade80;margin-bottom:4px">Won ARR</div>
-        <div style="font-size:22px;font-weight:900;color:#4ade80;line-height:1">${mktFmtN(d.won_arr)}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px">${d.won} account${d.won!==1?'s':''} active</div>
-      </div>
+      ${_c('','','Won ARR', mktFmtN(d.won_arr), d.won+' account'+(d.won!==1?'s':'')+' active', '#4ade80')}
+      ${_c('','','Ad Spend', spendVal, spendSub, isNA ? 'var(--border)' : '#8b949e')}
+    </div>`;
+
+  // ── TIER 3 Right: CPL / CPA / ROI cards (flex stretch) ────────────────
+  const cplVal = isPaid && cpl !== null ? '$'+cpl.toLocaleString() : isNA ? 'N/A' : '—';
+  const cplSub = isPaid && periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+mqlCount+' MQLs' : isNA ? 'Paid channel only' : 'No spend data';
+  const cpaVal = isPaid && cpa !== null ? '$'+cpa.toLocaleString() : isNA ? 'N/A' : '—';
+  const cpaSub = isPaid && periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+d.won+' won' : isNA ? 'Paid channel only' : 'No spend data';
+  const roiVal = isPaid && roi !== null ? roi+'%' : isNA ? 'N/A' : '—';
+  const roiSub = isPaid && roi !== null ? mktFmtN(d.won_arr)+' won ÷ '+mktFmtN(periodSpend)+' spend' : isNA ? 'Paid channel only' : 'Need wins + spend';
+
+  const _m = (bdr,lbl,val,sub,color,bmHtml) => `
+    <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;border-left:3px solid ${color}">
+      <div class="card-label" style="color:${color}">${lbl}</div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:${isNA ? 'var(--border2)' : color};line-height:1">${val}</div>
+      <div class="card-sub">${sub}</div>
+      ${bmHtml}
+    </div>`;
+
+  const adMetricsHtml = `
+    <div style="display:flex;flex-direction:column;gap:12px;height:100%">
+      ${_m('','CPL · Cost Per Lead', cplVal, cplSub, '#60a5fa', !isNA ? bmTag(cpl, BM_CPL, true) : '')}
+      ${_m('','CPA · Cost Per Acquisition', cpaVal, cpaSub, '#f472b6', !isNA ? bmTag(cpa, BM_CPA, true) : '')}
+      ${_m('','ROI · Return on Ad Spend', roiVal, roiSub, !isNA && roi !== null && roi > 0 ? '#4ade80' : !isNA && roi !== null ? '#f85149' : '#8b949e', !isNA ? bmTag(roi, BM_ROI, false) : '')}
     </div>`;
 
   // ── Build CVR rows ─────────────────────────────────────────────────────────
@@ -14737,24 +14842,23 @@ function mktRender() {
     return { s, val, cvr, ofTotal, arr, barW, prev };
   });
 
-  // ── Left: funnel table ─────────────────────────────────────────────────────
-  let tableHtml = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+  // ── TIER 3 Left: Funnel stages table ────────────────────────────────────
+  let tableHtml = `<table style="width:100%;border-collapse:collapse">
     <thead>
-      <tr style="border-bottom:1px solid var(--border)">
-        <th style="text-align:left;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Stage</th>
-        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Count</th>
-        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">Step CVR</th>
-        <th style="text-align:center;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">% of Top</th>
-        <th style="text-align:right;padding:6px 8px;color:var(--muted);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.06em">ARR</th>
+      <tr style="border-bottom:2px solid var(--border)">
+        <th style="text-align:left;padding:10px 16px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Stage</th>
+        <th style="text-align:center;padding:10px 16px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Count</th>
+        <th style="text-align:center;padding:10px 16px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Step CVR</th>
+        <th style="text-align:center;padding:10px 16px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">% of Top</th>
+        <th style="text-align:right;padding:10px 16px;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px">ARR</th>
       </tr>
     </thead><tbody>`;
 
   cvrRows.forEach(({s, val, cvr, ofTotal, arr}, i) => {
     const cvrBadge = i === 0
-      ? `<span style="font-size:10px;color:var(--muted)">entry</span>`
-      : `<span style="font-size:11px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${cvr}</span>`;
+      ? `<span style="font-size:13px;color:var(--muted)">entry</span>`
+      : `<span style="font-size:14px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${cvr}</span>`;
 
-    // Click handlers — lifecycle keys
     let countClick = '', clickable = '';
     if ((s.key === 'opp' || s.key === 'won') && val > 0) {
       countClick = `onclick="mktShowDealsModal('${s.key}')"`;
@@ -14766,25 +14870,24 @@ function mktRender() {
 
     tableHtml += `
       <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
-        <td style="padding:9px 8px">
-          <div style="display:flex;align-items:center;gap:7px">
-            <span style="width:7px;height:7px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
+        <td style="padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:10px;height:10px;border-radius:50%;background:${s.color};flex-shrink:0"></span>
             <div>
-              <div style="font-weight:700;font-size:12px;color:var(--text)">${s.label}</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:1px">${s.sub}</div>
+              <div style="font-weight:700;font-size:14px;color:var(--text)">${s.label}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">${s.sub}</div>
             </div>
           </div>
         </td>
-        <td style="text-align:center;padding:9px 8px;${clickable}" ${countClick}>
-          <span style="font-size:15px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
-          ${s.key === 'opp' && val > 0 ? `<div style="font-size:9px;color:var(--muted);margin-top:2px">${d.opp_open} open · ${d.opp_won} won · ${d.opp_lost} lost</div>` : ''}
+        <td style="text-align:center;padding:14px 16px;${clickable}" ${countClick}>
+          <span style="font-size:20px;font-weight:800;color:${val===0?'var(--muted)':s.color}">${val}</span>
         </td>
-        <td style="text-align:center;padding:9px 8px">${cvrBadge}</td>
-        <td style="text-align:center;padding:9px 8px">
-          <span style="font-size:10px;color:var(--muted)">${ofTotal}</span>
+        <td style="text-align:center;padding:14px 16px">${cvrBadge}</td>
+        <td style="text-align:center;padding:14px 16px">
+          <span style="font-size:13px;color:var(--muted)">${ofTotal}</span>
         </td>
-        <td style="text-align:right;padding:9px 8px">
-          <span style="font-size:11px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</span>
+        <td style="text-align:right;padding:14px 16px">
+          <span style="font-size:14px;font-weight:700;color:${arr?s.color:'var(--muted)'}">${arr || '—'}</span>
         </td>
       </tr>`;
 
@@ -14792,38 +14895,22 @@ function mktRender() {
       const nextVal  = d[MKT_STAGES[i+1].key] || 0;
       const dropCvr  = mktCvr(nextVal, val);
       const dropColor = nextVal === 0 ? '#f87171' : nextVal < val * 0.1 ? '#f97316' : nextVal < val * 0.5 ? '#fbbf24' : '#4ade80';
-      tableHtml += `<tr><td colspan="5" style="padding:0 8px 0 22px">
-        <div style="display:flex;align-items:center;gap:5px;padding:1px 0">
-          <span style="color:var(--border);font-size:11px">↓</span>
-          <span style="font-size:10px;color:${dropColor};font-weight:600">${dropCvr} converted</span>
+      tableHtml += `<tr><td colspan="5" style="padding:0 16px 0 36px">
+        <div style="display:flex;align-items:center;gap:6px;padding:3px 0">
+          <span style="color:var(--border);font-size:14px">↓</span>
+          <span style="font-size:13px;color:${dropColor};font-weight:600">${dropCvr} converted</span>
           <span style="flex:1;height:1px;background:var(--border)"></span>
         </div></td></tr>`;
     }
   });
   tableHtml += `</tbody></table>`;
 
-  // ── Right: horizontal bar chart ────────────────────────────────────────────
-  let chartHtml = `<div style="display:flex;flex-direction:column;gap:12px">`;
-  cvrRows.forEach(({s, val, barW}) => {
-    chartHtml += `
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-          <span style="font-size:11px;font-weight:600;color:${s.color}">${s.label}</span>
-          <span style="font-size:12px;font-weight:700;color:${val===0?'var(--muted)':s.color}">${val}</span>
-        </div>
-        <div style="height:20px;background:var(--bg3);border-radius:4px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${s.bg};border-left:3px solid ${s.color};transition:width .4s ease;display:flex;align-items:center;padding-left:6px">
-            ${val > 0 ? `<span style="font-size:9px;font-weight:700;color:${s.color};opacity:.9">${barW}%</span>` : ''}
-          </div>
-        </div>
-      </div>`;
-  });
-  chartHtml += `</div>`;
-
-  document.getElementById('mkt-funnel-content').innerHTML = kpiHtml + `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
-      <div>${tableHtml}</div>
-      <div>${chartHtml}</div>
+  // ── FINAL LAYOUT: 3 tiers ─────────────────────────────────────────────
+  document.getElementById('mkt-funnel-content').innerHTML =
+    tier1Html + `
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:stretch">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden">${tableHtml}</div>
+      <div>${adMetricsHtml}</div>
     </div>`;
 }
 
