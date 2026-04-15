@@ -176,16 +176,16 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .matrix-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .matrix-stats{display:flex;gap:20px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--bg3)}
 .matrix-stat{display:flex;flex-direction:column}
-.matrix-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.matrix-stat-value{font-size:20px;font-weight:800;color:var(--accent)}
+.matrix-stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.matrix-stat-value{font-size:24px;font-weight:900;color:var(--accent)}
 .matrix-table{width:100%;border-collapse:collapse}
-.matrix-table th{background:var(--bg3);padding:10px 16px;text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.matrix-table th{background:var(--bg3);padding:10px 16px;text-align:center;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
 .matrix-table th.left{text-align:left}
-.matrix-table td{padding:10px 16px;border-bottom:1px solid var(--border);text-align:center;font-size:13px}
-.matrix-table td.owner-col{text-align:left;font-weight:600;font-size:12px;color:var(--text)}
+.matrix-table td{padding:12px 16px;border-bottom:1px solid var(--border);text-align:center;font-size:16px;font-weight:700}
+.matrix-table td.owner-col{text-align:left;font-weight:700;font-size:14px;color:var(--text)}
 .matrix-table tr:last-child td{border-bottom:none}
 .matrix-table tr:hover td{background:rgba(48,54,61,.5)}
-.matrix-cell{cursor:pointer;border-radius:6px;padding:4px 8px;font-weight:700;font-size:14px;transition:all .15s;display:inline-block;min-width:52px;line-height:1.2}
+.matrix-cell{cursor:pointer;border-radius:6px;padding:5px 10px;font-weight:900;font-size:18px;transition:all .15s;display:inline-block;min-width:56px;line-height:1.2}
 .matrix-cell:hover{transform:scale(1.05)}
 .matrix-cell.nbm{color:var(--nbm)}
 .matrix-cell.nbm:hover{background:rgba(245,158,11,.15)}
@@ -195,8 +195,8 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .matrix-cell.cr:hover{background:rgba(63,185,80,.15)}
 .matrix-cell.trial{color:var(--purple)}
 .matrix-cell.trial:hover{background:rgba(188,140,255,.15)}
-.matrix-cell.zero{color:var(--border2);font-weight:400;font-size:12px;cursor:default}
-.totals-row td{background:var(--bg3);font-weight:700;border-top:2px solid var(--border)}
+.matrix-cell.zero{color:var(--border2);font-weight:400;font-size:14px;cursor:default}
+.totals-row td{background:var(--bg3);font-weight:900;border-top:2px solid var(--border)}
 .owner-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
 
 /* WATCHLIST */
@@ -253,9 +253,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .card-row-5{grid-template-columns:repeat(5,1fr)}
 
 /* MATRIX CELL 2-LINE */
-.mc-count{display:block;font-weight:700;line-height:1.2}
-.mc-arr{display:block;font-size:10px;font-weight:500;opacity:.75;line-height:1.3}
-.mc-mrr{display:block;font-size:9px;font-weight:400;color:var(--muted);opacity:.7;line-height:1.2}
+.mc-count{display:block;font-weight:900;font-size:26px;line-height:1.2}
+.mc-arr{display:block;font-size:16px;font-weight:800;opacity:.85;line-height:1.4}
+.mc-mrr{display:block;font-size:13px;font-weight:600;color:var(--muted);opacity:.75;line-height:1.3}
 .matrix-stat-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .matrix-stat{cursor:pointer}
 .matrix-stat:hover .matrix-stat-value{opacity:.8}
@@ -268,16 +268,16 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .monthly-chart-title{font-size:13px;font-weight:700;color:var(--text)}
 .monthly-chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 /* TABLE */
-.monthly-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:auto}
-.monthly-table th{padding:10px 16px;border-bottom:2px solid var(--border);text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:var(--bg3)}
+.monthly-table{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto}
+.monthly-table th{padding:10px 16px;border-bottom:2px solid var(--border);text-align:left;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:var(--bg3)}
 .monthly-table th.mm-owner-hdr{min-width:120px;border-right:2px solid var(--border)}
 .monthly-table th.mm-month-hdr{text-align:center;min-width:130px;border-right:1px solid var(--border)}
 .monthly-table th.mm-month-hdr.cur-month{color:var(--accent);background:rgba(88,166,255,.07);border-bottom:2px solid var(--accent)}
 .monthly-table th.mm-total-hdr{text-align:center;min-width:130px;background:var(--bg3)}
 .monthly-table td{padding:0;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:top}
-.monthly-table td.owner-col{padding:0 16px;height:100%;font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;background:var(--bg3);border-right:2px solid var(--border);vertical-align:middle;min-width:120px}
+.monthly-table td.owner-col{padding:0 16px;height:100%;font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;background:var(--bg3);border-right:2px solid var(--border);vertical-align:middle;min-width:120px}
 .monthly-table tr:last-child td{border-bottom:none}
-.monthly-table .mm-total-row td{background:rgba(255,255,255,.025);border-top:2px solid var(--border)}
+.monthly-table .mm-total-row td{background:rgba(255,255,255,.025);border-top:2px solid var(--border);font-weight:900}
 .monthly-table .mm-total-row td.owner-col{background:var(--bg3)}
 /* CELL INNER */
 .mm-cell{padding:12px 14px;display:block;cursor:pointer;transition:background .12s}
@@ -285,18 +285,18 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .mm-cell.cur{background:rgba(88,166,255,.04)}
 .mm-cell.cur:hover{background:rgba(88,166,255,.10)}
 .mm-pipe-row{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
-.mm-pipe-arr{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.02em;line-height:1}
-.mm-pipe-cnt{font-size:10px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.07);padding:1px 6px;border-radius:10px;white-space:nowrap}
-.mm-acv-row{font-size:10px;color:var(--muted);margin-bottom:4px}
-.mm-acv-row span{color:#a78bfa;font-weight:600}
-.mm-cvr-row{font-size:10px;color:var(--muted);margin-bottom:8px}
-.mm-cvr-row span{color:#f59e0b;font-weight:600}
-.mm-won-row{display:flex;align-items:center;gap:5px;padding-top:7px;border-top:1px solid rgba(63,185,80,.18);font-size:11px;font-weight:700;color:#3fb950}
-.mm-won-cnt{font-size:10px;font-weight:500;color:rgba(63,185,80,.7)}
+.mm-pipe-arr{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.02em;line-height:1}
+.mm-pipe-cnt{font-size:13px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.07);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.mm-acv-row{font-size:13px;color:var(--muted);margin-bottom:4px}
+.mm-acv-row span{color:#a78bfa;font-weight:700}
+.mm-cvr-row{font-size:13px;color:var(--muted);margin-bottom:8px}
+.mm-cvr-row span{color:#f59e0b;font-weight:700}
+.mm-won-row{display:flex;align-items:center;gap:5px;padding-top:7px;border-top:1px solid rgba(63,185,80,.18);font-size:14px;font-weight:700;color:#3fb950}
+.mm-won-cnt{font-size:12px;font-weight:500;color:rgba(63,185,80,.7)}
 .mm-empty-cell{padding:20px 14px;text-align:center;color:var(--border2);font-size:16px;font-weight:300}
 /* COLUMN HEADER STATS */
-.mm-hdr-won{font-size:10px;font-weight:600;color:#3fb950;margin-top:4px;letter-spacing:0;text-transform:none}
-.mm-hdr-cvr{font-size:10px;font-weight:600;color:#f59e0b;margin-top:2px;letter-spacing:0;text-transform:none}
+.mm-hdr-won{font-size:12px;font-weight:700;color:#3fb950;margin-top:4px;letter-spacing:0;text-transform:none}
+.mm-hdr-cvr{font-size:12px;font-weight:700;color:#f59e0b;margin-top:2px;letter-spacing:0;text-transform:none}
 .mm-hdr-muted{font-size:10px;color:var(--border2);margin-top:4px}
 
 /* HIGH-PROBABILITY SECTION */
@@ -343,17 +343,17 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .src-funnel-header{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .src-funnel-title{font-size:13px;font-weight:700;color:var(--text)}
 .src-funnel-badge{font-size:10px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;padding:2px 9px}
-.src-table{width:100%;border-collapse:collapse;font-size:12px}
-.src-table th{padding:8px 14px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;text-align:left}
+.src-table{width:100%;border-collapse:collapse;font-size:15px}
+.src-table th{padding:10px 14px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;text-align:left}
 .src-table th.num{text-align:right}
-.src-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-.src-table tr:last-child td{border-bottom:none;background:rgba(255,255,255,.025);font-weight:700}
+.src-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.src-table tr:last-child td{border-bottom:none;background:rgba(255,255,255,.025);font-weight:800}
 .src-table tr:hover:not(:last-child) td{background:rgba(255,255,255,.03)}
-.src-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0}
-.src-name{font-weight:600;color:var(--text);display:flex;align-items:center}
-.src-num{text-align:right;font-weight:700;color:var(--text)}
-.src-muted{text-align:right;color:var(--muted);font-size:11px}
-.src-pct{text-align:right;font-weight:700}
+.src-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;flex-shrink:0}
+.src-name{font-weight:700;color:var(--text);display:flex;align-items:center;font-size:14px}
+.src-num{text-align:right;font-weight:800;color:var(--text);font-size:16px}
+.src-muted{text-align:right;color:var(--muted);font-size:13px}
+.src-pct{text-align:right;font-weight:800;font-size:15px}
 .src-bar-cell{width:80px;padding-right:10px}
 .src-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden;min-width:40px}
 .src-bar-inner{height:100%;border-radius:2px;transition:width .4s}
@@ -468,17 +468,17 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .brief-output.visible{display:block}
 .brief-kpi-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:14px}
 .brief-kpi{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 10px;min-width:0}
-.brief-kpi-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brief-kpi-val{font-size:15px;font-weight:800;color:var(--text);line-height:1;white-space:nowrap}
-.brief-kpi-sub{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brief-section{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:10px}
-.brief-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.brief-deal-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+.brief-kpi-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brief-kpi-val{font-size:22px;font-weight:900;color:var(--text);line-height:1;white-space:nowrap}
+.brief-kpi-sub{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brief-section{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:12px;font-size:14px}
+.brief-section-title{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.brief-deal-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:15px}
 .brief-deal-row:last-child{border-bottom:none}
-.brief-deal-name{font-weight:600;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brief-deal-meta{font-size:11px;color:var(--muted);white-space:nowrap}
-.brief-deal-arr{font-weight:700;color:var(--accent);white-space:nowrap}
-.brief-alert-row{font-size:12px;color:var(--text);padding:4px 0 4px 10px;border-left:2px solid #f85149;margin-bottom:5px;line-height:1.4}
+.brief-deal-name{font-weight:700;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.brief-deal-meta{font-size:13px;color:var(--muted);white-space:nowrap}
+.brief-deal-arr{font-weight:800;font-size:16px;color:var(--accent);white-space:nowrap}
+.brief-alert-row{font-size:14px;color:var(--text);padding:6px 0 6px 10px;border-left:2px solid #f85149;margin-bottom:6px;line-height:1.5}
 .brief-alert-row:last-child{margin-bottom:0}
 /* ── Pipeline DealDesk ─────────────────────────────────────────────────────── */
 .dd-run-btn{padding:9px 20px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px}
@@ -10579,14 +10579,18 @@ function renderPulse() {
   document.getElementById('val-new-pipeline').textContent = newPipeDeals.length;
   document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' ARR · ' + fmtMRR(newPipeARR) + '/mo';
 
-  // ACV (Avg Contract Value of won deals in period; fallback to all-time)
-  const acvBase = wonDeals.length ? wonDeals : WON_DEALS.filter(d => selectedOwner === 'all' || d[4] === selectedOwner);
+  // ACV (Avg Contract Value — always reflects selected period)
+  // Priority: won deals in period → new pipeline in period → show dash
+  const acvFromWon = wonDeals.length > 0;
+  const acvBase = acvFromWon ? wonDeals : newPipeDeals;
   const acvARR  = acvBase.reduce((s,d)=>s+d[2],0);
   const acvVal  = acvBase.length ? Math.round(acvARR / acvBase.length) : 0;
   const acvEl   = document.getElementById('val-acv');
   const acvSub  = document.getElementById('sub-acv');
   if (acvEl) acvEl.textContent = acvVal ? fmt$(acvVal) : '—';
-  if (acvSub) acvSub.textContent = wonDeals.length ? wonDeals.length + ' deal avg' : 'all-time avg (' + WON_DEALS.length + ' deals)';
+  if (acvSub) acvSub.textContent = acvFromWon
+    ? wonDeals.length + ' won deal' + (wonDeals.length !== 1 ? 's' : '') + ' avg'
+    : acvBase.length ? newPipeDeals.length + ' new deal' + (newPipeDeals.length !== 1 ? 's' : '') + ' avg' : 'no deals in period';
 
   // Source Funnel
   renderSourceFunnel();
@@ -11500,16 +11504,21 @@ function dealsTable(deals, extraCols) {
   const DAY_MS = 86400000;
   const mkTh = (label, title='') => `<th onclick="sortModalTable(this)" ${title?`title="${title}"`:''}>${label}</th>`;
   return `<table class="modal-table"><thead><tr>
-    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Next Step')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
+    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Priority')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Next Step')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
   </tr></thead><tbody>${sorted.map(d => {
-    const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource, , srcDetail] = d;
+    const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource, srcDetail, priority] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
     const ai = dealAISummary(d);
+    const priBadge = priority === 'HIGH' ? '<span style="background:rgba(248,81,73,.15);color:#f85149;border:1px solid rgba(248,81,73,.3);padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700">HIGH</span>'
+      : priority === 'MEDIUM' ? '<span style="background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3);padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700">MED</span>'
+      : priority === 'LOW' ? '<span style="background:rgba(139,148,158,.15);color:#8b949e;border:1px solid rgba(139,148,158,.3);padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700">LOW</span>'
+      : '<span style="color:var(--muted);font-size:10px">—</span>';
     const baseRow = `<td class="deal-name">${dealLink(id, name)}</td>
       <td class="amount">${fmt$(amount)}</td>
       <td style="white-space:nowrap">${dealSourceTag(dealSource)}</td>
       <td style="white-space:nowrap;font-size:11px;color:var(--muted)">${srcDetail || '—'}</td>
       <td>${stageTag(stageId)}</td>
+      <td>${priBadge}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>`;
     // Lifecycle = days since deal created
     const lcMs = createDate ? Date.now() - new Date(createDate).getTime() : null;
@@ -12728,49 +12737,20 @@ function generateBrief() {
           : '';
         return `<div style="display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Last Wk</span>
-            ${pill(lwFwd.length,lwFwdArr,'#4ade80','+')}
-            ${pill(lwBck.length,lwBckArr,'#f87171','−')}
-            ${!lwFwd.length&&!lwBck.length ? '<span style="font-size:10px;color:var(--muted)">No transitions</span>' : ''}
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
             <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">This Wk</span>
             ${pill(twFwd.length,twFwdArr,'#4ade80','+')}
             ${pill(twBck.length,twBckArr,'#f87171','−')}
             ${!twFwd.length&&!twBck.length ? '<span style="font-size:10px;color:var(--muted)">None yet</span>' : ''}
           </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Last Wk</span>
+            ${pill(lwFwd.length,lwFwdArr,'#4ade80','+')}
+            ${pill(lwBck.length,lwBckArr,'#f87171','−')}
+            ${!lwFwd.length&&!lwBck.length ? '<span style="font-size:10px;color:var(--muted)">No transitions</span>' : ''}
+          </div>
         </div>`;
       })()}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0">
-        <!-- Last Week column -->
-        <div>
-          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">Last Week — ${stageTransitionsLW.length} deals</div>
-          ${stageTransitionsLW.length ? stageTransitionsLW.slice(0,6).map(d => {
-            const toStageId = d[3];
-            const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
-            const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
-            const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
-            const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
-            const arrowColor = toIdx >= 0 ? '#4ade80' : '#f87171';
-            const enteredDate = STAGE_ENTERED[d[0]] || '';
-            const isForwardMove = toIdx > 0; // moved forward in pipeline
-            const sign = isForwardMove ? '+' : '−';
-            const signColor = isForwardMove ? '#4ade80' : '#f87171';
-            return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
-                <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
-                <span style="font-size:11px;font-weight:600;color:${signColor};flex-shrink:0">${sign}${fmtK(d[2])}</span>
-              </div>
-              <div style="font-size:10px;margin-top:2px;display:flex;align-items:center;gap:3px">
-                <span style="color:var(--muted)">${fromLabel}</span>
-                <span style="color:${arrowColor};font-weight:700">→</span>
-                <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
-                ${enteredDate ? `<span style="color:var(--muted);margin-left:3px">${enteredDate}</span>` : ''}
-              </div>
-            </div>`;
-          }).join('') + (stageTransitionsLW.length > 6 ? `<div style="font-size:10px;color:var(--muted);padding:4px 0">+${stageTransitionsLW.length-6} more</div>` : '')
-          : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None last week</div>`}
-        </div>
         <!-- This Week column -->
         <div>
           <div style="font-size:10px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(74,222,128,.25)">This Week — ${stageTransitionsTW.length} deals</div>
@@ -12782,7 +12762,7 @@ function generateBrief() {
             const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
             const arrowColor = toIdx >= 0 ? '#4ade80' : '#f87171';
             const enteredDate = STAGE_ENTERED[d[0]] || '';
-            const isForwardMove = toIdx > 0; // moved forward in pipeline
+            const isForwardMove = toIdx > 0;
             const sign = isForwardMove ? '+' : '−';
             const signColor = isForwardMove ? '#4ade80' : '#f87171';
             return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
@@ -12799,6 +12779,35 @@ function generateBrief() {
             </div>`;
           }).join('') + (stageTransitionsTW.length > 6 ? `<div style="font-size:10px;color:var(--muted);padding:4px 0">+${stageTransitionsTW.length-6} more</div>` : '')
           : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None this week yet</div>`}
+        </div>
+        <!-- Last Week column -->
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)">Last Week — ${stageTransitionsLW.length} deals</div>
+          ${stageTransitionsLW.length ? stageTransitionsLW.slice(0,6).map(d => {
+            const toStageId = d[3];
+            const toLabel   = STAGE_SHORT2[toStageId] || toStageId;
+            const toIdx     = STAGE_PIPE_ORDER.indexOf(toStageId);
+            const fromId    = toIdx > 0 ? STAGE_PIPE_ORDER[toIdx - 1] : null;
+            const fromLabel = fromId ? (STAGE_SHORT2[fromId] || fromId) : '—';
+            const arrowColor = toIdx >= 0 ? '#4ade80' : '#f87171';
+            const enteredDate = STAGE_ENTERED[d[0]] || '';
+            const isForwardMove = toIdx > 0;
+            const sign = isForwardMove ? '+' : '−';
+            const signColor = isForwardMove ? '#4ade80' : '#f87171';
+            return `<div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
+                <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank" class="brief-deal-name" style="color:inherit;text-decoration:none;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='inherit'">${d[1].split(' - ')[0]} ↗</a>
+                <span style="font-size:11px;font-weight:600;color:${signColor};flex-shrink:0">${sign}${fmtK(d[2])}</span>
+              </div>
+              <div style="font-size:10px;margin-top:2px;display:flex;align-items:center;gap:3px">
+                <span style="color:var(--muted)">${fromLabel}</span>
+                <span style="color:${arrowColor};font-weight:700">→</span>
+                <span style="color:#f0f6fc;font-weight:600">${toLabel}</span>
+                ${enteredDate ? `<span style="color:var(--muted);margin-left:3px">${enteredDate}</span>` : ''}
+              </div>
+            </div>`;
+          }).join('') + (stageTransitionsLW.length > 6 ? `<div style="font-size:10px;color:var(--muted);padding:4px 0">+${stageTransitionsLW.length-6} more</div>` : '')
+          : `<div style="color:var(--muted);font-size:12px;padding:4px 0">None last week</div>`}
         </div>
       </div>
     </div>
