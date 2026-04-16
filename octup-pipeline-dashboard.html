@@ -11412,6 +11412,13 @@ function openModal(title, summaryHtml, contentHtml) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-summary').innerHTML = summaryHtml;
   document.getElementById('modal-content').innerHTML = contentHtml;
+  // Auto-bind sortable headers on ALL tables in the modal
+  document.querySelectorAll('#modal-content table th').forEach(th => {
+    if (!th.onclick && th.textContent.trim()) {
+      th.style.cursor = 'pointer';
+      th.onclick = function() { sortModalTable(this); };
+    }
+  });
   document.getElementById('modal-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -14081,10 +14088,10 @@ function renderPipeHygiene() {
     <div class="hg-table-wrap">
       <table class="hygiene-table">
         <thead><tr>
-          <th>Deal</th><th>Status</th><th>Action</th><th>Stage</th><th>Owner</th>
-          <th>Seller Touch</th><th>Customer Reply</th>
-          <th style="text-align:right">Amount</th><th>Close Date</th><th>Reengage Date</th>
-          <th>Source</th><th>Next Step</th><th>Risk</th><th style="text-align:center">Score</th>
+          <th onclick="sortModalTable(this)" style="cursor:pointer">Deal</th><th onclick="sortModalTable(this)" style="cursor:pointer">Status</th><th onclick="sortModalTable(this)" style="cursor:pointer">Action</th><th onclick="sortModalTable(this)" style="cursor:pointer">Stage</th><th onclick="sortModalTable(this)" style="cursor:pointer">Owner</th>
+          <th onclick="sortModalTable(this)" style="cursor:pointer">Seller Touch</th><th onclick="sortModalTable(this)" style="cursor:pointer">Customer Reply</th>
+          <th onclick="sortModalTable(this)" style="cursor:pointer;text-align:right">Amount</th><th onclick="sortModalTable(this)" style="cursor:pointer">Close Date</th><th onclick="sortModalTable(this)" style="cursor:pointer">Reengage Date</th>
+          <th onclick="sortModalTable(this)" style="cursor:pointer">Source</th><th onclick="sortModalTable(this)" style="cursor:pointer">Next Step</th><th onclick="sortModalTable(this)" style="cursor:pointer">Risk</th><th onclick="sortModalTable(this)" style="cursor:pointer;text-align:center">Score</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -14576,22 +14583,20 @@ function mktShowContactsModal(stage) {
       const stageBadge = stage
         ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
         : `<span style="color:var(--muted);font-size:10px">—</span>`;
-      // Inbound SLA: days between form submission and first engagement
+      // Inbound SLA: time from form submission to first team engagement
+      // Demo Meeting = self-booked → SLA 0d. Other forms = wait for team outreach.
       let slaHtml = '';
-      if (c.date && actDate && actDate !== c.date) {
+      const isDemoBooking = c.form === 'Demo Meeting';
+      if (isDemoBooking) {
+        slaHtml = `<span style="font-size:12px;font-weight:800;color:#4ade80">0d</span>`;
+      } else if (c.date && actDate) {
         const subMs = new Date(c.date + 'T00:00:00Z').getTime();
         const engMs = new Date(actDate + 'T00:00:00Z').getTime();
-        if (engMs >= subMs) {
-          const slaDays = Math.round((engMs - subMs) / 86400000);
-          const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
-          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
-        } else {
-          slaHtml = `<span style="font-size:10px;color:var(--muted)">—</span>`;
-        }
-      } else if (c.date && actDate && actDate === c.date) {
-        slaHtml = `<span style="font-size:12px;font-weight:800;color:#4ade80">0d</span>`;
+        const slaDays = Math.max(0, Math.round((engMs - subMs) / 86400000));
+        const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
+        slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
       } else {
-        slaHtml = `<span style="font-size:10px;color:var(--muted)">—</span>`;
+        slaHtml = `<span style="font-size:11px;font-weight:700;color:#f97316">⏳ Pending</span>`;
       }
 
       // Form badge
@@ -14620,6 +14625,7 @@ function mktShowContactsModal(stage) {
           <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
         </td>
         <td style="text-align:center">${slaHtml}</td>
+        <td style="font-size:10px;color:var(--muted);white-space:nowrap">${c.last_activity || '—'}</td>
       </tr>`;
     }).join('');
   }
@@ -14667,13 +14673,14 @@ function mktShowContactsModal(stage) {
   const tableHtml = filtersHtml + `
     <table class="modal-table">
       <thead><tr>
-        <th>Contact · Company</th>
-        <th>Stage</th>
-        <th>Form</th>
-        <th>Source · Traffic</th>
-        <th>Submitted</th>
-        <th>1st Engagement</th>
-        <th>Inbound SLA</th>
+        <th onclick="sortModalTable(this)">Contact · Company</th>
+        <th onclick="sortModalTable(this)">Stage</th>
+        <th onclick="sortModalTable(this)">Form</th>
+        <th onclick="sortModalTable(this)">Source · Traffic</th>
+        <th onclick="sortModalTable(this)">Submitted</th>
+        <th onclick="sortModalTable(this)">1st Engagement</th>
+        <th onclick="sortModalTable(this)">Inbound SLA</th>
+        <th onclick="sortModalTable(this)">Last Activity</th>
       </tr></thead>
       <tbody id="mkt-contact-tbody"></tbody>
     </table>`;
