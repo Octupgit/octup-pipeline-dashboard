@@ -14576,6 +14576,30 @@ function mktShowContactsModal(stage) {
       const stageBadge = stage
         ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
         : `<span style="color:var(--muted);font-size:10px">—</span>`;
+      // Inbound SLA: days between form submission and first engagement
+      let slaHtml = '';
+      if (c.date && actDate && actDate !== c.date) {
+        const subMs = new Date(c.date + 'T00:00:00Z').getTime();
+        const engMs = new Date(actDate + 'T00:00:00Z').getTime();
+        if (engMs >= subMs) {
+          const slaDays = Math.round((engMs - subMs) / 86400000);
+          const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
+          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
+        } else {
+          slaHtml = `<span style="font-size:10px;color:var(--muted)">—</span>`;
+        }
+      } else if (c.date && actDate && actDate === c.date) {
+        slaHtml = `<span style="font-size:12px;font-weight:800;color:#4ade80">0d</span>`;
+      } else {
+        slaHtml = `<span style="font-size:10px;color:var(--muted)">—</span>`;
+      }
+
+      // Form badge
+      const formColor = c.form === 'Demo Meeting' ? '#4ade80' : c.form === 'Pricing Form' ? '#f472b6' : '#fbbf24';
+      const formBadge = c.form
+        ? `<span style="background:${formColor}22;color:${formColor};border:1px solid ${formColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.form}</span>`
+        : `<span style="color:var(--muted);font-size:10px">—</span>`;
+
       return `<tr>
         <td>
           <div style="font-weight:700;font-size:12px">
@@ -14585,6 +14609,7 @@ function mktShowContactsModal(stage) {
           <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.company !== '—' ? c.company : c.email}</div>
         </td>
         <td>${stageBadge}</td>
+        <td>${formBadge}</td>
         <td>
           <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.traffic_source || c.campaign}</div>
@@ -14594,6 +14619,7 @@ function mktShowContactsModal(stage) {
           <span style="font-size:10px;color:${actColor};font-weight:600">${actType}</span>
           <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
         </td>
+        <td style="text-align:center">${slaHtml}</td>
       </tr>`;
     }).join('');
   }
@@ -14643,9 +14669,11 @@ function mktShowContactsModal(stage) {
       <thead><tr>
         <th>Contact · Company</th>
         <th>Stage</th>
+        <th>Form</th>
         <th>Source · Traffic</th>
-        <th>Date</th>
-        <th>Last Activity</th>
+        <th>Submitted</th>
+        <th>1st Engagement</th>
+        <th>Inbound SLA</th>
       </tr></thead>
       <tbody id="mkt-contact-tbody"></tbody>
     </table>`;
