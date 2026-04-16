@@ -14402,6 +14402,69 @@ const MKT_STAGE_MAP = {
   "hildana43@icloud.com": "MQL",       // No company associated
 };
 
+// First engagement data from HubSpot (hs_sa_first_engagement_date, hs_time_to_first_engagement)
+// d=engagement date, t=type (SENT/COMPLETED/SCHEDULED), ms=ms to first engagement, lc=last contacted
+const MKT_ENGAGEMENT = {
+  "07sikandari.zarina@gmail.com": {d:'2026-02-12',t:'SENT',ms:2939,lc:'2026-02-13'},
+  "07sikandari@gmail.com":        {d:'2026-02-12',t:'SENT',ms:3364,lc:'2026-02-13'},
+  "abrown@instawork.com":         {d:'2026-02-24',t:'SENT',ms:3171,lc:'2026-03-02'},
+  "aaron@myprolificbrands.com":   {d:'2026-01-23',t:'SENT',ms:3707,lc:'2026-03-25'},
+  "accounting@advtransolution.com":{d:'2026-03-18',t:'SENT',ms:3127,lc:'2026-03-18'},
+  "amanda@aaryaship.com":         {d:'2026-01-07',t:'COMPLETED',ms:428859841,lc:'2026-03-04'},
+  "andrew.s5@channelpartnersnetwork.com":{d:'2026-01-15',t:'SENT',ms:2414621098,lc:'2026-01-15'},
+  "andrew@shipscience.com":       {d:'2026-01-20',t:'SENT',ms:2542,lc:'2026-04-15'},
+  "andy@onncom.com":              {d:'2026-01-23',t:'SENT',ms:4354,lc:'2026-01-26'},
+  "anureet2626@gmail.com":        {d:'2026-03-05',t:'SENT',ms:2715,lc:'2026-03-09'},
+  "ben@advoc8.com":               {d:'',t:'',ms:0,lc:'2026-03-09'},
+  "benn@boxfortcommerce.com":     {d:'2026-01-06',t:'SENT',ms:4093,lc:'2026-03-11'},
+  "bigtcarney@gmail.com":         {d:'2026-02-15',t:'SENT',ms:4031,lc:'2026-02-16'},
+  "bryan@leftbrainlogistics.com": {d:'2026-04-01',t:'SENT',ms:87726246,lc:'2026-04-15'},
+  "carlosgrey1971@gmail.com":     {d:'',t:'',ms:0,lc:'2026-02-13'},
+  "catherine@bestowegifting.com": {d:'2026-03-25',t:'SENT',ms:5199,lc:'2026-03-26'},
+  "ciaran@contactmarketing.co.uk":{d:'2026-01-14',t:'SENT',ms:3368,lc:'2026-01-23'},
+  "cynncerepowell613@gmail.com":  {d:'2026-03-12',t:'SENT',ms:3657,lc:'2026-03-13'},
+  "dennis@lpxpartners.com":       {d:'2026-01-20',t:'SENT',ms:3223,lc:'2026-01-22'},
+  "dgreene@parcelplanet.com":     {d:'2026-03-10',t:'SENT',ms:76212497,lc:'2026-04-14'},
+  "eguibertosantosrodrigues@gmail.com":{d:'2026-02-17',t:'SENT',ms:6784,lc:'2026-02-17'},
+  "eli@logystico.com":            {d:'2026-02-10',t:'COMPLETED',ms:90075602,lc:'2026-04-09'},
+  "gavin@proshipper.com":         {d:'2026-04-01',t:'SENT',ms:5372,lc:'2026-04-15'},
+  "ginny@amzprep.com":            {d:'2026-02-27',t:'COMPLETED',ms:2589048772,lc:'2026-03-04'},
+  "hadgutesfahiwet9@gmail.com":   {d:'2026-03-20',t:'SENT',ms:4064,lc:'2026-03-26'},
+  "hildana43@icloud.com":         {d:'2026-03-10',t:'SENT',ms:3777,lc:'2026-03-12'},
+  "jmilner@whiteriverfulfillment.com":{d:'2025-10-07',t:'SCHEDULED',ms:436629607,lc:'2026-03-28'},
+  "joel.wilson@infopluscommerce.com":{d:'2024-11-15',t:'COMPLETED',ms:3905569,lc:'2026-03-09'},
+  "jwilson@infopluscommerce.com": {d:'2024-11-15',t:'COMPLETED',ms:3905569,lc:'2026-03-09'},
+  "josep@amphoralogistics.com":   {d:'2026-01-15',t:'SENT',ms:1303049836,lc:'2026-01-15'},
+  "joshua.pavel@lumana.ai":       {d:'2026-01-09',t:'SENT',ms:856071714,lc:'2026-01-09'},
+  "jps@prova-mexico.com":         {d:'2025-12-05',t:'SENT',ms:340060655,lc:'2026-01-15'},
+  "kevin@relaydistro.com":        {d:'2026-02-23',t:'SENT',ms:412987751,lc:'2026-02-23'},
+  "logistics@windmilloperations.com":{d:'2026-01-15',t:'SENT',ms:10845,lc:'2026-04-10'},
+  "ltvines34@gmail.com":          {d:'2026-02-16',t:'SENT',ms:2937,lc:'2026-02-20'},
+  "luca.marano@shiporo.com":      {d:'2026-01-13',t:'SENT',ms:5531675852,lc:'2026-01-13'},
+  "matt@whitehouse-solutions.co.uk":{d:'2026-03-03',t:'SENT',ms:408256674,lc:'2026-03-17'},
+  "mgale@onelineage.com":         {d:'2026-02-12',t:'SENT',ms:17537011,lc:'2026-02-12'},
+  "mlee@lmwarehousing.com":       {d:'2026-01-30',t:'COMPLETED',ms:353438725,lc:'2026-04-02'},
+  "mubarak@units.sa":             {d:'2026-01-19',t:'SENT',ms:328699961,lc:'2026-01-28'},
+  "neil@shippingbutler.com":      {d:'2026-03-11',t:'SENT',ms:4524,lc:'2026-04-07'},
+  "riyadahmed633@gmail.com":      {d:'2026-02-02',t:'SENT',ms:3466,lc:'2026-02-06'},
+  "ryan.andrews@portless.com":    {d:'',t:'',ms:0,lc:'2026-04-07'},
+  "ryan@biolongevitylabs.com":    {d:'2026-03-27',t:'SENT',ms:76247503,lc:'2026-04-14'},
+  "saciidmoha2020@icloud.com":    {d:'2026-03-21',t:'SENT',ms:3914,lc:'2026-03-24'},
+  "sam@wavefulfil.com":           {d:'2026-01-19',t:'SENT',ms:4415,lc:'2026-01-20'},
+  "sayidaliibraahim@gmail.com":   {d:'2026-03-22',t:'SENT',ms:4298,lc:'2026-03-25'},
+  "sburr@saia.com":               {d:'2026-03-06',t:'EMPTY_DESCRIPTION',ms:601742974,lc:'2026-03-18'},
+  "scott@jocordistro.com":        {d:'2026-02-25',t:'SENT',ms:59124930,lc:'2026-02-27'},
+  "sedrickmalilo@gmail.com":      {d:'2026-02-02',t:'SENT',ms:12472,lc:'2026-02-02'},
+  "stephen.wolff@tupack.co.uk":   {d:'2025-11-19',t:'COMPLETED',ms:190353534,lc:'2026-04-09'},
+  "sulemansharaf01@gmail.com":    {d:'2026-03-14',t:'SENT',ms:4689,lc:'2026-03-17'},
+  "team@opsengine.co":            {d:'2026-01-07',t:'SENT',ms:5012476509,lc:'2026-03-31'},
+  "viktor@shopmiko.com":          {d:'2026-01-25',t:'SENT',ms:5752,lc:'2026-01-28'},
+  "aptouomou@gmail.com":          {d:'',t:'',ms:0,lc:'2026-02-11'},
+  "ricardo.landa@directemailuniverse.us":{d:'2026-01-28',t:'SENT',ms:408280,lc:'2026-01-28'},
+  "mark.hance@baseleaddata.com":  {d:'',t:'',ms:0,lc:''},
+  "jack@scrumbles.co.uk":         {d:'',t:'',ms:0,lc:''},
+};
+
 const MKT_DB = {
   all: {
     all: {
@@ -14593,32 +14656,46 @@ function mktShowContactsModal(stage) {
       const stageBadge = stage
         ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
         : `<span style="color:var(--muted);font-size:10px">—</span>`;
-      // Inbound SLA: time from form submission to first team engagement
-      // Demo Meeting = self-booked → SLA 0d.
-      // Other forms: last_activity records the form event itself, not team outreach.
-      // If activity type differs from form event (booked ≠ submitted), it's real engagement.
-      // Otherwise, team hasn't reached out yet.
-      let slaHtml = '';
+      // Inbound SLA from real HubSpot engagement data (MKT_ENGAGEMENT map)
+      const eng = MKT_ENGAGEMENT[c.email] || {};
       const isDemoBooking = c.form === 'Demo Meeting';
-      const isFormEvent = actType.includes('submitted') || actType.includes('form') || actType.includes('Form');
+      let slaHtml = '', engDateStr = '', engTypeStr = '';
+
       if (isDemoBooking) {
         slaHtml = `<span style="font-size:12px;font-weight:800;color:#4ade80">0d</span>`;
-      } else if (c.date && actDate && !isFormEvent) {
-        // Activity is real engagement (not just the form submission echo)
+        engDateStr = c.date;
+        engTypeStr = 'Self-booked';
+      } else if (eng.d) {
+        // Real engagement exists — compute SLA from form submission to first engagement
+        engDateStr = eng.d;
+        engTypeStr = eng.t === 'SENT' ? 'Email sent' : eng.t === 'COMPLETED' ? 'Meeting held' : eng.t === 'SCHEDULED' ? 'Meeting set' : eng.t || 'Engaged';
         const subMs = new Date(c.date + 'T00:00:00Z').getTime();
-        const engMs = new Date(actDate + 'T00:00:00Z').getTime();
-        const slaMs = engMs - subMs;
+        const engMs = new Date(eng.d + 'T00:00:00Z').getTime();
+        const slaMs = Math.max(0, engMs - subMs);
         if (slaMs < 86400000) {
-          const slaHrs = Math.max(0, Math.round(slaMs / 3600000));
-          const slaColor = slaHrs <= 4 ? '#4ade80' : slaHrs <= 24 ? '#fbbf24' : '#f85149';
-          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaHrs}h</span>`;
+          // Sub-day: show hours (use ms field if available for precision)
+          const hrs = eng.ms > 0 ? Math.round(eng.ms / 3600000) : Math.round(slaMs / 3600000);
+          const hrsDisplay = Math.max(0, Math.min(hrs, 24));
+          const slaColor = hrsDisplay <= 4 ? '#4ade80' : hrsDisplay <= 12 ? '#fbbf24' : '#f85149';
+          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${hrsDisplay}h</span>`;
         } else {
           const slaDays = Math.round(slaMs / 86400000);
           const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
           slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
         }
+      } else if (eng.lc) {
+        // No first engagement but was contacted — use last contacted
+        engDateStr = eng.lc;
+        engTypeStr = 'Contacted';
+        const subMs = new Date(c.date + 'T00:00:00Z').getTime();
+        const lcMs  = new Date(eng.lc + 'T00:00:00Z').getTime();
+        const slaDays = Math.max(0, Math.round((lcMs - subMs) / 86400000));
+        const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
+        slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
       } else {
         slaHtml = `<span style="font-size:11px;font-weight:700;color:#f97316">⏳ No outreach</span>`;
+        engTypeStr = '';
+        engDateStr = '';
       }
 
       // Form badge
@@ -14642,12 +14719,10 @@ function mktShowContactsModal(stage) {
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.traffic_source || c.campaign}</div>
         </td>
         <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
-        <td style="white-space:nowrap">${isDemoBooking ? `
-          <span style="font-size:10px;color:#4ade80;font-weight:600">Demo booked</span>
-          <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.date}</div>` : isFormEvent ? `
-          <span style="font-size:10px;color:var(--muted)">—</span>` : `
-          <span style="font-size:10px;color:${actColor};font-weight:600">${actType}</span>
-          <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>`}
+        <td style="white-space:nowrap">${engTypeStr ? `
+          <span style="font-size:10px;color:${isDemoBooking ? '#4ade80' : eng.t === 'COMPLETED' ? '#4ade80' : '#60a5fa'};font-weight:600">${engTypeStr}</span>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${engDateStr}</div>` : `
+          <span style="font-size:10px;color:var(--muted)">—</span>`}
         </td>
         <td style="text-align:center">${slaHtml}</td>
         <td style="font-size:10px;color:var(--muted);white-space:nowrap">${c.last_activity || '—'}</td>
