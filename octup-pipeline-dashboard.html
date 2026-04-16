@@ -14800,9 +14800,27 @@ function mktRender() {
       monthsInPeriod.forEach(m => { if (MKT_AD_SPEND[m]) periodSpend += MKT_AD_SPEND[m]; });
     }
   }
-  const cpl = mqlCount > 0 && periodSpend > 0 ? Math.round(periodSpend / mqlCount) : null;
-  const cpa = d.won > 0 && periodSpend > 0 ? Math.round(periodSpend / d.won) : null;
-  const roi = d.won_arr > 0 && periodSpend > 0 ? Math.round((d.won_arr - periodSpend) / periodSpend * 100) : null;
+  // ── Paid-only metrics for CPL/CPA/ROI (always use paid data, never organic) ─
+  let paidMqlCount, paidWonCount, paidWonArr;
+  if (mktCh === 'paid') {
+    // Already filtered to paid
+    paidMqlCount = mqlCount;
+    paidWonCount = d.won;
+    paidWonArr   = d.won_arr;
+  } else {
+    // Recompute from paid-only contacts/deals regardless of current filter
+    let paidContacts = MKT_CONTACTS;
+    if (selectedWeek !== 'alltime') paidContacts = paidContacts.filter(c => dateInRange(c.date, selectedWeek));
+    paidContacts = paidContacts.filter(c => PAID_KEYS.includes(c.source_key));
+    paidMqlCount = paidContacts.length;
+    let paidWon = WON_DEALS.filter(dl => dl[6] === 'Marketing Paid');
+    if (selectedWeek !== 'alltime') paidWon = paidWon.filter(dl => dateInRange(dl[7], selectedWeek));
+    paidWonCount = paidWon.length;
+    paidWonArr   = paidWon.reduce((s,dl) => s + dl[2], 0);
+  }
+  const cpl = paidMqlCount > 0 && periodSpend > 0 ? Math.round(periodSpend / paidMqlCount) : null;
+  const cpa = paidWonCount > 0 && periodSpend > 0 ? Math.round(periodSpend / paidWonCount) : null;
+  const roi = paidWonArr > 0 && periodSpend > 0 ? Math.round((paidWonArr - periodSpend) / periodSpend * 100) : null;
 
   // ── Pipeline breakdown data ───────────────────────────────────────────────
   const lostArr    = mktLost.reduce((s,dl)=>s+dl[2],0);
@@ -14854,12 +14872,13 @@ function mktRender() {
     </div>`;
 
   // ── TIER 3 Right: CPL / CPA / ROI cards (flex stretch) ────────────────
-  const cplVal = isPaid && cpl !== null ? '$'+cpl.toLocaleString() : isNA ? 'N/A' : '—';
-  const cplSub = isPaid && periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+mqlCount+' MQLs' : isNA ? 'Paid channel only' : 'No spend data';
-  const cpaVal = isPaid && cpa !== null ? '$'+cpa.toLocaleString() : isNA ? 'N/A' : '—';
-  const cpaSub = isPaid && periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+d.won+' won' : isNA ? 'Paid channel only' : 'No spend data';
-  const roiVal = isPaid && roi !== null ? roi+'%' : isNA ? 'N/A' : '—';
-  const roiSub = isPaid && roi !== null ? mktFmtN(d.won_arr)+' won ÷ '+mktFmtN(periodSpend)+' spend' : isNA ? 'Paid channel only' : 'Need wins + spend';
+  // CPL/CPA/ROI always use paid-only data — show for all channels
+  const cplVal = cpl !== null ? '$'+cpl.toLocaleString() : '—';
+  const cplSub = periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+paidMqlCount+' paid MQLs' : 'No spend data';
+  const cpaVal = cpa !== null ? '$'+cpa.toLocaleString() : '—';
+  const cpaSub = periodSpend > 0 ? mktFmtN(periodSpend)+' ÷ '+paidWonCount+' paid won' : 'No spend data';
+  const roiVal = roi !== null ? roi+'%' : '—';
+  const roiSub = roi !== null ? mktFmtN(paidWonArr)+' paid won ÷ '+mktFmtN(periodSpend)+' spend' : 'Need wins + spend';
 
   const _m = (bdr,lbl,val,sub,color,bmHtml) => `
     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;border-left:3px solid ${color}">
@@ -14871,9 +14890,9 @@ function mktRender() {
 
   const adMetricsHtml = `
     <div style="display:flex;flex-direction:column;gap:12px;height:100%">
-      ${_m('','CPL · Cost Per Lead', cplVal, cplSub, '#60a5fa', !isNA ? bmTag(cpl, BM_CPL, true) : '')}
-      ${_m('','CPA · Cost Per Acquisition', cpaVal, cpaSub, '#f472b6', !isNA ? bmTag(cpa, BM_CPA, true) : '')}
-      ${_m('','ROI · Return on Ad Spend', roiVal, roiSub, !isNA && roi !== null && roi > 0 ? '#4ade80' : !isNA && roi !== null ? '#f85149' : '#8b949e', !isNA ? bmTag(roi, BM_ROI, false) : '')}
+      ${_m('','CPL · Cost Per Lead', cplVal, cplSub, '#60a5fa', bmTag(cpl, BM_CPL, true))}
+      ${_m('','CPA · Cost Per Acquisition', cpaVal, cpaSub, '#f472b6', bmTag(cpa, BM_CPA, true))}
+      ${_m('','ROI · Return on Ad Spend', roiVal, roiSub, roi !== null && roi > 0 ? '#4ade80' : roi !== null ? '#f85149' : '#8b949e', bmTag(roi, BM_ROI, false))}
     </div>`;
 
   // ── Build CVR rows ─────────────────────────────────────────────────────────
