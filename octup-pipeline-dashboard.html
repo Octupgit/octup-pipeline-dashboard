@@ -14584,19 +14584,31 @@ function mktShowContactsModal(stage) {
         ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
         : `<span style="color:var(--muted);font-size:10px">—</span>`;
       // Inbound SLA: time from form submission to first team engagement
-      // Demo Meeting = self-booked → SLA 0d. Other forms = wait for team outreach.
+      // Demo Meeting = self-booked → SLA 0d.
+      // Other forms: last_activity records the form event itself, not team outreach.
+      // If activity type differs from form event (booked ≠ submitted), it's real engagement.
+      // Otherwise, team hasn't reached out yet.
       let slaHtml = '';
       const isDemoBooking = c.form === 'Demo Meeting';
+      const isFormEvent = actType.includes('submitted') || actType.includes('form') || actType.includes('Form');
       if (isDemoBooking) {
         slaHtml = `<span style="font-size:12px;font-weight:800;color:#4ade80">0d</span>`;
-      } else if (c.date && actDate) {
+      } else if (c.date && actDate && !isFormEvent) {
+        // Activity is real engagement (not just the form submission echo)
         const subMs = new Date(c.date + 'T00:00:00Z').getTime();
         const engMs = new Date(actDate + 'T00:00:00Z').getTime();
-        const slaDays = Math.max(0, Math.round((engMs - subMs) / 86400000));
-        const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
-        slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
+        const slaMs = engMs - subMs;
+        if (slaMs < 86400000) {
+          const slaHrs = Math.max(0, Math.round(slaMs / 3600000));
+          const slaColor = slaHrs <= 4 ? '#4ade80' : slaHrs <= 24 ? '#fbbf24' : '#f85149';
+          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaHrs}h</span>`;
+        } else {
+          const slaDays = Math.round(slaMs / 86400000);
+          const slaColor = slaDays <= 1 ? '#4ade80' : slaDays <= 3 ? '#fbbf24' : '#f85149';
+          slaHtml = `<span style="font-size:12px;font-weight:800;color:${slaColor}">${slaDays}d</span>`;
+        }
       } else {
-        slaHtml = `<span style="font-size:11px;font-weight:700;color:#f97316">⏳ Pending</span>`;
+        slaHtml = `<span style="font-size:11px;font-weight:700;color:#f97316">⏳ No outreach</span>`;
       }
 
       // Form badge
@@ -14620,9 +14632,12 @@ function mktShowContactsModal(stage) {
           <div style="font-size:10px;color:var(--muted);margin-top:3px">${c.traffic_source || c.campaign}</div>
         </td>
         <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
-        <td style="white-space:nowrap">
+        <td style="white-space:nowrap">${isDemoBooking ? `
+          <span style="font-size:10px;color:#4ade80;font-weight:600">Demo booked</span>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.date}</div>` : isFormEvent ? `
+          <span style="font-size:10px;color:var(--muted)">—</span>` : `
           <span style="font-size:10px;color:${actColor};font-weight:600">${actType}</span>
-          <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${actDate}</div>`}
         </td>
         <td style="text-align:center">${slaHtml}</td>
         <td style="font-size:10px;color:var(--muted);white-space:nowrap">${c.last_activity || '—'}</td>
