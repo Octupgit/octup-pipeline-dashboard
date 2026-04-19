@@ -160,7 +160,7 @@ def fetch_closed_deals(stage, days_back=1825):
     print(f'  Fetching stage={stage} deals (last {days_back}d, pipeline {PIPELINE_ID})...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     props = ['dealname','amount','closedate','createdate','hubspot_owner_id',
-             'hs_created_by_user_id','dealstage','deal_source']
+             'hs_created_by_user_id','dealstage','deal_source','closed_lost_reason']
     body = {
         'filterGroups': [{'filters': [
             {'propertyName': 'dealstage',  'operator': 'EQ',  'value': stage},
@@ -204,6 +204,7 @@ def build_lost(deals):
             safe_str(p.get('dealstage')),
             deal_source(p),
             fmt_date(p.get('createdate')),   # [8] createDate — for WoW chart
+            safe_str(p.get('closed_lost_reason')),  # [9] closed lost reason
         ])
     return rows
 

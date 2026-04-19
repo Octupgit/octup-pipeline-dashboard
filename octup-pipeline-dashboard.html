@@ -11764,7 +11764,7 @@ function computeMovedDeals(weekKey, ownerKey) {
       id: d[0], name: d[1], amount: d[2],
       fromId: null, toId: '608286679', ownerId: d[4],
       date: d[3], kind: 'lost',
-      reason: LOST_REASONS[d[0]] || null
+      reason: d[9] || LOST_REASONS[d[0]] || null
     });
     badARR += d[2];
   });
@@ -11783,66 +11783,48 @@ function openDealsMovedModal() {
     <div class="modal-summary-item"><span class="modal-summary-label">⚠️ Bad</span><span class="modal-summary-val" style="color:var(--red)">${bad.length} · ${fmt$(badARR)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Net ARR</span><span class="modal-summary-val" style="color:${goodARR-badARR>=0?'var(--green)':'var(--red)'}">${fmt$(goodARR - badARR)}</span></div>`;
 
-  const stagePill = (id, isTo) => {
-    if (!id) return '<span style="color:var(--muted)">—</span>';
-    const lbl = _STAGE_LBL[id] || id;
-    const color = id === '2918051008' ? '#94a3b8'
-                : id === '608286678' ? 'var(--green)'
-                : id === '608286679' ? 'var(--red)'
-                : isTo ? '#f0f6fc' : 'var(--muted)';
-    const weight = isTo ? '700' : '500';
-    return `<span style="color:${color};font-weight:${weight}">${lbl}</span>`;
+  // Group by destination stage
+  const BUCKET_ORDER = ['608286678','608286677','4988070119','608286676','740160705','608286675','2918051007','2918051008','608286679'];
+  const BUCKET_COLOR = {
+    '608286678':'var(--green)','608286679':'var(--red)','2918051008':'#94a3b8',
+    '4988070119':'var(--purple)','608286677':'#60a5fa','608286676':'#f0b429',
+    '740160705':'#fb923c','608286675':'#a3e635','2918051007':'var(--muted)'
   };
-  const transition = (fromId, toId, kindColor) =>
-    `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap">
-       ${stagePill(fromId, false)}
-       <span style="color:${kindColor};font-weight:700">→</span>
-       ${stagePill(toId, true)}
-     </span>`;
-
-  const buildRow = (r, isGood) => {
-    const arrColor = isGood ? 'var(--green)' : 'var(--red)';
-    const sign = isGood ? '+' : '−';
-    const kindColor = isGood ? 'var(--green)' : 'var(--red)';
-    const kindBadge = r.kind === 'won'     ? '<span class="tag tag-won">🏆 Won</span>'
-                    : r.kind === 'lost'    ? '<span class="tag tag-lost">✗ Lost</span>'
-                    : r.kind === 'stalled' ? '<span class="tag" style="background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.25)">⏸ Stalled</span>'
-                    : '<span class="tag" style="background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.25)">▶ Forward</span>';
-    const reasonCell = r.kind === 'lost'
-      ? `<td style="font-size:11px;color:var(--muted);max-width:220px;white-space:normal">${r.reason || '<span style="opacity:.6">— not recorded</span>'}</td>`
-      : `<td style="color:var(--muted)">—</td>`;
-    return `<tr>
-      <td class="deal-name">${dealLink(r.id, r.name)}</td>
-      <td>${transition(r.fromId, r.toId, kindColor)}</td>
-      <td class="amount" style="color:${arrColor}">${sign}${fmt$(r.amount)}</td>
-      <td>${kindBadge}</td>
-      <td>${ownerDot(r.ownerId)}${ownerName(r.ownerId)}</td>
-      <td>${fmtDate(r.date)}</td>
-      ${reasonCell}
-    </tr>`;
-  };
+  const all = [...good, ...bad];
+  const groups = {};
+  all.forEach(r => { (groups[r.toId] = groups[r.toId] || []).push(r); });
 
   const tableHead = `<thead><tr>
-    <th>Deal Name</th><th>Old Stage → New Stage</th><th>ARR</th><th>Type</th><th>Owner</th><th>Date</th><th>Lost Reason</th>
+    <th>Deal Name</th><th>From Stage</th><th>ARR</th><th>Owner</th><th>Date</th><th>Lost Reason</th>
   </tr></thead>`;
-  const goodRows = good.map(r => buildRow(r, true)).join('')  || `<tr><td colspan="7" class="no-data">No forward moves this period</td></tr>`;
-  const badRows  = bad.map(r => buildRow(r, false)).join('')  || `<tr><td colspan="7" class="no-data">No bad moves this period 🟢</td></tr>`;
 
-  const content = `
-    <div style="margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px">
-        ✅ Good Moves — Forward in Pipeline / Won
-        <span style="font-size:11px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0">${good.length} deal${good.length!==1?'s':''} · ${fmt$(goodARR)}</span>
+  const sections = BUCKET_ORDER.filter(sid => groups[sid]?.length).map(sid => {
+    const deals = groups[sid].sort((a,b) => b.amount - a.amount);
+    const isGood = !['2918051008','608286679'].includes(sid);
+    const color  = BUCKET_COLOR[sid] || 'var(--text)';
+    const sign   = isGood ? '+' : '−';
+    const arrColor = isGood ? 'var(--green)' : 'var(--red)';
+    const totalARR = deals.reduce((s,r) => s + r.amount, 0);
+    const fromLabel = id => id ? (_STAGE_LBL[id] || id) : '—';
+    const rows = deals.map(r => `<tr>
+      <td class="deal-name">${dealLink(r.id, r.name)}</td>
+      <td style="color:var(--muted);white-space:nowrap">${fromLabel(r.fromId)}</td>
+      <td class="amount" style="color:${arrColor}">${sign}${fmt$(r.amount)}</td>
+      <td>${ownerDot(r.ownerId)}${ownerName(r.ownerId)}</td>
+      <td style="white-space:nowrap">${fmtDate(r.date)}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:200px;white-space:normal">${r.reason || '<span style="opacity:.5">—</span>'}</td>
+    </tr>`).join('');
+    return `<div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid ${color}44">
+        <span style="font-size:13px;font-weight:700;color:${color}">${_STAGE_LBL[sid] || sid}</span>
+        <span style="font-size:11px;color:var(--muted)">${deals.length} deal${deals.length>1?'s':''} · ${sign}${fmt$(totalARR)}</span>
+        ${isGood ? '<span style="font-size:10px;background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.25);padding:1px 7px;border-radius:10px;font-weight:600">✅ Forward</span>' : '<span style="font-size:10px;background:rgba(248,81,73,.12);color:var(--red);border:1px solid rgba(248,81,73,.25);padding:1px 7px;border-radius:10px;font-weight:600">⚠️ Bad</span>'}
       </div>
-      <table class="modal-table">${tableHead}<tbody>${goodRows}</tbody></table>
-    </div>
-    <div>
-      <div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px">
-        ⚠️ Bad Moves — To Stalled / Backwards / Lost
-        <span style="font-size:11px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0">${bad.length} deal${bad.length!==1?'s':''} · ${fmt$(badARR)}</span>
-      </div>
-      <table class="modal-table">${tableHead}<tbody>${badRows}</tbody></table>
+      <table class="modal-table">${tableHead}<tbody>${rows}</tbody></table>
     </div>`;
+  });
+
+  const content = sections.join('') || '<div class="no-data">No deals moved this period</div>';
 
   openModal('🔀 Deals Moved — ' + WEEKS[selectedWeek].label, summary, content);
 }
