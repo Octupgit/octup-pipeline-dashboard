@@ -251,6 +251,8 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 /* CARD ROW 4 */
 .card-row-4{grid-template-columns:repeat(4,1fr)}
 .card-row-5{grid-template-columns:repeat(5,1fr)}
+.card-row-6{grid-template-columns:repeat(6,1fr)}
+@media (max-width: 1280px){.card-row-6{grid-template-columns:repeat(3,1fr)}}
 
 /* MATRIX CELL 2-LINE */
 .mc-count{display:block;font-weight:700;font-size:16px;line-height:1.2}
@@ -685,7 +687,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       </div>
     </div>
 
-    <div class="card-row card-row-5" style="margin-bottom:14px">
+    <div class="card-row card-row-6" style="margin-bottom:14px">
       <div class="card card-clickable" id="card-won" onclick="openWonModal()">
         <div class="card-icon">🏆</div>
         <div class="card-label" data-tip="Deals moved to Closed Won stage during the selected period. Gross ARR = full contract value.">ARR Won (Gross)</div>
@@ -715,6 +717,12 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div class="card-label" data-tip="Average Contract Value of deals closed won in this period.">Avg Deal (ACV)</div>
         <div class="card-value" style="color:#c084fc" id="val-acv">—</div>
         <div class="card-sub" id="sub-acv"></div>
+      </div>
+      <div class="card card-clickable" id="card-moved" onclick="openDealsMovedModal()">
+        <div class="card-icon">🔀</div>
+        <div class="card-label" data-tip="Deals that changed stage in the selected period. Good moves = forward in pipeline or Won. Bad moves = to Stalled, backwards, or Lost.">Deals Moved</div>
+        <div class="card-value" style="color:#f0b429" id="val-moved">—</div>
+        <div class="card-sub" id="sub-moved"></div>
       </div>
     </div>
 
@@ -1047,7 +1055,7 @@ const BUCKET = {
 };
 const TODAY = new Date();
 (function buildWeeks() {
-  // Find this Monday (Mon-Sat cycle) — use local date to avoid UTC offset issues
+  // Find this Monday (Mon-Sun cycle, ISO week) — use local date to avoid UTC offset issues
   const dow = TODAY.getDay(); // 0=Sun … 6=Sat
   const toMon = dow === 0 ? 6 : dow - 1;
   const mon = new Date(TODAY); mon.setDate(TODAY.getDate() - toMon); mon.setHours(0,0,0,0);
@@ -1059,7 +1067,7 @@ const TODAY = new Date();
   function shortFmt(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
   function weekObj(offset, prefix) {
     const s = new Date(mon); s.setDate(mon.getDate() + offset * 7);
-    const e = new Date(s);   e.setDate(s.getDate() + 5); // Mon–Sat
+    const e = new Date(s);   e.setDate(s.getDate() + 6); // Mon–Sun (ISO week)
     const yr = s.getFullYear();
     return { start: isoDate(s), end: isoDate(e),
              label: `${prefix} (${shortFmt(s)}–${shortFmt(e)}, ${yr})` };
@@ -10430,33 +10438,32 @@ function renderWoWChart() {
     const isLastWeek = selectedWeek === 'last';
     const isWeekly   = isThisWeek || isLastWeek;
 
-    // Find the last complete Saturday at or before the period end
-    let sat = new Date(periodEnd);
-    sat.setUTCHours(12,0,0,0);
-    // If it's exactly Saturday and we're in "this week" mode, go back one more week
-    while (sat.getUTCDay() !== 6) sat = new Date(sat - DAY_MS);
+    // Find the last complete Sunday at or before the period end (ISO week ends Sun)
+    let sun = new Date(periodEnd);
+    sun.setUTCHours(12,0,0,0);
+    // Walk back to the most recent Sunday (getUTCDay()===0)
+    while (sun.getUTCDay() !== 0) sun = new Date(sun - DAY_MS);
     // For multi-week periods (month/quarter/year), include the anchor week even if partial
     if (!isWeekly) {
-      // If period end is after last sat, we'll add current-week bar at end
+      // If period end is after last sun, we'll add current-week bar at end
     } else if (isThisWeek) {
-      // For "This Week": go back one sat so current in-progress week is added after loop
-      // no-op: the in-progress week will be added below
+      // For "This Week": the in-progress week will be added below
     }
 
-    // Build 9 complete weeks ending at/before sat
+    // Build 9 complete weeks ending at/before sun
     for (let i = 8; i >= 0; i--) {
-      const end   = new Date(sat - i * 7 * DAY_MS);
-      const start = new Date(end  - 5 * DAY_MS);
+      const end   = new Date(sun - i * 7 * DAY_MS);
+      const start = new Date(end  - 6 * DAY_MS);
       const isLast = i === 0;
       const label  = start.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
       weeks.push({ label, start: toYMD(start), end: toYMD(end), isLast });
     }
 
-    // For "this week" or when period extends past last sat, add current in-progress bar
+    // For "this week" or when period extends past last sun, add current in-progress bar
     const todayD = new Date(); todayD.setUTCHours(12,0,0,0);
     const periodEndStr = WEEKS[selectedWeek]?.end || toYMD(todayD);
-    if (isThisWeek || toYMD(todayD) > toYMD(sat)) {
-      const cwStart = new Date(sat.getTime() + 2 * DAY_MS); // Monday after last Sat
+    if (isThisWeek || toYMD(todayD) > toYMD(sun)) {
+      const cwStart = new Date(sun.getTime() + 1 * DAY_MS); // Monday after last Sun
       const cwEnd   = isThisWeek ? toYMD(todayD) : periodEndStr;
       if (cwStart.toISOString().slice(0,10) <= cwEnd) {
         const cwLabel = cwStart.toLocaleDateString('en',{month:'short',day:'numeric',timeZone:'UTC'});
@@ -10658,6 +10665,16 @@ function renderPulse() {
   if (acvSub) acvSub.textContent = acvFromWon
     ? wonDeals.length + ' won deal' + (wonDeals.length !== 1 ? 's' : '') + ' avg'
     : acvBase.length ? newPipeDeals.length + ' new deal' + (newPipeDeals.length !== 1 ? 's' : '') + ' avg' : 'no deals in period';
+
+  // Deals Moved (stage transitions in selected period) — good vs bad
+  const moved = computeMovedDeals(selectedWeek, selectedOwner);
+  const movedEl  = document.getElementById('val-moved');
+  const movedSub = document.getElementById('sub-moved');
+  const totalMoved = moved.good.length + moved.bad.length;
+  if (movedEl)  movedEl.textContent = totalMoved || '—';
+  if (movedSub) movedSub.textContent = totalMoved
+    ? `+${moved.good.length} good · ${moved.bad.length} bad · ${fmt$(moved.goodARR - moved.badARR)} net`
+    : 'no stage changes in period';
 
   // Source Funnel
   renderSourceFunnel();
@@ -11692,6 +11709,142 @@ function openWonModal() {
     <th>Deal Name</th><th>ARR</th><th>Source</th><th>Status</th><th>Owner</th><th>Close Date</th>
   </tr></thead><tbody>${rows || '<tr><td colspan="6" class="no-data">No won deals this period</td></tr>'}</tbody></table>`;
   openModal('🏆 ARR Won — ' + WEEKS[selectedWeek].label, summary, content);
+}
+
+// ─── DEALS MOVED (stage transitions in selected period) ─────────────────────
+// Per-deal lost reason (dealId → reason). Populate as needed; falls back to "—".
+const LOST_REASONS = {};
+
+// Full pipeline order including Won at the end. Lost + Stalled are off-pipeline.
+const _PIPE_FULL = ['2918051008','2918051007','608286675','740160705','608286676','4988070119','608286677','608286678'];
+const _STAGE_LBL = {'2918051007':'NBM','2918051008':'Stalled','608286675':'Discovery','740160705':'Pres.','608286676':'SA','4988070119':'Trial','608286677':'CR','608286678':'Won','608286679':'Lost'};
+
+function computeMovedDeals(weekKey, ownerKey) {
+  const good = [], bad = [];
+  let goodARR = 0, badARR = 0;
+
+  // Open deals whose current stage was entered within the period
+  let pool = DEALS.filter(d => {
+    const entered = STAGE_ENTERED[d[0]];
+    return entered && dateInRange(entered, weekKey);
+  });
+  if (ownerKey !== 'all') pool = pool.filter(d => d[4] === ownerKey);
+  pool.forEach(d => {
+    const toId = d[3];
+    const toIdx = _PIPE_FULL.indexOf(toId);
+    const fromId = toIdx > 0 ? _PIPE_FULL[toIdx - 1] : null;
+    const rec = {
+      id: d[0], name: d[1], amount: d[2],
+      fromId, toId, ownerId: d[4],
+      date: STAGE_ENTERED[d[0]],
+      kind: toId === '2918051008' ? 'stalled' : 'forward',
+      reason: null
+    };
+    if (toId === '2918051008') { bad.push(rec); badARR += d[2]; }
+    else                       { good.push(rec); goodARR += d[2]; }
+  });
+
+  // Won deals closed in period → good (CR → Won assumed)
+  let wonP = WON_DEALS.filter(d => dateInRange(d[3], weekKey));
+  if (ownerKey !== 'all') wonP = wonP.filter(d => d[4] === ownerKey);
+  wonP.forEach(d => {
+    good.push({
+      id: d[0], name: d[1], amount: d[2],
+      fromId: '608286677', toId: '608286678', ownerId: d[4],
+      date: d[3], kind: 'won', reason: null
+    });
+    goodARR += d[2];
+  });
+
+  // Lost deals closed in period → bad (with reason if available)
+  let lostP = LOST_DEALS.filter(d => dateInRange(d[3], weekKey));
+  if (ownerKey !== 'all') lostP = lostP.filter(d => d[4] === ownerKey);
+  lostP.forEach(d => {
+    bad.push({
+      id: d[0], name: d[1], amount: d[2],
+      fromId: null, toId: '608286679', ownerId: d[4],
+      date: d[3], kind: 'lost',
+      reason: LOST_REASONS[d[0]] || null
+    });
+    badARR += d[2];
+  });
+
+  good.sort((a,b) => b.amount - a.amount);
+  bad.sort((a,b)  => b.amount - a.amount);
+  return { good, bad, goodARR, badARR };
+}
+
+function openDealsMovedModal() {
+  const { good, bad, goodARR, badARR } = computeMovedDeals(selectedWeek, selectedOwner);
+  const total = good.length + bad.length;
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Total Moves</span><span class="modal-summary-val">${total}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">✅ Good</span><span class="modal-summary-val" style="color:var(--green)">${good.length} · ${fmt$(goodARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">⚠️ Bad</span><span class="modal-summary-val" style="color:var(--red)">${bad.length} · ${fmt$(badARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Net ARR</span><span class="modal-summary-val" style="color:${goodARR-badARR>=0?'var(--green)':'var(--red)'}">${fmt$(goodARR - badARR)}</span></div>`;
+
+  const stagePill = (id, isTo) => {
+    if (!id) return '<span style="color:var(--muted)">—</span>';
+    const lbl = _STAGE_LBL[id] || id;
+    const color = id === '2918051008' ? '#94a3b8'
+                : id === '608286678' ? 'var(--green)'
+                : id === '608286679' ? 'var(--red)'
+                : isTo ? '#f0f6fc' : 'var(--muted)';
+    const weight = isTo ? '700' : '500';
+    return `<span style="color:${color};font-weight:${weight}">${lbl}</span>`;
+  };
+  const transition = (fromId, toId, kindColor) =>
+    `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap">
+       ${stagePill(fromId, false)}
+       <span style="color:${kindColor};font-weight:700">→</span>
+       ${stagePill(toId, true)}
+     </span>`;
+
+  const buildRow = (r, isGood) => {
+    const arrColor = isGood ? 'var(--green)' : 'var(--red)';
+    const sign = isGood ? '+' : '−';
+    const kindColor = isGood ? 'var(--green)' : 'var(--red)';
+    const kindBadge = r.kind === 'won'     ? '<span class="tag tag-won">🏆 Won</span>'
+                    : r.kind === 'lost'    ? '<span class="tag tag-lost">✗ Lost</span>'
+                    : r.kind === 'stalled' ? '<span class="tag" style="background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.25)">⏸ Stalled</span>'
+                    : '<span class="tag" style="background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.25)">▶ Forward</span>';
+    const reasonCell = r.kind === 'lost'
+      ? `<td style="font-size:11px;color:var(--muted);max-width:220px;white-space:normal">${r.reason || '<span style="opacity:.6">— not recorded</span>'}</td>`
+      : `<td style="color:var(--muted)">—</td>`;
+    return `<tr>
+      <td class="deal-name">${dealLink(r.id, r.name)}</td>
+      <td>${transition(r.fromId, r.toId, kindColor)}</td>
+      <td class="amount" style="color:${arrColor}">${sign}${fmt$(r.amount)}</td>
+      <td>${kindBadge}</td>
+      <td>${ownerDot(r.ownerId)}${ownerName(r.ownerId)}</td>
+      <td>${fmtDate(r.date)}</td>
+      ${reasonCell}
+    </tr>`;
+  };
+
+  const tableHead = `<thead><tr>
+    <th>Deal Name</th><th>Old Stage → New Stage</th><th>ARR</th><th>Type</th><th>Owner</th><th>Date</th><th>Lost Reason</th>
+  </tr></thead>`;
+  const goodRows = good.map(r => buildRow(r, true)).join('')  || `<tr><td colspan="7" class="no-data">No forward moves this period</td></tr>`;
+  const badRows  = bad.map(r => buildRow(r, false)).join('')  || `<tr><td colspan="7" class="no-data">No bad moves this period 🟢</td></tr>`;
+
+  const content = `
+    <div style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+        ✅ Good Moves — Forward in Pipeline / Won
+        <span style="font-size:11px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0">${good.length} deal${good.length!==1?'s':''} · ${fmt$(goodARR)}</span>
+      </div>
+      <table class="modal-table">${tableHead}<tbody>${goodRows}</tbody></table>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+        ⚠️ Bad Moves — To Stalled / Backwards / Lost
+        <span style="font-size:11px;font-weight:500;color:var(--muted);text-transform:none;letter-spacing:0">${bad.length} deal${bad.length!==1?'s':''} · ${fmt$(badARR)}</span>
+      </div>
+      <table class="modal-table">${tableHead}<tbody>${badRows}</tbody></table>
+    </div>`;
+
+  openModal('🔀 Deals Moved — ' + WEEKS[selectedWeek].label, summary, content);
 }
 
 function openLostModal() {
