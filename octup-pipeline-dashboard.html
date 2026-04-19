@@ -706,9 +706,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         <div class="card-value blue" id="val-new-pipeline">—</div>
         <div class="card-sub" id="sub-new-pipeline"></div>
       </div>
-      <div class="card">
+      <div class="card card-clickable" onclick="openOpenPipelineModal()">
         <div class="card-icon">📂</div>
-        <div class="card-label" data-tip="Open deals created during the selected period that are still active (not won/lost). Weighted = ARR × stage probability.">Open Pipeline</div>
+        <div class="card-label" data-tip="Open deals created during the selected period that are still active (not won/lost). Weighted = ARR × stage probability. Click to view deals.">Open Pipeline</div>
         <div class="card-value" style="color:#e2b714" id="val-open-pipe">—</div>
         <div class="card-sub" id="sub-open-pipe"></div>
       </div>
@@ -11599,7 +11599,7 @@ function dealsTable(deals, extraCols) {
   const DAY_MS = 86400000;
   const mkTh = (label, title='') => `<th onclick="sortModalTable(this)" ${title?`title="${title}"`:''}>${label}</th>`;
   return `<table class="modal-table"><thead><tr>
-    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Priority')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Next Step')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
+    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Priority')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('RevOps Notes')}${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
   </tr></thead><tbody>${sorted.map(d => {
     const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource, srcDetail, priority] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
@@ -11632,11 +11632,11 @@ function dealsTable(deals, extraCols) {
       ? `<div style="line-height:1.4"><span style="color:${lcaColor};font-weight:700;white-space:nowrap">${lcaIcon} ${lca.daysAgo}d ago</span><div style="font-size:10px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lca.label.replace(/"/g,"'")}">${lca.label}</div></div>`
       : '<span style="color:var(--muted)">—</span>';
     const extraData = extraCols ? '' : `
+      <td style="min-width:180px;max-width:240px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(nextStep||'').replace(/"/g,"'")}">${nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
       <td style="text-align:right;font-weight:600;color:${lcColor};white-space:nowrap">${lcLabel}</td>
       <td style="text-align:right;font-weight:700;color:${disColor};white-space:nowrap">${disLabel}</td>
       <td style="white-space:nowrap">${fmtDate(closeDate)}</td>
       <td style="min-width:120px">${lcaLabel}</td>
-      <td style="min-width:160px;max-width:220px"><div style="font-size:11px;color:var(--text);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical" title="${(nextStep||'').replace(/"/g,"'")}">${nextStep || '<span style=\'color:var(--muted)\'>—</span>'}</div></td>
       <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
       <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>`;
     return `<tr class="${stale?'stale-row':''}">${baseRow}${extraData}</tr>`;
@@ -12401,6 +12401,23 @@ function openInventoryStatModal(bucket) {
     <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${label}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:13px">${periodLabel}</span></div>`;
   openModal('🗂 Pipeline Inventory — ' + label, summary, dealsTable(filtered));
+}
+
+function openOpenPipelineModal() {
+  const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
+  let deals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
+  deals.sort((a,b) => b[2] - a[2]);
+  const totalARR   = deals.reduce((s,d) => s + d[2], 0);
+  const weightedARR = deals.reduce((s,d) => s + d[2] * (STAGE_WIN_PROB[d[3]] || 0.1), 0);
+  const periodLabel = selectedWeek === 'alltime' ? 'All Time' : WEEKS[selectedWeek].label.split('(')[0].trim();
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Open Deals</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val" style="color:#e2b714">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Weighted ARR</span><span class="modal-summary-val" style="color:#f0b429">${fmt$(Math.round(weightedARR))}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:13px">${periodLabel}</span></div>`;
+  openModal('📂 Open Pipeline — ' + periodLabel, summary, dealsTable(deals));
 }
 
 // ─── TOOLTIP ──────────────────────────────────────────────────────────────────
