@@ -246,6 +246,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .oc-blake{background:#f59e0b}
 .oc-jay{background:#58a6ff}
 .oc-chanan{background:#3fb950}
+.oc-josh{background:#06b6d4}
 .oc-matthew{background:#bc8cff}
 
 /* CARD ROW 4 */
@@ -263,6 +264,10 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
 .matrix-stat:hover .matrix-stat-value{opacity:.8}
 .matrix-cell.total-cell{color:var(--text)}
 .matrix-cell.total-cell:hover{background:rgba(230,237,243,.08)}
+.matrix-cell.stalled{color:#f97316}
+.matrix-cell.stalled:hover{background:rgba(249,115,22,.15)}
+.matrix-cell.won-cell{color:#4ade80}
+.matrix-cell.won-cell:hover{background:rgba(74,222,128,.15)}
 
 /* MONTHLY PIPELINE CHART */
 .monthly-chart-wrap{margin-top:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -661,6 +666,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
       <button class="btn btn-owner" data-owner="29896105"><span class="owner-dot oc-blake"></span>Blake</button>
       <button class="btn btn-owner" data-owner="29422733"><span class="owner-dot oc-jay"></span>Jay</button>
       <button class="btn btn-owner" data-owner="30284350"><span class="owner-dot oc-chanan"></span>Chanan</button>
+      <button class="btn btn-owner" data-owner="33508297"><span class="owner-dot oc-josh"></span>Josh</button>
     </div>
     <div class="btn-group" id="week-btns">
       <button class="btn active" data-week="this">This Week ★</button>
@@ -752,7 +758,16 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
         </div>
         <span class="action-btn-badge action-btn-badge-muted">Live</span>
       </div>
+      <div class="action-btn-card" onclick="openSectionPanel('section-salescycle')">
+        <span class="action-btn-icon">📈</span>
+        <div style="flex:1;min-width:0">
+          <div class="action-btn-label">Sales Cycle Analysis</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">Closed-won velocity &amp; patterns</div>
+        </div>
+        <span class="action-btn-badge action-btn-badge-muted">Live</span>
+      </div>
     </div>
+
 
     <!-- WEEK-OVER-WEEK NEW PIPELINE CHART -->
     <div class="wow-wrap" id="wow-chart-wrap">
@@ -779,10 +794,10 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     <!-- SDR ACTIVITY -->
     <div class="sdr-card">
       <div class="sdr-header">
-        <div class="sdr-avatar">CB</div>
+        <div class="sdr-avatar">HB</div>
         <div>
-          <div class="sdr-name">Chanan Burstein — SDR Activity</div>
-          <div class="sdr-role">Business Development · ID: 30284350</div>
+          <div class="sdr-name">Hunter Boland — SDR Activity</div>
+          <div class="sdr-role">Business Development · Owner Filter: Joshua Jackson (33508297)</div>
         </div>
         <div style="margin-left:auto;font-size:11px;color:var(--muted)" id="sdr-week-label"></div>
       </div>
@@ -830,10 +845,20 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
           <div class="matrix-stat-value" style="color:var(--purple)" id="stat-trial">—</div>
           <div class="matrix-stat-sub" id="stat-trial-sub">—</div>
         </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('stalled')" data-tip="Stalled deals: not progressing, awaiting response or delayed. Click to view.">
+          <div class="matrix-stat-label">Stalled</div>
+          <div class="matrix-stat-value" style="color:#f97316" id="stat-stalled">—</div>
+          <div class="matrix-stat-sub" id="stat-stalled-sub">—</div>
+        </div>
         <div class="matrix-stat" onclick="openInventoryStatModal('cr')" data-tip="Commercial Review: final stage before close. Contract review, legal sign-off, or final approval. Click to view.">
           <div class="matrix-stat-label">Commercial Review</div>
           <div class="matrix-stat-value" style="color:var(--cr)" id="stat-cr">—</div>
           <div class="matrix-stat-sub" id="stat-cr-sub">—</div>
+        </div>
+        <div class="matrix-stat" onclick="openInventoryStatModal('won')" data-tip="Won deals closed in the selected period. Click to view.">
+          <div class="matrix-stat-label">Won</div>
+          <div class="matrix-stat-value" style="color:#4ade80" id="stat-won">—</div>
+          <div class="matrix-stat-sub" id="stat-won-sub">—</div>
         </div>
       </div>
       <div class="matrix-table-scroll">
@@ -844,7 +869,9 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
               <th style="color:var(--nbm)" data-tip="New Business Meeting stage. Deals awaiting or just completed their first qualifying meeting. Count / ARR shown.">NBM</th>
               <th style="color:var(--inp)" data-tip="In-Progress: Discovery, Demo, and Solution Alignment stages combined. All active deals not in NBM, Trial, or Commercial Review. Count / ARR shown.">In-Progress</th>
               <th style="color:var(--purple)" data-tip="Trial: deals actively in a product trial. Count / ARR shown.">Trial</th>
+              <th style="color:#f97316" data-tip="Stalled: deals not progressing. Count / ARR shown.">Stalled</th>
               <th style="color:var(--cr)" data-tip="Commercial Review: final stage before close. Deals in contract or legal review. Count / ARR shown.">Comm. Review</th>
+              <th style="color:#4ade80" data-tip="Won deals closed in the selected period. Count / ARR shown.">Won</th>
               <th data-tip="Total count of all open deals for this owner. Click to see deal list.">Total</th>
               <th data-tip="Total ARR value of all open deals for this owner. Click to see deal list.">Total ARR</th>
               <th data-tip="External meetings set during the selected week for this owner.">Meetings</th>
@@ -991,6 +1018,7 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     </div>
   </section>
 
+  <section id="section-salescycle" style="display:none"></section>
   <section id="section-highvalue" style="display:none">
     <div class="section-subtitle" id="hv-subtitle" style="padding:0 20px 8px;font-size:11px;color:var(--muted)"></div>
     <div class="matrix-stats" id="hv-stats" style="padding:0 20px 0;border-bottom:1px solid var(--border);margin-bottom:0"></div>
@@ -1034,6 +1062,7 @@ const OWNERS = {
   '29422733': {name:'Jay Mazur',    color:'#58a6ff', cls:'oc-jay'},
   '30284350': {name:'Chanan Burstein', color:'#3fb950', cls:'oc-chanan'},
   '32023983': {name:'Matthew Bocker', color:'#bc8cff', cls:'oc-matthew'},
+  '33508297': {name:'Joshua Jackson', color:'#06b6d4', cls:'oc-josh'},
 };
 const STAGES = {
   '2918051007': 'NBM',
@@ -10130,6 +10159,16 @@ const ACTIVITY_MAP = {};
     });
   });
 })();
+
+// ─── PER-DEAL ENGAGEMENT COUNTS ───────────────────────────────────────────────
+const DEAL_COUNTS = {};
+(function buildDealCounts() {
+  const get = id => DEAL_COUNTS[id] || (DEAL_COUNTS[id] = {meetings:0, emails:0, calls:0});
+  MEETINGS.forEach(m => { if (!m.dealIds?.length) return; m.dealIds.forEach(id => { if (m.outcome === 'COMPLETED') get(id).meetings++; }); });
+  EMAILS.forEach(e  => { if (!e.dealIds?.length) return; e.dealIds.forEach(id => { get(id).emails++; }); });
+  CALLS.forEach(c   => { if (!c.dealIds?.length) return; c.dealIds.forEach(id => { get(id).calls++;  }); });
+})();
+
 function fmt$(n) {
   if (!n || n < 1) return '$0';
   if (n >= 1000000) return '$' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
@@ -10484,12 +10523,14 @@ function renderPulse() {
     ? `+${moved.good.length} good · ${moved.bad.length} bad · ${fmt$(moved.goodARR - moved.badARR)} net`
     : 'no stage changes in period';
 
+
   // Source Funnel
   renderSourceFunnel();
 
   // SDR Activity
   renderSDR();
 }
+
 
 // ─── CONVERSION KPIs ──────────────────────────────────────────────────────────
 function renderConversionKPIs() {
@@ -10715,66 +10756,54 @@ function selectSDRTab(tab, btn) {
 
 // ─── RENDER SDR ACTIVITY ──────────────────────────────────────────────────────
 function renderSDR() {
-  const SDR_ID = '30284350';
+  const SDR_ID   = '33508297'; // Joshua Jackson — Hunter Boland's activity owner
+  const SDR_NAME = 'Hunter Boland';
 
-  // Raw data sets for selected week
-  const mAll      = MEETINGS.filter(m => m[4] === SDR_ID && dateInRange(m[2], selectedWeek));
-  const mExt      = mAll.filter(m => !m[5]);                     // exclude internal
-  const mComp     = mExt.filter(m => m[3] === 'COMPLETED');
-  const callsSet  = CALLS.filter(c => c[4] === SDR_ID && dateInRange(c[2], selectedWeek));
-  const emailsAll = EMAILS.filter(e => e[3] === SDR_ID && dateInRange(e[2], selectedWeek));
-  const emailsExt = emailsAll.filter(e => !e[4]);                 // exclude internal
+  const mAll       = MEETINGS.filter(m => m.ownerId === SDR_ID && dateInRange(m.timestamp, selectedWeek));
+  const mComp      = mAll.filter(m => m.outcome === 'COMPLETED');
+  const callsSet   = CALLS.filter(c => c.ownerId === SDR_ID && dateInRange(c.timestamp, selectedWeek));
+  const emailsAll  = EMAILS.filter(e => e.ownerId === SDR_ID && dateInRange(e.timestamp, selectedWeek));
+  const emailsExt  = emailsAll.filter(e => e.dealIds?.length > 0);
   const dealsCreated = DEALS.filter(d => d[8] === SDR_ID && dateInRange(d[5], selectedWeek));
 
-  // Store globally for "View all" onclick handlers
-  window._sdr = { mAll, mExt, mComp, callsSet, emailsAll, emailsExt, dealsCreated };
+  window._sdr = { mAll, mExt: mAll, mComp, callsSet, emailsAll, emailsExt, dealsCreated };
 
-  // Update tab count badges
   const setCount = (id, n) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.textContent = n;
     el.classList.toggle('zero', n === 0);
   };
-  setCount('sdr-cnt-meetings', mExt.length);
+  setCount('sdr-cnt-meetings', mAll.length);
   setCount('sdr-cnt-calls',    callsSet.length);
-  setCount('sdr-cnt-emails',   emailsAll.length);   // total incl. internal
+  setCount('sdr-cnt-emails',   emailsAll.length);
   setCount('sdr-cnt-deals',    dealsCreated.length);
 
   // ── MEETINGS PANEL ────────────────────────────────────────
   const mPanel = document.getElementById('sdr-panel-meetings');
   if (mPanel) {
-    const intHidden = mAll.length - mExt.length;
     const hdr = `<div class="sdr-panel-header">
       <div>
-        <div class="sdr-panel-count">${mExt.length || '—'}</div>
-        <div class="sdr-panel-meta">${mExt.length} set &nbsp;·&nbsp; ${mComp.length} completed${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} internal hidden` : ''}</div>
+        <div class="sdr-panel-count">${mAll.length || '—'}</div>
+        <div class="sdr-panel-meta">${mAll.length} set &nbsp;·&nbsp; ${mComp.length} completed</div>
       </div>
-      ${mExt.length > 0 ? `<button class="sdr-view-all" onclick="openMeetingsModal('Meetings Set by Chanan',window._sdr.mExt)">View all →</button>` : ''}
+      ${mAll.length > 0 ? `<button class="sdr-view-all" onclick="openMeetingsModal('Meetings Set by ${SDR_NAME}',window._sdr.mExt)">View all →</button>` : ''}
     </div>`;
-    if (mExt.length === 0) {
-      mPanel.innerHTML = hdr + `<div class="sdr-zero">No external meetings this period</div>`;
+    if (mAll.length === 0) {
+      mPanel.innerHTML = hdr + `<div class="sdr-zero">No meetings this period</div>`;
     } else {
-      const rows = mExt.slice(0, 8).map(m => {
-        const oc = m[3];
+      const rows = mAll.slice(0, 8).map(m => {
+        const oc    = m.outcome;
         const ocCls = oc === 'COMPLETED' ? 'sdr-status-connected' : oc === 'NO_SHOW' ? 'sdr-status-not-interested' : oc === 'RESCHEDULED' ? 'sdr-status-hangup' : 'sdr-status-scheduled';
-        const ocLabel = oc || 'SCHEDULED';
-        const attendees = m[6] || '';
-        const company   = m[7] || '';
-        const primary   = attendees || m[1];
-        const secondary = attendees ? (company || `<span style="color:var(--border2)">Company pending</span>`) : (company || `<span style="color:var(--border2)">${m[1]}</span>`);
-        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${m[0]}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
+        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-47/${m.id}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
         return `<tr>
-          <td style="width:120px"><span class="sdr-status ${ocCls}">${ocLabel}</span></td>
-          <td>
-            <div style="font-weight:500;color:var(--text)">${primary}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:1px">${secondary}</div>
-          </td>
-          <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(m[2])}</td>
+          <td style="width:120px"><span class="sdr-status ${ocCls}">${oc || 'SCHEDULED'}</span></td>
+          <td><div style="font-weight:500;color:var(--text)">${m.title}</div></td>
+          <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(m.timestamp)}</td>
           <td style="text-align:center;padding:0 6px">${hsLink}</td>
         </tr>`;
       }).join('');
-      const more = mExt.length > 8 ? `<tr><td colspan="4" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${mExt.length - 8} more — click View all</td></tr>` : '';
+      const more = mAll.length > 8 ? `<tr><td colspan="4" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${mAll.length - 8} more — click View all</td></tr>` : '';
       mPanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
     }
   }
@@ -10782,39 +10811,25 @@ function renderSDR() {
   // ── CALLS PANEL ───────────────────────────────────────────
   const cPanel = document.getElementById('sdr-panel-calls');
   if (cPanel) {
-    const connected = callsSet.filter(c => c[5] === 'Connected').length;
-    const answered  = callsSet.filter(c => ['Connected','Abrupt Hangup','Not Interested'].includes(c[5])).length;
     const hdr = `<div class="sdr-panel-header">
       <div>
         <div class="sdr-panel-count">${callsSet.length || '—'}</div>
-        <div class="sdr-panel-meta">${callsSet.length} calls &nbsp;·&nbsp; ${answered} answered (${connected} connected)</div>
+        <div class="sdr-panel-meta">${callsSet.length} calls logged</div>
       </div>
-      ${callsSet.length > 0 ? `<button class="sdr-view-all" onclick="openCallsModal('Calls by Chanan',window._sdr.callsSet)">View all →</button>` : ''}
+      ${callsSet.length > 0 ? `<button class="sdr-view-all" onclick="openCallsModal('Calls by ${SDR_NAME}',window._sdr.callsSet)">View all →</button>` : ''}
     </div>`;
     if (callsSet.length === 0) {
       cPanel.innerHTML = hdr + `<div class="sdr-zero">No calls logged this period</div>`;
     } else {
       const rows = callsSet.slice(0, 10).map(c => {
-        const status = c[5] || '';
-        const sCls = status === 'Connected' ? 'sdr-status-connected' : status === 'No Answer' ? 'sdr-status-no-answer' : status === 'Abrupt Hangup' ? 'sdr-status-hangup' : status === 'Not Interested' ? 'sdr-status-not-interested' : 'sdr-status-outbound';
-        const dur     = c[3] ? Math.floor(c[3]/60) + 'm ' + (c[3]%60) + 's' : '—';
-        const contact = c[6] || '';
-        const company = c[7] || '';
-        const primary   = contact || company || '—';
-        const secondary = contact && company ? company : '';
-        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-48/${c[0]}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
+        const hsLink = `<a href="https://app-eu1.hubspot.com/contacts/26004468/record/0-48/${c.id}" target="_blank" style="color:var(--border2);text-decoration:none;font-size:14px" title="Open in HubSpot">↗</a>`;
         return `<tr>
-          <td style="width:120px"><span class="sdr-status ${sCls}">${status || '—'}</span></td>
-          <td>
-            <div style="font-weight:500;color:var(--text)">${primary}</div>
-            ${secondary ? `<div style="font-size:10px;color:var(--muted);margin-top:1px">${secondary}</div>` : ''}
-          </td>
-          <td style="white-space:nowrap;color:var(--muted)">${fmtDate(c[2])}</td>
-          <td style="white-space:nowrap;color:var(--muted);text-align:right">${dur}</td>
+          <td><div style="font-weight:500;color:var(--text)">${c.title}</div></td>
+          <td style="white-space:nowrap;color:var(--muted)">${fmtDate(c.timestamp)}</td>
           <td style="text-align:center;padding:0 6px">${hsLink}</td>
         </tr>`;
       }).join('');
-      const more = callsSet.length > 10 ? `<tr><td colspan="5" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${callsSet.length - 10} more — click View all</td></tr>` : '';
+      const more = callsSet.length > 10 ? `<tr><td colspan="3" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${callsSet.length - 10} more — click View all</td></tr>` : '';
       cPanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
     }
   }
@@ -10828,14 +10843,14 @@ function renderSDR() {
         <div class="sdr-panel-count">${emailsAll.length || '—'}</div>
         <div class="sdr-panel-meta">${emailsExt.length} external${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} internal` : ''}</div>
       </div>
-      ${emailsExt.length > 0 ? `<button class="sdr-view-all" onclick="openEmailsModal('Emails by Chanan',window._sdr.emailsExt)">View all →</button>` : ''}
+      ${emailsExt.length > 0 ? `<button class="sdr-view-all" onclick="openEmailsModal('Emails by ${SDR_NAME}',window._sdr.emailsExt)">View all →</button>` : ''}
     </div>`;
     if (emailsExt.length === 0) {
       ePanel.innerHTML = hdr + `<div class="sdr-zero">No external emails this period</div>`;
     } else {
       const rows = emailsExt.slice(0, 10).map(e => `<tr>
-        <td style="font-weight:500;color:var(--text)">${e[1]}</td>
-        <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(e[2])}</td>
+        <td style="font-weight:500;color:var(--text)">${e.subject}</td>
+        <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(e.timestamp)}</td>
       </tr>`).join('');
       const more = emailsExt.length > 10 ? `<tr><td colspan="2" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${emailsExt.length - 10} more — click View all</td></tr>` : '';
       ePanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
@@ -10851,7 +10866,7 @@ function renderSDR() {
         <div class="sdr-panel-count">${dealsCreated.length || '—'}</div>
         <div class="sdr-panel-meta">Deals created &nbsp;·&nbsp; ${fmt$(totalARR)} ARR</div>
       </div>
-      ${dealsCreated.length > 0 ? `<button class="sdr-view-all" onclick="openSDRDealsModal('Deals Created by Chanan',window._sdr.dealsCreated)">View all →</button>` : ''}
+      ${dealsCreated.length > 0 ? `<button class="sdr-view-all" onclick="openSDRDealsModal('Deals Created by ${SDR_NAME}',window._sdr.dealsCreated)">View all →</button>` : ''}
     </div>`;
     if (dealsCreated.length === 0) {
       dPanel.innerHTML = hdr + `<div class="sdr-zero">No deals created this period</div>`;
@@ -10871,7 +10886,7 @@ function renderSDR() {
 
 // ─── RENDER PIPELINE INVENTORY ────────────────────────────────────────────────
 function renderInventory() {
-  const owners = ['29896105','29422733'];
+  const owners = ['29896105','29422733','33508297'];
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
   // Apply creation-date filter from global period
@@ -10892,14 +10907,19 @@ function renderInventory() {
   document.getElementById('stat-total-deals').textContent = deals.length;
   document.getElementById('stat-total-arr-sub').textContent = fmt$(totalARR) + ' ARR · ' + fmtMRR(totalARR) + '/mo';
 
-  const nbmDeals   = deals.filter(d=>d[3]==='2918051007');
-  const inpDeals   = deals.filter(d=>['608286675','740160705','608286676'].includes(d[3]));
-  const trialDeals = deals.filter(d=>d[3]==='4988070119');
-  const crDeals    = deals.filter(d=>d[3]==='608286677');
-  const nbmARR   = nbmDeals.reduce((s,d)=>s+d[2],0);
-  const inpARR   = inpDeals.reduce((s,d)=>s+d[2],0);
-  const trialARR = trialDeals.reduce((s,d)=>s+d[2],0);
-  const crARR    = crDeals.reduce((s,d)=>s+d[2],0);
+  const nbmDeals     = deals.filter(d=>d[3]==='2918051007');
+  const inpDeals     = deals.filter(d=>['608286675','740160705','608286676'].includes(d[3]));
+  const trialDeals   = deals.filter(d=>d[3]==='4988070119');
+  const stalledDeals = deals.filter(d=>d[3]==='2918051008');
+  const crDeals      = deals.filter(d=>d[3]==='608286677');
+  const nbmARR     = nbmDeals.reduce((s,d)=>s+d[2],0);
+  const inpARR     = inpDeals.reduce((s,d)=>s+d[2],0);
+  const trialARR   = trialDeals.reduce((s,d)=>s+d[2],0);
+  const stalledARR = stalledDeals.reduce((s,d)=>s+d[2],0);
+  const crARR      = crDeals.reduce((s,d)=>s+d[2],0);
+  let wonPeriodDeals = selectedOwner === 'all' ? WON_DEALS : WON_DEALS.filter(d=>d[4]===selectedOwner);
+  if (selectedWeek !== 'alltime') wonPeriodDeals = wonPeriodDeals.filter(d=>dateInRange(d[3],selectedWeek));
+  const wonARR = wonPeriodDeals.reduce((s,d)=>s+d[2],0);
 
   document.getElementById('stat-nbm').textContent = nbmDeals.length;
   document.getElementById('stat-nbm-sub').textContent = fmt$(nbmARR) + ' ARR · ' + fmtMRR(nbmARR) + '/mo';
@@ -10907,33 +10927,41 @@ function renderInventory() {
   document.getElementById('stat-inp-sub').textContent = fmt$(inpARR) + ' ARR · ' + fmtMRR(inpARR) + '/mo';
   document.getElementById('stat-trial').textContent = trialDeals.length;
   document.getElementById('stat-trial-sub').textContent = fmt$(trialARR) + ' ARR · ' + fmtMRR(trialARR) + '/mo';
+  document.getElementById('stat-stalled').textContent = stalledDeals.length;
+  document.getElementById('stat-stalled-sub').textContent = fmt$(stalledARR) + ' ARR';
   document.getElementById('stat-cr').textContent  = crDeals.length;
   document.getElementById('stat-cr-sub').textContent = fmt$(crARR) + ' ARR · ' + fmtMRR(crARR) + '/mo';
+  document.getElementById('stat-won').textContent = wonPeriodDeals.length;
+  document.getElementById('stat-won-sub').textContent = fmt$(wonARR) + ' ARR';
 
   const ownerList = selectedOwner === 'all' ? owners : [selectedOwner];
   let rows = '';
   const _WP = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  let totNBM=0, totINP=0, totTRIAL=0, totCR=0, totAll=0, totArrAll=0, totMtgs=0;
-  let totNBMArr=0, totINPArr=0, totTRIALArr=0, totCRArr=0;
+  let totNBM=0, totINP=0, totTRIAL=0, totStalled=0, totCR=0, totWon=0, totAll=0, totArrAll=0, totMtgs=0;
+  let totNBMArr=0, totINPArr=0, totTRIALArr=0, totStalledArr=0, totCRArr=0, totWonArr=0;
   let totNBMWtd=0, totINPWtd=0, totTRIALWtd=0, totCRWtd=0, totWtdAll=0;
 
   ownerList.forEach(oid => {
     const o = OWNERS[oid];
     if (!o) return;
     const od = deals.filter(d => d[4] === oid);
-    const nbm   = od.filter(d => d[3]==='2918051007');
-    const inp   = od.filter(d => ['608286675','740160705','608286676'].includes(d[3]));
-    const trial = od.filter(d => d[3]==='4988070119');
-    const cr    = od.filter(d => d[3]==='608286677');
+    const nbm     = od.filter(d => d[3]==='2918051007');
+    const inp     = od.filter(d => ['608286675','740160705','608286676'].includes(d[3]));
+    const trial   = od.filter(d => d[3]==='4988070119');
+    const stalled = od.filter(d => d[3]==='2918051008');
+    const cr      = od.filter(d => d[3]==='608286677');
+    const ownerWon = wonPeriodDeals.filter(d => d[4] === oid);
     const arr = od.reduce((s,d)=>s+d[2],0);
     const mtgList = MEETINGS.filter(m => m.ownerId === oid && dateInRange(m.timestamp, selectedWeek) && m.outcome !== 'CANCELLED');
     const mtgs = mtgList.length;
-    totNBM+=nbm.length; totINP+=inp.length; totTRIAL+=trial.length; totCR+=cr.length;
+    totNBM+=nbm.length; totINP+=inp.length; totTRIAL+=trial.length; totStalled+=stalled.length; totCR+=cr.length; totWon+=ownerWon.length;
     totAll+=od.length; totArrAll+=arr; totMtgs+=mtgs;
-    totNBMArr+=nbm.reduce((s,d)=>s+d[2],0);
-    totINPArr+=inp.reduce((s,d)=>s+d[2],0);
-    totTRIALArr+=trial.reduce((s,d)=>s+d[2],0);
-    totCRArr +=cr.reduce((s,d)=>s+d[2],0);
+    totNBMArr    += nbm.reduce((s,d)=>s+d[2],0);
+    totINPArr    += inp.reduce((s,d)=>s+d[2],0);
+    totTRIALArr  += trial.reduce((s,d)=>s+d[2],0);
+    totStalledArr+= stalled.reduce((s,d)=>s+d[2],0);
+    totCRArr     += cr.reduce((s,d)=>s+d[2],0);
+    totWonArr    += ownerWon.reduce((s,d)=>s+d[2],0);
     const wtdArr = od.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
     totWtdAll += wtdArr;
     totNBMWtd  += nbm.reduce((s,d)=>s+(d[2]*(_WP[d[3]]||0.1)),0);
@@ -10946,7 +10974,7 @@ function renderInventory() {
       if (subset.length === 0) return `<span class="matrix-cell zero">—</span>`;
       const subARR = subset.reduce((s,d)=>s+d[2],0);
       const subWtd = subset.reduce((s,d)=>s+(d[2]*(WIN_PROB[d[3]]||0.1)),0);
-      const cls = bucket === 'NBM' ? 'nbm' : bucket === 'In-Progress' ? 'inp' : bucket === 'Trial' ? 'trial' : 'cr';
+      const cls = bucket === 'NBM' ? 'nbm' : bucket === 'In-Progress' ? 'inp' : bucket === 'Trial' ? 'trial' : bucket === 'Stalled' ? 'stalled' : 'cr';
       const idsJson = JSON.stringify(subset.map(d=>d[0]));
       return `<span class="matrix-cell ${cls}"
                data-owner='${oid}' data-bucket='${bucket}' data-ids='${idsJson}'
@@ -10956,13 +10984,23 @@ function renderInventory() {
                  <span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(subWtd))}</span>
                </span>`;
     };
+    const mkWonCell = (subset, oid) => {
+      if (subset.length === 0) return `<span class="matrix-cell zero">—</span>`;
+      const subARR = subset.reduce((s,d)=>s+d[2],0);
+      return `<span class="matrix-cell won-cell" onclick="openInventoryStatModal('won','${oid}')">
+        <span class="mc-count">${subset.length}</span>
+        <span class="mc-arr">${fmt$(subARR)}</span>
+      </span>`;
+    };
 
     rows += `<tr>
       <td class="owner-col">${ownerDot(oid)}${o.name}</td>
       <td>${mkCell(nbm,'NBM')}</td>
       <td>${mkCell(inp,'In-Progress')}</td>
       <td>${mkCell(trial,'Trial')}</td>
+      <td>${mkCell(stalled,'Stalled')}</td>
       <td>${mkCell(cr,'Commercial Review')}</td>
+      <td>${mkWonCell(ownerWon,oid)}</td>
       <td><span class="matrix-cell total-cell"
         data-owner='${oid}' data-bucket='All' data-ids='${JSON.stringify(od.map(d=>d[0]))}'
         onclick="openBucketModal(this.dataset.owner,this.dataset.bucket,JSON.parse(this.dataset.ids))">
@@ -10992,7 +11030,13 @@ function renderInventory() {
         <span class="matrix-cell trial" onclick="openInventoryStatModal('trial')"><span class="mc-count">${totTRIAL}</span><span class="mc-arr">${fmt$(totTRIALArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totTRIALWtd))}</span></span>
       </td>
       <td>
+        <span class="matrix-cell stalled" onclick="openInventoryStatModal('stalled')"><span class="mc-count">${totStalled}</span><span class="mc-arr">${fmt$(totStalledArr)}</span></span>
+      </td>
+      <td>
         <span class="matrix-cell cr" onclick="openInventoryStatModal('cr')"><span class="mc-count">${totCR}</span><span class="mc-arr">${fmt$(totCRArr)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totCRWtd))}</span></span>
+      </td>
+      <td>
+        <span class="matrix-cell won-cell" onclick="openInventoryStatModal('won')"><span class="mc-count">${totWon}</span><span class="mc-arr">${fmt$(totWonArr)}</span></span>
       </td>
       <td>
         <span class="matrix-cell total-cell" onclick="openInventoryStatModal('all')"><span class="mc-count">${totAll}</span><span class="mc-arr">${fmt$(totArrAll)}</span><span class="mc-mrr" style="color:var(--muted)">Wtd ${fmt$(Math.round(totWtdAll))}</span></span>
@@ -11010,7 +11054,7 @@ function renderInventory() {
 
 // ─── MONTHLY PIPELINE BREAKDOWN ───────────────────────────────────────────────
 function renderMonthlyBreakdown() {
-  const OWNER_LIST = ['29896105','29422733'];
+  const OWNER_LIST = ['29896105','29422733','33508297'];
   const deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
   const stageOf = d => {
@@ -11401,13 +11445,16 @@ function dealSourceTag(src) {
   return `<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap;background:${style.bg};color:${style.color}">${src}</span>`;
 }
 
-function dealsTable(deals, extraCols) {
+function dealsTable(deals, opts) {
   if (deals.length === 0) return '<div class="no-data">No deals to display</div>';
+  opts = opts || {};
+  const showEng  = !!opts.engagement;
+  const extraCols = opts.extraCols || null;
   const sorted = [...deals].sort((a,b)=>b[2]-a[2]);
   const DAY_MS = 86400000;
   const mkTh = (label, title='') => `<th onclick="sortModalTable(this)" ${title?`title="${title}"`:''}>${label}</th>`;
   return `<table class="modal-table"><thead><tr>
-    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Priority')}${mkTh('Owner')}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('RevOps Notes')}${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
+    ${mkTh('Deal Name')}${mkTh('ARR')}${mkTh('Source')}${mkTh('Source Detail')}${mkTh('Stage')}${mkTh('Priority')}${mkTh('Owner')}${showEng ? `${mkTh('Emails')}${mkTh('Meetings')}${mkTh('Touchpoints')}` : ''}${extraCols ? extraCols.map(c=>`<th onclick="sortModalTable(this)">${c}</th>`).join('') : `${mkTh('RevOps Notes')}${mkTh('Lifecycle','Days since deal was created')}${mkTh('Stage Age','Days in current stage')}${mkTh('Close Date')}${mkTh('Last Engagement')}${mkTh('Last Activity AI')}${mkTh('Next Action AI')}`}
   </tr></thead><tbody>${sorted.map(d => {
     const [id, name, amount, stageId, ownerId, createDate, closeDate, nextStep, , lastMod, dealSource, srcDetail, priority] = d;
     const stale = daysSince(lastMod) !== null && daysSince(lastMod) >= 21;
@@ -11423,6 +11470,14 @@ function dealsTable(deals, extraCols) {
       <td>${stageTag(stageId)}</td>
       <td>${priBadge}</td>
       <td>${ownerDot(ownerId)}${ownerName(ownerId)}</td>`;
+    const engRow = showEng ? (() => {
+      const countMap = opts.dealCounts || DEAL_COUNTS;
+      const cnt = countMap[id] || {emails:0, meetings:0, calls:0};
+      const tp = cnt.emails + cnt.meetings + cnt.calls;
+      return `<td style="text-align:right;font-family:var(--mono);font-size:11px">${cnt.emails||'—'}</td>
+        <td style="text-align:right;font-family:var(--mono);font-size:11px">${cnt.meetings||'—'}</td>
+        <td style="text-align:right;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text)">${tp||'—'}</td>`;
+    })() : '';
     // Lifecycle = days since deal created
     const lcMs = createDate ? Date.now() - new Date(createDate).getTime() : null;
     const lcDays = lcMs !== null ? Math.max(0, Math.floor(lcMs / DAY_MS)) : null;
@@ -11447,7 +11502,7 @@ function dealsTable(deals, extraCols) {
       <td style="min-width:120px">${lcaLabel}</td>
       <td style="min-width:160px;line-height:1.6">${ai.lastHtml}</td>
       <td style="min-width:160px;line-height:1.6">${ai.nextHtml}</td>`;
-    return `<tr class="${stale?'stale-row':''}">${baseRow}${extraData}</tr>`;
+    return `<tr class="${stale?'stale-row':''}">${baseRow}${engRow}${extraData}</tr>`;
   }).join('')}</tbody></table>`;
 }
 
@@ -11456,11 +11511,18 @@ function openBucketModal(ownerId, bucket, dealIds) {
   const totalARR = dealSet.reduce((s,d)=>s+d[2],0);
   const ownerLabel = ownerId && OWNERS[ownerId] ? OWNERS[ownerId].name : 'All';
   const title = `${ownerLabel} — ${bucket} (${dealSet.length} deals)`;
+  const n = dealSet.length || 1;
+  const totEmails   = dealSet.reduce((s,d) => s + (DEAL_COUNTS[d[0]]?.emails   || 0), 0);
+  const totMeetings = dealSet.reduce((s,d) => s + (DEAL_COUNTS[d[0]]?.meetings || 0), 0);
+  const totCalls    = dealSet.reduce((s,d) => s + (DEAL_COUNTS[d[0]]?.calls    || 0), 0);
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${dealSet.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Emails</span><span class="modal-summary-val">${(totEmails/n).toFixed(1)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Meetings</span><span class="modal-summary-val">${(totMeetings/n).toFixed(1)}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Touchpoints</span><span class="modal-summary-val">${((totEmails+totMeetings+totCalls)/n).toFixed(1)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${bucket}</span></div>`;
-  openModal(title, summary, dealsTable(dealSet));
+  openModal(title, summary, dealsTable(dealSet, {engagement: true}));
 }
 
 function openWoWWeekModal(weekLabel) {
@@ -12177,13 +12239,11 @@ function openNewPipelineModal() {
 }
 
 // ─── INVENTORY STAT MODAL ─────────────────────────────────────────────────────
-function openInventoryStatModal(bucket) {
-  let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
-  // Apply the same global period filter as the inventory table
-  if (selectedWeek !== 'alltime') {
-    deals = deals.filter(d => dateInRange(d[5], selectedWeek));
-  }
-  let filtered, label;
+function openInventoryStatModal(bucket, filterOwner) {
+  const ownerFilter = filterOwner || selectedOwner;
+  let deals = ownerFilter === 'all' ? DEALS : DEALS.filter(d => d[4] === ownerFilter);
+  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[5], selectedWeek));
+  let filtered, label, wonDealCounts = null;
   if (bucket === 'nbm') {
     filtered = deals.filter(d => d[3]==='2918051007');
     label = 'NBM';
@@ -12193,9 +12253,28 @@ function openInventoryStatModal(bucket) {
   } else if (bucket === 'trial') {
     filtered = deals.filter(d => d[3]==='4988070119');
     label = 'Trial';
+  } else if (bucket === 'stalled') {
+    filtered = deals.filter(d => d[3]==='2918051008');
+    label = 'Stalled';
   } else if (bucket === 'cr') {
     filtered = deals.filter(d => d[3]==='608286677');
     label = 'Commercial Review';
+  } else if (bucket === 'won') {
+    let wonD = ownerFilter === 'all' ? WON_DEALS : WON_DEALS.filter(d => d[4] === ownerFilter);
+    if (selectedWeek !== 'alltime') wonD = wonD.filter(d => dateInRange(d[3], selectedWeek));
+    // Normalize WON_DEALS → DEALS format for dealsTable
+    filtered = wonD.map(w => [w[0],w[1],w[2],'608286678',w[4],w[7]||'',w[3],'',w[5],w[3],w[6]||'','','']);
+    // Build engagement counts filtered to each deal's close date
+    wonDealCounts = {};
+    wonD.forEach(w => {
+      const closeTs = new Date(w[3] + 'T23:59:59Z').getTime();
+      wonDealCounts[w[0]] = {
+        emails:   EMAILS.filter(e => e.dealIds?.includes(w[0]) && new Date(e.timestamp).getTime() <= closeTs).length,
+        meetings: MEETINGS.filter(m => m.dealIds?.includes(w[0]) && m.outcome === 'COMPLETED' && new Date(m.timestamp).getTime() <= closeTs).length,
+        calls:    CALLS.filter(c => c.dealIds?.includes(w[0]) && new Date(c.timestamp).getTime() <= closeTs).length,
+      };
+    });
+    label = 'Won';
   } else {
     filtered = deals;
     label = 'All Open Deals';
@@ -12203,12 +12282,23 @@ function openInventoryStatModal(bucket) {
   filtered.sort((a,b) => b[2]-a[2]);
   const totalARR = filtered.reduce((s,d)=>s+d[2],0);
   const periodLabel = selectedWeek === 'alltime' ? 'All Time' : WEEKS[selectedWeek].label.split('(')[0].trim();
+  // Use close-date-filtered counts for won, global counts for everything else
+  const countMap = wonDealCounts || DEAL_COUNTS;
+  const n = filtered.length || 1;
+  const totEmails   = filtered.reduce((s,d) => s + (countMap[d[0]]?.emails   || 0), 0);
+  const totMeetings = filtered.reduce((s,d) => s + (countMap[d[0]]?.meetings || 0), 0);
+  const totCalls    = filtered.reduce((s,d) => s + (countMap[d[0]]?.calls    || 0), 0);
+  const avgEmails   = (totEmails   / n).toFixed(1);
+  const avgMeetings = (totMeetings / n).toFixed(1);
+  const avgTP       = ((totEmails + totMeetings + totCalls) / n).toFixed(1);
   const summary = `
     <div class="modal-summary-item"><span class="modal-summary-label">Count</span><span class="modal-summary-val">${filtered.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
-    <div class="modal-summary-item"><span class="modal-summary-label">Bucket</span><span class="modal-summary-val" style="font-size:13px">${label}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Emails</span><span class="modal-summary-val">${avgEmails}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Meetings</span><span class="modal-summary-val">${avgMeetings}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Avg Touchpoints</span><span class="modal-summary-val">${avgTP}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val" style="font-size:13px">${periodLabel}</span></div>`;
-  openModal('🗂 Pipeline Inventory — ' + label, summary, dealsTable(filtered));
+  openModal('🗂 Pipeline Inventory — ' + label, summary, dealsTable(filtered, {engagement: true, dealCounts: countMap}));
 }
 
 function openOpenPipelineModal() {
@@ -13241,10 +13331,11 @@ function render() {
 
 // ─── SECTION PANEL OVERLAY ────────────────────────────────────────────────────
 const _panelTitles = {
-  'section-highvalue': '🎯 High Prob Deals — High Intent to Close',
-  'section-dealdesk':  '🧠 Pipeline DealDesk',
-  'section-brief':     '📋 Weekly Deal Desk',
-  'section-hygiene':   '🧹 Pipe Hygiene — Pipeline Health Check',
+  'section-highvalue':   '🎯 High Prob Deals — High Intent to Close',
+  'section-dealdesk':    '🧠 Pipeline DealDesk',
+  'section-brief':       '📋 Weekly Deal Desk',
+  'section-hygiene':     '🧹 Pipe Hygiene — Pipeline Health Check',
+  'section-salescycle':  '📈 Sales Cycle Analysis',
 };
 let _panelMovedSection = null;
 
@@ -13255,7 +13346,12 @@ function openSectionPanel(sectionId) {
   const titleEl = document.getElementById('panel-title');
   if (titleEl) titleEl.textContent = _panelTitles[sectionId] || '';
 
-  if (sectionId === 'section-highvalue') {
+  if (sectionId === 'section-salescycle') {
+    renderSalesCyclePanel(panelContent);
+    document.getElementById('section-panel-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  } else if (sectionId === 'section-highvalue') {
     // Static rendered content — safe to clone
     panelContent.innerHTML = section.innerHTML;
   } else {
@@ -13284,7 +13380,310 @@ function closeSectionPanel() {
   document.body.style.overflow = '';
 }
 
-// ─── SYNC TIMESTAMP ───────────────────────────────────────────────────────────
+// ─── SALES CYCLE ANALYSIS ────────────────────────────────────────────────────
+function renderSalesCyclePanel(container) {
+  let won = selectedOwner === 'all' ? WON_DEALS : WON_DEALS.filter(d => d[4] === selectedOwner);
+  if (selectedWeek !== 'alltime') won = won.filter(d => dateInRange(d[3], selectedWeek));
+
+  if (!won.length) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;font-family:DM Mono,monospace;color:#4a5568">No won deals in the selected period.</div>';
+    return;
+  }
+
+  const cycleDays = d => {
+    if (!d[7]) return null;
+    const diff = Math.round((new Date(d[3]+'T12:00:00Z') - new Date(d[7]+'T12:00:00Z')) / 86400000);
+    return diff >= 0 ? diff : null;
+  };
+
+  const totalARR = won.reduce((s,d) => s+d[2], 0);
+  const avgSize  = Math.round(totalARR / won.length);
+  const withCy   = won.map(d => ({d, days:cycleDays(d)})).filter(x => x.days !== null);
+  const avgCycle = withCy.length ? Math.round(withCy.reduce((s,x)=>s+x.days,0)/withCy.length) : null;
+  const sortedCy = [...withCy].sort((a,b) => a.days - b.days);
+  const mid      = Math.floor(sortedCy.length/2);
+  const medCycle = sortedCy.length ? (sortedCy.length%2 ? sortedCy[mid].days : Math.round((sortedCy[mid-1].days+sortedCy[mid].days)/2)) : null;
+  const minCycle = sortedCy.length ? sortedCy[0].days : null;
+  const maxCycle = sortedCy.length ? sortedCy[sortedCy.length-1].days : null;
+
+  const fast   = withCy.filter(x => x.days < 15).length;
+  const medium = withCy.filter(x => x.days >= 15 && x.days <= 80).length;
+  const longD  = withCy.filter(x => x.days > 80).length;
+  const bkTot  = fast + medium + longD || 1;
+
+  const fmtK   = v => v >= 1000000 ? '$'+(v/1000000).toFixed(1)+'M' : v >= 1000 ? '$'+Math.round(v/1000)+'K' : '$'+v;
+  const dayCol = d => d===null?'#4a5568':d<15?'#1dcc8a':d<=50?'#b8ff00':d<=80?'#f97316':'#ff4d2e';
+  const dayCls = d => d===null?'':d<15?'sc-hg':d<=50?'sc-hy':d<=80?'sc-ho':'sc-hr';
+  const mtgsFor   = (id, closeDate) => MEETINGS.filter(m => m.dealIds?.includes(id) && (!closeDate || new Date(m.timestamp) <= new Date(closeDate+'T23:59:59Z'))).length;
+  const emailsFor = (id, closeDate) => EMAILS.filter(e => e.dealIds?.includes(id) && (!closeDate || new Date(e.timestamp) <= new Date(closeDate+'T23:59:59Z'))).length;
+
+  const periodLabel = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || selectedWeek);
+  const ownerLabel  = selectedOwner === 'all' ? 'All Reps' : (OWNERS[selectedOwner]?.name || selectedOwner);
+
+  const ownerBadge = oid => {
+    const o = OWNERS[oid]; if (!o) return '<span class="sc-mtag">—</span>';
+    const cls = oid==='29422733'?'sc-ob-j':oid==='29896105'?'sc-ob-b':'sc-ob-c';
+    const dot = oid==='29422733'?'sc-dj':oid==='29896105'?'sc-db':'sc-dc';
+    return `<span class="sc-ob ${cls}"><span class="sc-dot ${dot}"></span>${o.name.split(' ').map(n=>n[0]).join('')}</span>`;
+  };
+  const srcShort = s => (s||'—').replace('Outbound Sales','Outbound').replace('Marketing Organic','Organic').replace('Marketing Paid','Paid').replace('Event or Webinar','Event').replace('Partner Channel','Partner').replace('Social (Alon - LinkedIn)','Social').replace('Outbound SDR','SDR');
+  const srcTag   = s => `<span class="sc-tag">${srcShort(s)}</span>`;
+
+  const srcMap = {};
+  won.forEach(d => { const s=d[6]||'Unknown'; if(!srcMap[s]) srcMap[s]={count:0,arr:0}; srcMap[s].count++; srcMap[s].arr+=d[2]; });
+  const srcEntries = Object.entries(srcMap).sort((a,b) => b[1].arr-a[1].arr);
+  const maxSrcArr  = srcEntries[0]?.[1]?.arr || 1;
+
+  const ownerMap = {};
+  won.forEach(d => { const oid=d[4]; if(!ownerMap[oid]) ownerMap[oid]={count:0,arr:0,days:[]}; ownerMap[oid].count++; ownerMap[oid].arr+=d[2]; const cy=cycleDays(d); if(cy!==null) ownerMap[oid].days.push(cy); });
+
+  const sortedWon = [...won].sort((a,b) => b[2]-a[2]);
+
+  const totalMtgs = won.reduce((s,d) => s + mtgsFor(d[0], d[3]), 0);
+  const avgMtgs   = won.length ? (totalMtgs / won.length).toFixed(1) : null;
+
+  const tableRows = sortedWon.map((d,i) => {
+    const cy     = cycleDays(d);
+    const mtg    = mtgsFor(d[0], d[3]);
+    const emails = emailsFor(d[0], d[3]);
+    const cre    = d[7] ? new Date(d[7]+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',year:'2-digit'}) : '—';
+    return `<tr>
+      <td class="sc-num">${String(i+1).padStart(2,'0')}</td>
+      <td><div class="sc-dn">${d[1]}</div></td>
+      <td>${ownerBadge(d[4])}</td>
+      <td>${srcTag(d[6])}</td>
+      <td class="r"><span class="sc-av">${fmtK(d[2])}</span></td>
+      <td><span class="sc-mtag">${cre}</span></td>
+      <td class="r"><span class="sc-pill ${dayCls(cy)}">${cy!==null?cy:'—'}</span></td>
+      <td class="r"><span style="font-family:'DM Mono',monospace;font-size:11px;color:#e879f9">${mtg||'—'}</span></td>
+      <td class="r"><span style="font-family:'DM Mono',monospace;font-size:11px;color:#38bdf8">${emails||'—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  const srcBars = srcEntries.map(([src,data]) => {
+    const pct = Math.round((data.arr/maxSrcArr)*100);
+    return `<div class="sc-stage-row">
+      <div class="sc-stage-label">${srcShort(src)}</div>
+      <div class="sc-stage-track"><div class="sc-stage-fill" style="width:${pct}%;background:#b8ff00">${fmtK(data.arr)}</div></div>
+      <div class="sc-stage-right">${data.count} deal${data.count!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+
+  const srcCountBars = srcEntries.map(([src,data]) => {
+    const pct = Math.round((data.count/won.length)*100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:#7c869a;width:90px;flex-shrink:0">${srcShort(src)}</span>
+      <div style="flex:1;background:#141821;border-radius:3px;height:14px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:#9b59ff;border-radius:3px"></div>
+      </div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:#edf0f8;min-width:55px;text-align:right">${data.count} (${pct}%)</span>
+    </div>`;
+  }).join('');
+
+  const bucketBars = [{l:'Fast (<15d)',n:fast,c:'#1dcc8a'},{l:'Medium (15–80d)',n:medium,c:'#b8ff00'},{l:'Long (>80d)',n:longD,c:'#ff4d2e'}].map(b => {
+    const pct = Math.round((b.n/bkTot)*100);
+    return `<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:${b.c}">${b.l}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#7c869a">${b.n} deal${b.n!==1?'s':''} · ${pct}%</span>
+      </div>
+      <div style="background:#141821;border-radius:4px;height:20px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${b.c};border-radius:4px;display:flex;align-items:center;padding:0 8px">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#07090e;white-space:nowrap">${pct}%</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const velBars = sortedCy.map(x => `<div class="sc-vrow">
+    <div class="sc-vl">${x.d[1].length>32?x.d[1].substring(0,32)+'…':x.d[1]}</div>
+    <div class="sc-vt"><div class="sc-vf" style="width:${Math.round((x.days/(maxCycle||1))*100)}%;background:${dayCol(x.days)}"></div></div>
+    <div class="sc-vv">${x.days}d</div>
+  </div>`).join('');
+
+  const velBucketBars = [{l:'Fast (<15d)',n:fast,c:'#1dcc8a'},{l:'Medium (15–80d)',n:medium,c:'#b8ff00'},{l:'Long (>80d)',n:longD,c:'#ff4d2e'}].map(b => {
+    const pct = Math.round((b.n/bkTot)*100);
+    return `<div class="sc-vrow"><div class="sc-vl" style="color:${b.c}">${b.l}</div><div class="sc-vt"><div class="sc-vf" style="width:${pct}%;background:${b.c}"></div></div><div class="sc-vv">${b.n} (${pct}%)</div></div>`;
+  }).join('');
+
+  const statBoxes = [{l:'Average',v:avgCycle!==null?avgCycle+'d':'—',c:'#1dcc8a'},{l:'Median',v:medCycle!==null?medCycle+'d':'—',c:'#b8ff00'},{l:'Fastest',v:minCycle!==null?minCycle+'d':'—',c:'#1dcc8a'},{l:'Slowest',v:maxCycle!==null?maxCycle+'d':'—',c:'#ff4d2e'},{l:'Fast (<15d)',v:fast,c:'#1dcc8a'},{l:'Long (>80d)',v:longD,c:'#ff4d2e'}].map(s =>
+    `<div style="background:#141821;border:1px solid #1e2538;border-radius:8px;padding:12px;text-align:center">
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:${s.c};line-height:1;margin-bottom:2px">${s.v}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#4a5568">${s.l}</div>
+    </div>`
+  ).join('');
+
+  const ownerCards = ['29422733','29896105','30284350','33508297'].filter(oid => ownerMap[oid]).map(oid => {
+    const data = ownerMap[oid];
+    const o    = OWNERS[oid]||{name:oid};
+    const avD  = data.days.length ? Math.round(data.days.reduce((s,d)=>s+d,0)/data.days.length) : null;
+    const fastN= data.days.filter(d=>d<15).length;
+    const avCls= oid==='29422733'?'sc-avj':oid==='29896105'?'sc-avb':oid==='33508297'?'sc-avj':'sc-avc';
+    const deals= sortedWon.filter(d=>d[4]===oid).slice(0,5);
+    return `<div class="sc-ocard">
+      <div class="sc-ohdr">
+        <div class="sc-oav ${avCls}">${o.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div><div class="sc-oname">${o.name}</div><div class="sc-orole">Account Executive</div></div>
+      </div>
+      <div class="sc-ostats">
+        <div class="sc-osb"><div class="sc-osn" style="color:#b8ff00">${fmtK(data.arr)}</div><div class="sc-osl">ARR Won</div></div>
+        <div class="sc-osb"><div class="sc-osn">${data.count}</div><div class="sc-osl">Deals</div></div>
+        <div class="sc-osb"><div class="sc-osn" style="color:${dayCol(avD)}">${avD!==null?avD+'d':'—'}</div><div class="sc-osl">Avg Cycle</div></div>
+        <div class="sc-osb"><div class="sc-osn" style="color:#1dcc8a">${fastN}</div><div class="sc-osl">Fast (<15d)</div></div>
+      </div>
+      <div class="sc-dlist">
+        ${deals.map(d=>{const cy=cycleDays(d);return `<div class="sc-dr"><div class="sc-drn">${d[1]}</div><div class="sc-drr">${fmtK(d[2])}</div><div class="sc-drd">${cy!==null?cy+'d':'—'}</div></div>`;}).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Sora:wght@300;400;600;700&display=swap');
+.sc-wrap{background:#07090e;color:#edf0f8;font-family:'Sora',sans-serif;font-size:13px;line-height:1.6;padding:28px 24px 40px;position:relative}
+.sc-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(184,255,0,0.04),transparent);pointer-events:none;z-index:0}
+.sc-in{position:relative;z-index:1}
+.sc-hdr{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid #1e2538;position:relative;flex-wrap:wrap;gap:12px}
+.sc-hdr::after{content:'';position:absolute;bottom:-1px;left:0;width:140px;height:2px;background:linear-gradient(90deg,#b8ff00,transparent)}
+.sc-eye{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#b8ff00;margin-bottom:4px}
+.sc-h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;line-height:1.1;color:#edf0f8}
+.sc-h1 em{font-style:italic;color:#00cfff}
+.sc-big{font-family:'DM Serif Display',serif;font-size:38px;color:#b8ff00;line-height:1;text-shadow:0 0 40px rgba(184,255,0,.2);text-align:right}
+.sc-hsub{font-family:'DM Mono',monospace;font-size:10px;color:#7c869a;letter-spacing:.06em;margin-top:4px;text-align:right}
+.sc-tabs{display:flex;gap:2px;margin-bottom:24px;background:#0e1119;border:1px solid #1e2538;border-radius:10px;padding:3px;width:fit-content;flex-wrap:wrap}
+.sc-t{background:none;border:none;cursor:pointer;padding:8px 16px;border-radius:7px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#7c869a;transition:all .2s}
+.sc-t.on{background:#b8ff00;color:#07090e}
+.sc-t:hover:not(.on){color:#edf0f8}
+.sc-panel{display:none}.sc-panel.on{display:block}
+.sc-kr{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+.sc-k{background:#0e1119;border:1px solid #1e2538;border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:border-color .2s,transform .18s}
+.sc-k:hover{border-color:#b8ff00;transform:translateY(-2px)}
+.sc-kb{position:absolute;top:0;left:0;right:0;height:2px}
+.sc-kl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#4a5568;margin-bottom:5px}
+.sc-kv{font-family:'DM Serif Display',serif;font-size:28px;line-height:1;margin-bottom:2px}
+.sc-kn{font-family:'DM Mono',monospace;font-size:9px;color:#7c869a}
+.sc-sh{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#4a5568;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sc-sh::after{content:'';flex:1;height:1px;background:#1e2538}
+.sc-tw{background:#0e1119;border:1px solid #1e2538;border-radius:12px;overflow:hidden;margin-bottom:24px}
+.sc-tbl{width:100%;border-collapse:collapse}
+.sc-tbl thead th{background:#141821;padding:10px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#4a5568;border-bottom:1px solid #1e2538;white-space:nowrap}
+.sc-tbl thead th.r{text-align:right}
+.sc-tbl tbody tr{border-bottom:1px solid #1e2538;transition:background .12s}
+.sc-tbl tbody tr:last-child{border-bottom:none}
+.sc-tbl tbody tr:hover{background:#141821}
+.sc-tbl td{padding:10px 12px;vertical-align:middle}
+.sc-tbl td.r{text-align:right}
+.sc-num{font-family:'DM Mono',monospace;font-size:10px;color:#4a5568}
+.sc-dn{font-weight:600;font-size:12px}
+.sc-av{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#1dcc8a}
+.sc-ob{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:16px;font-family:'DM Mono',monospace;font-size:9px;font-weight:500}
+.sc-ob-j{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.18)}
+.sc-ob-b{background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.18)}
+.sc-ob-c{background:rgba(232,121,249,.1);color:#e879f9;border:1px solid rgba(232,121,249,.18)}
+.sc-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.sc-dj{background:#f59e0b}.sc-db{background:#38bdf8}.sc-dc{background:#e879f9}
+.sc-pill{display:inline-block;background:#141821;border:1px solid #1e2538;border-radius:4px;padding:2px 6px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600}
+.sc-hg{color:#1dcc8a;border-color:rgba(29,204,138,.3)}.sc-hy{color:#b8ff00;border-color:rgba(184,255,0,.3)}
+.sc-ho{color:#f97316;border-color:rgba(249,115,22,.3)}.sc-hr{color:#ff4d2e;border-color:rgba(255,77,46,.3)}
+.sc-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em;background:rgba(155,89,255,.1);color:#9b59ff;border:1px solid rgba(155,89,255,.18)}
+.sc-mtag{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;background:#141821;border:1px solid #1e2538;color:#7c869a;text-transform:uppercase;letter-spacing:.04em}
+.sc-stage-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.sc-stage-label{font-family:'DM Mono',monospace;font-size:10px;color:#7c869a;width:120px;flex-shrink:0}
+.sc-stage-track{flex:1;background:#141821;border-radius:4px;height:22px;overflow:hidden}
+.sc-stage-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:#07090e;min-width:32px}
+.sc-stage-right{width:72px;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:#7c869a;flex-shrink:0}
+.sc-funnel{background:#0e1119;border:1px solid #1e2538;border-radius:12px;padding:20px;margin-bottom:20px}
+.sc-og{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.sc-ocard{background:#0e1119;border:1px solid #1e2538;border-radius:12px;padding:20px}
+.sc-ohdr{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #1e2538}
+.sc-oav{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0}
+.sc-avj{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.22)}
+.sc-avb{background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.22)}
+.sc-avc{background:rgba(232,121,249,.12);color:#e879f9;border:1px solid rgba(232,121,249,.22)}
+.sc-oname{font-size:14px;font-weight:700}
+.sc-orole{font-family:'DM Mono',monospace;font-size:9px;color:#4a5568;margin-top:1px}
+.sc-ostats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sc-osb{background:#141821;border:1px solid #1e2538;border-radius:8px;padding:10px;text-align:center}
+.sc-osn{font-family:'DM Serif Display',serif;font-size:20px;line-height:1;margin-bottom:2px}
+.sc-osl{font-family:'DM Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#4a5568}
+.sc-dlist{display:flex;flex-direction:column;gap:5px}
+.sc-dr{background:#141821;border:1px solid #1e2538;border-radius:7px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sc-drn{font-size:10px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-drr{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:#1dcc8a;flex-shrink:0}
+.sc-drd{font-family:'DM Mono',monospace;font-size:9px;color:#7c869a;flex-shrink:0}
+.sc-vrow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.sc-vl{font-size:10px;min-width:185px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0}
+.sc-vt{flex:1;height:8px;background:#141821;border-radius:4px;overflow:hidden}
+.sc-vf{height:100%;border-radius:4px}
+.sc-vv{font-family:'DM Mono',monospace;font-size:10px;color:#7c869a;min-width:50px;text-align:right}
+.sc-cg2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.sc-cc{background:#0e1119;border:1px solid #1e2538;border-radius:12px;padding:20px}
+.sc-ct{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#4a5568;margin-bottom:14px}
+@media(max-width:900px){.sc-kr{grid-template-columns:repeat(2,1fr)}.sc-og,.sc-cg2{grid-template-columns:1fr}}
+</style>
+<div class="sc-wrap"><div class="sc-in">
+  <div class="sc-hdr">
+    <div>
+      <div class="sc-eye">Won Deals · ${periodLabel} · ${ownerLabel}</div>
+      <div class="sc-h1">Sales Cycle <em>Intelligence</em></div>
+    </div>
+    <div>
+      <div class="sc-big">${fmtK(totalARR)}</div>
+      <div class="sc-hsub">${won.length} deal${won.length!==1?'s':''} · stalled excl.</div>
+    </div>
+  </div>
+  <div class="sc-tabs">
+    <button class="sc-t on" onclick="scTab('sc-ov',this)">Overview</button>
+    <button class="sc-t" onclick="scTab('sc-owners',this)">By Owner</button>
+    <button class="sc-t" onclick="scTab('sc-cycle',this)">Cycle Deep Dive</button>
+  </div>
+  <div id="sc-ov" class="sc-panel on">
+    <div class="sc-kr">
+      <div class="sc-k"><div class="sc-kb" style="background:#b8ff00"></div><div class="sc-kl">ARR Won</div><div class="sc-kv" style="color:#b8ff00">${fmtK(totalARR)}</div><div class="sc-kn">${won.length} deal${won.length!==1?'s':''}</div></div>
+      <div class="sc-k"><div class="sc-kb" style="background:#00cfff"></div><div class="sc-kl">Avg Deal Size</div><div class="sc-kv">${fmtK(avgSize)}</div><div class="sc-kn">Per closed-won deal</div></div>
+      <div class="sc-k"><div class="sc-kb" style="background:#1dcc8a"></div><div class="sc-kl">Avg Cycle Days</div><div class="sc-kv" style="color:#1dcc8a">${avgCycle!==null?avgCycle:'—'}</div><div class="sc-kn">Create → Close</div></div>
+      <div class="sc-k"><div class="sc-kb" style="background:#b8ff00"></div><div class="sc-kl">Median Cycle</div><div class="sc-kv">${medCycle!==null?medCycle:'—'}</div><div class="sc-kn">50th percentile</div></div>
+      <div class="sc-k"><div class="sc-kb" style="background:#1dcc8a"></div><div class="sc-kl">Fastest Close</div><div class="sc-kv" style="color:#1dcc8a">${minCycle!==null?minCycle:'—'}</div><div class="sc-kn">Days to win</div></div>
+      <div class="sc-k"><div class="sc-kb" style="background:#e879f9"></div><div class="sc-kl">Avg Mtgs to Close</div><div class="sc-kv" style="color:#e879f9">${avgMtgs!==null?avgMtgs:'—'}</div><div class="sc-kn">Completed meetings</div></div>
+    </div>
+    <div class="sc-cg2" style="margin-bottom:24px">
+      <div class="sc-cc"><div class="sc-ct">Cycle Time Buckets</div>${bucketBars}</div>
+      <div class="sc-cc"><div class="sc-ct">Cycle Stats</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">${statBoxes}</div></div>
+    </div>
+    <p class="sc-sh">All ${won.length} Won Deals — Sorted by ARR</p>
+    <div class="sc-tw">
+      <table class="sc-tbl">
+        <thead><tr>
+          <th>#</th><th>Deal Name</th><th>Owner</th><th>Source</th>
+          <th class="r">ARR</th><th>Created</th><th class="r">Cycle Days</th><th class="r">Meetings</th><th class="r">Emails</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+  </div>
+  <div id="sc-owners" class="sc-panel">
+    <p class="sc-sh">Performance by Account Executive</p>
+    <div class="sc-og">${ownerCards}</div>
+  </div>
+  <div id="sc-cycle" class="sc-panel">
+    <p class="sc-sh">Deal Velocity — Days to Close (Fastest → Slowest)</p>
+    <div class="sc-cc" style="margin-bottom:20px">${velBars||'<div style="color:#4a5568;padding:10px">No cycle data</div>'}</div>
+    <div class="sc-cg2">
+      <div class="sc-cc"><div class="sc-ct">Speed Distribution</div>${velBucketBars}</div>
+      <div class="sc-cc"><div class="sc-ct">Cycle Stats</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">${statBoxes}</div></div>
+    </div>
+  </div>
+</div></div>`;
+
+  window.scTab = (id, btn) => {
+    container.querySelectorAll('.sc-panel').forEach(p => p.classList.remove('on'));
+    container.querySelectorAll('.sc-t').forEach(b => b.classList.remove('on'));
+    const el = container.querySelector('#'+id);
+    if (el) el.classList.add('on');
+    if (btn) btn.classList.add('on');
+  };
+}
+
 function updateSyncTimestamp(label) {
   const el = document.getElementById('sync-timestamp');
   if (!el) return;
