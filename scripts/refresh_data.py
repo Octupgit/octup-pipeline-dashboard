@@ -24,7 +24,7 @@ ACTIVE_STAGES = [
     '608286677',   # Commercial Review
 ]
 
-OWNER_IDS   = {'29896105', '29422733', '30284350', '74016070'}
+OWNER_IDS   = {'29896105', '29422733', '30284350', '74016070', '33508297'}  # added Joshua Jackson
 PIPELINE_ID = '394300639'  # 3PL New Business
 
 SOURCE_MAP = {
