@@ -696,37 +696,37 @@ main{padding:20px 24px;display:flex;flex-direction:column;gap:24px}
     <div class="card-row card-row-6" style="margin-bottom:14px">
       <div class="card card-clickable" id="card-won" onclick="openWonModal()">
         <div class="card-icon">🏆</div>
-        <div class="card-label" data-tip="Deals moved to Closed Won stage during the selected period. Gross ARR = full contract value.">ARR Won (Gross)</div>
+        <div class="card-label" data-tip="Deals closed Won during the selected period — filtered by close date.">ARR Won (Gross)</div>
         <div class="card-value green" id="val-won">—</div>
         <div class="card-sub" id="sub-won"></div>
       </div>
       <div class="card card-clickable" id="card-lost" onclick="openLostModal()">
         <div class="card-icon">❌</div>
-        <div class="card-label" data-tip="Deals moved to Closed Lost during the selected period.">Deals Lost</div>
+        <div class="card-label" data-tip="Deals closed Lost during the selected period — filtered by close date.">Deals Lost</div>
         <div class="card-value red" id="val-lost-count">—</div>
         <div class="card-sub" id="sub-lost"></div>
       </div>
       <div class="card card-clickable" id="card-new-pipeline" onclick="openNewPipelineModal()">
         <div class="card-icon">➕</div>
-        <div class="card-label" data-tip="All new deals entered into the CRM during the selected period.">New Pipeline</div>
+        <div class="card-label" data-tip="New deals entered into the CRM during the selected period — filtered by create date.">New Pipeline</div>
         <div class="card-value blue" id="val-new-pipeline">—</div>
         <div class="card-sub" id="sub-new-pipeline"></div>
       </div>
       <div class="card card-clickable" onclick="openOpenPipelineModal()">
         <div class="card-icon">📂</div>
-        <div class="card-label" data-tip="Open deals created during the selected period that are still active (not won/lost). Weighted = ARR × stage probability. Click to view deals.">Open Pipeline</div>
+        <div class="card-label" data-tip="Active open deals whose expected close date falls in the selected period — filtered by close date. Weighted = ARR × stage win probability. Click to view deals.">Open Pipeline</div>
         <div class="card-value" style="color:#e2b714" id="val-open-pipe">—</div>
         <div class="card-sub" id="sub-open-pipe"></div>
       </div>
       <div class="card">
         <div class="card-icon">💰</div>
-        <div class="card-label" data-tip="Average Contract Value of deals closed won in this period.">Avg Deal (ACV)</div>
+        <div class="card-label" data-tip="Average ARR of open deals created during the selected period — filtered by create date.">Avg Deal (ACV)</div>
         <div class="card-value" style="color:#c084fc" id="val-acv">—</div>
         <div class="card-sub" id="sub-acv"></div>
       </div>
       <div class="card card-clickable" id="card-moved" onclick="openDealsMovedModal()">
         <div class="card-icon">🔀</div>
-        <div class="card-label" data-tip="Deals that changed stage in the selected period. Good moves = forward in pipeline or Won. Bad moves = to Stalled, backwards, or Lost.">Deals Moved</div>
+        <div class="card-label" data-tip="Deals that changed stage during the selected period — filtered by stage-change date. Good = forward or Won. Bad = Stalled, backwards, or Lost.">Deals Moved</div>
         <div class="card-value" style="color:#f0b429" id="val-moved">—</div>
         <div class="card-sub" id="sub-moved"></div>
       </div>
@@ -10464,10 +10464,10 @@ function renderPulse() {
   // Update labels
   document.getElementById('pulse-week-badge').textContent = w.label.split('(')[0].trim();
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
-  // Open Pipeline — open deals created in selected period (timeframe-aware)
+  // Open Pipeline — active deals whose expected close date falls in the selected period
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
   let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
-  if (selectedWeek !== 'alltime') openPipeDeals = openPipeDeals.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedWeek !== 'alltime') openPipeDeals = openPipeDeals.filter(d => dateInRange(d[6], selectedWeek));
   if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
   const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
   const weightedARR    = openPipeDeals.reduce((s,d)=>s+(d[2]*(STAGE_WIN_PROB[d[3]]||0.1)),0);
@@ -12302,7 +12302,7 @@ function openInventoryStatModal(bucket, filterOwner) {
 function openOpenPipelineModal() {
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
   let deals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
-  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[6], selectedWeek)); // d[6]=closeDate (expected close)
   if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
   deals.sort((a,b) => b[2] - a[2]);
   const totalARR   = deals.reduce((s,d) => s + d[2], 0);
