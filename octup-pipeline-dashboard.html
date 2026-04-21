@@ -10850,18 +10850,18 @@ function renderSDR() {
     const hdr = `<div class="sdr-panel-header">
       <div>
         <div class="sdr-panel-count">${emailsAll.length || '—'}</div>
-        <div class="sdr-panel-meta">${emailsExt.length} external${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} internal` : ''}</div>
+        <div class="sdr-panel-meta">${emailsExt.length} deal-linked${intHidden > 0 ? ` &nbsp;·&nbsp; ${intHidden} unlinked` : ''}</div>
       </div>
-      ${emailsExt.length > 0 ? `<button class="sdr-view-all" onclick="openEmailsModal('Emails by ${SDR_NAME}',window._sdr.emailsExt)">View all →</button>` : ''}
+      ${emailsAll.length > 0 ? `<button class="sdr-view-all" onclick="openEmailsModal('Emails by ${SDR_NAME}',window._sdr.emailsAll)">View all →</button>` : ''}
     </div>`;
-    if (emailsExt.length === 0) {
-      ePanel.innerHTML = hdr + `<div class="sdr-zero">No external emails this period</div>`;
+    if (emailsAll.length === 0) {
+      ePanel.innerHTML = hdr + `<div class="sdr-zero">No emails this period</div>`;
     } else {
-      const rows = emailsExt.slice(0, 10).map(e => `<tr>
+      const rows = emailsAll.slice(0, 10).map(e => `<tr>
         <td style="font-weight:500;color:var(--text)">${e.subject}</td>
         <td style="white-space:nowrap;color:var(--muted);text-align:right">${fmtDate(e.timestamp)}</td>
       </tr>`).join('');
-      const more = emailsExt.length > 10 ? `<tr><td colspan="2" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${emailsExt.length - 10} more — click View all</td></tr>` : '';
+      const more = emailsAll.length > 10 ? `<tr><td colspan="2" style="color:var(--muted);font-size:10px;padding:6px 16px;text-align:center">+${emailsAll.length - 10} more — click View all</td></tr>` : '';
       ePanel.innerHTML = hdr + `<table class="sdr-inline">${rows}${more}</table>`;
     }
   }

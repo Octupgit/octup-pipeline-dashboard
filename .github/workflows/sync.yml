@@ -41,16 +41,5 @@ jobs:
             git push origin main
           fi
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
-        run: |
-          cp octup-pipeline-dashboard.html /tmp/dashboard.html
-          git fetch origin gh-pages
-          git checkout gh-pages
-          cp /tmp/dashboard.html index.html
-          git add index.html
-          if git diff --staged --quiet; then
-            echo "No changes to deploy"
-          else
-            git commit -m "deploy: auto-sync HubSpot data [$(date -u '+%Y-%m-%d %H:%M UTC')]"
-            git push origin gh-pages
-          fi
+      - name: Trigger Cloud Run deploy
+        run: echo "Cloud Run deployment triggered automatically by push to main"
