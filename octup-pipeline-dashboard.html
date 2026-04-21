@@ -10466,7 +10466,7 @@ function renderPulse() {
   document.getElementById('pulse-date-range').textContent = '(' + (w.label.match(/\((.+)\)/)||['',''])[1] + ')';
   // Open Pipeline — active deals whose expected close date falls in the selected period
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  let openPipeDeals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  let openPipeDeals = DEALS.filter(d => !['608286678','608286679','2918051008'].includes(d[3])); // exclude Won, Lost, Stalled
   if (selectedWeek !== 'alltime') openPipeDeals = openPipeDeals.filter(d => dateInRange(d[6], selectedWeek));
   if (selectedOwner !== 'all') openPipeDeals = openPipeDeals.filter(d => d[4] === selectedOwner);
   const openPipeARR    = openPipeDeals.reduce((s,d)=>s+d[2],0);
@@ -10491,11 +10491,15 @@ function renderPulse() {
   document.getElementById('val-lost-count').textContent = lostDeals.length;
   document.getElementById('sub-lost').textContent = fmt$(lostARR) + ' ARR · ' + fmtMRR(lostARR) + '/mo';
 
-  // New Pipeline (deals created this week)
+  // New Pipeline (deals created this period — open + won + lost for true cohort count)
   let newPipeDeals = DEALS.filter(d => dateInRange(d[5], selectedWeek));
   if (selectedOwner !== 'all') newPipeDeals = newPipeDeals.filter(d => d[4] === selectedOwner);
-  const newPipeARR = newPipeDeals.reduce((s,d)=>s+d[2],0);
-  document.getElementById('val-new-pipeline').textContent = newPipeDeals.length;
+  // Include won/lost deals created in period (WON_DEALS[7]=createDate, LOST_DEALS[8]=createDate)
+  const newPipeWon  = (selectedWeek === 'alltime' ? WON_DEALS  : WON_DEALS.filter(d  => d[7] && dateInRange(d[7],  selectedWeek))).filter(d => selectedOwner === 'all' || d[4] === selectedOwner);
+  const newPipeLost = (selectedWeek === 'alltime' ? LOST_DEALS : LOST_DEALS.filter(d => d[8] && dateInRange(d[8], selectedWeek))).filter(d => selectedOwner === 'all' || d[4] === selectedOwner);
+  const newPipeTotal = newPipeDeals.length + newPipeWon.length + newPipeLost.length;
+  const newPipeARR = newPipeDeals.reduce((s,d)=>s+d[2],0) + newPipeWon.reduce((s,d)=>s+d[2],0) + newPipeLost.reduce((s,d)=>s+d[2],0);
+  document.getElementById('val-new-pipeline').textContent = newPipeTotal;
   document.getElementById('sub-new-pipeline').textContent = fmt$(newPipeARR) + ' ARR · ' + fmtMRR(newPipeARR) + '/mo';
 
   // ACV (Avg Contract Value — always reflects selected period)
@@ -12301,7 +12305,7 @@ function openInventoryStatModal(bucket, filterOwner) {
 
 function openOpenPipelineModal() {
   const STAGE_WIN_PROB = {'2918051007':0.10,'608286675':0.20,'740160705':0.20,'608286676':0.60,'4988070119':0.70,'608286677':0.80,'2918051008':0.05};
-  let deals = DEALS.filter(d => !['608286678','608286679'].includes(d[3]));
+  let deals = DEALS.filter(d => !['608286678','608286679','2918051008'].includes(d[3])); // exclude Won, Lost, Stalled
   if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[6], selectedWeek)); // d[6]=closeDate (expected close)
   if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
   deals.sort((a,b) => b[2] - a[2]);
@@ -13699,7 +13703,7 @@ const HS_BASE = '/hs-proxy'; // routes through local Python proxy → avoids COR
 const HS_CLOSED_WON  = '608286678';
 // Only these stage IDs are considered "open pipeline" — anything else (Lost, Disqualified, etc.) is excluded
 const HS_OPEN_STAGES = new Set(['2918051007','608286675','740160705','608286676','4988070119','608286677']);
-const HS_ALL_OWNERS  = ['29896105','29422733','30284350','32023983'];
+const HS_ALL_OWNERS  = ['29896105','29422733','30284350','32023983','33508297']; // added Joshua Jackson
 
 function getHsToken() { return localStorage.getItem('hs_token'); }
 function saveHsToken(t) { localStorage.setItem('hs_token', t); }
