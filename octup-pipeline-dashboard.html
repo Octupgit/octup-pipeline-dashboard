@@ -11098,8 +11098,9 @@ function renderMonthlyBreakdown() {
   months.forEach(m => colTotals[m] = { count:0, arr:0 });
   let grandTotal = 0, grandArr = 0;
 
-  const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostDeals=[]) => {
-    if (!mDeals.length && !mWonDeals.length && !mLostDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
+  const mkCell = (mDeals, isCurrent, title, mWonDeals=[], mLostDeals=[], mWonGen=[], mLostGen=[]) => {
+    const genTotal = mDeals.length + mWonGen.length + mLostGen.length;
+    if (!genTotal && !mWonDeals.length && !mLostDeals.length) return `<td><div class="mm-empty-cell">—</div></td>`;
     const pipeArr  = mDeals.reduce((s,d)=>s+d[2], 0);
     // ACV = avg closed won deal size
     const wonARR   = mWonDeals.reduce((s,w)=>s+w[2], 0);
@@ -11114,7 +11115,7 @@ function renderMonthlyBreakdown() {
       <div class="mm-cell${curCls}">
         <div class="mm-pipe-row">
           <span class="mm-pipe-arr">${fmt$(pipeArr)}</span>
-          <span class="mm-pipe-cnt">${mDeals.length} deal${mDeals.length!==1?'s':''}</span>
+          <span class="mm-pipe-cnt">${genTotal} deal${genTotal!==1?'s':''}</span>
         </div>
         <div class="mm-acv-row" style="margin-bottom:1px">${fmtMRR(pipeArr)}<span style="color:var(--muted);font-weight:400">/mo MRR</span></div>
         <div class="mm-acv-row">ACV <span>${acv}</span></div>
@@ -11172,11 +11173,14 @@ function renderMonthlyBreakdown() {
       const mDeals = od.filter(d => monthKey(d[5]) === m);
       const mWon = WON_DEALS.filter(w => w[4] === oid && monthKey(w[3]) === m);
       const mLostDeals = LOST_DEALS.filter(l => l[4] === oid && monthKey(l[3]) === m);
-      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon, mLostDeals);
+      // Gen cohort: won/lost filtered by createDate for accurate deal count
+      const mWonGen  = WON_DEALS.filter(w  => w[4] === oid && w[7] && monthKey(w[7]) === m);
+      const mLostGen = LOST_DEALS.filter(l => l[4] === oid && l[8] && monthKey(l[8]) === m);
+      html += mkCell(mDeals, isCur, `${o.name} — ${monthLabel(m)}`, mWon, mLostDeals, mWonGen, mLostGen);
       const arr = mDeals.reduce((s,d)=>s+d[2],0);
-      rowCount += mDeals.length;
+      rowCount += mDeals.length + mWonGen.length + mLostGen.length;
       rowArr += arr;
-      colTotals[m].count += mDeals.length;
+      colTotals[m].count += mDeals.length + mWonGen.length + mLostGen.length;
       colTotals[m].arr   += arr;
     });
     grandTotal += rowCount; grandArr += rowArr;
