@@ -311,6 +311,111 @@ def build_emails(items):
         })
     return rows
 
+# ── Marketing contacts (form submissions) ─────────────────────────────────────
+FORM_LIST_ID = '154243004'   # "Get Demo Form Requests" saved list in HubSpot
+
+SOURCE_KEY_MAP = {
+    'DIRECT_TRAFFIC': 'direct',
+    'ORGANIC_SEARCH': 'organic',
+    'REFERRALS':      'other',
+    'SOCIAL_MEDIA':   'organic',
+    'EMAIL_MARKETING':'email',
+    'PAID_SEARCH':    'google',
+    'PAID_SOCIAL':    'meta',
+    'OTHER_CAMPAIGNS':'other',
+    'OFFLINE':        'other',
+}
+
+def fetch_mkt_contacts():
+    print('  Fetching marketing contacts (form submissions)...')
+    try:
+        members = get_all(f'/crm/v3/lists/{FORM_LIST_ID}/memberships?limit=100', key='results')
+        contact_ids = [str(m['recordId']) for m in members]
+        if not contact_ids:
+            print('  No contacts found in list')
+            return []
+        print(f'  Found {len(contact_ids)} contacts in list')
+
+        props = ['firstname','lastname','email','company',
+                 'hs_analytics_source','hs_analytics_source_data_1','hs_analytics_source_data_2',
+                 'createdate','recent_conversion_event_name','num_associated_deals']
+        contacts = []
+        for i in range(0, len(contact_ids), 100):
+            chunk = contact_ids[i:i+100]
+            resp = hs_post('/crm/v3/objects/contacts/batch/read', {
+                'properties': props,
+                'inputs': [{'id': cid} for cid in chunk],
+            })
+            contacts.extend(resp.get('results', []))
+        return contacts
+    except Exception as e:
+        print(f'  ⚠ Could not fetch mkt contacts: {e}')
+        return []
+
+def build_mkt_contacts(raw):
+    rows = []
+    for c in raw:
+        p = c.get('properties', {})
+        first = safe_str(p.get('firstname', ''))
+        last  = safe_str(p.get('lastname', ''))
+        name  = (f'{first} {last}'.strip()) or safe_str(p.get('email', ''))
+        email = safe_str(p.get('email', ''))
+        company = safe_str(p.get('company', '')) or '—'
+
+        src       = safe_str(p.get('hs_analytics_source', ''))
+        src_data1 = safe_str(p.get('hs_analytics_source_data_1', ''))
+        src_data2 = safe_str(p.get('hs_analytics_source_data_2', ''))
+
+        source_label = SOURCE_MAP.get(src, 'Direct')
+        source_key   = SOURCE_KEY_MAP.get(src, 'direct')
+        if src in ('PAID_SEARCH', 'PAID_SOCIAL'):
+            s1 = src_data1.lower()
+            if 'linkedin' in s1:
+                source_key = 'linkedin'
+                source_label = 'LinkedIn Ads'
+            elif 'facebook' in s1 or 'meta' in s1 or 'instagram' in s1:
+                source_key = 'meta'
+                source_label = 'Meta Ads'
+            else:
+                source_key = 'google'
+                source_label = 'Google Ads'
+
+        create_date = fmt_date(p.get('createdate', ''))
+        conversion  = safe_str(p.get('recent_conversion_event_name', '')).lower()
+        form_type   = 'Demo Meeting' if any(kw in conversion for kw in ['meeting', 'booking', 'calendly', 'book demo']) else 'Demo Form'
+        deal_count  = safe_int(p.get('num_associated_deals', 0))
+
+        rows.append({
+            'name':          name,
+            'email':         email,
+            'company':       company,
+            'source':        source_label,
+            'source_key':    source_key,
+            'campaign':      src_data1 or '—',
+            'traffic_source':src_data2 or src_data1 or '—',
+            'form':          form_type,
+            'date':          create_date,
+            'last_activity': f'{create_date} · Form submitted',
+            'has_deal':      deal_count > 0,
+            'deal_count':    deal_count,
+        })
+
+    rows.sort(key=lambda r: r['date'], reverse=True)
+    return rows
+
+def js_mkt_contacts(rows):
+    parts = []
+    for r in rows:
+        has_deal = 'true' if r['has_deal'] else 'false'
+        parts.append(
+            f"{{name:{js_str(r['name'])},email:{js_str(r['email'])},company:{js_str(r['company'])},"
+            f"source:{js_str(r['source'])},source_key:{js_str(r['source_key'])},"
+            f"campaign:{js_str(r['campaign'])},traffic_source:{js_str(r['traffic_source'])},"
+            f"form:{js_str(r['form'])},date:{js_str(r['date'])},"
+            f"last_activity:{js_str(r['last_activity'])},has_deal:{has_deal},deal_count:{r['deal_count']}}}"
+        )
+    return '[\n' + ',\n'.join('  ' + p for p in parts) + '\n]'
+
 # ── JS serialisation ──────────────────────────────────────────────────────────
 def js_str(v):
     return "'" + str(v).replace('\\','\\\\').replace("'","\\'") + "'"
@@ -356,7 +461,7 @@ def replace_block(html, var_name, new_value, open_char='[', close_char=']'):
         print(f'  ⚠ WARNING: could not find const {var_name} — skipping')
     return new_html
 
-def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails):
+def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts=None):
     now_utc = datetime.now(timezone.utc)
     now_str = now_utc.strftime('%Y-%m-%d %H:%M UTC')
     now_iso = now_utc.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -380,6 +485,8 @@ def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails):
         html = replace_block(html, 'CALLS',    js_obj_array(calls))
     if emails:
         html = replace_block(html, 'EMAILS',   js_obj_array(emails))
+    if mkt_contacts:
+        html = replace_block(html, 'MKT_CONTACTS', js_mkt_contacts(mkt_contacts))
 
     # Update last-synced comment at top of file
     html = re.sub(
@@ -411,18 +518,22 @@ def main():
     calls    = build_calls(call_raw)
     emails   = build_emails(email_raw)
 
+    mkt_raw      = fetch_mkt_contacts()
+    mkt_contacts = build_mkt_contacts(mkt_raw)
+
     html_path = os.path.abspath(HTML_FILE)
     print(f'\nUpdating {html_path}...')
     with open(html_path, 'r', encoding='utf-8') as f:
         html = f.read()
 
-    html = update_html(html, deals, stage_entered, won, lost, meetings, calls, emails)
+    html = update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts)
 
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(html)
 
     print(f'\n✅ Done — {len(deals)} open, {len(won)} won, {len(lost)} lost, '
-          f'{len(meetings)} meetings, {len(calls)} calls, {len(emails)} emails')
+          f'{len(meetings)} meetings, {len(calls)} calls, {len(emails)} emails, '
+          f'{len(mkt_contacts)} mkt contacts')
 
 if __name__ == '__main__':
     main()
