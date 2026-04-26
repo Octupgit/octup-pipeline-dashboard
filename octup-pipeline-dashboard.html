@@ -1072,6 +1072,8 @@ const STAGES = {
   '608286676':  'Solution Alignment',
   '4988070119': 'Trial',
   '608286677':  'Commercial Review',
+  'closedwon':  'Won',
+  'closedlost': 'Lost',
 };
 const BUCKET = {
   '2918051007': 'NBM',
@@ -10288,6 +10290,8 @@ function ownerDot(id) {
 function stageName(id) { return STAGES[id] || id; }
 function bucketOf(stageId) { return BUCKET[stageId] || 'NBM'; }
 function stageTag(stageId) {
+  if (stageId === 'closedwon')  return `<span class="tag tag-won">✓ Won</span>`;
+  if (stageId === 'closedlost') return `<span class="tag tag-lost">✗ Lost</span>`;
   const b = bucketOf(stageId);
   const cls = b === 'NBM' ? 'tag-nbm' : b === 'In-Progress' ? 'tag-inp' : b === 'Trial' ? 'tag-trial' : 'tag-cr';
   return `<span class="tag ${cls}">${stageName(stageId)}</span>`;
@@ -12326,13 +12330,22 @@ function openHVBucketModal(bucket, ids) {
 function openNewPipelineModal() {
   let deals = DEALS.filter(d => dateInRange(d[5], selectedWeek));
   if (selectedOwner !== 'all') deals = deals.filter(d => d[4] === selectedOwner);
-  deals.sort((a,b) => b[2]-a[2]);
-  const totalARR = deals.reduce((s,d)=>s+d[2],0);
+
+  // Include won/lost deals created in this period (same cohort logic as the summary card)
+  const wonInPeriod = (selectedWeek === 'alltime' ? WON_DEALS : WON_DEALS.filter(d => d[7] && dateInRange(d[7], selectedWeek)))
+    .filter(d => selectedOwner === 'all' || d[4] === selectedOwner)
+    .map(d => [d[0], d[1], d[2], 'closedwon', d[4], d[7], d[3], '', d[5], d[3], d[6]]);
+  const lostInPeriod = (selectedWeek === 'alltime' ? LOST_DEALS : LOST_DEALS.filter(d => d[8] && dateInRange(d[8], selectedWeek)))
+    .filter(d => selectedOwner === 'all' || d[4] === selectedOwner)
+    .map(d => [d[0], d[1], d[2], 'closedlost', d[4], d[8], d[3], d[9]||'', d[5], d[3], d[7]]);
+
+  const allDeals = [...deals, ...wonInPeriod, ...lostInPeriod].sort((a,b) => b[2]-a[2]);
+  const totalARR = allDeals.reduce((s,d)=>s+d[2],0);
   const summary = `
-    <div class="modal-summary-item"><span class="modal-summary-label">Deals Created</span><span class="modal-summary-val">${deals.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Deals Created</span><span class="modal-summary-val">${allDeals.length}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Total ARR</span><span class="modal-summary-val">${fmt$(totalARR)}</span></div>
     <div class="modal-summary-item"><span class="modal-summary-label">Week</span><span class="modal-summary-val" style="font-size:12px">${WEEKS[selectedWeek].label}</span></div>`;
-  openModal('➕ New Pipeline — ' + WEEKS[selectedWeek].label, summary, dealsTable(deals));
+  openModal('➕ New Pipeline — ' + WEEKS[selectedWeek].label, summary, dealsTable(allDeals));
 }
 
 // ─── INVENTORY STAT MODAL ─────────────────────────────────────────────────────
@@ -15440,20 +15453,6 @@ function mktRender() {
   const genCount   = d.opp;
   const genArr     = d.opp_arr + lostArr;  // total generated = open + won + lost
 
-  // ── Benchmarks: logistics startup ~$1M rev, typical ad spend ──────────────
-  const BM_CPL = 150;   // $150 CPL benchmark for logistics SaaS
-  const BM_CPA = 3000;  // $3,000 CPA benchmark
-  const BM_ROI = 200;   // 200% ROAS benchmark
-  const bmTag = (val, bm, lowerBetter) => {
-    if (val === null) return '';
-    const good = lowerBetter ? val <= bm : val >= bm;
-    const icon = good ? '▲' : '▼';
-    const color = good ? '#4ade80' : '#f85149';
-    const label = good ? 'Below' : 'Above';
-    const labelRoi = good ? 'Above' : 'Below';
-    return `<div style="font-size:11px;margin-top:6px;padding:3px 8px;border-radius:5px;background:${good ? 'rgba(74,222,128,.12)' : 'rgba(248,81,73,.12)'};color:${color};font-weight:700;display:inline-block">${icon} ${lowerBetter ? label : labelRoi} ${lowerBetter ? '$' : ''}${bm.toLocaleString()}${!lowerBetter ? '%' : ''} benchmark</div>`;
-  };
-
   // ── TIER 1: Summary Cards (matches .card pattern — 26px values) ─────────
   const isPaid = mktCh === 'paid' || mktCh === 'all';
   const isNA   = mktCh === 'organic';
@@ -15492,19 +15491,18 @@ function mktRender() {
   const roiVal = roi !== null ? roi+'%' : '—';
   const roiSub = roi !== null ? mktFmtN(paidWonArr)+' paid won ÷ '+mktFmtN(periodSpend)+' spend' : 'Need wins + spend';
 
-  const _m = (bdr,lbl,val,sub,color,bmHtml) => `
+  const _m = (bdr,lbl,val,sub,color) => `
     <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 20px;border-left:3px solid ${color}">
       <div class="card-label" style="color:${color}">${lbl}</div>
       <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:${isNA ? 'var(--border2)' : color};line-height:1">${val}</div>
       <div class="card-sub">${sub}</div>
-      ${bmHtml}
     </div>`;
 
   const adMetricsHtml = `
     <div style="display:flex;flex-direction:column;gap:12px;height:100%">
-      ${_m('','CPL · Cost Per Lead', cplVal, cplSub, '#60a5fa', bmTag(cpl, BM_CPL, true))}
-      ${_m('','CPA · Cost Per Acquisition', cpaVal, cpaSub, '#f472b6', bmTag(cpa, BM_CPA, true))}
-      ${_m('','ROI · Return on Ad Spend', roiVal, roiSub, roi !== null && roi > 0 ? '#4ade80' : roi !== null ? '#f85149' : '#8b949e', bmTag(roi, BM_ROI, false))}
+      ${_m('','CPL · Cost Per Lead', cplVal, cplSub, '#60a5fa')}
+      ${_m('','CPA · Cost Per Acquisition', cpaVal, cpaSub, '#f472b6')}
+      ${_m('','ROI · Return on Ad Spend', roiVal, roiSub, roi !== null && roi > 0 ? '#4ade80' : roi !== null ? '#f85149' : '#8b949e')}
     </div>`;
 
   // ── Build CVR rows ─────────────────────────────────────────────────────────
