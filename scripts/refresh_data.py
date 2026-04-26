@@ -327,26 +327,28 @@ SOURCE_KEY_MAP = {
 }
 
 def fetch_mkt_contacts():
+    """Fetch contacts who submitted demo/pricing forms via CRM search (no lists scope needed)."""
     print('  Fetching marketing contacts (form submissions)...')
     try:
-        members = get_all(f'/crm/v3/lists/{FORM_LIST_ID}/memberships?limit=100', key='results')
-        contact_ids = [str(m['recordId']) for m in members]
-        if not contact_ids:
-            print('  No contacts found in list')
-            return []
-        print(f'  Found {len(contact_ids)} contacts in list')
-
         props = ['firstname','lastname','email','company',
                  'hs_analytics_source','hs_analytics_source_data_1','hs_analytics_source_data_2',
                  'createdate','recent_conversion_event_name','num_associated_deals']
-        contacts = []
-        for i in range(0, len(contact_ids), 100):
-            chunk = contact_ids[i:i+100]
-            resp = hs_post('/crm/v3/objects/contacts/batch/read', {
-                'properties': props,
-                'inputs': [{'id': cid} for cid in chunk],
-            })
-            contacts.extend(resp.get('results', []))
+        # OR across form name patterns — each filterGroup is OR'd, filters within are AND'd
+        body = {
+            'filterGroups': [
+                {'filters': [{'propertyName': 'recent_conversion_event_name',
+                              'operator': 'CONTAINS_TOKEN', 'value': 'Demo'}]},
+                {'filters': [{'propertyName': 'recent_conversion_event_name',
+                              'operator': 'CONTAINS_TOKEN', 'value': 'Pricing'}]},
+                {'filters': [{'propertyName': 'recent_conversion_event_name',
+                              'operator': 'CONTAINS_TOKEN', 'value': 'demo'}]},
+            ],
+            'properties': props,
+            'sorts': [{'propertyName': 'createdate', 'direction': 'DESCENDING'}],
+            'limit': 100,
+        }
+        contacts = search_all('/crm/v3/objects/contacts/search', body)
+        print(f'  Found {len(contacts)} form submission contacts')
         return contacts
     except Exception as e:
         print(f'  ⚠ Could not fetch mkt contacts: {e}')
