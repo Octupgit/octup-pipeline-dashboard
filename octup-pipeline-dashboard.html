@@ -10990,9 +10990,9 @@ function renderInventory() {
   const owners = ['29896105','29422733','33508297'];
   let deals = selectedOwner === 'all' ? DEALS : DEALS.filter(d => d[4] === selectedOwner);
 
-  // Apply creation-date filter from global period
+  // Filter by expected close date (d[6]) so the matrix shows what's closing in the selected period
   if (selectedWeek !== 'alltime') {
-    deals = deals.filter(d => dateInRange(d[5], selectedWeek));
+    deals = deals.filter(d => dateInRange(d[6], selectedWeek));
   }
 
   // Update badge text
@@ -11001,7 +11001,7 @@ function renderInventory() {
     const periodLabel = selectedWeek === 'alltime'
       ? 'All Time'
       : WEEKS[selectedWeek].label.split('(')[0].trim();
-    badge.textContent = 'Open Deals · Created ' + periodLabel;
+    badge.textContent = selectedWeek === 'alltime' ? 'Open Deals · All Time' : 'Open Deals · Closing ' + periodLabel;
   }
 
   const totalARR = deals.reduce((s,d)=>s+d[2],0);
@@ -12356,7 +12356,7 @@ function openNewPipelineModal() {
 function openInventoryStatModal(bucket, filterOwner) {
   const ownerFilter = filterOwner || selectedOwner;
   let deals = ownerFilter === 'all' ? DEALS : DEALS.filter(d => d[4] === ownerFilter);
-  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[5], selectedWeek));
+  if (selectedWeek !== 'alltime') deals = deals.filter(d => dateInRange(d[6], selectedWeek));
   let filtered, label, wonDealCounts = null;
   if (bucket === 'nbm') {
     filtered = deals.filter(d => d[3]==='2918051007');
