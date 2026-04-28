@@ -15279,31 +15279,32 @@ function mktShowContactsModal(stage) {
       const hsContactUrl = hsContactId
         ? `https://app-eu1.hubspot.com/contacts/${PORTAL}/contact/${hsContactId}`
         : `https://app-eu1.hubspot.com/contacts/${PORTAL}/objects/0-1/views/all/list?query=${encodeURIComponent(c.email)}`;
-      // Status badge: opportunity contacts → deal stage; others → lead status
+      // Status badge: company lifecycle stage; for Opportunity + active deal → show deal stage
       const mapStage = MKT_STAGE_MAP[c.email] || '';
-      const isOpp = (c.lifecycle_stage === 'opportunity') || mapStage === 'Opportunity';
+      const companyStage = c.company_lifecycle || mapStage;
+      const isOpp = companyStage === 'Opportunity' || c.lifecycle_stage === 'opportunity';
       let statusText = '', statusColor = 'var(--muted)';
-      if (isOpp) {
-        statusText = c.deal_stage || mapStage || 'Opportunity';
+      if (isOpp && c.deal_stage) {
+        statusText = c.deal_stage;
         statusColor = statusText === 'Won' ? '#4ade80'
           : statusText === 'Lost' ? '#f87171'
           : statusText === 'Commercial Review' ? '#f97316'
           : statusText === 'Solution Alignment' ? '#60a5fa'
           : '#fbbf24';
       } else {
-        statusText = c.lead_status || mapStage;
-        const sl = statusText.toLowerCase();
-        statusColor = sl.includes('connect') ? '#4ade80'
-          : sl.includes('progress') ? '#60a5fa'
-          : sl.includes('attempt') ? '#f97316'
-          : sl.includes('new') ? '#8b82dc'
-          : sl.includes('open') ? '#94a3b8'
-          : sl.includes('bad timing') ? '#94a3b8'
-          : sl.includes('unqualified') ? '#f87171'
-          : sl.includes('account') ? '#4ade80'
+        statusText = companyStage || c.lead_status;
+        const sl = (statusText || '').toLowerCase();
+        statusColor = sl.includes('account') || sl.includes('brand client') ? '#4ade80'
+          : sl.includes('trial') ? '#2dd4bf'
+          : sl.includes('opportunity') ? '#fbbf24'
           : sl.includes('sql') ? '#60a5fa'
           : sl.includes('mql') ? '#8b82dc'
           : sl.includes('review') ? '#f97316'
+          : sl.includes('prospect') || sl.includes('lead') ? '#94a3b8'
+          : sl.includes('unqualified') || sl.includes('closed lost') || sl.includes('churned') ? '#f87171'
+          : sl.includes('connect') ? '#4ade80'
+          : sl.includes('progress') ? '#60a5fa'
+          : sl.includes('attempt') ? '#f97316'
           : 'var(--muted)';
       }
       const stageBadge = statusText

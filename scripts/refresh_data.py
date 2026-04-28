@@ -63,6 +63,22 @@ LEAD_STATUS_MAP = {
     'bad_timing':           'Bad Timing',
 }
 
+COMPANY_LIFECYCLE_MAP = {
+    '737555912':          'Prospect',
+    '737479612':          'MQL',
+    '737555913':          'SQL',
+    '737555914':          'Opportunity',
+    '261097686':          'Client / Trial',
+    '737555917':          'Account Active',
+    'customer':           'Brand Client',
+    '575905252':          'Unqualified',
+    '739392741':          'Closed Lost',
+    '614568683':          'Churned',
+    'marketingqualifiedlead': 'Brand MQL',
+    'lead':               'Lead',
+    '5022983403':         'For Review',
+}
+
 # ── HubSpot API helpers ───────────────────────────────────────────────────────
 def hs_get(path):
     url = f'https://api.hubapi.com{path}'
@@ -373,6 +389,47 @@ def fetch_contact_deal_assocs(contact_ids):
             print(f'  ⚠ Batch contact-deal assoc: {e}')
     return result
 
+def fetch_contact_company_assocs(contact_ids):
+    """Batch-fetch primary company ID for each contact."""
+    if not contact_ids:
+        return {}
+    result = {}
+    chunk_size = 100
+    for i in range(0, len(contact_ids), chunk_size):
+        chunk = contact_ids[i:i+chunk_size]
+        body = {'inputs': [{'id': str(cid)} for cid in chunk]}
+        try:
+            resp = hs_post('/crm/v4/associations/contacts/companies/batch/read', body)
+            for r in resp.get('results', []):
+                from_id = str(r.get('from', {}).get('id', ''))
+                to_ids  = [str(a.get('toObjectId', '')) for a in r.get('to', [])]
+                if from_id and to_ids:
+                    result[from_id] = to_ids[0]
+        except Exception as e:
+            print(f'  ⚠ Batch contact-company assoc: {e}')
+    return result
+
+def fetch_company_lifecycle_stages(company_ids):
+    """Batch-read lifecyclestage for a list of company IDs."""
+    if not company_ids:
+        return {}
+    result = {}
+    ids = list(set(str(c) for c in company_ids if c))
+    chunk_size = 100
+    for i in range(0, len(ids), chunk_size):
+        chunk = ids[i:i+chunk_size]
+        body = {'inputs': [{'id': cid} for cid in chunk], 'properties': ['lifecyclestage']}
+        try:
+            resp = hs_post('/crm/v3/objects/companies/batch/read', body)
+            for r in resp.get('results', []):
+                cid   = str(r.get('id', ''))
+                stage = safe_str(r.get('properties', {}).get('lifecyclestage', ''))
+                if cid:
+                    result[cid] = COMPANY_LIFECYCLE_MAP.get(stage, stage)
+        except Exception as e:
+            print(f'  ⚠ Batch company lifecycle: {e}')
+    return result
+
 def fetch_mkt_contacts():
     """Fetch contacts who submitted demo/pricing forms via CRM search (no lists scope needed)."""
     print('  Fetching marketing contacts (form submissions)...')
@@ -402,7 +459,7 @@ def fetch_mkt_contacts():
         print(f'  ⚠ Could not fetch mkt contacts: {e}')
         return []
 
-def build_mkt_contacts(raw, contact_deal_assocs=None, deal_stage_map=None):
+def build_mkt_contacts(raw, contact_deal_assocs=None, deal_stage_map=None, contact_company_assocs=None, company_lifecycle_map=None):
     rows = []
     for c in raw:
         p = c.get('properties', {})
@@ -440,6 +497,10 @@ def build_mkt_contacts(raw, contact_deal_assocs=None, deal_stage_map=None):
         lead_status_raw = safe_str(p.get('hs_lead_status', ''))
         lead_status    = LEAD_STATUS_MAP.get(lead_status_raw, lead_status_raw.replace('_', ' ').title() if lead_status_raw else '')
 
+        # Company lifecycle stage (primary company)
+        company_id = contact_company_assocs.get(c['id'], '') if contact_company_assocs else ''
+        company_lifecycle = company_lifecycle_map.get(company_id, '') if (company_lifecycle_map and company_id) else ''
+
         # Best deal stage for this contact (prefer open/won over lost)
         deal_stage = ''
         if contact_deal_assocs is not None and deal_stage_map is not None:
@@ -469,9 +530,10 @@ def build_mkt_contacts(raw, contact_deal_assocs=None, deal_stage_map=None):
             'last_activity':  f'{create_date} · Form submitted',
             'has_deal':       deal_count > 0,
             'deal_count':     deal_count,
-            'lifecycle_stage':lifecycle_raw,
-            'lead_status':    lead_status,
-            'deal_stage':     deal_stage,
+            'lifecycle_stage':  lifecycle_raw,
+            'lead_status':      lead_status,
+            'deal_stage':       deal_stage,
+            'company_lifecycle':company_lifecycle,
         })
 
     rows.sort(key=lambda r: r['date'], reverse=True)
@@ -488,7 +550,7 @@ def js_mkt_contacts(rows):
             f"form:{js_str(r['form'])},date:{js_str(r['date'])},"
             f"last_activity:{js_str(r['last_activity'])},has_deal:{has_deal},deal_count:{r['deal_count']},"
             f"lifecycle_stage:{js_str(r.get('lifecycle_stage',''))},lead_status:{js_str(r.get('lead_status',''))},"
-            f"deal_stage:{js_str(r.get('deal_stage',''))}}}"
+            f"deal_stage:{js_str(r.get('deal_stage',''))},company_lifecycle:{js_str(r.get('company_lifecycle',''))}}}"
         )
     return '[\n' + ',\n'.join('  ' + p for p in parts) + '\n]'
 
@@ -605,10 +667,13 @@ def main():
     calls    = build_calls(call_raw)
     emails   = build_emails(email_raw)
 
-    mkt_raw           = fetch_mkt_contacts()
-    contact_ids       = [c['id'] for c in mkt_raw]
-    contact_deal_assocs = fetch_contact_deal_assocs(contact_ids)
-    mkt_contacts      = build_mkt_contacts(mkt_raw, contact_deal_assocs, deal_stage_map)
+    mkt_raw               = fetch_mkt_contacts()
+    contact_ids           = [c['id'] for c in mkt_raw]
+    contact_deal_assocs   = fetch_contact_deal_assocs(contact_ids)
+    contact_company_assocs= fetch_contact_company_assocs(contact_ids)
+    company_ids           = list(contact_company_assocs.values())
+    company_lifecycle_map = fetch_company_lifecycle_stages(company_ids)
+    mkt_contacts          = build_mkt_contacts(mkt_raw, contact_deal_assocs, deal_stage_map, contact_company_assocs, company_lifecycle_map)
 
     html_path = os.path.abspath(HTML_FILE)
     print(f'\nUpdating {html_path}...')
