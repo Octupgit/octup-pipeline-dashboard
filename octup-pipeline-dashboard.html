@@ -10814,11 +10814,13 @@ function renderSourceFunnel() {
   // e.g. a deal created in Q1 but closed in Q2 appears in genIds but not in allWon/allLost.
   const _allDealMap = {};
   allDeals.forEach(d => { _allDealMap[d[0]] = d; });
-  allWon.forEach(d   => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[3],d[3],'',d[5],'',d[6]]; });
-  allLost.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[3],d[3],'',d[5],'',d[7]]; });
-  // Also seed from cohort arrays so Gen/SQL clicks always resolve all IDs
-  wonForGen.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[7],d[3],'',d[5],'',d[6]]; });
-  lostForGen.forEach(d => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[8],d[3],'',d[5],'',d[7]]; });
+  // WON_DEALS: [id,name,amount,closeDate,ownerId,createdById,dealSource,createDate,srcDetail]
+  // LOST_DEALS: [id,name,amount,closeDate,ownerId,createdById,stage,dealSource,createDate,lostReason,srcDetail]
+  // Canonical DEALS format indices: [0]id [1]name [2]arr [3]stage [4]owner [5]create [6]close [7]nextStep [8]createdBy [9]lastMod [10]dealSource [11]srcDetail [12]priority
+  allWon.forEach(d   => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[7]||d[3],d[3],'',d[5],'',d[6],d[8]||'']; });
+  allLost.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[8],d[3],'',d[5],'',d[7],d[10]||'']; });
+  wonForGen.forEach(d  => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'WON', d[4],d[7]||d[3],d[3],'',d[5],'',d[6],d[8]||'']; });
+  lostForGen.forEach(d => { if (!_allDealMap[d[0]]) _allDealMap[d[0]] = [d[0],d[1],d[2],'LOST',d[4],d[8],d[3],'',d[5],'',d[7],d[10]||'']; });
 
   const openFunnelModal = (title, ids) => {
     const dealSet = ids.map(id => _allDealMap[id]).filter(Boolean).sort((a,b)=>b[2]-a[2]);
@@ -15246,19 +15248,35 @@ function mktShowContactsModal(stage) {
       const hsContactUrl = hsContactId
         ? `https://app-eu1.hubspot.com/contacts/${PORTAL}/contact/${hsContactId}`
         : `https://app-eu1.hubspot.com/contacts/${PORTAL}/objects/0-1/views/all/list?query=${encodeURIComponent(c.email)}`;
-      // Lifecycle stage badge
-      const stage = MKT_STAGE_MAP[c.email] || '';
-      const stageColor = stage === 'Account Active' ? '#4ade80'
-        : stage === 'Opportunity'  ? '#fbbf24'
-        : stage === 'SQL'          ? '#60a5fa'
-        : stage === 'MQL'          ? '#8b82dc'
-        : stage === 'For Review'   ? '#f97316'
-        : stage === 'Prospect'     ? '#94a3b8'
-        : stage === 'Client / Trial' ? '#2dd4bf'
-        : stage === 'Unqualified'  ? '#f87171'
-        : 'var(--muted)';
-      const stageBadge = stage
-        ? `<span style="background:${stageColor}22;color:${stageColor};border:1px solid ${stageColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${stage}</span>`
+      // Status badge: opportunity contacts → deal stage; others → lead status
+      const mapStage = MKT_STAGE_MAP[c.email] || '';
+      const isOpp = (c.lifecycle_stage === 'opportunity') || mapStage === 'Opportunity';
+      let statusText = '', statusColor = 'var(--muted)';
+      if (isOpp) {
+        statusText = c.deal_stage || mapStage || 'Opportunity';
+        statusColor = statusText === 'Won' ? '#4ade80'
+          : statusText === 'Lost' ? '#f87171'
+          : statusText === 'Commercial Review' ? '#f97316'
+          : statusText === 'Solution Alignment' ? '#60a5fa'
+          : '#fbbf24';
+      } else {
+        statusText = c.lead_status || mapStage;
+        const sl = statusText.toLowerCase();
+        statusColor = sl.includes('connect') ? '#4ade80'
+          : sl.includes('progress') ? '#60a5fa'
+          : sl.includes('attempt') ? '#f97316'
+          : sl.includes('new') ? '#8b82dc'
+          : sl.includes('open') ? '#94a3b8'
+          : sl.includes('bad timing') ? '#94a3b8'
+          : sl.includes('unqualified') ? '#f87171'
+          : sl.includes('account') ? '#4ade80'
+          : sl.includes('sql') ? '#60a5fa'
+          : sl.includes('mql') ? '#8b82dc'
+          : sl.includes('review') ? '#f97316'
+          : 'var(--muted)';
+      }
+      const stageBadge = statusText
+        ? `<span style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${statusText}</span>`
         : `<span style="color:var(--muted);font-size:10px">—</span>`;
       // Inbound SLA from real HubSpot engagement data (MKT_ENGAGEMENT map)
       const eng = MKT_ENGAGEMENT[c.email] || {};

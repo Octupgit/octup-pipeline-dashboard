@@ -40,6 +40,29 @@ SOURCE_MAP = {
     'PAID_SOCIAL':       'Paid Social',
 }
 
+STAGE_NAMES = {
+    '2918051007': 'NBM',
+    '2918051008': 'Stalled',
+    '608286675':  'Discovery',
+    '740160705':  'Presentation',
+    '608286676':  'Solution Alignment',
+    '4988070119': 'Trial',
+    '608286677':  'Commercial Review',
+    '608286678':  'Won',
+    '608286679':  'Lost',
+}
+
+LEAD_STATUS_MAP = {
+    'new':                  'New Lead',
+    'open':                 'Open',
+    'in_progress':          'In Progress',
+    'open_deal':            'Has Deal',
+    'unqualified':          'Unqualified',
+    'attempted_to_contact': 'Attempted',
+    'connected':            'Connected',
+    'bad_timing':           'Bad Timing',
+}
+
 # ── HubSpot API helpers ───────────────────────────────────────────────────────
 def hs_get(path):
     url = f'https://api.hubapi.com{path}'
@@ -160,7 +183,7 @@ def fetch_closed_deals(stage, days_back=1825):
     print(f'  Fetching stage={stage} deals (last {days_back}d, pipeline {PIPELINE_ID})...')
     cutoff = int((datetime.now(timezone.utc) - timedelta(days=days_back)).timestamp() * 1000)
     props = ['dealname','amount','closedate','createdate','hubspot_owner_id',
-             'hs_created_by_user_id','dealstage','deal_source','closed_lost_reason']
+             'hs_created_by_user_id','dealstage','deal_source','deal_source_detail','closed_lost_reason']
     body = {
         'filterGroups': [{'filters': [
             {'propertyName': 'dealstage',  'operator': 'EQ',  'value': stage},
@@ -186,7 +209,8 @@ def build_won(deals):
             safe_str(p.get('hubspot_owner_id')),
             safe_str(p.get('hs_created_by_user_id')),
             deal_source(p),
-            fmt_date(p.get('createdate')),   # [7] createDate — for WoW chart
+            fmt_date(p.get('createdate')),              # [7] createDate — for WoW chart
+            safe_str(p.get('deal_source_detail', '')),  # [8] srcDetail
         ])
     return rows
 
@@ -203,8 +227,9 @@ def build_lost(deals):
             safe_str(p.get('hs_created_by_user_id')),
             safe_str(p.get('dealstage')),
             deal_source(p),
-            fmt_date(p.get('createdate')),   # [8] createDate — for WoW chart
-            safe_str(p.get('closed_lost_reason')),  # [9] closed lost reason
+            fmt_date(p.get('createdate')),              # [8] createDate — for WoW chart
+            safe_str(p.get('closed_lost_reason')),      # [9] closed lost reason
+            safe_str(p.get('deal_source_detail', '')),  # [10] srcDetail
         ])
     return rows
 
@@ -326,13 +351,36 @@ SOURCE_KEY_MAP = {
     'OFFLINE':        'other',
 }
 
+def fetch_contact_deal_assocs(contact_ids):
+    """Batch-fetch deal associations for a list of contact IDs.
+    Returns dict {contact_id_str: [deal_id_str, ...]}
+    """
+    if not contact_ids:
+        return {}
+    result = {}
+    chunk_size = 100
+    for i in range(0, len(contact_ids), chunk_size):
+        chunk = contact_ids[i:i+chunk_size]
+        body = {'inputs': [{'id': str(cid)} for cid in chunk]}
+        try:
+            resp = hs_post('/crm/v4/associations/contacts/deals/batch/read', body)
+            for r in resp.get('results', []):
+                from_id = str(r.get('from', {}).get('id', ''))
+                to_ids  = [str(a.get('toObjectId', '')) for a in r.get('to', [])]
+                if from_id:
+                    result[from_id] = to_ids
+        except Exception as e:
+            print(f'  ⚠ Batch contact-deal assoc: {e}')
+    return result
+
 def fetch_mkt_contacts():
     """Fetch contacts who submitted demo/pricing forms via CRM search (no lists scope needed)."""
     print('  Fetching marketing contacts (form submissions)...')
     try:
         props = ['firstname','lastname','email','company',
                  'hs_analytics_source','hs_analytics_source_data_1','hs_analytics_source_data_2',
-                 'createdate','recent_conversion_event_name','num_associated_deals']
+                 'createdate','recent_conversion_event_name','num_associated_deals',
+                 'hs_lead_status','lifecyclestage']
         # OR across form name patterns — each filterGroup is OR'd, filters within are AND'd
         body = {
             'filterGroups': [
@@ -354,7 +402,7 @@ def fetch_mkt_contacts():
         print(f'  ⚠ Could not fetch mkt contacts: {e}')
         return []
 
-def build_mkt_contacts(raw):
+def build_mkt_contacts(raw, contact_deal_assocs=None, deal_stage_map=None):
     rows = []
     for c in raw:
         p = c.get('properties', {})
@@ -387,19 +435,43 @@ def build_mkt_contacts(raw):
         form_type   = 'Demo Meeting' if any(kw in conversion for kw in ['meeting', 'booking', 'calendly', 'book demo']) else 'Demo Form'
         deal_count  = safe_int(p.get('num_associated_deals', 0))
 
+        # Lead status and lifecycle stage
+        lifecycle_raw  = safe_str(p.get('lifecyclestage', ''))
+        lead_status_raw = safe_str(p.get('hs_lead_status', ''))
+        lead_status    = LEAD_STATUS_MAP.get(lead_status_raw, lead_status_raw.replace('_', ' ').title() if lead_status_raw else '')
+
+        # Best deal stage for this contact (prefer open/won over lost)
+        deal_stage = ''
+        if contact_deal_assocs is not None and deal_stage_map is not None:
+            assoc_deal_ids = contact_deal_assocs.get(c['id'], [])
+            best = ''
+            for did in assoc_deal_ids:
+                ds = deal_stage_map.get(str(did), '')
+                if not ds:
+                    continue
+                if ds not in ('Won', 'Lost'):
+                    best = ds  # prefer active deal stage
+                    break
+                if not best:
+                    best = ds  # fallback to won/lost
+            deal_stage = best
+
         rows.append({
-            'name':          name,
-            'email':         email,
-            'company':       company,
-            'source':        source_label,
-            'source_key':    source_key,
-            'campaign':      src_data1 or '—',
-            'traffic_source':src_data2 or src_data1 or '—',
-            'form':          form_type,
-            'date':          create_date,
-            'last_activity': f'{create_date} · Form submitted',
-            'has_deal':      deal_count > 0,
-            'deal_count':    deal_count,
+            'name':           name,
+            'email':          email,
+            'company':        company,
+            'source':         source_label,
+            'source_key':     source_key,
+            'campaign':       src_data1 or '—',
+            'traffic_source': src_data2 or src_data1 or '—',
+            'form':           form_type,
+            'date':           create_date,
+            'last_activity':  f'{create_date} · Form submitted',
+            'has_deal':       deal_count > 0,
+            'deal_count':     deal_count,
+            'lifecycle_stage':lifecycle_raw,
+            'lead_status':    lead_status,
+            'deal_stage':     deal_stage,
         })
 
     rows.sort(key=lambda r: r['date'], reverse=True)
@@ -414,7 +486,9 @@ def js_mkt_contacts(rows):
             f"source:{js_str(r['source'])},source_key:{js_str(r['source_key'])},"
             f"campaign:{js_str(r['campaign'])},traffic_source:{js_str(r['traffic_source'])},"
             f"form:{js_str(r['form'])},date:{js_str(r['date'])},"
-            f"last_activity:{js_str(r['last_activity'])},has_deal:{has_deal},deal_count:{r['deal_count']}}}"
+            f"last_activity:{js_str(r['last_activity'])},has_deal:{has_deal},deal_count:{r['deal_count']},"
+            f"lifecycle_stage:{js_str(r.get('lifecycle_stage',''))},lead_status:{js_str(r.get('lead_status',''))},"
+            f"deal_stage:{js_str(r.get('deal_stage',''))}}}"
         )
     return '[\n' + ',\n'.join('  ' + p for p in parts) + '\n]'
 
@@ -508,8 +582,19 @@ def main():
     print('=== Octup Dashboard — HubSpot Data Refresh ===')
 
     deals, stage_entered = fetch_open_deals()
-    won   = build_won(fetch_closed_deals('608286678'))   # Closed Won stage ID
-    lost  = build_lost(fetch_closed_deals('608286679'))  # Closed Lost stage ID
+    won_raw  = fetch_closed_deals('608286678')   # Closed Won stage ID
+    lost_raw = fetch_closed_deals('608286679')   # Closed Lost stage ID
+    won  = build_won(won_raw)
+    lost = build_lost(lost_raw)
+
+    # Build deal-stage lookup for contact enrichment
+    deal_stage_map = {}
+    for d in deals:
+        deal_stage_map[str(d[0])] = STAGE_NAMES.get(str(d[3]), str(d[3]))
+    for d in won:
+        deal_stage_map[str(d[0])] = 'Won'
+    for d in lost:
+        deal_stage_map[str(d[0])] = 'Lost'
 
     # Engagements are best-effort — won't fail the sync if missing
     meeting_raw = fetch_engagements('MEETING', days_back=60)
@@ -520,8 +605,10 @@ def main():
     calls    = build_calls(call_raw)
     emails   = build_emails(email_raw)
 
-    mkt_raw      = fetch_mkt_contacts()
-    mkt_contacts = build_mkt_contacts(mkt_raw)
+    mkt_raw           = fetch_mkt_contacts()
+    contact_ids       = [c['id'] for c in mkt_raw]
+    contact_deal_assocs = fetch_contact_deal_assocs(contact_ids)
+    mkt_contacts      = build_mkt_contacts(mkt_raw, contact_deal_assocs, deal_stage_map)
 
     html_path = os.path.abspath(HTML_FILE)
     print(f'\nUpdating {html_path}...')
