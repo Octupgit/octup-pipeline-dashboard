@@ -19665,14 +19665,13 @@ function mktShowPlatformModal(stage, count, src) {
     </div>`);
 }
 
-// Show contacts modal — stage: 'mql' (all) | 'sql' (Demo Meeting only)
+// Show contacts modal — stage: 'prospect' | 'mql' (all) | 'sql' (Demo Meeting only)
 function mktShowContactsModal(stage) {
   const initForm = stage === 'sql' ? 'Demo Meeting' : 'all';
   const mktCh = window._mktCh || 'all';
   const mktSrc = window._mktSrc || 'all';
-  // Pre-select source chip from main view's source filter
   const initSrc = mktSrc !== 'all' ? mktSrc : 'all';
-  window._mktCF = {src:initSrc, form:initForm, deal:'all'}; // contact filter state
+  window._mktCF = {src:initSrc, form:initForm, deal:'all'};
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
   const PAID_KEYS    = ['google','meta','linkedin'];
   const ORGANIC_KEYS = ['organic','direct','email','other'];
@@ -19680,8 +19679,9 @@ function mktShowContactsModal(stage) {
   function buildTable() {
     const f = window._mktCF;
     let contacts = MKT_CONTACTS;
+    // Prospect = form submitters whose company is at Prospect lifecycle stage
+    if (stage === 'prospect') contacts = contacts.filter(c => c.company_lifecycle === 'Prospect');
     if (selectedWeek !== 'alltime') contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
-    // Apply channel filter from main view (paid/organic)
     if (mktCh === 'paid')    contacts = contacts.filter(c => PAID_KEYS.includes(c.source_key));
     if (mktCh === 'organic') contacts = contacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
     if (f.src  !== 'all') contacts = contacts.filter(c => c.source_key === f.src);
@@ -20068,8 +20068,8 @@ function mktRender() {
   // Source filter: 'all' | 'google' | 'linkedin' | 'direct' | 'email' | 'organic' | 'other'
   const mktSrc = window._mktSrc || 'all';
 
-  // Prospect = contacts at prospect lifecycle stage
-  let prospectContacts = LIFECYCLE_CONTACTS.filter(c => c.stage === 'prospect');
+  // Prospect = form submitters (MKT_CONTACTS) whose company lifecycle stage is Prospect
+  let prospectContacts = MKT_CONTACTS.filter(c => c.company_lifecycle === 'Prospect');
   if (selectedWeek !== 'alltime') prospectContacts = prospectContacts.filter(c => dateInRange(c.date, selectedWeek));
   if (mktCh === 'paid')    prospectContacts = prospectContacts.filter(c => PAID_KEYS.includes(c.source_key));
   if (mktCh === 'organic') prospectContacts = prospectContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
@@ -20268,7 +20268,7 @@ function mktRender() {
       countClick = `onclick="mktShowContactsModal('${s.key}')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     } else if (s.key === 'prospect' && val > 0) {
-      countClick = `onclick="lifecycleShowContactsModal('prospect')"`;
+      countClick = `onclick="mktShowContactsModal('prospect')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
 
