@@ -79,6 +79,15 @@ COMPANY_LIFECYCLE_MAP = {
     '5022983403':         'For Review',
 }
 
+# Lifecycle stage IDs → internal stage key for LIFECYCLE_CONTACTS
+LIFECYCLE_STAGE_IDS = {
+    '737555912': 'prospect',
+    '737479612': 'mql',
+    '737555913': 'sql',
+    '737555914': 'opportunity',
+    '737555917': 'active',
+}
+
 # ── HubSpot API helpers ───────────────────────────────────────────────────────
 def hs_get(path):
     url = f'https://api.hubapi.com{path}'
@@ -156,7 +165,7 @@ def fetch_open_deals():
     props = [
         'dealname','amount','dealstage','hubspot_owner_id','createdate',
         'closedate','hs_next_step','hs_created_by_user_id','notes_last_updated',
-        'deal_source','hs_v2_date_entered_current_stage','reengage_date','hs_priority',
+        'deal_source','event_source','hs_v2_date_entered_current_stage','hs_priority',
     ]
     body = {
         'filterGroups': [{'filters': [
@@ -187,7 +196,7 @@ def fetch_open_deals():
             safe_str(p.get('hs_created_by_user_id')),
             fmt_date(p.get('notes_last_updated')),
             deal_source(p),
-            fmt_date(p.get('reengage_date')),   # [11] Reengage Date
+            safe_str(p.get('event_source', '')),                                      # [11] srcDetail (Deal Source Details)
             safe_str(p.get('hs_priority')).upper() if p.get('hs_priority') else '',  # [12] Priority (HIGH/MEDIUM/LOW)
         ])
     print(f'  → {len(rows)} open deals, {len(stage_entered)} stage dates')
@@ -388,6 +397,82 @@ def fetch_contact_deal_assocs(contact_ids):
         except Exception as e:
             print(f'  ⚠ Batch contact-deal assoc: {e}')
     return result
+
+def fetch_all_lifecycle_contacts():
+    """Fetch contacts at all 5 lifecycle stages (Prospect → MQL → SQL → Opportunity → Active)."""
+    print('  Fetching lifecycle contacts (all stages)...')
+    stage_ids = list(LIFECYCLE_STAGE_IDS.keys())
+    props = ['firstname','lastname','email','company',
+             'hs_analytics_source','hs_analytics_source_data_1',
+             'createdate','lifecyclestage','num_associated_deals']
+    body = {
+        'filterGroups': [
+            {'filters': [{'propertyName': 'lifecyclestage', 'operator': 'EQ', 'value': sid}]}
+            for sid in stage_ids
+        ],
+        'properties': props,
+        'sorts': [{'propertyName': 'createdate', 'direction': 'DESCENDING'}],
+        'limit': 100,
+    }
+    contacts = search_all('/crm/v3/objects/contacts/search', body)
+    print(f'  → {len(contacts)} lifecycle contacts')
+    return contacts
+
+def build_lifecycle_contacts(raw):
+    rows = []
+    for c in raw:
+        p = c.get('properties', {})
+        first = safe_str(p.get('firstname', ''))
+        last  = safe_str(p.get('lastname', ''))
+        name  = (f'{first} {last}'.strip()) or safe_str(p.get('email', ''))
+        email = safe_str(p.get('email', ''))
+        company = safe_str(p.get('company', '')) or '—'
+
+        src       = safe_str(p.get('hs_analytics_source', ''))
+        src_data1 = safe_str(p.get('hs_analytics_source_data_1', ''))
+        source_label = SOURCE_MAP.get(src, 'Direct')
+        source_key   = SOURCE_KEY_MAP.get(src, 'direct')
+        if src in ('PAID_SEARCH', 'PAID_SOCIAL'):
+            s1 = src_data1.lower()
+            if 'linkedin' in s1:
+                source_key, source_label = 'linkedin', 'LinkedIn Ads'
+            elif 'facebook' in s1 or 'meta' in s1 or 'instagram' in s1:
+                source_key, source_label = 'meta', 'Meta Ads'
+            else:
+                source_key, source_label = 'google', 'Google Ads'
+
+        lifecycle_raw = safe_str(p.get('lifecyclestage', ''))
+        stage = LIFECYCLE_STAGE_IDS.get(lifecycle_raw, '')
+        stage_label = COMPANY_LIFECYCLE_MAP.get(lifecycle_raw, lifecycle_raw.title() if lifecycle_raw else '')
+        create_date = fmt_date(p.get('createdate', ''))
+        deal_count  = safe_int(p.get('num_associated_deals', 0))
+
+        rows.append({
+            'name':          name,
+            'email':         email,
+            'company':       company,
+            'source':        source_label,
+            'source_key':    source_key,
+            'date':          create_date,
+            'stage':         stage,
+            'stage_label':   stage_label,
+            'has_deal':      deal_count > 0,
+            'deal_count':    deal_count,
+        })
+    rows.sort(key=lambda r: r['date'], reverse=True)
+    return rows
+
+def js_lifecycle_contacts(rows):
+    parts = []
+    for r in rows:
+        has_deal = 'true' if r['has_deal'] else 'false'
+        parts.append(
+            f"{{name:{js_str(r['name'])},email:{js_str(r['email'])},company:{js_str(r['company'])},"
+            f"source:{js_str(r['source'])},source_key:{js_str(r['source_key'])},"
+            f"date:{js_str(r['date'])},stage:{js_str(r['stage'])},stage_label:{js_str(r['stage_label'])},"
+            f"has_deal:{has_deal},deal_count:{r['deal_count']}}}"
+        )
+    return '[\n' + ',\n'.join('  ' + p for p in parts) + '\n]'
 
 def fetch_contact_company_assocs(contact_ids):
     """Batch-fetch primary company ID for each contact."""
@@ -599,7 +684,7 @@ def replace_block(html, var_name, new_value, open_char='[', close_char=']'):
         print(f'  ⚠ WARNING: could not find const {var_name} — skipping')
     return new_html
 
-def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts=None):
+def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts=None, lifecycle_contacts=None):
     now_utc = datetime.now(timezone.utc)
     now_str = now_utc.strftime('%Y-%m-%d %H:%M UTC')
     now_iso = now_utc.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -625,6 +710,8 @@ def update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, 
         html = replace_block(html, 'EMAILS',   js_obj_array(emails))
     if mkt_contacts:
         html = replace_block(html, 'MKT_CONTACTS', js_mkt_contacts(mkt_contacts))
+    if lifecycle_contacts is not None:
+        html = replace_block(html, 'LIFECYCLE_CONTACTS', js_lifecycle_contacts(lifecycle_contacts))
 
     # Update last-synced comment at top of file
     html = re.sub(
@@ -667,6 +754,9 @@ def main():
     calls    = build_calls(call_raw)
     emails   = build_emails(email_raw)
 
+    lifecycle_raw_all     = fetch_all_lifecycle_contacts()
+    lifecycle_contacts    = build_lifecycle_contacts(lifecycle_raw_all)
+
     mkt_raw               = fetch_mkt_contacts()
     contact_ids           = [c['id'] for c in mkt_raw]
     contact_deal_assocs   = fetch_contact_deal_assocs(contact_ids)
@@ -680,14 +770,14 @@ def main():
     with open(html_path, 'r', encoding='utf-8') as f:
         html = f.read()
 
-    html = update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts)
+    html = update_html(html, deals, stage_entered, won, lost, meetings, calls, emails, mkt_contacts, lifecycle_contacts)
 
     with open(html_path, 'w', encoding='utf-8') as f:
         f.write(html)
 
     print(f'\n✅ Done — {len(deals)} open, {len(won)} won, {len(lost)} lost, '
           f'{len(meetings)} meetings, {len(calls)} calls, {len(emails)} emails, '
-          f'{len(mkt_contacts)} mkt contacts')
+          f'{len(mkt_contacts)} mkt contacts, {len(lifecycle_contacts)} lifecycle contacts')
 
 if __name__ == '__main__':
     main()

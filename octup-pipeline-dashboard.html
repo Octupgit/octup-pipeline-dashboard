@@ -12741,7 +12741,7 @@ function generateBrief() {
   // New deal row with source shown below name
   const newDealRow = (d) => {
     const src = d[10] || '';
-    const srcDetail = d[12] || '';
+    const srcDetail = d[11] || '';
     const srcText = srcDetail ? `${src} · ${srcDetail}` : src;
     return `<div class="brief-deal-row">
       <div style="flex:1;min-width:0">
@@ -13009,7 +13009,7 @@ function generateBrief() {
             </div>
             ${newTW.length
               ? newTW.map(d => {
-                  const src = d[10] || ''; const srcD = d[12] || '';
+                  const src = d[10] || ''; const srcD = d[11] || '';
                   return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
                     <div style="width:22px;height:22px;border-radius:50%;background:rgba(249,115,22,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
                       <span style="font-size:9px;font-weight:700;color:#f97316">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
@@ -13032,7 +13032,7 @@ function generateBrief() {
             </div>
             ${newLW.length
               ? newLW.map(d => {
-                  const src = d[10] || ''; const srcD = d[12] || '';
+                  const src = d[10] || ''; const srcD = d[11] || '';
                   return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)">
                     <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;flex-shrink:0">
                       <span style="font-size:9px;font-weight:700;color:var(--muted)">${(OWNERS[d[4]]||{}).name?.split(' ').map(n=>n[0]).join('').slice(0,2)||'?'}</span>
@@ -14727,6 +14727,10 @@ const MKT_AD_SPEND = {
   '2026-04': 6000,
 };
 
+// Lifecycle contacts (Prospect → MQL → SQL → Opportunity → Active) — populated by sync
+const LIFECYCLE_CONTACTS = [
+];
+
 // Update these values with real data as campaigns run.
 // Real HubSpot contacts from view 154243004 (73 total) — 3 form types, filtered/sortable
 const MKT_CONTACTS = [
@@ -15175,10 +15179,11 @@ const MKT_DB = {
 };
 
 const MKT_STAGES = [
-  {key:'mql',  label:'MQL',            sub:'submitted demo or pricing request',  color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
-  {key:'sql',  label:'SQL',            sub:'demo meeting booked with sales',      color:'#60a5fa', bg:'rgba(96,165,250,.18)'},
-  {key:'opp',  label:'Opportunity',    sub:'all deals that entered pipeline (open · won · lost)',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
-  {key:'won',  label:'Account Active', sub:'closed won · active customer',       color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
+  {key:'prospect', label:'Prospect',      sub:'contacts at prospect lifecycle stage',                  color:'#94a3b8', bg:'rgba(148,163,184,.18)'},
+  {key:'mql',      label:'MQL',           sub:'submitted demo or pricing request',                     color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
+  {key:'sql',      label:'SQL',           sub:'demo meeting booked with sales',                        color:'#60a5fa', bg:'rgba(96,165,250,.18)'},
+  {key:'opp',      label:'Opportunity',   sub:'all deals that entered pipeline (open · won · lost)',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
+  {key:'won',      label:'Account Active',sub:'closed won · active customer',                         color:'#4ade80', bg:'rgba(63,185,80,.25)',  arrKey:'won_arr'},
 ];
 
 function mktFmtN(n) { return n >= 1000 ? '$'+(n/1000).toFixed(0)+'K' : '$'+n; }
@@ -15444,6 +15449,128 @@ function mktShowContactsModal(stage) {
   setTimeout(buildTable, 0);
 }
 
+// Show lifecycle contacts modal — stage: 'prospect' | 'mql' | 'sql' | 'opportunity' | 'active'
+function lifecycleShowContactsModal(stage) {
+  const STAGE_LABELS = { prospect:'Prospect', mql:'MQL', sql:'SQL', opportunity:'Opportunity', active:'Account Active' };
+  const STAGE_COLORS = { prospect:'#94a3b8', mql:'#8b82dc', sql:'#60a5fa', opportunity:'#fbbf24', active:'#4ade80' };
+  const stageLabel = STAGE_LABELS[stage] || stage;
+  const stageColor = STAGE_COLORS[stage] || 'var(--muted)';
+
+  const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
+  const mktCh  = window._mktCh  || 'all';
+  const mktSrc = window._mktSrc || 'all';
+  const PAID_KEYS    = ['google','meta','linkedin'];
+  const ORGANIC_KEYS = ['organic','direct','email','other'];
+
+  window._lcCF = { src: 'all' };
+
+  function getContacts() {
+    let contacts = LIFECYCLE_CONTACTS.filter(c => c.stage === stage);
+    if (selectedWeek !== 'alltime') contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
+    if (mktCh === 'paid')    contacts = contacts.filter(c => PAID_KEYS.includes(c.source_key));
+    if (mktCh === 'organic') contacts = contacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
+    if (mktSrc !== 'all')    contacts = contacts.filter(c => c.source_key === mktSrc);
+    if (window._lcCF.src !== 'all') contacts = contacts.filter(c => c.source_key === window._lcCF.src);
+    return contacts;
+  }
+
+  function buildTable() {
+    const contacts = getContacts();
+    const badge = document.getElementById('lc-contact-count');
+    if (badge) badge.textContent = contacts.length;
+    if (!contacts.length) {
+      document.getElementById('lc-contact-tbody').innerHTML =
+        `<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--muted)">No contacts match these filters.</td></tr>`;
+      return;
+    }
+    document.getElementById('lc-contact-tbody').innerHTML = contacts.map(c => {
+      const hsUrl = `https://app-eu1.hubspot.com/contacts/${PORTAL}/objects/0-1/views/all/list?query=${encodeURIComponent(c.email)}`;
+      const dealBadge = c.has_deal
+        ? `<span style="display:inline-block;background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3);border-radius:6px;padding:1px 7px;font-size:10px;font-weight:700">🟢 ${c.deal_count} deal${c.deal_count>1?'s':''}</span>`
+        : '';
+      const sl = (c.stage_label || '').toLowerCase();
+      const lsColor = sl.includes('account') || sl.includes('active') ? '#4ade80'
+        : sl.includes('trial') ? '#2dd4bf'
+        : sl.includes('opportunity') ? '#fbbf24'
+        : sl.includes('sql') ? '#60a5fa'
+        : sl.includes('mql') ? '#8b82dc'
+        : sl.includes('review') ? '#f97316'
+        : sl.includes('unqualified') || sl.includes('lost') || sl.includes('churned') ? '#f87171'
+        : '#94a3b8';
+      const stageBadge = c.stage_label
+        ? `<span style="background:${lsColor}22;color:${lsColor};border:1px solid ${lsColor}44;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.stage_label}</span>`
+        : `<span style="color:var(--muted);font-size:10px">—</span>`;
+      return `<tr>
+        <td>
+          <div style="font-weight:700;font-size:12px">
+            <a href="${hsUrl}" target="_blank" style="color:var(--text);text-decoration:none" onmouseover="this.style.color='#8b82dc'" onmouseout="this.style.color='var(--text)'">${c.name} ↗</a>
+            ${dealBadge}
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px">${c.company !== '—' ? c.company : c.email}</div>
+        </td>
+        <td>${stageBadge}</td>
+        <td>
+          <span style="background:rgba(139,130,220,.15);color:#8b82dc;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;white-space:nowrap">${c.source}</span>
+        </td>
+        <td style="font-size:11px;color:var(--muted);white-space:nowrap">${c.date}</td>
+        <td style="text-align:center">
+          ${c.has_deal
+            ? `<span style="font-size:10px;font-weight:700;color:#4ade80">${c.deal_count}</span>`
+            : `<span style="font-size:10px;color:var(--muted)">—</span>`}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  window._lcSetSrc = function(val, el) {
+    window._lcCF.src = val;
+    document.querySelectorAll('.lc-chip-src').forEach(c => {
+      c.style.background = 'rgba(255,255,255,.06)'; c.style.color = 'var(--muted)'; c.style.borderColor = 'var(--border)';
+    });
+    el.style.background = 'rgba(139,130,220,.25)'; el.style.color = '#8b82dc'; el.style.borderColor = 'rgba(139,130,220,.4)';
+    buildTable();
+  };
+
+  const cs  = 'display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border)';
+  const csa = 'display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;background:rgba(139,130,220,.25);color:#8b82dc;border:1px solid rgba(139,130,220,.4)';
+
+  const allContacts = getContacts();
+  const dealCount   = allContacts.filter(c => c.has_deal).length;
+
+  const summary = `
+    <div class="modal-summary-item"><span class="modal-summary-label">Stage</span><span class="modal-summary-val" style="color:${stageColor}">${stageLabel}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Period</span><span class="modal-summary-val">${periodLbl}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">Contacts</span><span class="modal-summary-val" id="lc-contact-count">${allContacts.length}</span></div>
+    <div class="modal-summary-item"><span class="modal-summary-label">With Deals</span><span class="modal-summary-val" style="color:#4ade80">${dealCount}</span></div>`;
+
+  const filtersHtml = `
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-right:2px">Source</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('all',this)"      style="${csa}">All</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('google',this)"   style="${cs}">Google Ads</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('direct',this)"   style="${cs}">Direct</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('email',this)"    style="${cs}">Email</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('linkedin',this)" style="${cs}">LinkedIn</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('organic',this)"  style="${cs}">Organic</span>
+      <span class="lc-chip-src" onclick="window._lcSetSrc('other',this)"    style="${cs}">Other</span>
+    </div>`;
+
+  const tableHtml = filtersHtml + `
+    <table class="modal-table">
+      <thead><tr>
+        <th onclick="sortModalTable(this)">Contact · Company</th>
+        <th onclick="sortModalTable(this)">Lifecycle Stage</th>
+        <th onclick="sortModalTable(this)">Source</th>
+        <th onclick="sortModalTable(this)">Joined</th>
+        <th onclick="sortModalTable(this)" style="text-align:center">Deals</th>
+      </tr></thead>
+      <tbody id="lc-contact-tbody"></tbody>
+    </table>`;
+
+  openModal('📣 ' + stageLabel + ' Contacts · ' + periodLbl, summary, tableHtml);
+  setTimeout(buildTable, 0);
+}
+
 // Show deals modal for marketing funnel — type: 'opp' | 'won'
 // MUST mirror the exact same filters as mktRender() so modal count === funnel count
 function mktShowDealsModal(type) {
@@ -15514,6 +15641,14 @@ function mktRender() {
   // Source filter: 'all' | 'google' | 'linkedin' | 'direct' | 'email' | 'organic' | 'other'
   const mktSrc = window._mktSrc || 'all';
 
+  // Prospect = contacts at prospect lifecycle stage
+  let prospectContacts = LIFECYCLE_CONTACTS.filter(c => c.stage === 'prospect');
+  if (selectedWeek !== 'alltime') prospectContacts = prospectContacts.filter(c => dateInRange(c.date, selectedWeek));
+  if (mktCh === 'paid')    prospectContacts = prospectContacts.filter(c => PAID_KEYS.includes(c.source_key));
+  if (mktCh === 'organic') prospectContacts = prospectContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
+  if (mktSrc !== 'all')    prospectContacts = prospectContacts.filter(c => c.source_key === mktSrc);
+  const prospectCount = prospectContacts.length;
+
   // MQL = all contacts who submitted a demo/pricing request
   let mktContacts = MKT_CONTACTS;
   if (selectedWeek !== 'alltime') mktContacts = mktContacts.filter(c => dateInRange(c.date, selectedWeek));
@@ -15541,6 +15676,7 @@ function mktRender() {
   const oppCount = mktDeals.length + mktWon.length + mktLost.length;
 
   const d = {
+    prospect: prospectCount,
     mql:     mqlCount,
     sql:     sqlCount,
     opp:     oppCount,
@@ -15551,7 +15687,7 @@ function mktRender() {
     won:     mktWon.length,
     won_arr: wonArr,
   };
-  const max = d.mql || 1;
+  const max = Math.max(d.prospect, d.mql) || 1;
 
   const periodLbl = selectedWeek === 'alltime' ? 'All Time' : (WEEKS[selectedWeek]?.label?.split('(')[0]?.trim() || 'Selected Period');
 
@@ -15632,8 +15768,8 @@ function mktRender() {
 
   const tier1Html = `
     <div class="card-row" style="grid-template-columns:1fr 1fr 1.6fr 1fr 1fr;margin-bottom:16px">
-      ${_c('','','MQL → Active', mktCvr(d.won,d.mql), d.won+' won · '+mktFmtN(d.won_arr), '#8b82dc')}
-      ${_c('','','MQL → Opportunity', mktCvr(d.opp,d.mql), d.opp+' deals · '+mktFmtN(d.opp_arr), '#fbbf24')}
+      ${_c('','','Prospect → Active', mktCvr(d.won,d.prospect||d.mql), d.won+' won · '+mktFmtN(d.won_arr), '#8b82dc')}
+      ${_c('','','Prospect → Opportunity', mktCvr(d.opp,d.prospect||d.mql), d.opp+' deals · '+mktFmtN(d.opp_arr), '#fbbf24')}
       <div class="card" style="padding:16px;border-left:3px solid #fbbf24">
         <div class="card-label">Pipeline · ${genCount} deals · ${mktFmtN(genArr)}</div>
         <div style="display:flex;gap:16px;margin-top:6px">
@@ -15703,6 +15839,9 @@ function mktRender() {
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     } else if ((s.key === 'mql' || s.key === 'sql') && val > 0) {
       countClick = `onclick="mktShowContactsModal('${s.key}')"`;
+      clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
+    } else if (s.key === 'prospect' && val > 0) {
+      countClick = `onclick="lifecycleShowContactsModal('prospect')"`;
       clickable  = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;';
     }
 
