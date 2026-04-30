@@ -13603,327 +13603,291 @@ function runWeeklySnapshot() {
   const btn = document.getElementById('snapshot-run-btn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Building…'; }
 
-  const DAY_MS   = 86400000;
-  const NOW_MS   = TODAY.getTime ? TODAY.getTime() : new Date(TODAY).getTime();
-  const now      = new Date(NOW_MS);
-  const MONTH_START = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).getTime();
+  const DAY_MS  = 86400000;
+  const NOW_MS  = TODAY.getTime ? TODAY.getTime() : new Date(TODAY).getTime();
+  const todayStr = (TODAY.toISOString ? TODAY.toISOString() : new Date(NOW_MS).toISOString()).split('T')[0];
 
-  // Use the dashboard's selectedWeek / WEEKS for date filtering
-  const w        = WEEKS[selectedWeek];
-  const periodStart = selectedWeek === 'alltime' ? 0 : new Date(w.start + 'T00:00:00Z').getTime();
-  const periodEnd   = selectedWeek === 'alltime' ? NOW_MS : new Date(w.end + 'T23:59:59Z').getTime();
-  const periodLabel = selectedWeek === 'alltime' ? 'All Time' : (w.label || selectedWeek);
-  const inPeriod = (dateStr) => {
-    if (!dateStr) return false;
-    const t = new Date(dateStr + (dateStr.length === 10 ? 'T12:00:00Z' : '')).getTime();
-    return t >= periodStart && t <= periodEnd;
-  };
-  // For meetings — also include upcoming scheduled
-  const meetPeriodEnd = selectedWeek === 'alltime' ? NOW_MS + 7 * DAY_MS : periodEnd + 2 * DAY_MS;
-  const inMeetPeriod = (dateStr) => {
-    if (!dateStr) return false;
-    const t = new Date(dateStr + (dateStr.length === 10 ? 'T12:00:00Z' : '')).getTime();
-    return t >= periodStart && t <= meetPeriodEnd;
-  };
-
-  // Rep order per prompt: Jay → Blake → Yotam
-  const REPS = [
-    { id: '29422733', name: 'Jay Mazur' },
-    { id: '29896105', name: 'Blake Read' },
-    { id: '32126513', name: 'Yotam Sina' },
-  ];
-  const REP_IDS = new Set(REPS.map(r => r.id));
-
-  const dateMs = s => s ? new Date((s.length === 10 ? s + 'T12:00:00Z' : s)).getTime() : null;
-  const fmtK   = n => !n ? '$0' : n >= 1000000 ? '$' + (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M' : n >= 1000 ? '$' + Math.round(n / 1000) + 'K' : '$' + n;
-  const short  = n => n.split(' - ')[0].split(' | ')[0].trim();
-  const daysAgo = ms => Math.floor((NOW_MS - ms) / DAY_MS);
-  const STAGE_SHORT = {
-    '2918051007': 'NBM', '2918051008': 'Stalled', '608286675': 'Discovery',
-    '740160705': 'Presentation', '608286676': 'SA', '4988070119': 'Trial', '608286677': 'CR'
-  };
-  const stageLabel = sid => STAGE_SHORT[sid] || (STAGES && STAGES[sid]) || sid || '—';
-
-  // ── Engagement from MEETINGS + EMAILS ──────────────────────────────────────
-  const dealEng = id => {
-    const meets  = MEETINGS.filter(m => m.dealIds && m.dealIds.includes(id));
-    const emails = EMAILS.filter(e => e.dealIds && e.dealIds.includes(id) && !e.isInternal);
-    let lastMs = null;
-    meets.forEach(m  => { const t = dateMs(m.timestamp); if (t && t > (lastMs || 0)) lastMs = t; });
-    emails.forEach(e => { const t = dateMs(e.timestamp); if (t && t > (lastMs || 0)) lastMs = t; });
-    return { daysAgo: lastMs ? daysAgo(lastMs) : null };
-  };
-
-  // ── Period metrics (respect selectedWeek) ──────────────────────────────────
-  const wonWk  = WON_DEALS.filter(d  => inPeriod(d[3]));
-  const lostWk = LOST_DEALS.filter(d => inPeriod(d[3]));
-  const newWk  = DEALS.filter(d      => inPeriod(d[5]));
-  const wonMo  = WON_DEALS.filter(d  => { const m = dateMs(d[3]); return m && m >= MONTH_START && m <= NOW_MS; });
-  const lostMo = LOST_DEALS.filter(d => { const m = dateMs(d[3]); return m && m >= MONTH_START && m <= NOW_MS; });
-  const wonARRWk  = wonWk.reduce((s,  d) => s + (d[2] || 0), 0);
-  const lostARRWk = lostWk.reduce((s, d) => s + (d[2] || 0), 0);
-  const wonARRMo  = wonMo.reduce((s,  d) => s + (d[2] || 0), 0);
-  const lostARRMo = lostMo.reduce((s, d) => s + (d[2] || 0), 0);
-
-  // Overdue open deals
-  const overdue = DEALS.filter(d => {
-    const c = dateMs(d[6]); return c && c < NOW_MS;
-  });
-
-  // ── Annotate all open deals ─────────────────────────────────────────────────
-  const ann = DEALS.map(d => {
-    const closeMs = dateMs(d[6]);
-    const lastMs  = dateMs(d[9]);
-    const eng     = dealEng(d[0]);
-    const daysToClose = closeMs ? Math.round((closeMs - NOW_MS) / DAY_MS) : null;
-    const staleDays   = eng.daysAgo !== null ? eng.daysAgo : (lastMs ? daysAgo(lastMs) : null);
-    return { d, daysToClose, staleDays, eng };
-  });
-
-  // ── Hot / urgent ────────────────────────────────────────────────────────────
-  const urgent = ann.filter(a =>
-    (a.daysToClose !== null && a.daysToClose < 0) ||
-    (a.daysToClose !== null && a.daysToClose <= 14) ||
-    (a.staleDays !== null && a.staleDays > 14 && a.d[2] >= 50000)
-  ).sort((a, b) => {
-    const pa = (a.daysToClose !== null && a.daysToClose < 0) ? 0
-      : (a.daysToClose !== null && a.daysToClose <= 7)  ? 1
-      : (a.daysToClose !== null && a.daysToClose <= 14) ? 2 : 3;
-    const pb = (b.daysToClose !== null && b.daysToClose < 0) ? 0
-      : (b.daysToClose !== null && b.daysToClose <= 7)  ? 1
-      : (b.daysToClose !== null && b.daysToClose <= 14) ? 2 : 3;
-    return pa !== pb ? pa - pb : (b.d[2] || 0) - (a.d[2] || 0);
-  });
-
-  // ── External meetings (selected period) ────────────────────────────────────
-  // External = linked to a deal OR owner is a known rep, skip internal-looking titles
-  const INTERNAL_KEYWORDS = /standup|stand.up|team sync|hiring|interview|internal|workshop|1:1|onboarding|allhands|all.hands/i;
-  const recentMeetings = MEETINGS.filter(m => {
-    if (!inMeetPeriod(m.timestamp)) return false;
-    if (INTERNAL_KEYWORDS.test(m.title || '')) return false;
-    if (m.outcome === 'CANCELLED') return false;
-    return (m.dealIds && m.dealIds.length > 0) || REP_IDS.has(m.ownerId);
-  }).sort((a, b) => (dateMs(b.timestamp) || 0) - (dateMs(a.timestamp) || 0));
+  // Selected period from dashboard week-picker
+  const wk       = WEEKS[selectedWeek];
+  const periodStart = selectedWeek === 'alltime' ? 0 : new Date(wk.start + 'T00:00:00Z').getTime();
+  const periodEnd   = selectedWeek === 'alltime' ? NOW_MS : new Date(wk.end + 'T23:59:59Z').getTime();
+  const periodLabel = wk ? wk.label : selectedWeek;
 
   // ── Helpers ─────────────────────────────────────────────────────────────────
-  const engBadge = a => {
-    if (a.staleDays === null) return `<span style="color:#f85149">⚠️ No tracked contact</span>`;
-    if (a.staleDays > 21) return `<span style="color:#f85149">🥶 Dark ${a.staleDays}d</span>`;
-    if (a.staleDays > 14) return `<span style="color:#f97316">🟡 Quiet ${a.staleDays}d</span>`;
-    if (a.staleDays > 7)  return `<span style="color:#fbbf24">🟡 ${a.staleDays}d ago</span>`;
-    return `<span style="color:#3fb950">✅ Active ${a.staleDays}d ago</span>`;
+  const fmtK    = n => !n ? '$0' : n >= 1000000 ? '$'+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M' : n >= 1000 ? '$'+Math.round(n/1000)+'K' : '$'+n;
+  const oShort  = id => (OWNERS[id]||{}).name?.split(' ')[0] || id;
+  const oFull   = id => (OWNERS[id]||{}).name || id;
+  const short   = n => n.split(' - ')[0].split(' | ')[0].trim();
+  const dateMs  = s => s ? new Date(s.length===10 ? s+'T12:00:00Z' : s).getTime() : null;
+  const daysAgo = ms => Math.floor((NOW_MS - ms) / DAY_MS);
+  const inPeriod = s => {
+    if (!s) return false;
+    const t = dateMs(s);
+    return t >= periodStart && t <= periodEnd;
   };
-  const closeBadge = a => {
-    if (!a.daysToClose && a.daysToClose !== 0) return '';
-    if (a.daysToClose < 0)  return ` <b style="color:#f85149">${Math.abs(a.daysToClose)}d overdue</b>`;
-    if (a.daysToClose === 0) return ` <b style="color:#f85149">Closes TODAY</b>`;
-    if (a.daysToClose <= 7) return ` <b style="color:#f97316">Closes in ${a.daysToClose}d</b>`;
-    return ` <span style="color:var(--muted)">Closes ${a.d[6]}</span>`;
-  };
-  const actionFlag = a => {
-    const ns = a.d[7] || '';
-    if (a.daysToClose !== null && a.daysToClose < 0)
-      return `<span style="color:#f85149">⚡ Overdue — push close date or close-lost today</span>`;
-    if (a.d[3] === '4988070119' && a.staleDays !== null && a.staleDays > 14)
-      return `<span style="color:#f97316">🔬 Trial stalled — get feedback, push to CR or close-lost</span>`;
-    if (a.staleDays !== null && a.staleDays > 14 && a.d[2] >= 50000)
-      return `<span style="color:#f97316">👻 Ghost ${a.d[2] >= 50000 ? '(high-value)' : ''} — re-engage or qualify out</span>`;
-    if (!ns) return `<span style="color:var(--muted)">No next step defined</span>`;
-    return `<span style="color:var(--muted)">${ns.length > 90 ? ns.substring(0, 87) + '…' : ns}</span>`;
+  const fmtDate = s => {
+    if (!s) return '';
+    const d = new Date(s + (s.length===10 ? 'T12:00:00Z' : ''));
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', timeZone:'UTC'});
   };
 
-  const dealCard = (a, borderColor) => `
-    <div style="background:var(--bg);border:1px solid var(--border);border-left:3px solid ${borderColor};border-radius:8px;padding:10px 14px;margin-bottom:7px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:3px">
-        <div style="font-weight:700;font-size:13px">${dealLink(a.d[0], short(a.d[1]))}</div>
-        <div style="font-weight:800;color:var(--accent);white-space:nowrap">${fmtK(a.d[2])}</div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:5px">
-        ${ownerName(a.d[4])} · ${stageLabel(a.d[3])}${closeBadge(a)}
-      </div>
-      <div style="font-size:11px;margin-bottom:4px">${engBadge(a)}</div>
-      <div style="font-size:11px;padding:4px 8px;background:rgba(255,255,255,.04);border-radius:5px;border-left:2px solid ${borderColor}">→ ${actionFlag(a)}</div>
+  // Stage badge styles
+  const STAGE_CFG = {
+    '608286677': { label:'Commercial Review', bg:'rgba(63,185,80,.15)',   color:'#3fb950' },
+    '4988070119':{ label:'Trial',             bg:'rgba(188,140,255,.15)', color:'#bc8cff' },
+    '608286676': { label:'Solution Alignment',bg:'rgba(88,166,255,.15)',  color:'#58a6ff' },
+    '740160705': { label:'Tech Eval',         bg:'rgba(88,166,255,.15)',  color:'#58a6ff' },
+    '608286675': { label:'Discovery',         bg:'rgba(56,189,248,.15)',  color:'#38bdf8' },
+    '2918051007':{ label:'NBM Scheduled',     bg:'rgba(251,191,36,.15)',  color:'#fbbf24' },
+    '2918051008':{ label:'Stalled',           bg:'rgba(148,163,184,.12)','color':'#94a3b8' },
+  };
+  const stageBadge = sid => {
+    const c = STAGE_CFG[sid] || { label: (STAGES&&STAGES[sid])||sid, bg:'rgba(255,255,255,.07)', color:'var(--muted)' };
+    return `<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;background:${c.bg};color:${c.color};white-space:nowrap">${c.label}</span>`;
+  };
+
+  // Rep order: Jay → Blake → Yotam
+  const REPS = [
+    { id:'29422733', name:'Jay Mazur' },
+    { id:'29896105', name:'Blake Read' },
+    { id:'32126513', name:'Yotam Sina' },
+  ];
+  const REP_IDS = new Set(REPS.map(r => r.id));
+  const INTERNAL_RE = /standup|stand.up|team sync|hiring|interview|internal|workshop|1:1|onboarding|allhands|all.hands/i;
+
+  // ── Period deals ─────────────────────────────────────────────────────────────
+  const wonPeriod  = WON_DEALS.filter(d => inPeriod(d[3]));
+  const lostPeriod = LOST_DEALS.filter(d => inPeriod(d[3]));
+  const newPeriod  = DEALS.filter(d => inPeriod(d[5]));
+  const wonARR     = wonPeriod.reduce((s,d)=>s+(d[2]||0),0);
+  const lostARR    = lostPeriod.reduce((s,d)=>s+(d[2]||0),0);
+
+  // ── Client meetings (period + scheduled upcoming) ───────────────────────────
+  const meetEnd = selectedWeek === 'alltime' ? NOW_MS + 7*DAY_MS : periodEnd + 2*DAY_MS;
+  const clientMeetings = MEETINGS.filter(m => {
+    const t = dateMs(m.timestamp);
+    if (!t || t < periodStart || t > meetEnd) return false;
+    if (INTERNAL_RE.test(m.title||'')) return false;
+    if (m.outcome === 'CANCELLED') return false;
+    return (m.dealIds&&m.dealIds.length>0) || REP_IDS.has(m.ownerId);
+  }).sort((a,b) => (dateMs(b.timestamp)||0)-(dateMs(a.timestamp)||0));
+
+  // ── Hot deals: closing today or overdue, in active stage ───────────────────
+  const hotDeals = DEALS.filter(d =>
+    d[6] && d[6] <= todayStr && !['608286678','608286679','2918051008'].includes(d[3])
+  ).sort((a,b) => (a[6]||'').localeCompare(b[6]||''));
+
+  // ── Engagement for deal cards ────────────────────────────────────────────────
+  const dealLastContact = id => {
+    const meets  = MEETINGS.filter(m => m.dealIds&&m.dealIds.includes(id));
+    const emails = EMAILS.filter(e => e.dealIds&&e.dealIds.includes(id)&&!e.isInternal);
+    let last = null;
+    meets.forEach(m  => { const t=dateMs(m.timestamp); if(t&&(!last||t>last)) last=t; });
+    emails.forEach(e => { const t=dateMs(e.timestamp); if(t&&(!last||t>last)) last=t; });
+    return last ? daysAgo(last) : null;
+  };
+
+  // ── KPI subtexts ─────────────────────────────────────────────────────────────
+  const newSub = newPeriod.length
+    ? newPeriod.map(d => `${short(d[1])} · ${fmtK(d[2])} · ${oShort(d[4])}`).join('<br>')
+    : 'No new deals';
+  const wonSub = wonPeriod.length
+    ? wonPeriod.map(d => `${short(d[1])} · ${fmtK(d[2])} · ${oShort(d[4])}`).join('<br>')
+    : 'No wins';
+  const lostSub = lostPeriod.length
+    ? `${fmtK(lostARR)} · ${lostPeriod.map(d=>short(d[1])).join(' + ')}`
+    : 'No losses';
+  const meetSub = clientMeetings.length
+    ? [...new Set(clientMeetings.map(m => {
+        const d = m.dealIds&&m.dealIds[0] ? DEALS.find(x=>x[0]===m.dealIds[0]) : null;
+        return d ? short(d[1]) : (m.title||'').split(/[|<>–—-]/)[0].trim().slice(0,20);
+      }))].slice(0,4).join(', ') + (clientMeetings.length > 4 ? ` +${clientMeetings.length-4}` : '')
+    : 'No client meetings';
+
+  // ── KPI tile builder ─────────────────────────────────────────────────────────
+  const kpiTile = (label, val, sub, valColor='var(--accent)') => `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:0">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">${label}</div>
+      <div style="font-size:26px;font-weight:900;color:${valColor};line-height:1;margin-bottom:5px">${val}</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.5">${sub}</div>
     </div>`;
 
-  // ── HTML builder ────────────────────────────────────────────────────────────
-  const monthLabel = new Date(MONTH_START).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
-  const ts = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  const totalARR = DEALS.reduce((s, d) => s + (d[2] || 0), 0);
+  // ── Deal card for 2-col grid ─────────────────────────────────────────────────
+  const dealCard = d => {
+    const isOverdue   = d[6] && d[6] < todayStr;
+    const closesToday = d[6] === todayStr;
+    const closeMs     = dateMs(d[6]);
+    const daysToClose = closeMs ? Math.round((closeMs - NOW_MS) / DAY_MS) : null;
+    const lastContact = dealLastContact(d[0]);
+    const ns = d[7] || '';
+    const src = d[11] || d[10] || '';
 
-  // ── 1. SUMMARY METRICS ──────────────────────────────────────────────────────
-  const summaryHtml = `
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px">
-      ${[
-        { label: 'Open Pipeline', val: fmtK(totalARR), sub: DEALS.length + ' deals', color: 'var(--accent)' },
-        { label: 'New ' + periodLabel, val: newWk.length, sub: fmtK(newWk.reduce((s,d)=>s+(d[2]||0),0)), color: '#58a6ff' },
-        { label: 'Won ' + periodLabel, val: wonWk.length, sub: fmtK(wonARRWk), color: '#3fb950' },
-        { label: 'Lost ' + periodLabel, val: lostWk.length, sub: fmtK(lostARRWk), color: '#f85149' },
-        { label: 'Overdue Deals', val: overdue.length, sub: fmtK(overdue.reduce((s,d)=>s+(d[2]||0),0)), color: overdue.length ? '#f97316' : 'var(--muted)' },
-      ].map(k => `
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 12px">
-          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">${k.label}</div>
-          <div style="font-size:22px;font-weight:900;color:${k.color};line-height:1">${k.val}</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:3px">${k.sub}</div>
-        </div>`).join('')}
-    </div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:14px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px">
-      <b style="color:var(--text)">${monthLabel} MTD</b> &nbsp;·&nbsp;
-      <span style="color:#3fb950">✅ Won ${wonMo.length} · ${fmtK(wonARRMo)}</span> &nbsp;·&nbsp;
-      <span style="color:#f85149">❌ Lost ${lostMo.length} · ${fmtK(lostARRMo)}</span>
-    </div>`;
+    const borderCol = isOverdue ? '#f85149' : closesToday ? '#f97316' : (lastContact!==null&&lastContact>14) ? 'rgba(255,255,255,.12)' : 'var(--border)';
+    const closeLine = isOverdue
+      ? `<span style="color:#f85149;font-size:10px;font-weight:700">⚠️ ${Math.abs(daysToClose||0)}d overdue · Close date: ${fmtDate(d[6])}</span>`
+      : closesToday
+      ? `<span style="color:#f97316;font-size:10px;font-weight:700">⚡ Closes TODAY · ${fmtDate(d[6])}</span>`
+      : daysToClose !== null && daysToClose <= 14
+      ? `<span style="color:#fbbf24;font-size:10px">Closes in ${daysToClose}d · ${fmtDate(d[6])}</span>`
+      : d[6] ? `<span style="font-size:10px;color:var(--muted)">Close: ${fmtDate(d[6])}</span>` : '';
 
-  // ── 2. HOT / URGENT ─────────────────────────────────────────────────────────
-  const urgentHtml = `
-    <div style="font-size:12px;font-weight:700;color:#f85149;text-transform:uppercase;letter-spacing:.5px;margin:0 0 8px">
-      🔥 Hot &amp; Urgent · ${urgent.length} deals
-    </div>
-    ${urgent.length
-      ? urgent.map(a => {
-          const col = (a.daysToClose !== null && a.daysToClose < 0) ? '#f85149'
-            : (a.daysToClose !== null && a.daysToClose <= 7) ? '#f97316' : '#fbbf24';
-          return dealCard(a, col);
-        }).join('')
-      : '<div style="color:var(--muted);font-size:12px;padding:8px 0">No urgent deals this week 🟢</div>'}`;
+    const contactLine = lastContact === null
+      ? `<span style="color:var(--muted);font-size:10px">⚠️ No tracked contact</span>`
+      : lastContact > 14
+      ? `<span style="color:#f97316;font-size:10px">🟡 ${lastContact}d since last contact</span>`
+      : `<span style="color:#3fb950;font-size:10px">✅ ${lastContact}d ago</span>`;
 
-  // ── 3. REP-BY-REP ───────────────────────────────────────────────────────────
-  const repHtml = REPS.map(rep => {
-    const repDeals = ann.filter(a => a.d[4] === rep.id);
-    const repARR   = repDeals.reduce((s, a) => s + (a.d[2] || 0), 0);
-    // Group by stage priority
-    const STAGE_ORDER = ['608286677','4988070119','608286676','740160705','608286675','2918051007','2918051008'];
-    const sorted = [...repDeals].sort((a, b) => {
-      const pa = STAGE_ORDER.indexOf(a.d[3]); const pb = STAGE_ORDER.indexOf(b.d[3]);
-      return (pa === -1 ? 99 : pa) - (pb === -1 ? 99 : pb);
-    });
-    const stageSummary = {};
-    repDeals.forEach(a => {
-      const sl = stageLabel(a.d[3]);
-      if (!stageSummary[sl]) stageSummary[sl] = 0;
-      stageSummary[sl]++;
-    });
     return `
-      <div style="margin-bottom:18px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:800;color:var(--text)">${rep.name}</div>
-          <div style="font-size:11px;color:var(--muted)">${repDeals.length} deals · ${fmtK(repARR)}</div>
-          <div style="font-size:10px;color:var(--muted);margin-left:auto">${Object.entries(stageSummary).map(([k,v]) => `${k}: ${v}`).join(' · ')}</div>
+      <div style="background:var(--bg);border:1px solid ${borderCol};border-radius:9px;padding:11px 13px;display:flex;flex-direction:column;gap:5px;min-width:0">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;min-width:0">
+          <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank"
+            style="font-size:13px;font-weight:700;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px"
+            onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${short(d[1])} ↗</a>
+          ${stageBadge(d[3])}
         </div>
-        ${sorted.length
-          ? sorted.map(a => {
-              const col = (a.staleDays !== null && a.staleDays > 14) ? '#f97316'
-                : (a.daysToClose !== null && a.daysToClose <= 14) ? '#fbbf24' : 'var(--border)';
-              return dealCard(a, col);
-            }).join('')
-          : '<div style="color:var(--muted);font-size:12px;padding:6px 0">No open deals</div>'}
+        <div style="font-size:18px;font-weight:900;color:var(--accent);line-height:1">${fmtK(d[2])}</div>
+        ${closeLine ? `<div>${closeLine}</div>` : ''}
+        <div>${contactLine}</div>
+        ${ns ? `<div style="font-size:11px;color:var(--text);line-height:1.45"><b style="color:var(--muted)">Next:</b> ${ns.length>110?ns.slice(0,107)+'…':ns}</div>` : '<div style="font-size:11px;color:var(--muted)">No next step</div>'}
+        ${src ? `<div style="font-size:10px;color:var(--muted)">📍 ${src}</div>` : ''}
+      </div>`;
+  };
+
+  // ── CLOSED THIS WEEK section ─────────────────────────────────────────────────
+  const closedRows = [
+    ...wonPeriod.map(d => `
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank"
+          style="flex:1;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+          onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${short(d[1])} ↗</a>
+        <span style="font-size:11px;font-weight:700;color:#3fb950;white-space:nowrap">${fmtK(d[2])}</span>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">${oShort(d[4])}</span>
+        <span style="font-size:10px;background:rgba(63,185,80,.15);color:#3fb950;padding:2px 8px;border-radius:8px;font-weight:600;white-space:nowrap">✅ Closed Won · ${fmtDate(d[3])}</span>
+      </div>`),
+    ...lostPeriod.map(d => `
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank"
+          style="flex:1;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+          onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--text)'">${short(d[1])} ↗</a>
+        <span style="font-size:11px;font-weight:700;color:#f85149;white-space:nowrap">${fmtK(d[2])}</span>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">${oShort(d[4])}</span>
+        <span style="font-size:10px;background:rgba(248,81,73,.15);color:#f85149;padding:2px 8px;border-radius:8px;font-weight:600;white-space:nowrap">❌ Closed Lost · ${fmtDate(d[3])}</span>
+      </div>`)
+  ];
+
+  // ── Rep sections ─────────────────────────────────────────────────────────────
+  const repSections = REPS.map(rep => {
+    const repDeals = DEALS.filter(d => d[4] === rep.id && !['2918051008'].includes(d[3]))
+      .sort((a,b) => {
+        const ORDER = {'608286677':0,'4988070119':1,'608286676':2,'740160705':3,'608286675':4,'2918051007':5};
+        return (ORDER[a[3]]??9) - (ORDER[b[3]]??9);
+      });
+    if (!repDeals.length) return '';
+    const repARR = repDeals.reduce((s,d)=>s+(d[2]||0),0);
+    // Stalled deals separate
+    const stalledDeals = DEALS.filter(d => d[4]===rep.id && d[3]==='2918051008');
+    return `
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid rgba(255,255,255,.08)">
+          <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text)">${rep.name} — Active Deals</div>
+          <div style="font-size:11px;color:var(--muted)">${repDeals.length} deals · ${fmtK(repARR)}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${repDeals.map(d => dealCard(d)).join('')}
+        </div>
+        ${stalledDeals.length ? `
+        <div style="margin-top:10px">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Stalled / Delayed — ${stalledDeals.length}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${stalledDeals.map(d => `
+              <a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${d[0]}" target="_blank"
+                style="font-size:11px;background:rgba(148,163,184,.12);color:#94a3b8;padding:3px 10px;border-radius:8px;text-decoration:none"
+                onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='#94a3b8'">${short(d[1])} · ${fmtK(d[2])}</a>`).join('')}
+          </div>
+        </div>` : ''}
       </div>`;
   }).join('');
 
-  // ── 4. RECENT MEETINGS ──────────────────────────────────────────────────────
-  const meetHtml = recentMeetings.length
-    ? recentMeetings.map(m => {
-        const dealId = m.dealIds && m.dealIds[0];
-        const deal   = dealId ? DEALS.find(d => d[0] === dealId) : null;
-        const outcome = m.outcome === 'COMPLETED' ? '✅ Done'
-          : m.outcome === 'SCHEDULED' ? '📅 Sched' : m.outcome || '—';
-        const outcomeColor = m.outcome === 'COMPLETED' ? '#3fb950' : m.outcome === 'SCHEDULED' ? '#58a6ff' : 'var(--muted)';
-        return `
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-            <div style="min-width:64px;font-size:11px;color:var(--muted);padding-top:1px">${m.timestamp || '—'}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.title || 'Meeting'}</div>
-              ${deal ? `<div style="font-size:11px;color:var(--muted)">${ownerName(m.ownerId)} · ${dealLink(deal[0], short(deal[1]))}</div>` : `<div style="font-size:11px;color:var(--muted)">${ownerName(m.ownerId)}</div>`}
-            </div>
-            <div style="font-size:11px;font-weight:600;color:${outcomeColor};white-space:nowrap">${outcome}</div>
-          </div>`;
-      }).join('')
-    : '<div style="color:var(--muted);font-size:12px;padding:8px 0">No external meetings in the last 7 days</div>';
+  // ── Client meetings section ──────────────────────────────────────────────────
+  const meetRows = clientMeetings.map(m => {
+    const dealId = m.dealIds && m.dealIds[0];
+    const deal   = dealId ? DEALS.find(x=>x[0]===dealId)||WON_DEALS.find(x=>x[0]===dealId)||null : null;
+    const repNames = [m.ownerId].filter(Boolean).map(id => oShort(id)).join(', ');
+    const outcome = m.outcome === 'COMPLETED' ? '✅' : m.outcome === 'SCHEDULED' ? '📅' : m.outcome === 'RESCHEDULED' ? '🔄' : '·';
+    const outcomeColor = m.outcome === 'COMPLETED' ? '#3fb950' : m.outcome === 'SCHEDULED' ? '#58a6ff' : 'var(--muted)';
+    const titleClean = (m.title||'Meeting').replace(/^(Octup\s*[x|<>]\s*|Octup\s+)/i,'').replace(/\s*-\s*Octup/i,'').trim();
+    const dealLink2 = deal ? `<a href="https://app-eu1.hubspot.com/contacts/${PORTAL}/record/0-3/${dealId}" target="_blank" style="font-size:10px;color:var(--muted);text-decoration:none;margin-left:4px" onmouseover="this.style.color='#58a6ff'" onmouseout="this.style.color='var(--muted)'">↗ ${short(deal[1])}</a>` : '';
+    return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="min-width:56px;font-size:11px;color:var(--muted);padding-top:1px;flex-shrink:0">${fmtDate(m.timestamp)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;color:var(--text)">${titleClean}${dealLink2}</div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:${outcomeColor};flex-shrink:0">${outcome} ${repNames}</div>
+      </div>`;
+  });
 
-  // ── 5. ACTION ITEMS ─────────────────────────────────────────────────────────
-  const actions = [];
-  // Overdue
-  overdue.forEach(d => actions.push({ pri: 0, color: '#f85149', icon: '🔴', text: `<b>${short(d[1])}</b> — overdue ${Math.abs(Math.round((dateMs(d[6]) - NOW_MS) / DAY_MS))}d · ${fmtK(d[2])} · ${ownerName(d[4])} → push close date or close-lost` }));
-  // Trial blockers
-  ann.filter(a => a.d[3] === '4988070119').forEach(a =>
-    actions.push({ pri: 1, color: '#bc8cff', icon: '🔬', text: `<b>${short(a.d[1])}</b> — Trial in progress · ${fmtK(a.d[2])} · ${ownerName(a.d[4])} → confirm invoice readiness, push to CR` })
-  );
-  // Ghosts > $50K
-  ann.filter(a => a.staleDays !== null && a.staleDays > 14 && a.d[2] >= 50000 && !overdue.find(d => d[0] === a.d[0])).forEach(a =>
-    actions.push({ pri: 2, color: '#f97316', icon: '👻', text: `<b>${short(a.d[1])}</b> — No contact ${a.staleDays}d · ${fmtK(a.d[2])} · ${ownerName(a.d[4])} → re-engage or qualify out` })
-  );
-  // Stage mismatches: next step says stalled but stage isn't
-  ann.filter(a => a.d[3] !== '2918051008' && a.d[7] && /stall|no response|unresponsive|ghost|no reply|no engagement/i.test(a.d[7])).forEach(a =>
-    actions.push({ pri: 3, color: '#fbbf24', icon: '⚠️', text: `<b>${short(a.d[1])}</b> — Stage mismatch: shows ${stageLabel(a.d[3])} but next step signals stalled · ${ownerName(a.d[4])} → move to Stalled or re-engage` })
-  );
-  // Dedup
-  const seen = new Set();
-  const uniqueActions = actions.filter(a => {
-    const key = a.text.substring(0, 40);
-    if (seen.has(key)) return false; seen.add(key); return true;
-  }).sort((a, b) => a.pri - b.pri).slice(0, 10);
+  // ── Hot deal alert box ────────────────────────────────────────────────────────
+  const hotHtml = hotDeals.length ? hotDeals.map(d => {
+    const isToday = d[6] === todayStr;
+    const ns = d[7] || '';
+    return `
+      <div style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:12px 16px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <span style="font-size:13px">🔥</span>
+          <b style="font-size:13px;color:var(--text)">${short(d[1])}</b>
+          <span style="font-size:11px;color:#fbbf24;font-weight:600">${isToday?'— closes today ('+fmtDate(d[6])+')':d[6]<todayStr?'— overdue '+fmtDate(d[6]):'— closing soon'}</span>
+          <span style="margin-left:auto;font-size:13px;font-weight:900;color:var(--accent)">${fmtK(d[2])}</span>
+          ${stageBadge(d[3])}
+        </div>
+        ${ns ? `<div style="font-size:11px;color:var(--muted);line-height:1.5;padding-left:21px">${ns.slice(0,180)}${ns.length>180?'…':''}</div>` : ''}
+      </div>`;
+  }).join('') : '';
 
-  const actionHtml = uniqueActions.length
-    ? uniqueActions.map(a => `
-        <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span style="font-size:14px">${a.icon}</span>
-          <div style="font-size:12px;color:var(--text);line-height:1.5;border-left:2px solid ${a.color};padding-left:8px">${a.text}</div>
-        </div>`).join('')
-    : '<div style="color:var(--muted);font-size:12px;padding:8px 0">No critical action items 🟢</div>';
-
-  // ── Compose full output ──────────────────────────────────────────────────────
-  const section = (title, content) => `
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;color:var(--text)">${title}</div>
-      ${content}
-    </div>`;
-
-  const html = `
-    <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Generated ${ts} · <b style="color:var(--text)">${periodLabel}</b> · ${DEALS.length} open deals · ${fmtK(totalARR)} pipeline</div>
-    ${summaryHtml}
-    ${section('🔥 Hot &amp; Urgent Deals', urgentHtml)}
-    ${section('👥 Rep-by-Rep Breakdown', repHtml)}
-    ${section('📅 External Meetings (' + periodLabel + ')', meetHtml)}
-    ${section('✅ Action Items', actionHtml)}`;
-
-  // ── Plain-text copy version ──────────────────────────────────────────────────
-  const SEP  = '─'.repeat(55);
-  const stripHtml = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').trim();
-  const plainText =
-`📸 WEEKLY SNAPSHOT  ·  ${ts}  ·  ${periodLabel}
-${SEP}
-
-SUMMARY
-Open Pipeline: ${fmtK(totalARR)} · ${DEALS.length} deals
-New ${periodLabel}: ${newWk.length} deals · ${fmtK(newWk.reduce((s,d)=>s+(d[2]||0),0))}
-Won ${periodLabel}: ${wonWk.length} deals · ${fmtK(wonARRWk)}
-Lost ${periodLabel}: ${lostWk.length} deals · ${fmtK(lostARRWk)}
-Overdue: ${overdue.length} deals · ${fmtK(overdue.reduce((s,d)=>s+(d[2]||0),0))}
-${monthLabel} MTD: Won ${wonMo.length} · ${fmtK(wonARRMo)}  Lost ${lostMo.length} · ${fmtK(lostARRMo)}
-
-HOT & URGENT (${urgent.length} deals)
-${urgent.map(a => `  • ${short(a.d[1])} (${fmtK(a.d[2])}) · ${ownerName(a.d[4])} · ${stageLabel(a.d[3])}${a.daysToClose !== null && a.daysToClose < 0 ? ' · ' + Math.abs(a.daysToClose) + 'd overdue' : a.daysToClose !== null ? ' · closes in ' + a.daysToClose + 'd' : ''}`).join('\n') || '  None'}
-
-REP-BY-REP
-${REPS.map(rep => {
-  const rd = ann.filter(a => a.d[4] === rep.id);
-  return `${rep.name.toUpperCase()} — ${rd.length} deals · ${fmtK(rd.reduce((s,a)=>s+(a.d[2]||0),0))}\n` +
-    rd.map(a => `  • ${short(a.d[1])} (${fmtK(a.d[2])}) · ${stageLabel(a.d[3])}${a.staleDays !== null ? ' · ' + a.staleDays + 'd ago' : ''}\n    Next: ${(a.d[7]||'—').substring(0,80)}`).join('\n');
-}).join('\n\n')}
-
-RECENT MEETINGS (${periodLabel})
-${recentMeetings.map(m => `  • ${m.timestamp} — ${m.title || 'Meeting'} · ${ownerName(m.ownerId)} · ${m.outcome || '—'}`).join('\n') || '  None'}
-
-ACTION ITEMS
-${uniqueActions.map(a => `  ${a.icon} ${stripHtml(a.text)}`).join('\n') || '  None'}
-${SEP}`;
+  // ── Compose ─────────────────────────────────────────────────────────────────
+  const pipelineWeekRange = wk ? (wk.start && wk.end ? `Week of ${fmtDate(wk.start)}–${fmtDate(wk.end)}, ${new Date(wk.end+'T12:00:00Z').getUTCFullYear()}` : periodLabel) : periodLabel;
 
   const outEl = document.getElementById('snapshot-output');
-  outEl._copyText = plainText;
-  outEl.innerHTML = html;
-  outEl.classList.add('visible');
+  outEl.innerHTML = `
+    <!-- Header -->
+    <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px 16px;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:3px">Synthesized deal data, filtered stalled accounts, constructed exportable briefing prompt ›</div>
+      <div style="font-size:12px;font-weight:700;color:var(--text)">${pipelineWeekRange} · 3PL New Business · Pipeline ID 394300639</div>
+    </div>
 
+    <!-- 4 KPI tiles -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      ${kpiTile('New deals in', newPeriod.length, newSub, '#f97316')}
+      ${kpiTile('Closed won', wonPeriod.length, wonSub, '#3fb950')}
+      ${kpiTile('Closed lost', lostPeriod.length, lostSub, lostPeriod.length?'#f85149':'var(--muted)')}
+      ${kpiTile('Client meetings', clientMeetings.length, meetSub, '#58a6ff')}
+    </div>
+
+    <!-- Hot deal alerts -->
+    ${hotHtml}
+
+    <!-- CLOSED THIS WEEK -->
+    ${(wonPeriod.length || lostPeriod.length) ? `
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">Closed ${periodLabel}</div>
+      ${closedRows.join('') || '<div style="color:var(--muted);font-size:12px;padding:6px 0">No closed deals in this period</div>'}
+    </div>` : ''}
+
+    <!-- Rep-by-rep sections -->
+    ${repSections}
+
+    <!-- CLIENT MEETINGS -->
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">Client Meetings — ${periodLabel}</div>
+      ${meetRows.length ? meetRows.join('') : '<div style="color:var(--muted);font-size:12px;padding:6px 0">No external meetings in this period</div>'}
+    </div>
+  `;
+
+  outEl.classList.add('visible');
   document.getElementById('snapshot-placeholder').style.display = 'none';
   document.getElementById('snapshot-copy-btn').style.display = '';
-  document.getElementById('snapshot-ts').textContent = ts;
+  const ts2 = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  document.getElementById('snapshot-ts').textContent = 'Generated ' + ts2;
 
   if (btn) {
     btn.disabled = false;
