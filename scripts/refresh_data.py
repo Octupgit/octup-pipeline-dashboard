@@ -523,15 +523,13 @@ def fetch_mkt_contacts():
                  'hs_analytics_source','hs_analytics_source_data_1','hs_analytics_source_data_2',
                  'createdate','recent_conversion_event_name','num_associated_deals',
                  'hs_lead_status','lifecyclestage']
-        # OR across form name patterns — each filterGroup is OR'd, filters within are AND'd
+        # Match exact HubSpot saved list forms: "Get Demo Landing Page Form", "Pricing Request Form"
         body = {
             'filterGroups': [
                 {'filters': [{'propertyName': 'recent_conversion_event_name',
-                              'operator': 'CONTAINS_TOKEN', 'value': 'Demo'}]},
+                              'operator': 'EQ', 'value': 'Get Demo Landing Page Form'}]},
                 {'filters': [{'propertyName': 'recent_conversion_event_name',
-                              'operator': 'CONTAINS_TOKEN', 'value': 'Pricing'}]},
-                {'filters': [{'propertyName': 'recent_conversion_event_name',
-                              'operator': 'CONTAINS_TOKEN', 'value': 'demo'}]},
+                              'operator': 'EQ', 'value': 'Pricing Request Form'}]},
             ],
             'properties': props,
             'sorts': [{'propertyName': 'createdate', 'direction': 'DESCENDING'}],
