@@ -19620,7 +19620,7 @@ const MKT_DB = {
 };
 
 const MKT_STAGES = [
-  {key:'prospect', label:'Prospect',      sub:'contacts at prospect lifecycle stage',                  color:'#94a3b8', bg:'rgba(148,163,184,.18)'},
+  {key:'prospect', label:'Prospect',      sub:'all contacts created from web forms',                   color:'#94a3b8', bg:'rgba(148,163,184,.18)'},
   {key:'mql',      label:'MQL',           sub:'submitted demo or pricing request',                     color:'#8b82dc', bg:'rgba(139,130,220,.18)'},
   {key:'sql',      label:'SQL',           sub:'demo meeting booked with sales',                        color:'#60a5fa', bg:'rgba(96,165,250,.18)'},
   {key:'opp',      label:'Opportunity',   sub:'all deals that entered pipeline (open · won · lost)',   color:'#fbbf24', bg:'rgba(251,191,36,.18)', arrKey:'opp_arr'},
@@ -19693,8 +19693,7 @@ function mktShowContactsModal(stage) {
   function buildTable() {
     const f = window._mktCF;
     let contacts = MKT_CONTACTS;
-    // Prospect = form submitters whose company is at Prospect lifecycle stage
-    if (stage === 'prospect') contacts = contacts.filter(c => c.company_lifecycle === 'Prospect');
+    // Prospect = ALL form submitters (no lifecycle filter)
     if (selectedWeek !== 'alltime') contacts = contacts.filter(c => dateInRange(c.date, selectedWeek));
     if (mktCh === 'paid')    contacts = contacts.filter(c => PAID_KEYS.includes(c.source_key));
     if (mktCh === 'organic') contacts = contacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
@@ -20082,8 +20081,8 @@ function mktRender() {
   // Source filter: 'all' | 'google' | 'linkedin' | 'direct' | 'email' | 'organic' | 'other'
   const mktSrc = window._mktSrc || 'all';
 
-  // Prospect = form submitters (MKT_CONTACTS) whose company lifecycle stage is Prospect
-  let prospectContacts = MKT_CONTACTS.filter(c => c.company_lifecycle === 'Prospect');
+  // Prospect = ALL form submitters (MKT_CONTACTS), regardless of current lifecycle stage
+  let prospectContacts = MKT_CONTACTS.slice();
   if (selectedWeek !== 'alltime') prospectContacts = prospectContacts.filter(c => dateInRange(c.date, selectedWeek));
   if (mktCh === 'paid')    prospectContacts = prospectContacts.filter(c => PAID_KEYS.includes(c.source_key));
   if (mktCh === 'organic') prospectContacts = prospectContacts.filter(c => ORGANIC_KEYS.includes(c.source_key));
