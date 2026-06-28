@@ -6,7 +6,7 @@ Fetches live data from HubSpot and updates the baked-in JS arrays in the HTML fi
 Usage: HS_PAT=<token> python3 scripts/refresh_data.py
 """
 
-import os, json, re, sys, urllib.request, urllib.error
+import os, json, re, sys, time, urllib.request, urllib.error
 from datetime import datetime, timezone, timedelta
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -89,14 +89,44 @@ LIFECYCLE_STAGE_IDS = {
 }
 
 # ── HubSpot API helpers ───────────────────────────────────────────────────────
+# HubSpot search API allows 4 req/sec on standard tier. We throttle pagination
+# loops to stay under that, and back off on any 429 the server sends anyway.
+PAGINATE_SLEEP = 0.25   # seconds between paginated requests
+MAX_RETRIES    = 5
+BASE_BACKOFF   = 1.0    # seconds; doubles each retry, capped at 30s
+
+def _hs_request(req):
+    """Execute an HTTP request with retry on 429 and 5xx.
+    Honors HubSpot's Retry-After header when present."""
+    for attempt in range(MAX_RETRIES):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            transient = e.code == 429 or 500 <= e.code < 600
+            if not transient or attempt == MAX_RETRIES - 1:
+                raise
+            retry_after = e.headers.get('Retry-After') if e.headers else None
+            try:
+                wait = float(retry_after) if retry_after else min(BASE_BACKOFF * (2 ** attempt), 30.0)
+            except ValueError:
+                wait = min(BASE_BACKOFF * (2 ** attempt), 30.0)
+            print(f'  ⚠ HubSpot {e.code} on {req.full_url[:80]}... retry {attempt + 1}/{MAX_RETRIES} in {wait:.1f}s')
+            time.sleep(wait)
+        except urllib.error.URLError as e:
+            if attempt == MAX_RETRIES - 1:
+                raise
+            wait = min(BASE_BACKOFF * (2 ** attempt), 30.0)
+            print(f'  ⚠ HubSpot network error ({e}). retry {attempt + 1}/{MAX_RETRIES} in {wait:.1f}s')
+            time.sleep(wait)
+
 def hs_get(path):
     url = f'https://api.hubapi.com{path}'
     req = urllib.request.Request(url, headers={
         'Authorization': f'Bearer {HS_PAT}',
         'Content-Type': 'application/json',
     })
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    return _hs_request(req)
 
 def hs_post(path, body):
     url = f'https://api.hubapi.com{path}'
@@ -105,16 +135,18 @@ def hs_post(path, body):
         'Authorization': f'Bearer {HS_PAT}',
         'Content-Type': 'application/json',
     }, method='POST')
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read())
+    return _hs_request(req)
 
 def search_all(path, body, key='results'):
     """Paginate through all results from a search endpoint."""
-    all_items, after = [], None
+    all_items, after, first = [], None, True
     while True:
         if after:
             body['after'] = after
+        if not first:
+            time.sleep(PAGINATE_SLEEP)
         resp = hs_post(path, body)
+        first = False
         all_items.extend(resp.get(key, []))
         after = resp.get('paging', {}).get('next', {}).get('after')
         if not after:
@@ -123,10 +155,13 @@ def search_all(path, body, key='results'):
 
 def get_all(path, key='results'):
     """Paginate through all results from a GET endpoint."""
-    all_items, after = [], None
+    all_items, after, first = [], None, True
     while True:
         url = path + (f'&after={after}' if after else '')
+        if not first:
+            time.sleep(PAGINATE_SLEEP)
         resp = hs_get(url)
+        first = False
         all_items.extend(resp.get(key, []))
         after = resp.get('paging', {}).get('next', {}).get('after')
         if not after:
