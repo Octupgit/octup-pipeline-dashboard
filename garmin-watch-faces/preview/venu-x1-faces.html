@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}</style>
+</head><body>
+<title>Venu X1 Face Set</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@500;600;700&display=swap">
+<style>
+  /* Layout: a spec sheet. One stacked row per face - panel left, notes right -
+     under a shared control strip. The watch panel is always true black because
+     the device is; only the page around it follows the viewer's theme. */
+  :root {
+    --bg: #eceff3;
+    --surface: #ffffff;
+    --surface-2: #f5f7f9;
+    --fg: #141a20;
+    --muted: #5a6672;
+    --line: #d5dce3;
+    --accent: #0a6480;
+    --accent-fg: #ffffff;
+    --shadow: 0 1px 2px rgba(20, 26, 32, .06), 0 8px 24px rgba(20, 26, 32, .06);
+
+    --ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1014;
+      --surface: #141a20;
+      --surface-2: #1a2128;
+      --fg: #e6ebf0;
+      --muted: #8d99a5;
+      --line: #232c35;
+      --accent: #5ac8fa;
+      --accent-fg: #06202b;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 8px 24px rgba(0, 0, 0, .4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1014;
+    --surface: #141a20;
+    --surface-2: #1a2128;
+    --fg: #e6ebf0;
+    --muted: #8d99a5;
+    --line: #232c35;
+    --accent: #5ac8fa;
+    --accent-fg: #06202b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 8px 24px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--ui); line-height: 1.55; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; }
+
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 600; letter-spacing: -.02em; margin: 0 0 10px; text-wrap: balance; }
+  h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 600; letter-spacing: -.01em; margin: 0 0 2px; }
+  p { margin: 0 0 14px; }
+  .lede { font-size: 17px; color: var(--muted); max-width: 62ch; }
+
+  .spec { font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+          display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 22px 0 0;
+          padding-block: 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .spec b { font-weight: 500; color: var(--fg); }
+
+  /* control strip */
+  .controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+              background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+              box-shadow: var(--shadow); padding: 14px 16px; margin: 26px 0 40px;
+              display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; }
+  .ctl { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .ctl > span { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { font: inherit; font-size: 13px; padding: 7px 13px; border-radius: 999px; cursor: pointer;
+                background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .seg button:focus-visible, .toggle input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .toggle { display: flex; align-items: center; gap: 9px; font-size: 14px; cursor: pointer; }
+  .state-note { font-family: var(--mono); font-size: 12px; color: var(--muted); flex: 1 1 100%; min-width: 0; }
+
+  /* face rows */
+  .face { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: start;
+          padding-block: 34px; border-top: 1px solid var(--line); }
+  .face:first-of-type { border-top: 0; padding-top: 0; }
+  @media (min-width: 880px) { .face { grid-template-columns: 392px 1fr; gap: 48px; } }
+
+  /* the watch itself: thin titanium rim, true-black panel */
+  .device { width: 100%; max-width: 392px; margin-inline: auto; }
+  .bezel { background: linear-gradient(160deg, #4a5056, #22262a 45%, #3b4146);
+           padding: 9px; border-radius: 46px; box-shadow: var(--shadow); }
+  .panel { background: #000; border-radius: 38px; overflow: hidden; display: block; }
+  canvas { display: block; width: 100%; height: auto; aspect-ratio: 448 / 486; max-width: 100%; }
+  .caption { font-family: var(--mono); font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 12px; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase;
+             color: var(--accent); margin: 0 0 8px; }
+  .notes p { max-width: 58ch; }
+  .notes .why { color: var(--muted); }
+
+  .legend { list-style: none; margin: 18px 0 0; padding: 0; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 9px 20px; }
+  .legend li { display: flex; align-items: baseline; gap: 9px; font-size: 13.5px; min-width: 0; }
+  .legend i { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; transform: translateY(-1px); }
+  .legend span { color: var(--muted); }
+
+  .file { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 18px;
+          padding-top: 14px; border-top: 1px dashed var(--line); }
+
+  .footnote { margin-top: 48px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line);
+              border-radius: 14px; }
+  .footnote h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
+  .footnote p { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+  .footnote p:last-child { margin-bottom: 0; }
+  code { font-family: var(--mono); font-size: .92em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <h1>Venu X1 Face Set</h1>
+  <p class="lede">Four watch faces, one per layout style, drawn at the Venu X1's real panel size from the
+    same coordinates as the Monkey&nbsp;C source. Switch the day state to see how each face behaves when
+    goals are met, when they are not, and when the sensors have nothing to give.</p>
+
+  <div class="spec">
+    <span><b>448 &times; 486</b> px panel</span>
+    <span><b>2.0 in</b> AMOLED</span>
+    <span><b>venux1</b> build target</span>
+    <span><b>~81 KB</b> watch-face memory budget</span>
+    <span>always-on: <b>off</b></span>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <span>Day state</span>
+      <div class="seg" id="states" role="group" aria-label="Day state"></div>
+    </div>
+    <div class="ctl">
+      <span>Options</span>
+      <div class="seg">
+        <label class="toggle"><input type="checkbox" id="live" checked> Live clock</label>
+        <label class="toggle"><input type="checkbox" id="h24" checked> 24-hour</label>
+      </div>
+    </div>
+    <p class="state-note" id="state-note"></p>
+  </div>
+
+  <section class="face">
+    <div class="device">
+      <div class="bezel"><div class="panel"><canvas id="c-vanguard" aria-label="Vanguard face preview"></canvas></div></div>
+      <p class="caption">01 &nbsp;Vanguard</p>
+    </div>
+    <div class="notes">
+      <p class="eyebrow">Minimal typographic</p>
+      <h2>Vanguard</h2>
+      <p>Hours stacked over minutes at the largest size the device has a font for &mdash; roughly three times
+        the digit height of a stock digital face. The minutes take the blue accent so the time reads as two
+        numbers rather than one four-digit block.</p>
+      <p class="why">Pick this one if you mostly want to know the time and resent the clutter. Everything else
+        is a single row along the bottom, with one hairline under it for the step goal.</p>
+      <ul class="legend">
+        <li><i style="background:#4CD964"></i>Steps <span>+ goal hairline</span></li>
+        <li><i style="background:#E8EAED"></i>Temperature <span>+ conditions</span></li>
+        <li><i style="background:#8A8F98"></i>Watch battery</li>
+        <li><i style="background:#5AC8FA"></i>Status dots</li>
+      </ul>
+      <p class="file">vanguard/source/VanguardView.mc</p>
+    </div>
+  </section>
+
+  <section class="face">
+    <div class="device">
+      <div class="bezel"><div class="panel"><canvas id="c-flux" aria-label="Flux face preview"></canvas></div></div>
+      <p class="caption">02 &nbsp;Flux</p>
+    </div>
+    <div class="notes">
+      <p class="eyebrow">Data dashboard</p>
+      <h2>Flux</h2>
+      <p>Six metrics in a grid, weather on the top right, a full-width step-goal bar and today's daylight
+        window along the bottom. The time is left-aligned and deliberately smaller here, because on this face
+        it is one field among several rather than the subject.</p>
+      <p class="why">Pick this one if you open glance widgets several times a day. It is the only face that
+        carries all three groups you asked for at once, and the only one with sunrise and sunset.</p>
+      <ul class="legend">
+        <li><i style="background:#4CD964"></i>Steps</li>
+        <li><i style="background:#FF4D4F"></i>Heart rate</li>
+        <li><i style="background:#5AC8FA"></i>Body Battery</li>
+        <li><i style="background:#FF7A45"></i>Calories</li>
+        <li><i style="background:#B18CFF"></i>Floors</li>
+        <li><i style="background:#FF5CA8"></i>Intensity min <span>week</span></li>
+        <li><i style="background:#E8EAED"></i>Weather <span>temp, low/high</span></li>
+        <li><i style="background:#FFB020"></i>Move bar</li>
+      </ul>
+      <p class="file">flux/source/FluxView.mc</p>
+    </div>
+  </section>
+
+  <section class="face">
+    <div class="device">
+      <div class="bezel"><div class="panel"><canvas id="c-orbit" aria-label="Orbit face preview"></canvas></div></div>
+      <p class="caption">03 &nbsp;Orbit</p>
+    </div>
+    <div class="notes">
+      <p class="eyebrow">Goal rings</p>
+      <h2>Orbit</h2>
+      <p>Two concentric gauges: steps against today's goal outside, Body Battery inside. Both are questions of
+        "how full am I", which a ring answers at a glance and a number does not. The matching numbers sit
+        along the bottom in the same colours, so the rings never become decoration.</p>
+      <p class="why">Pick this one if you chase a daily step goal or watch your Body Battery drain through the
+        day. Weakest face for planning &mdash; it has temperature but no forecast and no sun times.</p>
+      <ul class="legend">
+        <li><i style="background:#4CD964"></i>Steps ring <span>vs goal</span></li>
+        <li><i style="background:#5AC8FA"></i>Body Battery ring</li>
+        <li><i style="background:#FF4D4F"></i>Heart rate</li>
+        <li><i style="background:#E8EAED"></i>Temperature</li>
+      </ul>
+      <p class="file">orbit/source/OrbitView.mc</p>
+    </div>
+  </section>
+
+  <section class="face">
+    <div class="device">
+      <div class="bezel"><div class="panel"><canvas id="c-meridian" aria-label="Meridian face preview"></canvas></div></div>
+      <p class="caption">04 &nbsp;Meridian</p>
+    </div>
+    <div class="notes">
+      <p class="eyebrow">Analog hybrid</p>
+      <h2>Meridian</h2>
+      <p>A real analog dial with sixty ticks, a creeping hour hand and a Body Battery arc wrapped around the
+        outside. Four values sit in a strip underneath with no captions, identified only by colour &mdash; this
+        face is meant to look like a watch rather than a readout.</p>
+      <p class="why">Pick this one if the Venu X1 is also a dress watch. The second hand runs only while the
+        screen is awake; there is no point animating a hand nobody is looking at.</p>
+      <ul class="legend">
+        <li><i style="background:#5AC8FA"></i>Body Battery arc</li>
+        <li><i style="background:#4CD964"></i>Steps</li>
+        <li><i style="background:#FF4D4F"></i>Heart rate</li>
+        <li><i style="background:#E8EAED"></i>Temperature</li>
+        <li><i style="background:#8A8F98"></i>Watch battery</li>
+      </ul>
+      <p class="file">meridian/source/MeridianView.mc</p>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <h3>How close this is to the real thing</h3>
+    <p>Positions, sizes, colours and goal arithmetic are taken straight from the Monkey&nbsp;C, so the
+      composition is accurate. The type is not: Garmin's built-in fonts ship on the device and cannot be
+      loaded here, so each one is matched by eye to a Barlow weight at a similar height. Expect glyph widths
+      to shift by a few pixels in the simulator &mdash; the bottom rows are the places to check.</p>
+    <p>Two things no watch face can show, because Connect&nbsp;IQ exposes no API for them: your calendar, and
+      last night's sleep score. Notification count is available and is one of the status dots; the rest of
+      your day planning has to come from a glance widget.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var W = 448, H = 486;
+
+  var T = {
+    BG: "#000000", TEXT: "#FFFFFF", DIM: "#8A8F98", FAINT: "#4A4F57", TRACK: "#23272C",
+    HR: "#FF4D4F", BODY: "#5AC8FA", STEPS: "#4CD964", CALORIES: "#FF7A45",
+    FLOORS: "#B18CFF", INTENSITY: "#FF5CA8", STRESS: "#FFB020", WEATHER: "#E8EAED",
+    BATT_OK: "#8A8F98", BATT_LOW: "#FF4D4F"
+  };
+
+  var STACK = '"Barlow", "DIN Alternate", "Helvetica Neue", Arial, sans-serif';
+  // Stand-ins for the device fonts. h is the height Draw.cell uses to place a
+  // caption under a value, matched to Garmin's getFontHeight as closely as
+  // guesswork allows.
+  var F = {
+    XTINY:  { px: 20,  h: 26,  w: 500, ls: 0.6 },
+    SMALL:  { px: 29,  h: 35,  w: 600, ls: 0 },
+    MEDIUM: { px: 35,  h: 43,  w: 600, ls: 0 },
+    N_MILD: { px: 58,  h: 64,  w: 600, ls: 0 },
+    N_HOT:  { px: 96,  h: 104, w: 700, ls: -1 },
+    N_THAI: { px: 132, h: 142, w: 700, ls: -2 }
+  };
+
+  // ---------------------------------------------------------------- drawing
+
+  function setFont(ctx, f) {
+    ctx.font = f.w + " " + f.px + "px " + STACK;
+    try { ctx.letterSpacing = (f.ls || 0) + "px"; } catch (e) { /* older engines */ }
+  }
+
+  function text(ctx, x, y, f, str, color, align) {
+    if (str === null || str === undefined || str === "") { return; }
+    setFont(ctx, f);
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.textBaseline = "middle";
+    ctx.fillText(str, x, y);
+  }
+
+  function cell(ctx, x, y, f, value, label, color) {
+    text(ctx, x, y, f, value, color, "center");
+    text(ctx, x, y + f.h / 2 + 11, F.XTINY, label, T.DIM, "center");
+  }
+
+  function ring(ctx, cx, cy, r, frac, color, pen) {
+    ctx.lineWidth = pen;
+    ctx.lineCap = "butt";
+    ctx.strokeStyle = T.TRACK;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+    if (frac <= 0) { return; }
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(frac, 0.9997));
+    ctx.stroke();
+  }
+
+  function bar(ctx, x, y, w, h, frac, color) {
+    ctx.fillStyle = T.TRACK;
+    ctx.fillRect(x, y, w, h);
+    if (frac <= 0) { return; }
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, Math.round(w * frac), h);
+  }
+
+  function statusDots(ctx, cx, y, s) {
+    var dots = [];
+    if (s.notifications > 0) { dots.push(T.BODY); }
+    if (s.alarm) { dots.push(T.STRESS); }
+    if (s.dnd) { dots.push(T.FLOORS); }
+    if (!s.phone) { dots.push(T.HR); }
+    if (!dots.length) { return; }
+    var spacing = 20, startX = cx - (dots.length - 1) * spacing / 2;
+    for (var i = 0; i < dots.length; i++) {
+      ctx.fillStyle = dots[i];
+      ctx.beginPath();
+      ctx.arc(startX + i * spacing, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function dialTicks(ctx, cx, cy, r) {
+    for (var i = 0; i < 60; i++) {
+      var isHour = i % 5 === 0;
+      var a = i * 6 * Math.PI / 180, sin = Math.sin(a), cos = Math.cos(a);
+      var inner = isHour ? r - 22 : r - 9;
+      ctx.lineWidth = isHour ? 4 : 2;
+      ctx.strokeStyle = isHour ? T.TEXT : T.FAINT;
+      ctx.beginPath();
+      ctx.moveTo(cx + inner * sin, cy - inner * cos);
+      ctx.lineTo(cx + r * sin, cy - r * cos);
+      ctx.stroke();
+    }
+  }
+
+  function hand(ctx, cx, cy, deg, len, tail, baseW, tipW, color) {
+    var a = deg * Math.PI / 180, sin = Math.sin(a), cos = Math.cos(a);
+    var tx = cx + len * sin, ty = cy - len * cos;
+    var bx = cx - tail * sin, by = cy + tail * cos;
+    var th = tipW / 2, bh = baseW / 2;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(tx + th * cos, ty + th * sin);
+    ctx.lineTo(tx - th * cos, ty - th * sin);
+    ctx.lineTo(bx - bh * cos, by - bh * sin);
+    ctx.lineTo(bx + bh * cos, by + bh * sin);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // ------------------------------------------------------------ value rules
+
+  var NO_VALUE = "--";
+
+  function num(v) { return v === null || v === undefined ? NO_VALUE : String(v); }
+
+  function compact(v) {
+    if (v === null || v === undefined) { return NO_VALUE; }
+    return v < 10000 ? String(v) : (v / 1000).toFixed(1) + "k";
+  }
+
+  function ratio(v, goal) {
+    if (v === null || v === undefined || !goal) { return 0; }
+    return Math.max(0, Math.min(1, v / goal));
+  }
+
+  function battColor(pct) { return pct <= 20 ? T.BATT_LOW : T.BATT_OK; }
+
+  function tempText(s) { return s.temp === null ? NO_VALUE : String(s.temp); }
+
+  function hoursText(s) {
+    if (ui.h24) { return ("0" + s.hour).slice(-2); }
+    var h = s.hour % 12;
+    return String(h === 0 ? 12 : h);
+  }
+
+  function minsText(s) { return ("0" + s.min).slice(-2); }
+
+  // ----------------------------------------------------------------- states
+
+  var STATES = [
+    { id: "afternoon", name: "Afternoon", note: "Mid-afternoon, goals in progress, everything reporting.",
+      hour: 14, min: 32, sec: 18, steps: 8420, stepGoal: 9000, hr: 62, body: 71, cals: 1840,
+      floors: 9, intMin: 118, intGoal: 150, temp: 18, cond: "PART CLOUD", hiLo: "12/21",
+      batt: 87, sunrise: "06:48", sunset: "18:22", notifications: 2, alarm: true, dnd: false,
+      phone: true, move: 0, date: "SUN 11 OCT" },
+
+    { id: "morning", name: "Early morning", note: "06:58, nothing logged yet - the state most faces look worst in.",
+      hour: 6, min: 58, sec: 42, steps: 340, stepGoal: 9000, hr: 54, body: 92, cals: 210,
+      floors: 0, intMin: 46, intGoal: 150, temp: 7, cond: "FOG", hiLo: "6/14",
+      batt: 96, sunrise: "06:48", sunset: "18:22", notifications: 0, alarm: true, dnd: false,
+      phone: true, move: 0, date: "SUN 11 OCT" },
+
+    { id: "evening", name: "Evening", note: "Goals met and overshot: rings full, Body Battery spent, do-not-disturb on.",
+      hour: 21, min: 7, sec: 5, steps: 12640, stepGoal: 9000, hr: 58, body: 34, cals: 2710,
+      floors: 17, intMin: 163, intGoal: 150, temp: 11, cond: "CLEAR", hiLo: "9/19",
+      batt: 62, sunrise: "06:48", sunset: "18:22", notifications: 5, alarm: true, dnd: true,
+      phone: true, move: 2, date: "SUN 11 OCT" },
+
+    { id: "degraded", name: "No data", note: "Phone away, battery at 12%, no weather or sensor history - every field degrades instead of blanking the face.",
+      hour: 16, min: 45, sec: 51, steps: 5120, stepGoal: 9000, hr: null, body: null, cals: 980,
+      floors: null, intMin: null, intGoal: 150, temp: null, cond: "", hiLo: "",
+      batt: 12, sunrise: "--:--", sunset: "--:--", notifications: 0, alarm: false, dnd: false,
+      phone: false, move: 4, date: "SUN 11 OCT" }
+  ];
+
+  var ui = { state: STATES[0], live: true, h24: true };
+
+  function activeState() {
+    var s = ui.state;
+    if (!ui.live) { return s; }
+    var now = new Date();
+    var days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var merged = {};
+    for (var k in s) { if (Object.prototype.hasOwnProperty.call(s, k)) { merged[k] = s[k]; } }
+    merged.hour = now.getHours();
+    merged.min = now.getMinutes();
+    merged.sec = now.getSeconds();
+    merged.date = days[now.getDay()] + " " + now.getDate() + " " + months[now.getMonth()];
+    return merged;
+  }
+
+  // ------------------------------------------------------------------ faces
+
+  function renderVanguard(ctx, s) {
+    statusDots(ctx, 224, 30, s);
+    text(ctx, 224, 64, F.SMALL, s.date, T.DIM, "center");
+    text(ctx, 224, 168, F.N_THAI, hoursText(s), T.TEXT, "center");
+    text(ctx, 224, 318, F.N_THAI, minsText(s), T.BODY, "center");
+    cell(ctx, 84, 420, F.SMALL, compact(s.steps), "STEPS", T.STEPS);
+    cell(ctx, 224, 420, F.SMALL, tempText(s), s.cond, T.WEATHER);
+    cell(ctx, 364, 420, F.SMALL, String(s.batt), "BATTERY", battColor(s.batt));
+    bar(ctx, 104, 470, 240, 4, ratio(s.steps, s.stepGoal), T.STEPS);
+  }
+
+  function renderFlux(ctx, s) {
+    text(ctx, 28, 34, F.XTINY, s.date, T.DIM, "left");
+    text(ctx, 420, 34, F.XTINY, s.batt + "%", battColor(s.batt), "right");
+    statusDots(ctx, 224, 34, s);
+
+    text(ctx, 28, 110, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "left");
+    text(ctx, 420, 94, F.N_MILD, tempText(s), T.WEATHER, "right");
+    text(ctx, 420, 136, F.XTINY, s.cond, T.DIM, "right");
+    text(ctx, 420, 158, F.XTINY, s.hiLo, T.DIM, "right");
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = T.FAINT;
+    ctx.beginPath();
+    ctx.moveTo(28, 172.5);
+    ctx.lineTo(420, 172.5);
+    ctx.stroke();
+
+    cell(ctx, 96, 238, F.MEDIUM, compact(s.steps), "STEPS", T.STEPS);
+    cell(ctx, 224, 238, F.MEDIUM, num(s.hr), "HEART", T.HR);
+    cell(ctx, 352, 238, F.MEDIUM, num(s.body), "BODY BATT", T.BODY);
+    cell(ctx, 96, 350, F.MEDIUM, compact(s.cals), "CALS", T.CALORIES);
+    cell(ctx, 224, 350, F.MEDIUM, num(s.floors), "FLOORS", T.FLOORS);
+    cell(ctx, 352, 350, F.MEDIUM, num(s.intMin), "INT MIN", T.INTENSITY);
+
+    bar(ctx, 28, 414, 392, 6, ratio(s.steps, s.stepGoal), T.STEPS);
+
+    text(ctx, 28, 446, F.XTINY, s.sunrise, T.TEXT, "left");
+    text(ctx, 28, 468, F.XTINY, "SUNRISE", T.DIM, "left");
+    text(ctx, 420, 446, F.XTINY, s.sunset, T.TEXT, "right");
+    text(ctx, 420, 468, F.XTINY, "SUNSET", T.DIM, "right");
+
+    if (s.move > 0) {
+      var notch = 14, gap = 5, total = 5 * notch + 4 * gap, x = 224 - total / 2;
+      for (var i = 0; i < 5; i++) {
+        ctx.fillStyle = i < s.move ? T.STRESS : T.TRACK;
+        ctx.fillRect(x + i * (notch + gap), 448, notch, 6);
+      }
+    }
+  }
+
+  function renderOrbit(ctx, s) {
+    ring(ctx, 224, 206, 186, ratio(s.steps, s.stepGoal), T.STEPS, 14);
+    ring(ctx, 224, 206, 164, ratio(s.body, 100), T.BODY, 14);
+    text(ctx, 224, 178, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "center");
+    text(ctx, 224, 252, F.XTINY, s.date, T.DIM, "center");
+    cell(ctx, 224, 292, F.SMALL, num(s.hr), "BPM", T.HR);
+    statusDots(ctx, 224, 348, s);
+    cell(ctx, 60, 430, F.SMALL, compact(s.steps), "STEPS", T.STEPS);
+    cell(ctx, 164, 430, F.SMALL, num(s.body), "BODY", T.BODY);
+    cell(ctx, 284, 430, F.SMALL, tempText(s), "TEMP", T.WEATHER);
+    cell(ctx, 388, 430, F.SMALL, String(s.batt), "BATT", battColor(s.batt));
+  }
+
+  function renderMeridian(ctx, s) {
+    ring(ctx, 224, 196, 186, ratio(s.body, 100), T.BODY, 8);
+    dialTicks(ctx, 224, 196, 168);
+
+    text(ctx, 224, 196 - 130, F.XTINY, "12", T.DIM, "center");
+    text(ctx, 224 + 130, 196, F.XTINY, "3", T.DIM, "center");
+    text(ctx, 224, 196 + 130, F.XTINY, "6", T.DIM, "center");
+    text(ctx, 224 - 130, 196, F.XTINY, "9", T.DIM, "center");
+
+    hand(ctx, 224, 196, ((s.hour % 12) + s.min / 60) * 30, 100, 34, 18, 9, T.TEXT);
+    hand(ctx, 224, 196, (s.min + s.sec / 60) * 6, 150, 40, 13, 6, T.TEXT);
+    hand(ctx, 224, 196, s.sec * 6, 162, 46, 4, 3, T.BODY);
+
+    ctx.fillStyle = T.TEXT;
+    ctx.beginPath(); ctx.arc(224, 196, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = T.BG;
+    ctx.beginPath(); ctx.arc(224, 196, 5, 0, Math.PI * 2); ctx.fill();
+
+    text(ctx, 224, 404, F.XTINY, s.date, T.DIM, "center");
+    text(ctx, 60, 440, F.SMALL, compact(s.steps), T.STEPS, "center");
+    text(ctx, 164, 440, F.SMALL, num(s.hr), T.HR, "center");
+    text(ctx, 284, 440, F.SMALL, s.temp === null ? NO_VALUE : s.temp + "°", T.WEATHER, "center");
+    text(ctx, 388, 440, F.SMALL, s.batt + "%", battColor(s.batt), "center");
+    statusDots(ctx, 224, 472, s);
+  }
+
+  var FACES = [
+    { id: "c-vanguard", draw: renderVanguard },
+    { id: "c-flux", draw: renderFlux },
+    { id: "c-orbit", draw: renderOrbit },
+    { id: "c-meridian", draw: renderMeridian }
+  ];
+
+  function renderAll() {
+    var s = activeState();
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
+    for (var i = 0; i < FACES.length; i++) {
+      var canvas = document.getElementById(FACES[i].id);
+      if (!canvas) { continue; }
+      if (canvas.width !== Math.round(W * dpr)) {
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+      }
+      var ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = T.BG;
+      ctx.fillRect(0, 0, W, H);
+      FACES[i].draw(ctx, s);
+    }
+  }
+
+  // ----------------------------------------------------------------- wiring
+
+  var seg = document.getElementById("states");
+  var note = document.getElementById("state-note");
+
+  STATES.forEach(function (state) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = state.name;
+    b.id = "state-" + state.id;
+    b.setAttribute("aria-pressed", state === ui.state ? "true" : "false");
+    b.addEventListener("click", function () {
+      ui.state = state;
+      Array.prototype.forEach.call(seg.children, function (el) {
+        el.setAttribute("aria-pressed", el === b ? "true" : "false");
+      });
+      syncNote();
+      renderAll();
+    });
+    seg.appendChild(b);
+  });
+
+  function syncNote() {
+    note.textContent = ui.live
+      ? ui.state.note + "  Clock is live."
+      : ui.state.note;
+  }
+
+  document.getElementById("live").addEventListener("change", function (e) {
+    ui.live = e.target.checked;
+    syncNote();
+    renderAll();
+  });
+
+  document.getElementById("h24").addEventListener("change", function (e) {
+    ui.h24 = e.target.checked;
+    renderAll();
+  });
+
+  syncNote();
+  renderAll();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(renderAll); }
+  window.addEventListener("resize", renderAll);
+  setInterval(function () { if (ui.live) { renderAll(); } }, 1000);
+})();
+</script>
+</body></html>
