@@ -5,8 +5,12 @@ import Toybox.Math;
 //! Blocky drawing kit.
 //!
 //! Everything here is built from filled rectangles and hard-edged arcs.
-//! Antialiasing is turned off on purpose: a smoothed edge is the one thing
-//! that stops pixel art reading as pixel art.
+//! Antialiasing stays off: a smoothed edge is the one thing that stops pixel
+//! art reading as pixel art.
+//!
+//! Lit segments are bevelled - a light band along the top edge, a dark one
+//! along the bottom. Flat fills read as 8-bit; shaded ones read as 16-bit,
+//! and it costs two extra rectangles per cell.
 module Draw {
 
     //! Clears to black with antialiasing off. Every onUpdate starts here.
@@ -39,12 +43,25 @@ module Draw {
     function segBar(dc as Graphics.Dc, x as Number, y as Number, width as Number,
                     height as Number, cells as Number, fraction as Float,
                     color as Number) as Void {
-        var gap = 3;
+        var gap = 2;
         var cellWidth = (width - gap * (cells - 1)) / cells;
         var lit = (fraction * cells).toNumber();
+        var highlight = Theme.shade(color, 155);
+        var shadow = Theme.shade(color, 55);
+        var bevel = height >= 8 ? 2 : 1;
         for (var i = 0; i < cells; i += 1) {
-            dc.setColor(i < lit ? color : Theme.TRACK, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(x + i * (cellWidth + gap), y, cellWidth, height);
+            var cellX = x + i * (cellWidth + gap);
+            if (i >= lit) {
+                dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(cellX, y, cellWidth, height);
+            } else {
+                dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(cellX, y, cellWidth, height);
+                dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(cellX, y, cellWidth, bevel);
+                dc.setColor(shadow, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(cellX, y + height - bevel, cellWidth, bevel);
+            }
         }
     }
 
@@ -52,13 +69,25 @@ module Draw {
     function segMeter(dc as Graphics.Dc, x as Number, y as Number, width as Number,
                       height as Number, cells as Number, fraction as Float,
                       color as Number) as Void {
-        var gap = 3;
+        var gap = 2;
         var cellHeight = (height - gap * (cells - 1)) / cells;
         var lit = (fraction * cells).toNumber();
+        var highlight = Theme.shade(color, 155);
+        var shadow = Theme.shade(color, 55);
+        var bevel = cellHeight >= 8 ? 2 : 1;
         for (var i = 0; i < cells; i += 1) {
             var cellY = y + height - (i + 1) * cellHeight - i * gap;
-            dc.setColor(i < lit ? color : Theme.TRACK, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(x, cellY, width, cellHeight);
+            if (i >= lit) {
+                dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(x, cellY, width, cellHeight);
+            } else {
+                dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(x, cellY, width, cellHeight);
+                dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(x, cellY, width, bevel);
+                dc.setColor(shadow, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(x, cellY + cellHeight - bevel, width, bevel);
+            }
         }
     }
 
@@ -68,7 +97,7 @@ module Draw {
                      pen as Number) as Void {
         var lit = (fraction * segments).toNumber();
         var span = 360.0 / segments;
-        var gap = span * 0.3;
+        var gap = span * 0.22;
         dc.setPenWidth(pen);
         for (var i = 0; i < segments; i += 1) {
             // Clock degrees run clockwise from 12; Garmin arc degrees run
@@ -147,13 +176,17 @@ module Draw {
         if (barWidth < 1) {
             barWidth = 1;
         }
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        var highlight = Theme.shade(color, 160);
         for (var i = 0; i < count; i += 1) {
             var barHeight = (series[i] - low) * height / span;
             if (barHeight < 2) {
                 barHeight = 2;
             }
-            dc.fillRectangle(x + i * pitch, y + height - barHeight, barWidth, barHeight);
+            var barY = y + height - barHeight;
+            dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(x + i * pitch, barY, barWidth, barHeight);
+            dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(x + i * pitch, barY, barWidth, 1);
         }
     }
 
@@ -199,20 +232,33 @@ module Draw {
         var pitch = size + 6;
         var startX = centerX - (blocks.size() * pitch - 6) / 2;
         for (var i = 0; i < blocks.size(); i += 1) {
+            var blockX = startX + i * pitch;
             dc.setColor(blocks[i], Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(startX + i * pitch, y - size / 2, size, size);
+            dc.fillRectangle(blockX, y - size / 2, size, size);
+            dc.setColor(Theme.shade(blocks[i], 160), Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(blockX, y - size / 2, size, 1);
         }
     }
 
-    //! Twelve square markers instead of sixty hairlines - at this pixel size
-    //! a minute track turns into a grey smear.
+    //! Twelve major blocks over a fine sixty-step minute track. The 8-bit
+    //! revision dropped the minute track because at that block size it
+    //! smeared; at two pixels it reads cleanly.
     function dialBlocks(dc as Graphics.Dc, cx as Number, cy as Number,
                         radius as Number) as Void {
+        dc.setColor(Theme.FAINT, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < 60; i += 1) {
+            if (i % 5 != 0) {
+                var minuteAngle = Math.toRadians(i * 6);
+                dc.fillRectangle(
+                    (cx + radius * Math.sin(minuteAngle) - 1).toNumber(),
+                    (cy - radius * Math.cos(minuteAngle) - 1).toNumber(), 3, 3);
+            }
+        }
         for (var i = 0; i < 12; i += 1) {
             var radians = Math.toRadians(i * 30);
             var quarter = i % 3 == 0;
-            var size = quarter ? 14 : 8;
-            dc.setColor(quarter ? Theme.TEXT : Theme.FAINT, Graphics.COLOR_TRANSPARENT);
+            var size = quarter ? 12 : 7;
+            dc.setColor(quarter ? Theme.TEXT : Theme.DIM, Graphics.COLOR_TRANSPARENT);
             dc.fillRectangle(
                 (cx + radius * Math.sin(radians) - size / 2).toNumber(),
                 (cy - radius * Math.cos(radians) - size / 2).toNumber(),

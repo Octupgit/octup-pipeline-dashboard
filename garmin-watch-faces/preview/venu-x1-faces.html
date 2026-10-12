@@ -97,7 +97,7 @@
 
 <div class="wrap">
   <h1>Venu X1 Pixel Faces</h1>
-  <p class="lede">Nine watch faces for the Garmin Venu X1, drawn entirely in a 5&times;7 pixel font with
+  <p class="lede">Nine watch faces for the Garmin Venu X1, drawn entirely in a 6&times;8 pixel font with
     segmented bars and hard edges. Rendered here at the real 448&nbsp;&times;&nbsp;486 panel size from the
     same coordinates and the same glyph table as the Monkey&nbsp;C source &mdash; this is not an impression
     of the design, it is the design.</p>
@@ -106,8 +106,8 @@
     <span><b>448 &times; 486</b> px, rectangular</span>
     <span><b>2.0 in</b> AMOLED</span>
     <span><b>venux1</b> build target</span>
-    <span>type: <b>5&times;7</b> blocks, no font resource</span>
-    <span><b>8.8</b> rects per glyph</span>
+    <span>type: <b>6&times;8</b> blocks, no font resource</span>
+    <span><b>9.8</b> rects per glyph</span>
     <span>always-on: <b>off</b></span>
   </div>
 
@@ -347,14 +347,14 @@
     TRACK: "#1E2430", SCANLINE: "#0C1016",
     HR: "#FF3333", BODY: "#33CCFF", STEPS: "#44DD44", CALORIES: "#FF8800",
     FLOORS: "#AA66FF", INTENSITY: "#FF44AA", STRESS: "#FFCC00", WEATHER: "#FFFFFF",
-    SKY: "#2E5A78", GROUND: "#785A2E",
+    SKY: "#2E5A78", GROUND: "#785A2E", SHADOW: "#0A0E14",
     BATT_OK: "#889099", BATT_LOW: "#FF3333"
   };
 
   // ---- 5x7 pixel font, generated from the same table as PixelFont.mc ----
-  var PF_CHARS = "0123456789:.-/% *+<>[]^vABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var PF_ROWS = ">AAAAA>4<4444>>A1248OO2421A>26:BO22O@N11A>68@NAA>O124888>AA>AA>>AA?12<044044000000<<000>000122488@IK248KC0000000<B<0000044O440248@8428421248>88888>>22222>4>K00000000K>4>AAOAAANAANAAN>A@@@A>LBAAABLO@@N@@OO@@N@@@>A@GAA?AAAOAAA>44444>72222B<ABDHDBA@@@@@@OAKEEAAAAAIECAA>AAAAA>NAAN@@@>AAAEB=NAANDBA?@@>11NO444444AAAAAA>AAAAA:4AAAEEKAAA:4:AAAA:4444O1248@O";
-  var PF_W = 5, PF_H = 7, PF_GAP = 1;
+  var PF_CHARS = "0123456789:.-/% *^v[]ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var PF_ROWS = "NccccccN<L<<<<<NNc36<H`oNc3>33cN6>Nfo666o``n33cN>H`ncccNo36<HHHHNccNcccNNcccO36L0<<00<<0000000<<000N0000336<H``0ac6<HcS000000000LffL00000<No00000000oN<0NHHHHHHNN666666NNcccocccnccncccnNc````cNlfccccflo``l```oo``l````Nc``gccNcccoccccN<<<<<<N76666ffLcflhlfcc```````ocoocccccckogccccNccccccNncccn```NccccgfMnccnhfccNc`N33cNo<<<<<<<cccccccNcccccN<<ccccooccccN<<NccccN<<<<<o36<H``o";
+  var PF_W = 6, PF_H = 8, PF_GAP = 1;
 
   function pfWidth(text, scale) {
     return text.length === 0 ? 0 : text.length * (PF_W + PF_GAP) * scale - PF_GAP * scale;
@@ -385,6 +385,21 @@
     }
   }
 
+  function shade(hex, pct) {
+    var r = Math.min(255, Math.round(parseInt(hex.substr(1, 2), 16) * pct / 100));
+    var g = Math.min(255, Math.round(parseInt(hex.substr(3, 2), 16) * pct / 100));
+    var b = Math.min(255, Math.round(parseInt(hex.substr(5, 2), 16) * pct / 100));
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+
+  function pfS(ctx, x, y, scale, text, color, off) {
+    pf(ctx, x + off, y + off, scale, text, T.SHADOW);
+    pf(ctx, x, y, scale, text, color);
+  }
+  function pfSC(ctx, cx, y, scale, text, color, off) {
+    pfS(ctx, cx - Math.floor(pfWidth(text, scale) / 2), y, scale, text, color, off);
+  }
+
   function pfC(ctx, cx, y, scale, text, color) { pf(ctx, cx - Math.floor(pfWidth(text, scale) / 2), y, scale, text, color); }
   function pfR(ctx, rx, y, scale, text, color) { pf(ctx, rx - pfWidth(text, scale), y, scale, text, color); }
 
@@ -400,25 +415,37 @@
   }
 
   function segBar(ctx, x, y, w, h, cells, frac, color) {
-    var gap = 3, cw = Math.floor((w - gap * (cells - 1)) / cells);
-    var lit = Math.floor(frac * cells);
+    var gap = 2, cw = Math.floor((w - gap * (cells - 1)) / cells);
+    var lit = Math.floor(frac * cells), bevel = h >= 8 ? 2 : 1;
+    var hi = shade(color, 155), lo = shade(color, 55);
     for (var i = 0; i < cells; i++) {
-      ctx.fillStyle = i < lit ? color : T.TRACK;
-      ctx.fillRect(x + i * (cw + gap), y, cw, h);
+      var cx = x + i * (cw + gap);
+      if (i >= lit) { ctx.fillStyle = T.TRACK; ctx.fillRect(cx, y, cw, h); }
+      else {
+        ctx.fillStyle = color; ctx.fillRect(cx, y, cw, h);
+        ctx.fillStyle = hi; ctx.fillRect(cx, y, cw, bevel);
+        ctx.fillStyle = lo; ctx.fillRect(cx, y + h - bevel, cw, bevel);
+      }
     }
   }
 
   function segMeter(ctx, x, y, w, h, cells, frac, color) {
-    var gap = 3, ch = Math.floor((h - gap * (cells - 1)) / cells);
-    var lit = Math.floor(frac * cells);
+    var gap = 2, ch = Math.floor((h - gap * (cells - 1)) / cells);
+    var lit = Math.floor(frac * cells), bevel = ch >= 8 ? 2 : 1;
+    var hi = shade(color, 155), lo = shade(color, 55);
     for (var i = 0; i < cells; i++) {
-      ctx.fillStyle = i < lit ? color : T.TRACK;
-      ctx.fillRect(x, y + h - (i + 1) * ch - i * gap, w, ch);
+      var cy = y + h - (i + 1) * ch - i * gap;
+      if (i >= lit) { ctx.fillStyle = T.TRACK; ctx.fillRect(x, cy, w, ch); }
+      else {
+        ctx.fillStyle = color; ctx.fillRect(x, cy, w, ch);
+        ctx.fillStyle = hi; ctx.fillRect(x, cy, w, bevel);
+        ctx.fillStyle = lo; ctx.fillRect(x, cy + ch - bevel, w, bevel);
+      }
     }
   }
 
   function segRing(ctx, cx, cy, radius, segments, frac, color, pen) {
-    var lit = Math.floor(frac * segments), span = 360 / segments, gap = span * 0.3;
+    var lit = Math.floor(frac * segments), span = 360 / segments, gap = span * 0.22;
     ctx.lineWidth = pen;
     ctx.lineCap = "butt";
     for (var i = 0; i < segments; i++) {
@@ -467,17 +494,26 @@
     if (!blocks.length) { return; }
     var pitch = size + 6, startX = cx - Math.floor((blocks.length * pitch - 6) / 2);
     for (var i = 0; i < blocks.length; i++) {
+      var bx = startX + i * pitch;
       ctx.fillStyle = blocks[i];
-      ctx.fillRect(startX + i * pitch, y - Math.floor(size / 2), size, size);
+      ctx.fillRect(bx, y - Math.floor(size / 2), size, size);
+      ctx.fillStyle = shade(blocks[i], 160);
+      ctx.fillRect(bx, y - Math.floor(size / 2), size, 1);
     }
   }
 
   function dialBlocks(ctx, cx, cy, radius) {
+    ctx.fillStyle = T.FAINT;
+    for (var i = 0; i < 60; i++) {
+      if (i % 5 === 0) { continue; }
+      var a = i * 6 * Math.PI / 180;
+      ctx.fillRect(Math.round(cx + radius * Math.sin(a) - 1), Math.round(cy - radius * Math.cos(a) - 1), 3, 3);
+    }
     for (var i = 0; i < 12; i++) {
-      var a = i * 30 * Math.PI / 180, quarter = i % 3 === 0, size = quarter ? 14 : 8;
-      ctx.fillStyle = quarter ? T.TEXT : T.FAINT;
-      ctx.fillRect(Math.round(cx + radius * Math.sin(a) - size / 2),
-                   Math.round(cy - radius * Math.cos(a) - size / 2), size, size);
+      var a2 = i * 30 * Math.PI / 180, quarter = i % 3 === 0, size = quarter ? 12 : 7;
+      ctx.fillStyle = quarter ? T.TEXT : T.DIM;
+      ctx.fillRect(Math.round(cx + radius * Math.sin(a2) - size / 2),
+                   Math.round(cy - radius * Math.cos(a2) - size / 2), size, size);
     }
   }
 
@@ -603,7 +639,9 @@
     ctx.fillStyle = color;
     for (var i = 0; i < n; i++) {
       var bh = Math.max(2, Math.floor((series[i] - low) * h / span));
-      ctx.fillRect(x + i * pitch, y + h - bh, bw, bh);
+      var by = y + h - bh;
+      ctx.fillStyle = color; ctx.fillRect(x + i * pitch, by, bw, bh);
+      ctx.fillStyle = shade(color, 160); ctx.fillRect(x + i * pitch, by, bw, 1);
     }
   }
 
@@ -632,7 +670,9 @@
     if (hist.length > 0) { histogram(ctx, 24, 118, 400, 34, hist, T.HR); }
     else { pfC(ctx, CX, 135, 2, "NO HR HISTORY", T.FAINT); }
 
-    pfGradC(ctx, CX, 210, 14, hoursText(s) + ":" + minsText(s), T.STRESS, T.STEPS);
+        var clock = hoursText(s) + ":" + minsText(s);
+    pfC(ctx, CX + 4, 214, 12, clock, T.SHADOW);
+    pfGradC(ctx, CX, 210, 12, clock, T.STRESS, T.STEPS);
 
     // steps, battery hours, temperature
     frame(ctx, LEFT, 272, 196, 60, 2, T.FAINT);
@@ -640,7 +680,7 @@
     pfR(ctx, LEFT + 196 - 12, 312, 4, num(s.steps), T.STEPS);
     pf(ctx, 240, 288, 2, "BATT", T.DIM);
     pf(ctx, 240, 314, 3, s.battHours === null ? NO_VALUE : s.battHours + "H", battColor(s.batt));
-    pfR(ctx, RIGHT, 304, 6, tempGlyph(s), T.WEATHER);
+    pfR(ctx, RIGHT, 304, 5, tempGlyph(s), T.WEATHER);
 
     // ring complications
     function ring(x, frac, value, label, color) {
@@ -658,28 +698,28 @@
   function renderVanguard(ctx, s) {
     statusBlocks(ctx, CX, 36, 10, s);
     pfC(ctx, CX, 66, 3, s.date, T.DIM);
-    pfC(ctx, CX, 160, 20, hoursText(s), T.TEXT);
-    pfC(ctx, CX, 316, 20, minsText(s), T.BODY);
-    segBar(ctx, 92, 398, 264, 10, 12, ratio(s.steps, s.stepGoal), T.STEPS);
-    field(ctx, 84, 428, compact(s.steps), "STEPS", T.STEPS, 4, 2);
-    field(ctx, 224, 428, tempGlyph(s), "TEMP", T.WEATHER, 4, 2);
-    field(ctx, 364, 428, String(s.batt), "BATT", battColor(s.batt), 4, 2);
+    pfSC(ctx, CX, 152, 16, hoursText(s), T.TEXT, 5);
+    pfSC(ctx, CX, 296, 16, minsText(s), T.BODY, 5);
+    segBar(ctx, 92, 380, 264, 10, 12, ratio(s.steps, s.stepGoal), T.STEPS);
+    field(ctx, 84, 418, compact(s.steps), "STEPS", T.STEPS, 4, 2);
+    field(ctx, 224, 418, tempGlyph(s), "TEMP", T.WEATHER, 4, 2);
+    field(ctx, 364, 418, String(s.batt), "BATT", battColor(s.batt), 4, 2);
   }
 
   function renderFlux(ctx, s) {
     pf(ctx, LEFT, 44, 2, s.date, T.DIM);
     pfR(ctx, RIGHT, 44, 2, s.batt + "%", battColor(s.batt));
     statusBlocks(ctx, CX, 44, 8, s);
-    pf(ctx, LEFT, 104, 9, hoursText(s) + ":" + minsText(s), T.TEXT);
-    pfR(ctx, RIGHT, 96, 5, tempGlyph(s), T.WEATHER);
-    pfR(ctx, RIGHT, 128, 2, s.cond, T.DIM);
+    pf(ctx, LEFT, 104, 8, hoursText(s) + ":" + minsText(s), T.TEXT);
+    pfR(ctx, RIGHT, 90, 4, tempGlyph(s), T.WEATHER);
+    pfR(ctx, RIGHT, 138, 2, s.cond, T.DIM);
     rect(ctx, LEFT, 148, INNER_W, 2, T.FAINT);
-    field(ctx, 97, 214, compact(s.steps), "STEPS", T.STEPS, 5, 2);
-    field(ctx, 224, 214, num(s.hr), "HEART", T.HR, 5, 2);
-    field(ctx, 351, 214, num(s.body), "BODY", T.BODY, 5, 2);
-    field(ctx, 97, 306, compact(s.cals), "CALS", T.CALORIES, 5, 2);
-    field(ctx, 224, 306, num(s.floors), "FLOORS", T.FLOORS, 5, 2);
-    field(ctx, 351, 306, num(s.intMin), "INT MIN", T.INTENSITY, 5, 2);
+    field(ctx, 97, 214, compact(s.steps), "STEPS", T.STEPS, 4, 2);
+    field(ctx, 224, 214, num(s.hr), "HEART", T.HR, 4, 2);
+    field(ctx, 351, 214, num(s.body), "BODY", T.BODY, 4, 2);
+    field(ctx, 97, 306, compact(s.cals), "CALS", T.CALORIES, 4, 2);
+    field(ctx, 224, 306, num(s.floors), "FLOORS", T.FLOORS, 4, 2);
+    field(ctx, 351, 306, num(s.intMin), "INT MIN", T.INTENSITY, 4, 2);
     segBar(ctx, LEFT, 378, INNER_W, 12, 20, ratio(s.steps, s.stepGoal), T.STEPS);
     pf(ctx, LEFT, 422, 3, "^ " + s.sunrise, T.STRESS);
     pfR(ctx, RIGHT, 422, 3, s.sunset + " v", T.BODY);
@@ -687,10 +727,10 @@
   }
 
   function renderOrbit(ctx, s) {
-    segRing(ctx, CX, 228, 186, 36, ratio(s.steps, s.stepGoal), T.STEPS, 16);
-    segRing(ctx, CX, 228, 158, 36, ratio(s.body, 100), T.BODY, 16);
+    segRing(ctx, CX, 228, 186, 48, ratio(s.steps, s.stepGoal), T.STEPS, 16);
+    segRing(ctx, CX, 228, 158, 48, ratio(s.body, 100), T.BODY, 16);
     statusBlocks(ctx, CX, 148, 8, s);
-    pfC(ctx, CX, 196, 9, hoursText(s) + ":" + minsText(s), T.TEXT);
+    pfSC(ctx, CX, 196, 8, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
     pfC(ctx, CX, 246, 2, s.date, T.DIM);
     field(ctx, CX, 280, num(s.hr), "BPM", T.HR, 4, 2);
     field(ctx, 78, 436, compact(s.steps), "STEPS", T.STEPS, 3, 2);
@@ -700,7 +740,7 @@
   }
 
   function renderMeridian(ctx, s) {
-    segRing(ctx, CX, 210, 192, 24, ratio(s.body, 100), T.BODY, 10);
+    segRing(ctx, CX, 210, 192, 32, ratio(s.body, 100), T.BODY, 10);
     dialBlocks(ctx, CX, 210, 168);
     statusBlocks(ctx, CX, 76, 8, s);
     pfC(ctx, CX, 424, 2, s.date, T.DIM);
@@ -708,21 +748,21 @@
     pfC(ctx, 176, 452, 3, num(s.hr), T.HR);
     pfC(ctx, 272, 452, 3, tempGlyph(s), T.WEATHER);
     pfC(ctx, 370, 452, 3, s.batt + "%", battColor(s.batt));
-    pixelHand(ctx, CX, 210, ((s.hour % 12) + s.min / 60) * 30, 104, 30, 12, T.TEXT);
-    pixelHand(ctx, CX, 210, (s.min + s.sec / 60) * 6, 158, 36, 8, T.TEXT);
-    pixelHand(ctx, CX, 210, s.sec * 6, 170, 40, 4, T.BODY);
+    pixelHand(ctx, CX, 210, ((s.hour % 12) + s.min / 60) * 30, 104, 30, 9, T.TEXT);
+    pixelHand(ctx, CX, 210, (s.min + s.sec / 60) * 6, 158, 36, 7, T.TEXT);
+    pixelHand(ctx, CX, 210, s.sec * 6, 170, 40, 3, T.BODY);
     rect(ctx, CX - 8, 202, 16, 16, T.TEXT);
     rect(ctx, CX - 3, 207, 6, 6, T.BG);
   }
 
   function renderTelemetry(ctx, s) {
-    scanlines(ctx, 4, T.SCANLINE);
+    scanlines(ctx, 3, T.SCANLINE);
     frame(ctx, 22, 22, 404, 430, 2, T.FAINT);
     var left = 40, right = 408;
     pf(ctx, left, 50, 2, s.date, T.DIM);
     pfR(ctx, right, 50, 2, s.batt + "%", battColor(s.batt));
     rect(ctx, left, 70, right - left, 1, T.FAINT);
-    pfC(ctx, CX, 122, 10, hoursText(s) + ":" + minsText(s), T.TEXT);
+    pfSC(ctx, CX, 122, 9, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
 
     function row(i, label, value, color) {
       var y = 180 + i * 42;
@@ -755,7 +795,7 @@
   }
 
   function renderHorizon(ctx, s) {
-    pfC(ctx, CX, 66, 7, "[" + hoursText(s) + ":" + minsText(s) + "]", T.TEXT);
+    pfC(ctx, CX, 66, 6, "[" + hoursText(s) + ":" + minsText(s) + "]", T.TEXT);
     segBar(ctx, LEFT, 104, INNER_W, 8, 20, ratio(s.steps, s.stepGoal), T.STEPS);
 
     var alt = altitudeFraction(s);
@@ -788,7 +828,7 @@
   }
 
   function renderTrace(ctx, s) {
-    pfC(ctx, CX, 70, 8, hoursText(s) + ":" + minsText(s), T.TEXT);
+    pfC(ctx, CX, 70, 7, hoursText(s) + ":" + minsText(s), T.TEXT);
     pfC(ctx, CX, 108, 2, s.date, T.DIM);
 
     grid(ctx, 22, 140, 404, 180, 34, T.TRACK);
@@ -812,8 +852,8 @@
 
   function renderCaliper(ctx, s) {
     statusBlocks(ctx, CX, 46, 8, s);
-    pfC(ctx, CX, 92, 9, hoursText(s) + ":" + minsText(s), T.TEXT);
-    pfC(ctx, CX, 132, 2, s.date, T.DIM);
+    pfSC(ctx, CX, 92, 8, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    pfC(ctx, CX, 144, 2, s.date, T.DIM);
 
     function meter(x, frac, label, value, color) {
       segMeter(ctx, x, 168, 54, 206, 14, frac, color);

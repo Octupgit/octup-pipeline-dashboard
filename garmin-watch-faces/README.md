@@ -1,7 +1,8 @@
 # Venu X1 pixel watch faces
 
 Nine Connect IQ watch faces for the **Garmin Venu X1**, drawn entirely in a
-5x7 pixel font with segmented bars and hard edges. Each is a separate app, so
+6x8 pixel font with bevelled segment bars, drop-shadowed type and hard edges -
+a 16-bit register rather than an 8-bit one. Each is a separate app, so
 wear a few and keep whichever fits.
 
 The panel is a **square-cornered 448 x 486 rectangle** and the layouts use all
@@ -35,19 +36,23 @@ including one where no sensor or weather data is available.
 ## The type
 
 Garmin's built-in fonts are smooth grotesques. Nothing drawn with them reads as
-8-bit, so `_shared/PixelFont.mc` carries a 5x7 font and draws every glyph
+pixel art, so `_shared/PixelFont.mc` carries a 6x8 font and draws every glyph
 directly to the `Dc` as filled rectangles.
 
 That avoids a bitmap font resource, which would cost memory and could not be
-checked at all without the SDK. Each glyph row is a 5-bit mask stored as
+checked at all without the SDK. Each glyph row is a 6-bit mask stored as
 `mask+48`, keeping the whole table in printable ASCII; horizontal runs of lit
 pixels merge into one rectangle each.
 
-- **8.8 rectangles per glyph** on average, 16 for the worst (`W`).
-- A dense face is roughly **600 fills per redraw**, which a watch face updating
+This replaced a 5x7 table. Doubling the ink area costs 11% more rectangles and
+buys letterforms with real shoulders and bowls instead of five columns
+suggesting them - which is most of what separates 16-bit type from 8-bit.
+
+- **9.8 rectangles per glyph** on average, 15 for the worst (`U`).
+- A dense face is roughly **700 fills per redraw**, which a watch face updating
   once a minute has ample budget for.
-- Sizes are a scale factor, not a font: the time on Vanguard is scale 20, so
-  each "pixel" is a 20 px block and the digits stand 140 px tall. No built-in
+- Sizes are a scale factor, not a font: the time on Vanguard is scale 16, so
+  each "pixel" is a 16 px block and the digits stand 128 px tall. No built-in
   font reaches that.
 - The table is ASCII-only, so `*` is the degree sign and `^` / `v` are the sun
   arrows. **Callers pass uppercase** - there are no lowercase glyphs, and
@@ -77,7 +82,24 @@ Status squares appear on every face: **blue** unread notifications, **amber**
 alarm set, **purple** do not disturb, **red** phone disconnected. Nothing is
 drawn when all four are clear.
 
-Metric colours are consistent across all eight, pushed toward primaries so they
+## The 16-bit pass
+
+What separates this from the 8-bit revision, beyond the finer font:
+
+- **Bevelled segments.** Every lit cell of a bar, meter or histogram bar gets a
+  light band along its top edge and a dark one along its bottom
+  (`Theme.shade`). Flat fills read as 8-bit; shaded ones read as raised. Costs
+  two rectangles per lit cell.
+- **Drop shadows** behind every large clock, offset two to five pixels
+  depending on scale. This is the staple trick for lifting UI type off its
+  background instead of letting it sit flat in it.
+- **Finer detail everywhere**: Orbit's rings went from 36 segments to 48,
+  Meridian's from 24 to 32 and it regained the sixty-step minute track that
+  smeared at the old block size, Telemetry's raster tightened from 4 px to 3,
+  segment gaps from 3 px to 2, and Meridian's hands step on a 7-9 px grid
+  rather than 8-12.
+
+Metric colours are consistent across all nine, pushed toward primaries so they
 read as an instrument panel: green steps, red heart, blue Body Battery, orange
 calories, purple floors, pink intensity minutes, amber daylight.
 
@@ -185,11 +207,12 @@ has synced weather at least once.
 
 - **A colour:** `_shared/Theme.mc`. One change applies to every face.
 - **A glyph:** the font table lives in `_shared/PixelFont.mc` as `CHARS` and
-  `ROWS`. Each character owns seven consecutive bytes of `ROWS`; subtract 48
-  from a byte to get its 5-bit row mask. Change both the Monkey C and the
+  `ROWS`. Each character owns eight consecutive bytes of `ROWS`; subtract 48
+  from a byte to get its 6-bit row mask. Change both the Monkey C and the
   preview's `PF_ROWS` together, or they will disagree.
-- **Text size:** every call passes a scale. Scale 2 is a caption, 4-5 a value,
-  8-10 a clock, 20 the Vanguard time.
+- **Text size:** every call passes a scale. Scale 2 is a caption, 3-4 a value,
+  6-9 a clock, 16 the Vanguard time. Glyphs are 6x8, so a scale-N glyph is
+  6N wide, 8N tall, and advances 7N.
 - **A metric in a slot:** the views are plain `onUpdate` calls, one line per
   element, with every coordinate a named `const` at the top.
 - **Goals** come from the watch's own activity tracking, so change them in
@@ -202,6 +225,7 @@ has synced weather at least once.
   Telemetry and Trace would need the most work - both light a lot of pixels.
 - **A settings menu** so metric slots are configurable from the phone
   (`resources/settings/settings.xml` plus `Application.Properties`).
-- **Lowercase glyphs and punctuation**, if any future label needs them.
+- **Lowercase glyphs and punctuation**, if any future label needs them. The
+  6x8 cell has room for proper descenders, which the 5x7 did not.
 - **Publishing to the Connect IQ store**, which needs store screenshots per
   device family and passes through Garmin review.

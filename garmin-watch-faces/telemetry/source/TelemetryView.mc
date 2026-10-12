@@ -34,7 +34,7 @@ class TelemetryView extends WatchUi.WatchFace {
 
     function onUpdate(dc as Graphics.Dc) as Void {
         Draw.begin(dc);
-        Draw.scanlines(dc, 4, Theme.SCANLINE);
+        Draw.scanlines(dc, 3, Theme.SCANLINE);
         Draw.frame(dc, FRAME_X, FRAME_Y, FRAME_W, FRAME_H, 2, Theme.FAINT);
 
         var left = FRAME_X + PAD_X;
@@ -46,8 +46,8 @@ class TelemetryView extends WatchUi.WatchFace {
             Theme.battery(battery));
         Draw.rect(dc, left, RULE_TOP_Y, right - left, 1, Theme.FAINT);
 
-        PixelFont.drawCentered(dc, Layout.CENTER_X, TIME_Y, 10,
-            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT);
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 9,
+            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
 
         row(dc, left, right, 0, "HR", Metrics.text(Metrics.heartRate()), Theme.HR);
         row(dc, left, right, 1, "BODY BATT", Metrics.text(Metrics.bodyBattery()), Theme.BODY);

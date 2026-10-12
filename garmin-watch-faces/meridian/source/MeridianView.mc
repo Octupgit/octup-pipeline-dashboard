@@ -6,8 +6,8 @@ import Toybox.WatchUi;
 
 //! MERIDIAN - blocky analog.
 //!
-//! Twelve square markers instead of a sixty-tick track, hands drawn as
-//! staircases of snapped blocks, and a segmented Body Battery ring outside. At this pixel size a
+//! Twelve major blocks over a fine minute track, hands drawn as staircases
+//! of snapped blocks, and a segmented Body Battery ring outside. At this pixel size a
 //! minute track turns into a grey smear, so it is left out.
 //!
 //! The second hand only runs while the screen is awake.
@@ -16,7 +16,7 @@ class MeridianView extends WatchUi.WatchFace {
     private const CENTER_Y = 210;
     private const ARC_RADIUS  = 192;
     private const ARC_PEN     = 10;
-    private const ARC_SEGMENTS = 24;
+    private const ARC_SEGMENTS = 32;
     private const DIAL_RADIUS = 168;
 
     private const HOUR_LENGTH   = 104;
@@ -82,10 +82,10 @@ class MeridianView extends WatchUi.WatchFace {
         var hourDegrees = ((now.hour % 12) + now.min / 60.0) * 30.0;
         var minuteDegrees = (now.min + now.sec / 60.0) * 6.0;
 
-        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, hourDegrees, HOUR_LENGTH, 30, 12, Theme.TEXT);
-        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, minuteDegrees, MINUTE_LENGTH, 36, 8, Theme.TEXT);
+        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, hourDegrees, HOUR_LENGTH, 30, 9, Theme.TEXT);
+        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, minuteDegrees, MINUTE_LENGTH, 36, 7, Theme.TEXT);
         if (mAwake) {
-            Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, now.sec * 6.0, SECOND_LENGTH, 40, 4, Theme.BODY);
+            Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, now.sec * 6.0, SECOND_LENGTH, 40, 3, Theme.BODY);
         }
 
         // Square centre cap, drawn last so the hands disappear under it.

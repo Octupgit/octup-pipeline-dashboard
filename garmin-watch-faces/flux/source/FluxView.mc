@@ -12,8 +12,8 @@ class FluxView extends WatchUi.WatchFace {
 
     private const TOP_Y  = 44;
     private const TIME_Y = 104;
-    private const TEMP_Y = 96;
-    private const COND_Y = 128;
+    private const TEMP_Y = 90;
+    private const COND_Y = 138;
     private const RULE_Y = 148;
 
     private const ROW_1_Y = 214;
@@ -39,28 +39,29 @@ class FluxView extends WatchUi.WatchFace {
             Theme.battery(battery));
         Draw.statusBlocks(dc, Layout.CENTER_X, TOP_Y, 8);
 
-        PixelFont.draw(dc, Layout.LEFT, TIME_Y, 9,
-            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT);
-        PixelFont.drawRight(dc, Layout.RIGHT, TEMP_Y, 5, Metrics.temperatureGlyph(),
+        // Scale 7, not 8: at 8 the clock runs into the condition text.
+        PixelFont.drawShadowed(dc, Layout.LEFT, TIME_Y, 7,
+            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
+        PixelFont.drawRight(dc, Layout.RIGHT, TEMP_Y, 4, Metrics.temperatureGlyph(),
             Theme.WEATHER);
         PixelFont.drawRight(dc, Layout.RIGHT, COND_Y, 2, Metrics.conditionWord(), Theme.DIM);
 
         Draw.rect(dc, Layout.LEFT, RULE_Y, Layout.INNER_W, 2, Theme.FAINT);
 
         Draw.field(dc, COL_1, ROW_1_Y, Metrics.compact(Metrics.steps()),
-            "STEPS", Theme.STEPS, 5, 2);
+            "STEPS", Theme.STEPS, 4, 2);
         Draw.field(dc, COL_2, ROW_1_Y, Metrics.text(Metrics.heartRate()),
-            "HEART", Theme.HR, 5, 2);
+            "HEART", Theme.HR, 4, 2);
         Draw.field(dc, COL_3, ROW_1_Y, Metrics.text(Metrics.bodyBattery()),
-            "BODY", Theme.BODY, 5, 2);
+            "BODY", Theme.BODY, 4, 2);
         Draw.field(dc, COL_1, ROW_2_Y, Metrics.compact(Metrics.calories()),
-            "CALS", Theme.CALORIES, 5, 2);
+            "CALS", Theme.CALORIES, 4, 2);
         Draw.field(dc, COL_2, ROW_2_Y, Metrics.text(Metrics.floors()),
-            "FLOORS", Theme.FLOORS, 5, 2);
+            "FLOORS", Theme.FLOORS, 4, 2);
         // Weekly rather than daily intensity minutes - that is the number
         // Garmin scores against the 150-a-week guideline.
         Draw.field(dc, COL_3, ROW_2_Y, Metrics.text(Metrics.intensityMinutes()),
-            "INT MIN", Theme.INTENSITY, 5, 2);
+            "INT MIN", Theme.INTENSITY, 4, 2);
 
         Draw.segBar(dc, Layout.LEFT, STEP_BAR_Y, Layout.INNER_W, 12, 20,
             Metrics.ratio(Metrics.steps(), Metrics.stepGoal()), Theme.STEPS);

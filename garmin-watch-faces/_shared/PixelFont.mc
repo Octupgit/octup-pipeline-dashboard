@@ -1,17 +1,21 @@
 import Toybox.Graphics;
 import Toybox.Lang;
 
-//! A 5x7 pixel font drawn as filled blocks.
+//! A 6x8 pixel font drawn as filled blocks.
 //!
 //! Garmin's built-in fonts are smooth grotesques - nothing drawn with them
 //! reads as 8-bit. The alternative to this would be a bitmap font resource,
 //! which costs memory and cannot be checked without the SDK, so every glyph
 //! here is drawn straight to the Dc instead.
 //!
-//! Each glyph row is a 5-bit mask stored as mask+48, which keeps the entire
+//! Each glyph row is a 6-bit mask stored as mask+48, which keeps the entire
 //! table inside printable ASCII. Horizontal runs of lit pixels merge into one
-//! rectangle, which works out at 8.9 rectangles per glyph - about 600 for a
-//! dense face, which is well inside a watch face's redraw budget.
+//! rectangle, which works out at 9.8 rectangles per glyph - about 700 for a
+//! dense face, well inside a watch face's redraw budget.
+//!
+//! This replaced a 5x7 table. Doubling the ink area costs 11% more rectangles
+//! and buys letterforms with real shoulders and bowls rather than five
+//! columns suggesting them.
 //!
 //! The table is ASCII-only, so '*' carries the degree sign.
 //!
@@ -19,12 +23,12 @@ import Toybox.Lang;
 //! down-arrow, so running text through toUpper() would break it.
 module PixelFont {
 
-    const CELL_W = 5;
-    const CELL_H = 7;
+    const CELL_W = 6;
+    const CELL_H = 8;
     const GAP = 1;
 
-    const CHARS = "0123456789:.-/% *+<>[]^vABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const ROWS = ">AAAAA>4<4444>>A1248OO2421A>26:BO22O@N11A>68@NAA>O124888>AA>AA>>AA?12<044044000000<<000>000122488@IK248KC0000000<B<0000044O440248@8428421248>88888>>22222>4>K00000000K>4>AAOAAANAANAAN>A@@@A>LBAAABLO@@N@@OO@@N@@@>A@GAA?AAAOAAA>44444>72222B<ABDHDBA@@@@@@OAKEEAAAAAIECAA>AAAAA>NAAN@@@>AAAEB=NAANDBA?@@>11NO444444AAAAAA>AAAAA:4AAAEEKAAA:4:AAAA:4444O1248@O";
+    const CHARS = "0123456789:.-/% *^v[]ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const ROWS = "NccccccN<L<<<<<NNc36<H`oNc3>33cN6>Nfo666o``n33cN>H`ncccNo36<HHHHNccNcccNNcccO36L0<<00<<0000000<<000N0000336<H``0ac6<HcS000000000LffL00000<No00000000oN<0NHHHHHHNN666666NNcccocccnccncccnNc````cNlfccccflo``l```oo``l````Nc``gccNcccoccccN<<<<<<N76666ffLcflhlfcc```````ocoocccccckogccccNccccccNncccn```NccccgfMnccnhfccNc`N33cNo<<<<<<<cccccccNcccccN<<ccccooccccN<<NccccN<<<<<o36<H``o";
 
     var mChars as Array<Char>? = null;
     var mRows as Array<Char>? = null;
@@ -86,6 +90,21 @@ module PixelFont {
             }
             pen += (CELL_W + GAP) * scale;
         }
+    }
+
+    //! Text with an offset copy behind it. A drop shadow is the staple trick
+    //! for lifting 16-bit UI type off its background rather than letting it
+    //! sit flat in it.
+    function drawShadowed(dc as Graphics.Dc, x as Number, y as Number, scale as Number,
+                          text as String, color as Number, offset as Number) as Void {
+        draw(dc, x + offset, y + offset, scale, text, Theme.SHADOW);
+        draw(dc, x, y, scale, text, color);
+    }
+
+    function drawShadowedCentered(dc as Graphics.Dc, centerX as Number, y as Number,
+                                  scale as Number, text as String, color as Number,
+                                  offset as Number) as Void {
+        drawShadowed(dc, centerX - width(text, scale) / 2, y, scale, text, color, offset);
     }
 
     //! Per-glyph colour ramp. A true gradient would mean a colour change per

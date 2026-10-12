@@ -37,7 +37,7 @@ class DailyView extends WatchUi.WatchFace {
     private const HIST_H = 34;
 
     private const TIME_Y = 210;
-    private const TIME_SCALE = 14;
+    private const TIME_SCALE = 12;
 
     // Steps, battery and temperature.
     // Tall enough for a caption stacked over a scale-4 value without either
@@ -82,10 +82,12 @@ class DailyView extends WatchUi.WatchFace {
                 "NO HR HISTORY", Theme.FAINT);
         }
 
-        // Amber into green, stepped once per digit.
+        // Amber into green, stepped once per digit, over its own shadow.
+        var clock = Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]);
+        PixelFont.drawCentered(dc, Layout.CENTER_X + 4, TIME_Y + 4, TIME_SCALE,
+            clock, Theme.SHADOW);
         PixelFont.drawGradientCentered(dc, Layout.CENTER_X, TIME_Y, TIME_SCALE,
-            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]),
-            Theme.STRESS, Theme.STEPS);
+            clock, Theme.STRESS, Theme.STEPS);
 
         drawInfoRow(dc);
         drawRings(dc);
@@ -138,7 +140,7 @@ class DailyView extends WatchUi.WatchFace {
             hours == null ? Metrics.text(null) : hours.format("%d") + "H",
             Theme.battery(Metrics.batteryPercent()));
 
-        PixelFont.drawRight(dc, Layout.RIGHT, INFO_Y + 32, 6,
+        PixelFont.drawRight(dc, Layout.RIGHT, INFO_Y + 32, 5,
             Metrics.temperatureGlyph(), Theme.WEATHER);
     }
 

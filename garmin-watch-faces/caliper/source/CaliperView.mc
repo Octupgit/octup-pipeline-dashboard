@@ -11,7 +11,7 @@ class CaliperView extends WatchUi.WatchFace {
 
     private const STATUS_Y = 46;
     private const TIME_Y   = 92;
-    private const DATE_Y   = 132;
+    private const DATE_Y   = 144;
 
     private const METER_Y = 168;
     private const METER_H = 206;
@@ -37,8 +37,8 @@ class CaliperView extends WatchUi.WatchFace {
         Draw.begin(dc);
 
         Draw.statusBlocks(dc, Layout.CENTER_X, STATUS_Y, 8);
-        PixelFont.drawCentered(dc, Layout.CENTER_X, TIME_Y, 9,
-            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT);
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 8,
+            Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
         PixelFont.drawCentered(dc, Layout.CENTER_X, DATE_Y, 2, Metrics.dateLine(), Theme.DIM);
 
         var steps = Metrics.steps();
