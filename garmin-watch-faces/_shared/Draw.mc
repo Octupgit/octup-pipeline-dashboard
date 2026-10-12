@@ -90,6 +90,18 @@ module Draw {
         }
     }
 
+    //! Small solid triangle, pointing up for sunrise and down for sunset.
+    //! Cheaper and sharper at this size than carrying an icon bitmap.
+    function caret(dc as Graphics.Dc, x as Number, y as Number, up as Boolean,
+                   color as Number) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        if (up) {
+            dc.fillPolygon([[x, y - 6], [x - 7, y + 5], [x + 7, y + 5]]);
+        } else {
+            dc.fillPolygon([[x, y + 6], [x - 7, y - 5], [x + 7, y - 5]]);
+        }
+    }
+
     //! Minute/hour/second ticks around an analog dial.
     function dialTicks(dc as Graphics.Dc, centerX as Number, centerY as Number,
                        radius as Number) as Void {

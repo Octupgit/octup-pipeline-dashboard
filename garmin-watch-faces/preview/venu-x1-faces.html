@@ -118,9 +118,10 @@
 
 <div class="wrap">
   <h1>Venu X1 Face Set</h1>
-  <p class="lede">Four watch faces, one per layout style, drawn at the Venu X1's real panel size from the
-    same coordinates as the Monkey&nbsp;C source. Switch the day state to see how each face behaves when
-    goals are met, when they are not, and when the sensors have nothing to give.</p>
+  <p class="lede">Four watch faces, one per layout style, all composed inside the same circular dial and
+    drawn at the Venu X1's real panel size from the same coordinates as the Monkey&nbsp;C source. Switch the
+    day state to see how each behaves when goals are met, when they are not, and when the sensors have
+    nothing to give.</p>
 
   <div class="spec">
     <span><b>448 &times; 486</b> px panel</span>
@@ -128,6 +129,7 @@
     <span><b>venux1</b> build target</span>
     <span><b>~81 KB</b> watch-face memory budget</span>
     <span>always-on: <b>off</b></span>
+    <span>dial: <b>r206</b> at 224, 243</span>
   </div>
 
   <div class="controls">
@@ -156,10 +158,11 @@
       <p>Hours stacked over minutes at the largest size the device has a font for &mdash; roughly three times
         the digit height of a stock digital face. The minutes take the blue accent so the time reads as two
         numbers rather than one four-digit block.</p>
-      <p class="why">Pick this one if you mostly want to know the time and resent the clutter. Everything else
-        is a single row along the bottom, with one hairline under it for the step goal.</p>
+      <p class="why">Pick this one if you mostly want to know the time and resent the clutter. The dial edge
+        is the step goal, so the only progress tracking on this face costs no space inside the circle at
+        all.</p>
       <ul class="legend">
-        <li><i style="background:#4CD964"></i>Steps <span>+ goal hairline</span></li>
+        <li><i style="background:#4CD964"></i>Steps <span>+ goal on the rim</span></li>
         <li><i style="background:#E8EAED"></i>Temperature <span>+ conditions</span></li>
         <li><i style="background:#8A8F98"></i>Watch battery</li>
         <li><i style="background:#5AC8FA"></i>Status dots</li>
@@ -176,9 +179,9 @@
     <div class="notes">
       <p class="eyebrow">Data dashboard</p>
       <h2>Flux</h2>
-      <p>Six metrics in a grid, weather on the top right, a full-width step-goal bar and today's daylight
-        window along the bottom. The time is left-aligned and deliberately smaller here, because on this face
-        it is one field among several rather than the subject.</p>
+      <p>Six metrics in two rows of three, weather on one line, and today's daylight window at the bottom,
+        all packed into the circle. The rows narrow as the dial curves in, so the lower row runs tighter than
+        the upper one and its captions are kept short.</p>
       <p class="why">Pick this one if you open glance widgets several times a day. It is the only face that
         carries all three groups you asked for at once, and the only one with sunrise and sunset.</p>
       <ul class="legend">
@@ -189,7 +192,7 @@
         <li><i style="background:#B18CFF"></i>Floors</li>
         <li><i style="background:#FF5CA8"></i>Intensity min <span>week</span></li>
         <li><i style="background:#E8EAED"></i>Weather <span>temp, low/high</span></li>
-        <li><i style="background:#FFB020"></i>Move bar</li>
+        <li><i style="background:#FFB020"></i>Sunrise <span>/ sunset</span></li>
       </ul>
       <p class="file">flux/source/FluxView.mc</p>
     </div>
@@ -203,9 +206,9 @@
     <div class="notes">
       <p class="eyebrow">Goal rings</p>
       <h2>Orbit</h2>
-      <p>Two concentric gauges: steps against today's goal outside, Body Battery inside. Both are questions of
-        "how full am I", which a ring answers at a glance and a number does not. The matching numbers sit
-        along the bottom in the same colours, so the rings never become decoration.</p>
+      <p>Two concentric gauges filling the dial: steps against today's goal outside, Body Battery inside.
+        Both are questions of "how full am I", which a ring answers at a glance and a number does not. Their
+        numbers flank the heart rate in matching colours, so the rings never become decoration.</p>
       <p class="why">Pick this one if you chase a daily step goal or watch your Body Battery drain through the
         day. Weakest face for planning &mdash; it has temperature but no forecast and no sun times.</p>
       <ul class="legend">
@@ -227,8 +230,8 @@
       <p class="eyebrow">Analog hybrid</p>
       <h2>Meridian</h2>
       <p>A real analog dial with sixty ticks, a creeping hour hand and a Body Battery arc wrapped around the
-        outside. Four values sit in a strip underneath with no captions, identified only by colour &mdash; this
-        face is meant to look like a watch rather than a readout.</p>
+        outside. Data sits inside the dial as a watch would place it &mdash; battery and date above the centre,
+        three values below, all uncaptioned and identified only by colour.</p>
       <p class="why">Pick this one if the Venu X1 is also a dress watch. The second hand runs only while the
         screen is awake; there is no point animating a hand nobody is looking at.</p>
       <ul class="legend">
@@ -244,7 +247,9 @@
 
   <div class="footnote">
     <h3>How close this is to the real thing</h3>
-    <p>Positions, sizes, colours and goal arithmetic are taken straight from the Monkey&nbsp;C, so the
+    <p>All four share one circle: centre (224, 243), radius 206, the largest the 448&nbsp;px-wide panel
+      holds. The bands above and below it are unused, which on an AMOLED panel means those pixels are simply
+      off. Positions, sizes, colours and goal arithmetic are taken straight from the Monkey&nbsp;C, so the
       composition is accurate. The type is not: Garmin's built-in fonts ship on the device and cannot be
       loaded here, so each one is matched by eye to a Barlow weight at a similar height. Expect glyph widths
       to shift by a few pixels in the simulator &mdash; the bottom rows are the places to check.</p>
@@ -443,94 +448,95 @@
 
   // ------------------------------------------------------------------ faces
 
+  function caret(ctx, x, y, up, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (up) { ctx.moveTo(x, y - 6); ctx.lineTo(x - 7, y + 5); ctx.lineTo(x + 7, y + 5); }
+    else { ctx.moveTo(x, y + 6); ctx.lineTo(x - 7, y - 5); ctx.lineTo(x + 7, y - 5); }
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // One dial geometry shared by all four faces.
+  var CX = 224, CY = 243, OUTER = 206;
+
   function renderVanguard(ctx, s) {
-    statusDots(ctx, 224, 30, s);
-    text(ctx, 224, 64, F.SMALL, s.date, T.DIM, "center");
-    text(ctx, 224, 168, F.N_THAI, hoursText(s), T.TEXT, "center");
-    text(ctx, 224, 318, F.N_THAI, minsText(s), T.BODY, "center");
-    cell(ctx, 84, 420, F.SMALL, compact(s.steps), "STEPS", T.STEPS);
-    cell(ctx, 224, 420, F.SMALL, tempText(s), s.cond, T.WEATHER);
-    cell(ctx, 364, 420, F.SMALL, String(s.batt), "BATTERY", battColor(s.batt));
-    bar(ctx, 104, 470, 240, 4, ratio(s.steps, s.stepGoal), T.STEPS);
+    ring(ctx, CX, CY, OUTER, ratio(s.steps, s.stepGoal), T.STEPS, 6);
+    statusDots(ctx, CX, 78, s);
+    text(ctx, CX, 120, F.SMALL, s.date, T.DIM, "center");
+    text(ctx, CX, 200, F.N_THAI, hoursText(s), T.TEXT, "center");
+    text(ctx, CX, 306, F.N_THAI, minsText(s), T.BODY, "center");
+    cell(ctx, 140, 380, F.SMALL, compact(s.steps), "STEP", T.STEPS);
+    cell(ctx, 224, 380, F.SMALL, tempText(s), "TEMP", T.WEATHER);
+    cell(ctx, 308, 380, F.SMALL, String(s.batt), "BATT", battColor(s.batt));
+  }
+
+  function weatherLine(s) {
+    var out = tempText(s) + "\u00B0";
+    if (s.cond) { out += "  " + s.cond; }
+    if (s.hiLo) { out += "  " + s.hiLo; }
+    return out;
   }
 
   function renderFlux(ctx, s) {
-    text(ctx, 28, 34, F.XTINY, s.date, T.DIM, "left");
-    text(ctx, 420, 34, F.XTINY, s.batt + "%", battColor(s.batt), "right");
-    statusDots(ctx, 224, 34, s);
+    ring(ctx, CX, CY, OUTER, ratio(s.steps, s.stepGoal), T.STEPS, 8);
+    statusDots(ctx, CX, 70, s);
+    text(ctx, CX, 106, F.XTINY, s.date, T.DIM, "center");
+    text(ctx, CX, 168, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "center");
+    text(ctx, CX, 222, F.XTINY, weatherLine(s), T.WEATHER, "center");
 
-    text(ctx, 28, 110, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "left");
-    text(ctx, 420, 94, F.N_MILD, tempText(s), T.WEATHER, "right");
-    text(ctx, 420, 136, F.XTINY, s.cond, T.DIM, "right");
-    text(ctx, 420, 158, F.XTINY, s.hiLo, T.DIM, "right");
+    cell(ctx, 112, 278, F.MEDIUM, compact(s.steps), "STEPS", T.STEPS);
+    cell(ctx, 224, 278, F.MEDIUM, num(s.hr), "HEART", T.HR);
+    cell(ctx, 336, 278, F.MEDIUM, num(s.body), "BODY", T.BODY);
+    // Outer columns pull in on the lower row, where the dial has curved.
+    cell(ctx, 120, 356, F.MEDIUM, compact(s.cals), "CALS", T.CALORIES);
+    cell(ctx, 224, 356, F.MEDIUM, num(s.floors), "FLOORS", T.FLOORS);
+    cell(ctx, 328, 356, F.MEDIUM, num(s.intMin), "INT MIN", T.INTENSITY);
 
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = T.FAINT;
-    ctx.beginPath();
-    ctx.moveTo(28, 172.5);
-    ctx.lineTo(420, 172.5);
-    ctx.stroke();
-
-    cell(ctx, 96, 238, F.MEDIUM, compact(s.steps), "STEPS", T.STEPS);
-    cell(ctx, 224, 238, F.MEDIUM, num(s.hr), "HEART", T.HR);
-    cell(ctx, 352, 238, F.MEDIUM, num(s.body), "BODY BATT", T.BODY);
-    cell(ctx, 96, 350, F.MEDIUM, compact(s.cals), "CALS", T.CALORIES);
-    cell(ctx, 224, 350, F.MEDIUM, num(s.floors), "FLOORS", T.FLOORS);
-    cell(ctx, 352, 350, F.MEDIUM, num(s.intMin), "INT MIN", T.INTENSITY);
-
-    bar(ctx, 28, 414, 392, 6, ratio(s.steps, s.stepGoal), T.STEPS);
-
-    text(ctx, 28, 446, F.XTINY, s.sunrise, T.TEXT, "left");
-    text(ctx, 28, 468, F.XTINY, "SUNRISE", T.DIM, "left");
-    text(ctx, 420, 446, F.XTINY, s.sunset, T.TEXT, "right");
-    text(ctx, 420, 468, F.XTINY, "SUNSET", T.DIM, "right");
-
-    if (s.move > 0) {
-      var notch = 14, gap = 5, total = 5 * notch + 4 * gap, x = 224 - total / 2;
-      for (var i = 0; i < 5; i++) {
-        ctx.fillStyle = i < s.move ? T.STRESS : T.TRACK;
-        ctx.fillRect(x + i * (notch + gap), 448, notch, 6);
-      }
-    }
+    caret(ctx, 150, 424, true, T.STRESS);
+    text(ctx, 164, 424, F.XTINY, s.sunrise, T.TEXT, "left");
+    caret(ctx, 298, 424, false, T.BODY);
+    text(ctx, 284, 424, F.XTINY, s.sunset, T.TEXT, "right");
   }
 
   function renderOrbit(ctx, s) {
-    ring(ctx, 224, 206, 186, ratio(s.steps, s.stepGoal), T.STEPS, 14);
-    ring(ctx, 224, 206, 164, ratio(s.body, 100), T.BODY, 14);
-    text(ctx, 224, 178, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "center");
-    text(ctx, 224, 252, F.XTINY, s.date, T.DIM, "center");
-    cell(ctx, 224, 292, F.SMALL, num(s.hr), "BPM", T.HR);
-    statusDots(ctx, 224, 348, s);
-    cell(ctx, 60, 430, F.SMALL, compact(s.steps), "STEPS", T.STEPS);
-    cell(ctx, 164, 430, F.SMALL, num(s.body), "BODY", T.BODY);
-    cell(ctx, 284, 430, F.SMALL, tempText(s), "TEMP", T.WEATHER);
-    cell(ctx, 388, 430, F.SMALL, String(s.batt), "BATT", battColor(s.batt));
+    ring(ctx, CX, CY, OUTER, ratio(s.steps, s.stepGoal), T.STEPS, 14);
+    ring(ctx, CX, CY, 182, ratio(s.body, 100), T.BODY, 14);
+    statusDots(ctx, CX, 130, s);
+    text(ctx, CX, 192, F.N_HOT, hoursText(s) + ":" + minsText(s), T.TEXT, "center");
+    text(ctx, CX, 246, F.XTINY, s.date, T.DIM, "center");
+    cell(ctx, 108, 288, F.SMALL, compact(s.steps), "STEPS", T.STEPS);
+    cell(ctx, 224, 288, F.SMALL, num(s.hr), "BPM", T.HR);
+    cell(ctx, 340, 288, F.SMALL, num(s.body), "BODY", T.BODY);
+    text(ctx, 176, 356, F.XTINY, tempText(s) + "\u00B0", T.WEATHER, "center");
+    text(ctx, 272, 356, F.XTINY, s.batt + "%", battColor(s.batt), "center");
   }
 
   function renderMeridian(ctx, s) {
-    ring(ctx, 224, 196, 186, ratio(s.body, 100), T.BODY, 8);
-    dialTicks(ctx, 224, 196, 168);
+    ring(ctx, CX, CY, OUTER, ratio(s.body, 100), T.BODY, 8);
+    dialTicks(ctx, CX, CY, 186);
 
-    text(ctx, 224, 196 - 130, F.XTINY, "12", T.DIM, "center");
-    text(ctx, 224 + 130, 196, F.XTINY, "3", T.DIM, "center");
-    text(ctx, 224, 196 + 130, F.XTINY, "6", T.DIM, "center");
-    text(ctx, 224 - 130, 196, F.XTINY, "9", T.DIM, "center");
+    text(ctx, CX, CY - 146, F.XTINY, "12", T.DIM, "center");
+    text(ctx, CX + 146, CY, F.XTINY, "3", T.DIM, "center");
+    text(ctx, CX, CY + 146, F.XTINY, "6", T.DIM, "center");
+    text(ctx, CX - 146, CY, F.XTINY, "9", T.DIM, "center");
 
-    hand(ctx, 224, 196, ((s.hour % 12) + s.min / 60) * 30, 100, 34, 18, 9, T.TEXT);
-    hand(ctx, 224, 196, (s.min + s.sec / 60) * 6, 150, 40, 13, 6, T.TEXT);
-    hand(ctx, 224, 196, s.sec * 6, 162, 46, 4, 3, T.BODY);
+    text(ctx, CX, 152, F.XTINY, s.date, T.DIM, "center");
+    text(ctx, 118, 326, F.XTINY, compact(s.steps), T.STEPS, "center");
+    text(ctx, 185, 326, F.XTINY, num(s.hr), T.HR, "center");
+    text(ctx, 252, 326, F.XTINY, tempText(s) + "\u00B0", T.WEATHER, "center");
+    text(ctx, 319, 326, F.XTINY, s.batt + "%", battColor(s.batt), "center");
+    statusDots(ctx, CX, 366, s);
+
+    // Hands last, so they pass over the data rather than under it.
+    hand(ctx, CX, CY, ((s.hour % 12) + s.min / 60) * 30, 110, 36, 18, 9, T.TEXT);
+    hand(ctx, CX, CY, (s.min + s.sec / 60) * 6, 166, 44, 13, 6, T.TEXT);
+    hand(ctx, CX, CY, s.sec * 6, 178, 50, 4, 3, T.BODY);
 
     ctx.fillStyle = T.TEXT;
-    ctx.beginPath(); ctx.arc(224, 196, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(CX, CY, 11, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = T.BG;
-    ctx.beginPath(); ctx.arc(224, 196, 5, 0, Math.PI * 2); ctx.fill();
-
-    text(ctx, 224, 404, F.XTINY, s.date, T.DIM, "center");
-    text(ctx, 60, 440, F.SMALL, compact(s.steps), T.STEPS, "center");
-    text(ctx, 164, 440, F.SMALL, num(s.hr), T.HR, "center");
-    text(ctx, 284, 440, F.SMALL, s.temp === null ? NO_VALUE : s.temp + "°", T.WEATHER, "center");
-    text(ctx, 388, 440, F.SMALL, s.batt + "%", battColor(s.batt), "center");
-    statusDots(ctx, 224, 472, s);
+    ctx.beginPath(); ctx.arc(CX, CY, 5, 0, Math.PI * 2); ctx.fill();
   }
 
   var FACES = [
@@ -604,4 +610,5 @@
   setInterval(function () { if (ui.live) { renderAll(); } }, 1000);
 })();
 </script>
+
 </body></html>

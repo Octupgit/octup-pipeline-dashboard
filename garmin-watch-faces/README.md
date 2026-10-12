@@ -3,6 +3,12 @@
 Four Connect IQ watch faces for the **Garmin Venu X1**, one per layout style, so you
 can wear each for a day and keep the one that fits.
 
+All four are composed inside **one circular dial**: centre (224, 243), radius 206,
+the largest circle the panel holds. Note that the Venu X1 panel is square-cornered
+and 448 x 486 - the circle is a deliberate design choice, not the shape of the
+hardware, and it leaves a 37 px band unused above and below. On an AMOLED panel
+those pixels are simply off, so the bands cost nothing but screen area.
+
 | | Face | Style | Best for |
 |---|---|---|---|
 | 01 | **Vanguard** | minimal typographic | reading the time without focusing on the watch |
@@ -20,19 +26,18 @@ Garmin's built-in fonts only exist on the device.
 
 |                        | Vanguard | Flux | Orbit | Meridian |
 |------------------------|:--------:|:----:|:-----:|:--------:|
-| Time                   | stacked, largest | left, medium | centred in rings | analog hands |
+| Time                   | stacked, largest | centred, medium | centred in rings | analog hands |
 | Date                   | yes | yes | yes | yes |
-| Steps + goal           | value + hairline | value + bar | **ring** | value |
+| Steps + goal           | value + **rim** | value + **rim** | **outer ring** | value |
 | Heart rate             | - | yes | yes | yes |
-| Body Battery           | - | yes | **ring** | **outer arc** |
+| Body Battery           | - | yes | **inner ring** | **outer arc** |
 | Calories               | - | yes | - | - |
 | Floors                 | - | yes | - | - |
 | Intensity minutes (wk) | - | yes | - | - |
 | Temperature            | yes | yes | yes | yes |
-| Conditions + low/high  | condition only | yes | - | - |
+| Conditions + low/high  | - | yes | - | - |
 | Sunrise / sunset       | - | yes | - | - |
-| Move bar               | - | yes | - | - |
-| Watch battery          | yes | yes | yes | yes |
+| Watch battery          | yes | - | yes | yes |
 | Status dots            | yes | yes | yes | yes |
 
 Status dots, in order: **blue** unread notifications, **amber** alarm set,
@@ -48,10 +53,11 @@ Battery, orange calories, purple floors, pink intensity minutes, white weather.
 ```
 garmin-watch-faces/
   _shared/            data layer used by all four faces
+    Layout.mc         the shared dial: centre and radius
     Theme.mc          the palette
     Metrics.mc        every sensor and activity reader, null-safe
     Solar.mc          sunrise/sunset, computed locally
-    Draw.mc           rings, bars, cells, dial ticks, clock hands
+    Draw.mc           rings, bars, cells, carets, dial ticks, clock hands
   vanguard/  flux/  orbit/  meridian/
     manifest.xml      app id, venux1 target, SensorHistory permission
     monkey.jungle     adds ../_shared to the source path
@@ -107,7 +113,10 @@ a build fails:
   `<face>/source/` and drop that line from the jungle.
 - **Font metrics.** `Draw.cell` places a caption using
   `dc.getFontHeight(font) / 2 + 11`. If captions sit too close to their values
-  on the device, change that `11`.
+  on the device, change that `11`. This is also the most likely cause of text
+  touching the dial rim: the lower rows of Flux and the tails of Orbit and
+  Meridian are placed against a circle that narrows quickly, and were checked
+  against approximated font widths rather than the device's real ones.
 - **`minApiLevel` is 5.0.0**, which is fine for the Venu X1 but will exclude
   older watches if you add more `<iq:product>` entries.
 
@@ -136,6 +145,10 @@ observation, which the phone refreshes without waking the GPS, so the fields rea
 - **Position of anything:** every coordinate is a named `const` at the top of
   each view, in device pixels, measured from the top left. 448 x 486, centre is
   (224, 243).
+- **The dial itself:** `_shared/Layout.mc`. Raising `OUTER_R` past 206 runs the
+  rim off the left and right edges, since the panel is only 448 px wide. To go
+  back to rectangular layouts, ignore it and use the full panel - nothing else
+  depends on the circle.
 - **The step goal ring target:** goals come from the watch's own activity
   tracking (`Metrics.stepGoal()`), so change them in Garmin Connect, not here.
 
