@@ -31,13 +31,24 @@ module Metrics {
         return hour.format("%d");
     }
 
+    //! Hours always two digits, even in 12-hour mode. Only the stacked
+    //! layouts use this: a lone "2" centred over "32" reads as a mistake.
+    function hoursPadded() as String {
+        var info = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
+        var hour = info.hour;
+        if (!System.getDeviceSettings().is24Hour) {
+            hour = hour % 12;
+            if (hour == 0) {
+                hour = 12;
+            }
+        }
+        return hour.format("%02d");
+    }
+
     function minutes() as String {
         return Gregorian.info(Time.now(), Time.FORMAT_SHORT).min.format("%02d");
     }
 
-    function seconds() as Number {
-        return Gregorian.info(Time.now(), Time.FORMAT_SHORT).sec;
-    }
 
     //! "SAT 11 OCT"
     function dateLine() as String {
@@ -93,14 +104,6 @@ module Metrics {
         return info.floorsClimbed;
     }
 
-    function floorGoal() as Number? {
-        var info = ActivityMonitor.getInfo();
-        if (info == null || !(info has :floorsClimbedGoal) || info.floorsClimbedGoal == null
-                || info.floorsClimbedGoal <= 0) {
-            return null;
-        }
-        return info.floorsClimbedGoal;
-    }
 
     //! Intensity minutes for the week, which is how Garmin scores the 150/week
     //! guideline - the daily number is too noisy to be worth a slot.
@@ -256,27 +259,7 @@ module Metrics {
         return temperature() + "*";
     }
 
-    //! Today's forecast range, e.g. "12/21". Empty when the phone has not synced.
-    function highLow() as String {
-        var conditions = currentConditions();
-        if (conditions == null || !(conditions has :highTemperature)
-                || conditions.highTemperature == null || conditions.lowTemperature == null) {
-            return "";
-        }
-        var statute = System.getDeviceSettings().temperatureUnits == System.UNIT_STATUTE;
-        return Lang.format("$1$/$2$", [
-            scaleTemp(conditions.lowTemperature, statute),
-            scaleTemp(conditions.highTemperature, statute)
-        ]);
-    }
 
-    function scaleTemp(celsius as Numeric, statute as Boolean) as String {
-        var value = celsius.toFloat();
-        if (statute) {
-            value = value * 9.0 / 5.0 + 32.0;
-        }
-        return value.toNumber().format("%d");
-    }
 
     //! Short condition word. Deliberately a small set - the full enum is ~50
     //! values and most of them never show up in one city.
@@ -373,7 +356,9 @@ module Metrics {
         return value == null ? NO_VALUE : value.format("%d");
     }
 
-    //! 8420 -> "8.4k", so a five-digit step count never overflows its cell.
+    //! 8420 -> "8.4K", so a five-digit step count never overflows its cell.
+    //! Uppercase deliberately: the pixel font has no lowercase glyphs, so a
+    //! lowercase suffix would silently render as nothing.
     function compact(value as Number?) as String {
         if (value == null) {
             return NO_VALUE;
@@ -381,7 +366,7 @@ module Metrics {
         if (value < 10000) {
             return value.format("%d");
         }
-        return (value / 1000.0).format("%.1f") + "k";
+        return (value / 1000.0).format("%.1f") + "K";
     }
 
     //! Fraction of a goal, clamped to 0..1. Null goal or value means no bar.

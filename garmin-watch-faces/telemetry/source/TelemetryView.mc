@@ -73,12 +73,16 @@ class TelemetryView extends WatchUi.WatchFace {
     //! of lit blocks is the point - it is a calendar strip, not a gauge.
     private function drawDayBar(dc as Graphics.Dc, x as Number, width as Number) as Void {
         var gap = 2;
-        var cellWidth = (width - gap * (BAR_CELLS - 1)) / BAR_CELLS;
+        var span = width - gap * (BAR_CELLS - 1);
+        var base = span / BAR_CELLS;
+        var extra = span % BAR_CELLS;
         var sunrise = Solar.sunriseMinutes();
         var sunset = Solar.sunsetMinutes();
         var nowHour = Solar.nowMinutes() / 60;
 
+        var cursor = x;
         for (var hour = 0; hour < BAR_CELLS; hour += 1) {
+            var cellWidth = base + (hour < extra ? 1 : 0);
             var color = Theme.TRACK;
             if (sunrise != null && sunset != null
                     && hour >= sunrise / 60 && hour <= sunset / 60) {
@@ -88,7 +92,8 @@ class TelemetryView extends WatchUi.WatchFace {
                 color = Theme.TEXT;
             }
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(x + hour * (cellWidth + gap), BAR_Y, cellWidth, BAR_H);
+            dc.fillRectangle(cursor, BAR_Y, cellWidth, BAR_H);
+            cursor += cellWidth + gap;
         }
     }
 }

@@ -40,54 +40,96 @@ module Draw {
 
     //! Horizontal bar divided into discrete cells. A segmented bar reads as a
     //! count rather than a length, which is the whole point of the style.
+    //!
+    //! Cell widths are handed the division remainder one pixel at a time, so
+    //! the bar fills its declared width exactly instead of stopping a few
+    //! pixels short of its own box.
     function segBar(dc as Graphics.Dc, x as Number, y as Number, width as Number,
                     height as Number, cells as Number, fraction as Float,
                     color as Number) as Void {
         var gap = 2;
-        var cellWidth = (width - gap * (cells - 1)) / cells;
-        var lit = (fraction * cells).toNumber();
-        var highlight = Theme.shade(color, 155);
-        var shadow = Theme.shade(color, 55);
+        var span = width - gap * (cells - 1);
+        var base = span / cells;
+        var extra = span % cells;
+
+        var clamped = clampFraction(fraction);
+        var lit = litCells(clamped, cells);
+        var met = clamped >= 1.0;
+        // A met goal lights every cell a shade brighter, so a full bar is
+        // visibly different from one clamped just short of full.
+        var body = met ? Theme.shade(color, 130) : color;
+        var highlight = Theme.shade(body, 155);
+        var shadow = Theme.shade(body, 55);
         var bevel = height >= 8 ? 2 : 1;
+
+        var cursor = x;
         for (var i = 0; i < cells; i += 1) {
-            var cellX = x + i * (cellWidth + gap);
+            var cellWidth = base + (i < extra ? 1 : 0);
             if (i >= lit) {
                 dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
-                dc.fillRectangle(cellX, y, cellWidth, height);
+                dc.fillRectangle(cursor, y, cellWidth, height);
             } else {
-                dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-                dc.fillRectangle(cellX, y, cellWidth, height);
+                dc.setColor(body, Graphics.COLOR_TRANSPARENT);
+                dc.fillRectangle(cursor, y, cellWidth, height);
                 dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
-                dc.fillRectangle(cellX, y, cellWidth, bevel);
+                dc.fillRectangle(cursor, y, cellWidth, bevel);
                 dc.setColor(shadow, Graphics.COLOR_TRANSPARENT);
-                dc.fillRectangle(cellX, y + height - bevel, cellWidth, bevel);
+                dc.fillRectangle(cursor, y + height - bevel, cellWidth, bevel);
             }
+            cursor += cellWidth + gap;
         }
     }
 
-    //! Vertical meter, filling from the bottom like a VU display.
+    function clampFraction(fraction as Float) as Float {
+        if (fraction < 0.0) { return 0.0; }
+        if (fraction > 1.0) { return 1.0; }
+        return fraction;
+    }
+
+    //! Lit cell count. Anything above zero lights at least one cell: a bar
+    //! that is entirely dark reads as a broken element rather than as a day
+    //! that has barely started.
+    function litCells(fraction as Float, cells as Number) as Number {
+        var lit = (fraction * cells).toNumber();
+        if (lit == 0 && fraction > 0.0) {
+            lit = 1;
+        }
+        return lit;
+    }
+
+    //! Vertical meter, filling from the bottom like a VU display. Same
+    //! remainder handling and same goal-met behaviour as segBar.
     function segMeter(dc as Graphics.Dc, x as Number, y as Number, width as Number,
                       height as Number, cells as Number, fraction as Float,
                       color as Number) as Void {
         var gap = 2;
-        var cellHeight = (height - gap * (cells - 1)) / cells;
-        var lit = (fraction * cells).toNumber();
-        var highlight = Theme.shade(color, 155);
-        var shadow = Theme.shade(color, 55);
-        var bevel = cellHeight >= 8 ? 2 : 1;
+        var span = height - gap * (cells - 1);
+        var base = span / cells;
+        var extra = span % cells;
+
+        var clamped = clampFraction(fraction);
+        var lit = litCells(clamped, cells);
+        var body = clamped >= 1.0 ? Theme.shade(color, 130) : color;
+        var highlight = Theme.shade(body, 155);
+        var shadow = Theme.shade(body, 55);
+
+        var cursor = y + height;
         for (var i = 0; i < cells; i += 1) {
-            var cellY = y + height - (i + 1) * cellHeight - i * gap;
+            var cellHeight = base + (i < extra ? 1 : 0);
+            var cellY = cursor - cellHeight;
+            var bevel = cellHeight >= 8 ? 2 : 1;
             if (i >= lit) {
                 dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(x, cellY, width, cellHeight);
             } else {
-                dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+                dc.setColor(body, Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(x, cellY, width, cellHeight);
                 dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(x, cellY, width, bevel);
                 dc.setColor(shadow, Graphics.COLOR_TRANSPARENT);
                 dc.fillRectangle(x, cellY + cellHeight - bevel, width, bevel);
             }
+            cursor -= cellHeight + gap;
         }
     }
 
@@ -95,7 +137,7 @@ module Draw {
     function segRing(dc as Graphics.Dc, cx as Number, cy as Number, radius as Number,
                      segments as Number, fraction as Float, color as Number,
                      pen as Number) as Void {
-        var lit = (fraction * segments).toNumber();
+        var lit = litCells(clampFraction(fraction), segments);
         var span = 360.0 / segments;
         var gap = span * 0.22;
         dc.setPenWidth(pen);
@@ -135,19 +177,19 @@ module Draw {
         if (span < 1) {
             span = 1;   // a flat trace still has to land somewhere
         }
-        var cellWidth = width / count;
-        if (cellWidth < 1) {
-            cellWidth = 1;
-        }
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         var lastY = -1;
         for (var i = 0; i < count; i += 1) {
+            // Edges derive from the full width, so the trace reaches the
+            // right-hand side of its frame instead of stopping short of it.
+            var left = x + i * width / count;
+            var cellWidth = x + (i + 1) * width / count - left;
             var sampleY = y + height - (series[i] - low) * height / span;
-            dc.fillRectangle(x + i * cellWidth, sampleY - 1, cellWidth, 3);
+            dc.fillRectangle(left, sampleY - 1, cellWidth, 3);
             if (lastY >= 0) {
                 var top = lastY < sampleY ? lastY : sampleY;
                 var bottom = lastY < sampleY ? sampleY : lastY;
-                dc.fillRectangle(x + i * cellWidth, top, 3, bottom - top);
+                dc.fillRectangle(left, top, 3, bottom - top);
             }
             lastY = sampleY;
         }
@@ -171,22 +213,22 @@ module Draw {
         if (span < 1) {
             span = 1;
         }
-        var pitch = width / count;
-        var barWidth = pitch - 2;
-        if (barWidth < 1) {
-            barWidth = 1;
-        }
         var highlight = Theme.shade(color, 160);
         for (var i = 0; i < count; i += 1) {
+            var barX = x + i * width / count;
+            var barWidth = x + (i + 1) * width / count - barX - 2;
+            if (barWidth < 1) {
+                barWidth = 1;
+            }
             var barHeight = (series[i] - low) * height / span;
             if (barHeight < 2) {
                 barHeight = 2;
             }
             var barY = y + height - barHeight;
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(x + i * pitch, barY, barWidth, barHeight);
+            dc.fillRectangle(barX, barY, barWidth, barHeight);
             dc.setColor(highlight, Graphics.COLOR_TRANSPARENT);
-            dc.fillRectangle(x + i * pitch, barY, barWidth, 1);
+            dc.fillRectangle(barX, barY, barWidth, 1);
         }
     }
 

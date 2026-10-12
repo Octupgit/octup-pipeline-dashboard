@@ -153,11 +153,13 @@ module Solar {
         }
         var hour = minutes / 60;
         var minute = minutes % 60;
-        if (!Metrics.is24Hour()) {
-            hour = hour % 12;
-            if (hour == 0) {
-                hour = 12;
-            }
+        if (Metrics.is24Hour()) {
+            // Zero-padded, so a sunrise row lines up with the clock above it.
+            return Lang.format("$1$:$2$", [hour.format("%02d"), minute.format("%02d")]);
+        }
+        hour = hour % 12;
+        if (hour == 0) {
+            hour = 12;
         }
         return Lang.format("$1$:$2$", [hour.format("%d"), minute.format("%02d")]);
     }

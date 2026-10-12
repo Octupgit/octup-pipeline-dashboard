@@ -414,38 +414,54 @@
     ctx.fillRect(x, y, t, h); ctx.fillRect(x + w - t, y, t, h);
   }
 
+  function clampFraction(f) { return f < 0 ? 0 : (f > 1 ? 1 : f); }
+  // Anything above zero lights at least one cell: an all-dark bar reads as a
+  // broken element rather than as a day that has barely started.
+  function litCells(f, cells) {
+    var lit = Math.floor(f * cells);
+    return (lit === 0 && f > 0) ? 1 : lit;
+  }
+
   function segBar(ctx, x, y, w, h, cells, frac, color) {
-    var gap = 2, cw = Math.floor((w - gap * (cells - 1)) / cells);
-    var lit = Math.floor(frac * cells), bevel = h >= 8 ? 2 : 1;
-    var hi = shade(color, 155), lo = shade(color, 55);
+    var gap = 2, span = w - gap * (cells - 1);
+    var base = Math.floor(span / cells), extra = span % cells;
+    var f = clampFraction(frac), lit = litCells(f, cells);
+    var body = f >= 1 ? shade(color, 130) : color;
+    var hi = shade(body, 155), lo = shade(body, 55), bevel = h >= 8 ? 2 : 1;
+    var cursor = x;
     for (var i = 0; i < cells; i++) {
-      var cx = x + i * (cw + gap);
-      if (i >= lit) { ctx.fillStyle = T.TRACK; ctx.fillRect(cx, y, cw, h); }
+      var cw = base + (i < extra ? 1 : 0);
+      if (i >= lit) { ctx.fillStyle = T.TRACK; ctx.fillRect(cursor, y, cw, h); }
       else {
-        ctx.fillStyle = color; ctx.fillRect(cx, y, cw, h);
-        ctx.fillStyle = hi; ctx.fillRect(cx, y, cw, bevel);
-        ctx.fillStyle = lo; ctx.fillRect(cx, y + h - bevel, cw, bevel);
+        ctx.fillStyle = body; ctx.fillRect(cursor, y, cw, h);
+        ctx.fillStyle = hi; ctx.fillRect(cursor, y, cw, bevel);
+        ctx.fillStyle = lo; ctx.fillRect(cursor, y + h - bevel, cw, bevel);
       }
+      cursor += cw + gap;
     }
   }
 
   function segMeter(ctx, x, y, w, h, cells, frac, color) {
-    var gap = 2, ch = Math.floor((h - gap * (cells - 1)) / cells);
-    var lit = Math.floor(frac * cells), bevel = ch >= 8 ? 2 : 1;
-    var hi = shade(color, 155), lo = shade(color, 55);
+    var gap = 2, span = h - gap * (cells - 1);
+    var base = Math.floor(span / cells), extra = span % cells;
+    var f = clampFraction(frac), lit = litCells(f, cells);
+    var body = f >= 1 ? shade(color, 130) : color;
+    var hi = shade(body, 155), lo = shade(body, 55);
+    var cursor = y + h;
     for (var i = 0; i < cells; i++) {
-      var cy = y + h - (i + 1) * ch - i * gap;
+      var ch = base + (i < extra ? 1 : 0), cy = cursor - ch, bevel = ch >= 8 ? 2 : 1;
       if (i >= lit) { ctx.fillStyle = T.TRACK; ctx.fillRect(x, cy, w, ch); }
       else {
-        ctx.fillStyle = color; ctx.fillRect(x, cy, w, ch);
+        ctx.fillStyle = body; ctx.fillRect(x, cy, w, ch);
         ctx.fillStyle = hi; ctx.fillRect(x, cy, w, bevel);
         ctx.fillStyle = lo; ctx.fillRect(x, cy + ch - bevel, w, bevel);
       }
+      cursor -= ch + gap;
     }
   }
 
   function segRing(ctx, cx, cy, radius, segments, frac, color, pen) {
-    var lit = Math.floor(frac * segments), span = 360 / segments, gap = span * 0.22;
+    var lit = litCells(clampFraction(frac), segments), span = 360 / segments, gap = span * 0.22;
     ctx.lineWidth = pen;
     ctx.lineCap = "butt";
     for (var i = 0; i < segments; i++) {
@@ -460,16 +476,15 @@
     var n = series.length;
     if (n < 2) { return; }
     var low = Math.min.apply(null, series), high = Math.max.apply(null, series);
-    var span = Math.max(1, high - low), cw = Math.max(1, Math.floor(w / n));
+    var span = Math.max(1, high - low);
     ctx.fillStyle = color;
     var lastY = -1;
     for (var i = 0; i < n; i++) {
+      var left = x + Math.floor(i * w / n);
+      var cw = x + Math.floor((i + 1) * w / n) - left;
       var sy = Math.round(y + h - (series[i] - low) * h / span);
-      ctx.fillRect(x + i * cw, sy - 1, cw, 3);
-      if (lastY >= 0) {
-        var top = Math.min(lastY, sy);
-        ctx.fillRect(x + i * cw, top, 3, Math.abs(sy - lastY));
-      }
+      ctx.fillRect(left, sy - 1, cw, 3);
+      if (lastY >= 0) { ctx.fillRect(left, Math.min(lastY, sy), 3, Math.abs(sy - lastY)); }
       lastY = sy;
     }
   }
@@ -547,6 +562,8 @@
     var h = s.hour % 12; return String(h === 0 ? 12 : h);
   }
   function minsText(s) { return ("0" + s.min).slice(-2); }
+  // Stacked layouts pad: a lone "2" centred over "32" reads as a mistake.
+  function hoursPadded(s) { return ("0" + (ui.h24 ? s.hour : (s.hour % 12 || 12))).slice(-2); }
   function sunMinutes(t) {
     if (!t || t.indexOf("--") === 0) { return null; }
     var b = t.split(":"); return parseInt(b[0], 10) * 60 + parseInt(b[1], 10);
@@ -634,14 +651,14 @@
     var n = series.length;
     if (!n) { return; }
     var low = Math.min.apply(null, series), high = Math.max.apply(null, series);
-    var span = Math.max(1, high - low);
-    var pitch = Math.floor(w / n), bw = Math.max(1, pitch - 2);
-    ctx.fillStyle = color;
+    var span = Math.max(1, high - low), hi = shade(color, 160);
     for (var i = 0; i < n; i++) {
+      var bx = x + Math.floor(i * w / n);
+      var bw = Math.max(1, x + Math.floor((i + 1) * w / n) - bx - 2);
       var bh = Math.max(2, Math.floor((series[i] - low) * h / span));
       var by = y + h - bh;
-      ctx.fillStyle = color; ctx.fillRect(x + i * pitch, by, bw, bh);
-      ctx.fillStyle = shade(color, 160); ctx.fillRect(x + i * pitch, by, bw, 1);
+      ctx.fillStyle = color; ctx.fillRect(bx, by, bw, bh);
+      ctx.fillStyle = hi; ctx.fillRect(bx, by, bw, 1);
     }
   }
 
@@ -698,7 +715,7 @@
   function renderVanguard(ctx, s) {
     statusBlocks(ctx, CX, 36, 10, s);
     pfC(ctx, CX, 66, 3, s.date, T.DIM);
-    pfSC(ctx, CX, 152, 16, hoursText(s), T.TEXT, 5);
+    pfSC(ctx, CX, 152, 16, hoursPadded(s), T.TEXT, 5);
     pfSC(ctx, CX, 296, 16, minsText(s), T.BODY, 5);
     segBar(ctx, 92, 380, 264, 10, 12, ratio(s.steps, s.stepGoal), T.STEPS);
     field(ctx, 84, 418, compact(s.steps), "STEPS", T.STEPS, 4, 2);
@@ -780,17 +797,21 @@
     pfR(ctx, right, 398, 2, s.sunset + " v", T.BODY);
 
     var cells = 24, gap = 2, width = right - left;
-    var cw = Math.floor((width - gap * (cells - 1)) / cells);
+    var base = Math.floor((width - gap * (cells - 1)) / cells);
+    var extra = (width - gap * (cells - 1)) % cells;
     var rise = sunMinutes(s.sunrise), set = sunMinutes(s.sunset);
     var nowHour = Math.floor((s.hour * 60 + s.min) / 60);
+    var cursor = left;
     for (var hour = 0; hour < cells; hour++) {
+      var cw = base + (hour < extra ? 1 : 0);
       var color = T.TRACK;
       if (rise !== null && set !== null && hour >= Math.floor(rise / 60) && hour <= Math.floor(set / 60)) {
         color = T.STRESS;
       }
       if (hour === nowHour) { color = T.TEXT; }
       ctx.fillStyle = color;
-      ctx.fillRect(left + hour * (cw + gap), 420, cw, 12);
+      ctx.fillRect(cursor, 420, cw, 12);
+      cursor += cw + gap;
     }
   }
 

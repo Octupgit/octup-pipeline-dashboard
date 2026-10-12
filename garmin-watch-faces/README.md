@@ -49,8 +49,11 @@ buys letterforms with real shoulders and bowls instead of five columns
 suggesting them - which is most of what separates 16-bit type from 8-bit.
 
 - **9.8 rectangles per glyph** on average, 15 for the worst (`U`).
-- A dense face is roughly **700 fills per redraw**, which a watch face updating
-  once a minute has ample budget for.
+- Measured draw operations for a full redraw, counted by instrumenting the
+  preview's canvas: Daily 979, Telemetry 964, Flux 963, Trace 678, Caliper 668,
+  Orbit 632, Meridian 542, Vanguard 437, Horizon 358. Only Meridian redraws
+  every second (its second hand) and it is the fourth lightest, so the heavy
+  faces pay their cost once a minute.
 - Sizes are a scale factor, not a font: the time on Vanguard is scale 16, so
   each "pixel" is a 16 px block and the digits stand 128 px tall. No built-in
   font reaches that.
@@ -90,6 +93,11 @@ What separates this from the 8-bit revision, beyond the finer font:
   light band along its top edge and a dark one along its bottom
   (`Theme.shade`). Flat fills read as 8-bit; shaded ones read as raised. Costs
   two rectangles per lit cell.
+- **Goal met lights the whole bar a shade brighter**, so a completed goal is
+  visibly different from one clamped just short of full.
+- **Any progress lights at least one cell.** A bar showing 340 of 9000 steps
+  would otherwise be entirely dark, which reads as a broken element rather
+  than as a day that has barely started.
 - **Drop shadows** behind every large clock, offset two to five pixels
   depending on scale. This is the staple trick for lifting UI type off its
   background instead of letting it sit flat in it.
@@ -165,13 +173,31 @@ two on the first build** - see Known risks below.
 Build produces a `.prg`. Connect the watch over USB, copy it to `GARMIN/APPS/`,
 eject, and pick the face from **Watch Face** on the watch.
 
+## Checks
+
+`python3 tools/check.py` from this directory. The preview page and the device
+code are written twice, by hand, from the same design, which is the likeliest
+place for a bug to hide - a divergence looks correct in every render. The
+script pins the parts that must agree:
+
+- the font table, cell size and row count match between `PixelFont.mc` and the
+  preview;
+- every string literal that can reach the pixel font is renderable with the
+  glyphs that exist (this is what catches a lowercase suffix, which would
+  silently draw nothing);
+- `compact()`'s thousands suffix matches between the two and is uppercase;
+- each manifest's `entry` names a class that exists;
+- every `Draw.`/`Metrics.`/`Solar.`/`Layout.`/`Theme.`/`PixelFont.` symbol
+  referenced anywhere is defined;
+- no shared function is dead.
+
 ## Known risks on the first build
 
-- **Redraw time.** The pixel font trades memory for draw calls. If the
-  simulator's profiler flags `onUpdate`, the cheapest fix is raising the scale
-  of small captions (fewer glyphs at a larger size costs the same per glyph but
-  lets you drop characters), or shortening labels. Telemetry and Flux are the
-  two heaviest.
+- **Redraw time.** The pixel font trades memory for draw calls, about 1,000
+  operations for the heaviest face (see the numbers above). If the simulator's
+  profiler flags `onUpdate`, shorten captions - Daily, Telemetry and Flux are
+  the three to trim, and Telemetry's CRT raster alone is 162 fills that can go
+  to a coarser step.
 - **`Char` comparison.** `PixelFont.draw` finds a glyph by comparing `Char`
   values with `==`. If your SDK is unhappy with that, compare
   `glyphs[g].toNumber()` instead.

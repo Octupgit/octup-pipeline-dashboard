@@ -39,7 +39,7 @@ class VanguardView extends WatchUi.WatchFace {
         // Minutes take the accent colour so the time reads as two numbers
         // rather than one four-digit block.
         PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, HOUR_Y, TIME_SCALE,
-            Metrics.hours(), Theme.TEXT, 5);
+            Metrics.hoursPadded(), Theme.TEXT, 5);
         PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, MINUTE_Y, TIME_SCALE,
             Metrics.minutes(), Theme.BODY, 5);
 
