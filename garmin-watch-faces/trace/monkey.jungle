@@ -1,0 +1,5 @@
+project.manifest = manifest.xml
+
+# Pull in ../_shared alongside this project's own source folder so the faces
+# share one data layer instead of a copy each.
+base.sourcePath = source;../_shared

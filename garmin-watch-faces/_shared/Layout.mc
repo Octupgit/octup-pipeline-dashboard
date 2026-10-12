@@ -1,11 +1,11 @@
 import Toybox.Lang;
 
-//! One dial geometry shared by all four faces.
+//! The panel, as it actually is: a square-cornered 448 x 486 rectangle.
 //!
-//! The Venu X1 panel is 448 x 486 and square-cornered, so a circle is a design
-//! choice rather than the shape of the hardware. Committing to it means every
-//! face is composed inside the same circle, with matching unused bands above
-//! and below; on an AMOLED panel those bands are simply off pixels.
+//! An earlier revision of these faces composed everything inside a circle.
+//! That was wrong for this watch - the Venu X1 is Garmin's rectangular
+//! model - and it cost a 37 px dead band top and bottom. Layouts now use the
+//! whole panel.
 module Layout {
     const WIDTH  = 448;
     const HEIGHT = 486;
@@ -13,6 +13,12 @@ module Layout {
     const CENTER_X = 224;
     const CENTER_Y = 243;
 
-    //! Largest circle the panel holds, less a small margin.
-    const OUTER_R = 206;
+    //! Safe inset from the glass edge.
+    const MARGIN = 22;
+    const LEFT   = MARGIN;
+    const RIGHT  = WIDTH - MARGIN;
+    const TOP    = MARGIN;
+    const BOTTOM = HEIGHT - MARGIN;
+
+    const INNER_W = RIGHT - LEFT;
 }

@@ -4,35 +4,32 @@ import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
 
-//! MERIDIAN - analog hybrid, filling the shared dial.
+//! MERIDIAN - blocky analog.
 //!
-//! A proper analog dial with sixty ticks and a creeping hour hand, with Body
-//! Battery wrapped around the outside. Data sits inside the dial as a watch
-//! would place it: battery and date above the centre, three values below.
-//! The hands are drawn last, so they pass over the text rather than under it.
+//! Twelve square markers instead of a sixty-tick track, hands drawn as
+//! staircases of snapped blocks, and a segmented Body Battery ring outside. At this pixel size a
+//! minute track turns into a grey smear, so it is left out.
 //!
-//! The second hand only runs while the screen is awake; there is no point
-//! animating a hand nobody is looking at.
-//!
-//! Every Y below is the vertical centre of its element, in device pixels.
+//! The second hand only runs while the screen is awake.
 class MeridianView extends WatchUi.WatchFace {
 
-    private const BODY_ARC_PEN = 8;
-    private const DIAL_RADIUS    = 186;
-    private const NUMERAL_RADIUS = 146;
+    private const CENTER_Y = 210;
+    private const ARC_RADIUS  = 192;
+    private const ARC_PEN     = 10;
+    private const ARC_SEGMENTS = 24;
+    private const DIAL_RADIUS = 168;
 
-    private const HOUR_LENGTH   = 110;
-    private const MINUTE_LENGTH = 166;
-    private const SECOND_LENGTH = 178;
+    private const HOUR_LENGTH   = 104;
+    private const MINUTE_LENGTH = 158;
+    private const SECOND_LENGTH = 170;
 
-    private const DATE_Y   = 152;
-    private const STRIP_Y  = 326;
-    private const STATUS_Y = 366;
-    // Four columns, spaced to stay inside the dial at this height.
-    private const STRIP_X_1 = 118;
-    private const STRIP_X_2 = 185;
-    private const STRIP_X_3 = 252;
-    private const STRIP_X_4 = 319;
+    private const STATUS_Y = 76;
+    private const DATE_Y   = 424;
+    private const STRIP_Y  = 452;
+    private const STRIP_X1 = 78;
+    private const STRIP_X2 = 176;
+    private const STRIP_X3 = 272;
+    private const STRIP_X4 = 370;
 
     private var mAwake as Boolean = true;
 
@@ -50,50 +47,32 @@ class MeridianView extends WatchUi.WatchFace {
     }
 
     function onUpdate(dc as Graphics.Dc) as Void {
-        Draw.antiAlias(dc);
-        Draw.clearScreen(dc);
+        Draw.begin(dc);
 
-        Draw.ring(dc, Layout.CENTER_X, Layout.CENTER_Y, Layout.OUTER_R,
-            Metrics.ratio(Metrics.bodyBattery(), 100), Theme.BODY, BODY_ARC_PEN);
+        Draw.segRing(dc, Layout.CENTER_X, CENTER_Y, ARC_RADIUS, ARC_SEGMENTS,
+            Metrics.ratio(Metrics.bodyBattery(), 100), Theme.BODY, ARC_PEN);
+        Draw.dialBlocks(dc, Layout.CENTER_X, CENTER_Y, DIAL_RADIUS);
+        Draw.statusBlocks(dc, Layout.CENTER_X, STATUS_Y, 8);
 
-        Draw.dialTicks(dc, Layout.CENTER_X, Layout.CENTER_Y, DIAL_RADIUS);
-        drawNumerals(dc);
-        drawData(dc);
+        drawStrip(dc);
         drawHands(dc);
     }
 
-    private function drawNumerals(dc as Graphics.Dc) as Void {
-        var centered = Graphics.TEXT_JUSTIFY_CENTER;
-        Draw.text(dc, Layout.CENTER_X, Layout.CENTER_Y - NUMERAL_RADIUS,
-            Graphics.FONT_XTINY, "12", Theme.DIM, centered);
-        Draw.text(dc, Layout.CENTER_X + NUMERAL_RADIUS, Layout.CENTER_Y,
-            Graphics.FONT_XTINY, "3", Theme.DIM, centered);
-        Draw.text(dc, Layout.CENTER_X, Layout.CENTER_Y + NUMERAL_RADIUS,
-            Graphics.FONT_XTINY, "6", Theme.DIM, centered);
-        Draw.text(dc, Layout.CENTER_X - NUMERAL_RADIUS, Layout.CENTER_Y,
-            Graphics.FONT_XTINY, "9", Theme.DIM, centered);
-    }
-
-    //! Values carry no captions on purpose: this face is meant to look like a
-    //! watch rather than a readout, and the colours identify them once worn:
+    //! Values carry no captions: this face is meant to look like a watch
+    //! rather than a readout, and the colours identify them once worn -
     //! green steps, red heart, white temperature, grey battery.
-    private function drawData(dc as Graphics.Dc) as Void {
-        Draw.text(dc, Layout.CENTER_X, DATE_Y, Graphics.FONT_XTINY, Metrics.dateLine(),
-            Theme.DIM, Graphics.TEXT_JUSTIFY_CENTER);
+    private function drawStrip(dc as Graphics.Dc) as Void {
+        PixelFont.drawCentered(dc, Layout.CENTER_X, DATE_Y, 2, Metrics.dateLine(), Theme.DIM);
 
-        // Battery joins the row rather than sitting above the centre, where it
-        // collided with the 12.
         var battery = Metrics.batteryPercent();
-        Draw.text(dc, STRIP_X_1, STRIP_Y, Graphics.FONT_XTINY,
-            Metrics.compact(Metrics.steps()), Theme.STEPS, Graphics.TEXT_JUSTIFY_CENTER);
-        Draw.text(dc, STRIP_X_2, STRIP_Y, Graphics.FONT_XTINY,
-            Metrics.text(Metrics.heartRate()), Theme.HR, Graphics.TEXT_JUSTIFY_CENTER);
-        Draw.text(dc, STRIP_X_3, STRIP_Y, Graphics.FONT_XTINY,
-            Metrics.temperature() + "°", Theme.WEATHER, Graphics.TEXT_JUSTIFY_CENTER);
-        Draw.text(dc, STRIP_X_4, STRIP_Y, Graphics.FONT_XTINY,
-            battery.format("%d") + "%", Theme.battery(battery), Graphics.TEXT_JUSTIFY_CENTER);
-
-        Draw.statusDots(dc, Layout.CENTER_X, STATUS_Y);
+        PixelFont.drawCentered(dc, STRIP_X1, STRIP_Y, 3,
+            Metrics.compact(Metrics.steps()), Theme.STEPS);
+        PixelFont.drawCentered(dc, STRIP_X2, STRIP_Y, 3,
+            Metrics.text(Metrics.heartRate()), Theme.HR);
+        PixelFont.drawCentered(dc, STRIP_X3, STRIP_Y, 3,
+            Metrics.temperatureGlyph(), Theme.WEATHER);
+        PixelFont.drawCentered(dc, STRIP_X4, STRIP_Y, 3,
+            battery.format("%d") + "%", Theme.battery(battery));
     }
 
     private function drawHands(dc as Graphics.Dc) as Void {
@@ -103,20 +82,14 @@ class MeridianView extends WatchUi.WatchFace {
         var hourDegrees = ((now.hour % 12) + now.min / 60.0) * 30.0;
         var minuteDegrees = (now.min + now.sec / 60.0) * 6.0;
 
-        Draw.hand(dc, Layout.CENTER_X, Layout.CENTER_Y, hourDegrees,
-            HOUR_LENGTH, 36, 18, 9, Theme.TEXT);
-        Draw.hand(dc, Layout.CENTER_X, Layout.CENTER_Y, minuteDegrees,
-            MINUTE_LENGTH, 44, 13, 6, Theme.TEXT);
-
+        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, hourDegrees, HOUR_LENGTH, 30, 12, Theme.TEXT);
+        Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, minuteDegrees, MINUTE_LENGTH, 36, 8, Theme.TEXT);
         if (mAwake) {
-            Draw.hand(dc, Layout.CENTER_X, Layout.CENTER_Y, now.sec * 6.0,
-                SECOND_LENGTH, 50, 4, 3, Theme.BODY);
+            Draw.pixelHand(dc, Layout.CENTER_X, CENTER_Y, now.sec * 6.0, SECOND_LENGTH, 40, 4, Theme.BODY);
         }
 
-        // Centre cap, drawn last so the hands disappear under it.
-        dc.setColor(Theme.TEXT, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(Layout.CENTER_X, Layout.CENTER_Y, 11);
-        dc.setColor(Theme.BG, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(Layout.CENTER_X, Layout.CENTER_Y, 5);
+        // Square centre cap, drawn last so the hands disappear under it.
+        Draw.rect(dc, Layout.CENTER_X - 8, CENTER_Y - 8, 16, 16, Theme.TEXT);
+        Draw.rect(dc, Layout.CENTER_X - 3, CENTER_Y - 3, 6, 6, Theme.BG);
     }
 }

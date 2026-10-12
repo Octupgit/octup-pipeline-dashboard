@@ -2,145 +2,219 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
 
-//! Drawing primitives shared by the four faces. Everything here is stateless
-//! and takes an explicit Dc so it can be called from any onUpdate.
+//! Blocky drawing kit.
+//!
+//! Everything here is built from filled rectangles and hard-edged arcs.
+//! Antialiasing is turned off on purpose: a smoothed edge is the one thing
+//! that stops pixel art reading as pixel art.
 module Draw {
 
-    function antiAlias(dc as Graphics.Dc) as Void {
+    //! Clears to black with antialiasing off. Every onUpdate starts here.
+    function begin(dc as Graphics.Dc) as Void {
         if (dc has :setAntiAlias) {
-            dc.setAntiAlias(true);
+            dc.setAntiAlias(false);
         }
-    }
-
-    function clearScreen(dc as Graphics.Dc) as Void {
         dc.setColor(Graphics.COLOR_TRANSPARENT, Theme.BG);
         dc.clear();
     }
 
-    //! Ring gauge: a dim full-circle track with the filled portion swept
-    //! clockwise from 12 o'clock.
-    function ring(dc as Graphics.Dc, centerX as Number, centerY as Number, radius as Number,
-                  fraction as Float, color as Number, penWidth as Number) as Void {
-        dc.setPenWidth(penWidth);
-        dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
-        dc.drawCircle(centerX, centerY, radius);
-        if (fraction <= 0.0) {
-            return;
-        }
-        // An exactly-360-degree arc draws nothing, so a completed ring stops a
-        // tenth of a degree short of its own start.
+    function rect(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                  height as Number, color as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(centerX, centerY, radius, Graphics.ARC_CLOCKWISE, 90, 90 - 359.9 * fraction);
-    }
-
-    function bar(dc as Graphics.Dc, x as Number, y as Number, width as Number, height as Number,
-                 fraction as Float, color as Number) as Void {
-        dc.setColor(Theme.TRACK, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(x, y, width, height);
-        if (fraction <= 0.0) {
+    }
+
+    //! Hollow rectangle, drawn as four fills so the thickness is exact.
+    function frame(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                   height as Number, thickness as Number, color as Number) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.fillRectangle(x, y, width, thickness);
+        dc.fillRectangle(x, y + height - thickness, width, thickness);
+        dc.fillRectangle(x, y, thickness, height);
+        dc.fillRectangle(x + width - thickness, y, thickness, height);
+    }
+
+    //! Horizontal bar divided into discrete cells. A segmented bar reads as a
+    //! count rather than a length, which is the whole point of the style.
+    function segBar(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                    height as Number, cells as Number, fraction as Float,
+                    color as Number) as Void {
+        var gap = 3;
+        var cellWidth = (width - gap * (cells - 1)) / cells;
+        var lit = (fraction * cells).toNumber();
+        for (var i = 0; i < cells; i += 1) {
+            dc.setColor(i < lit ? color : Theme.TRACK, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(x + i * (cellWidth + gap), y, cellWidth, height);
+        }
+    }
+
+    //! Vertical meter, filling from the bottom like a VU display.
+    function segMeter(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                      height as Number, cells as Number, fraction as Float,
+                      color as Number) as Void {
+        var gap = 3;
+        var cellHeight = (height - gap * (cells - 1)) / cells;
+        var lit = (fraction * cells).toNumber();
+        for (var i = 0; i < cells; i += 1) {
+            var cellY = y + height - (i + 1) * cellHeight - i * gap;
+            dc.setColor(i < lit ? color : Theme.TRACK, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(x, cellY, width, cellHeight);
+        }
+    }
+
+    //! Ring built from discrete arc segments with gaps between them.
+    function segRing(dc as Graphics.Dc, cx as Number, cy as Number, radius as Number,
+                     segments as Number, fraction as Float, color as Number,
+                     pen as Number) as Void {
+        var lit = (fraction * segments).toNumber();
+        var span = 360.0 / segments;
+        var gap = span * 0.3;
+        dc.setPenWidth(pen);
+        for (var i = 0; i < segments; i += 1) {
+            // Clock degrees run clockwise from 12; Garmin arc degrees run
+            // counter-clockwise from 3 o'clock, so one maps to the other
+            // as 90 - x, then wraps into range.
+            var from = normalize(90.0 - (i * span + gap / 2));
+            var to = normalize(90.0 - ((i + 1) * span - gap / 2));
+            dc.setColor(i < lit ? color : Theme.TRACK, Graphics.COLOR_TRANSPARENT);
+            dc.drawArc(cx, cy, radius, Graphics.ARC_CLOCKWISE, from, to);
+        }
+    }
+
+    function normalize(degrees as Float) as Float {
+        var value = degrees;
+        while (value < 0.0) { value += 360.0; }
+        while (value >= 360.0) { value -= 360.0; }
+        return value;
+    }
+
+    //! Sample-and-hold trace: a step per sample rather than a sloped line,
+    //! which is both the period-correct look and cheaper to draw.
+    function stepTrace(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                       height as Number, series as Array<Number>, color as Number) as Void {
+        var count = series.size();
+        if (count < 2) {
             return;
         }
+        var low = series[0];
+        var high = series[0];
+        for (var i = 1; i < count; i += 1) {
+            if (series[i] < low) { low = series[i]; }
+            if (series[i] > high) { high = series[i]; }
+        }
+        var span = high - low;
+        if (span < 1) {
+            span = 1;   // a flat trace still has to land somewhere
+        }
+        var cellWidth = width / count;
+        if (cellWidth < 1) {
+            cellWidth = 1;
+        }
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.fillRectangle(x, y, (width * fraction).toNumber(), height);
+        var lastY = -1;
+        for (var i = 0; i < count; i += 1) {
+            var sampleY = y + height - (series[i] - low) * height / span;
+            dc.fillRectangle(x + i * cellWidth, sampleY - 1, cellWidth, 3);
+            if (lastY >= 0) {
+                var top = lastY < sampleY ? lastY : sampleY;
+                var bottom = lastY < sampleY ? sampleY : lastY;
+                dc.fillRectangle(x + i * cellWidth, top, 3, bottom - top);
+            }
+            lastY = sampleY;
+        }
     }
 
-    //! A coloured value with a dim caption underneath, centred on x.
-    function cell(dc as Graphics.Dc, x as Number, y as Number, font as Graphics.FontType,
-                  value as String, label as String, color as Number) as Void {
+    //! CRT raster. Costs one fill per line, so keep the step coarse.
+    function scanlines(dc as Graphics.Dc, step as Number, color as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y, font, value,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
-        dc.setColor(Theme.DIM, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y + dc.getFontHeight(font) / 2 + 11, Graphics.FONT_XTINY, label,
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        for (var y = 0; y < Layout.HEIGHT; y += step) {
+            dc.fillRectangle(0, y, Layout.WIDTH, 1);
+        }
     }
 
-    function text(dc as Graphics.Dc, x as Number, y as Number, font as Graphics.FontType,
-                  value as String, color as Number, justify as Number) as Void {
+    function grid(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                  height as Number, step as Number, color as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x, y, font, value, justify | Graphics.TEXT_JUSTIFY_VCENTER);
+        for (var gx = x; gx <= x + width; gx += step) {
+            dc.fillRectangle(gx, y, 1, height);
+        }
+        for (var gy = y; gy <= y + height; gy += step) {
+            dc.fillRectangle(x, gy, width, 1);
+        }
     }
 
-    //! Status indicators as coloured dots rather than icon bitmaps: no image
-    //! resources to carry, and the colours are learnable in a day.
-    //! blue = unread notifications, amber = alarm set, purple = do not
-    //! disturb, red = phone disconnected.
-    function statusDots(dc as Graphics.Dc, centerX as Number, y as Number) as Void {
-        var dots = [] as Array<Number>;
+    //! Status squares: blue unread notifications, amber alarm, purple do not
+    //! disturb, red phone disconnected. Nothing drawn when all are clear.
+    function statusBlocks(dc as Graphics.Dc, centerX as Number, y as Number,
+                          size as Number) as Void {
+        var blocks = [] as Array<Number>;
         if (Metrics.notifications() > 0) {
-            dots.add(Theme.BODY);
+            blocks.add(Theme.BODY);
         }
         if (Metrics.alarmSet()) {
-            dots.add(Theme.STRESS);
+            blocks.add(Theme.STRESS);
         }
         if (Metrics.doNotDisturb()) {
-            dots.add(Theme.FLOORS);
+            blocks.add(Theme.FLOORS);
         }
         if (!Metrics.phoneConnected()) {
-            dots.add(Theme.HR);
+            blocks.add(Theme.HR);
         }
-        if (dots.size() == 0) {
+        if (blocks.size() == 0) {
             return;
         }
-        var spacing = 20;
-        var startX = centerX - (dots.size() - 1) * spacing / 2;
-        for (var i = 0; i < dots.size(); i += 1) {
-            dc.setColor(dots[i], Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(startX + i * spacing, y, 5);
+        var pitch = size + 6;
+        var startX = centerX - (blocks.size() * pitch - 6) / 2;
+        for (var i = 0; i < blocks.size(); i += 1) {
+            dc.setColor(blocks[i], Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(startX + i * pitch, y - size / 2, size, size);
         }
     }
 
-    //! Small solid triangle, pointing up for sunrise and down for sunset.
-    //! Cheaper and sharper at this size than carrying an icon bitmap.
-    function caret(dc as Graphics.Dc, x as Number, y as Number, up as Boolean,
-                   color as Number) as Void {
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        if (up) {
-            dc.fillPolygon([[x, y - 6], [x - 7, y + 5], [x + 7, y + 5]]);
-        } else {
-            dc.fillPolygon([[x, y + 6], [x - 7, y - 5], [x + 7, y - 5]]);
+    //! Twelve square markers instead of sixty hairlines - at this pixel size
+    //! a minute track turns into a grey smear.
+    function dialBlocks(dc as Graphics.Dc, cx as Number, cy as Number,
+                        radius as Number) as Void {
+        for (var i = 0; i < 12; i += 1) {
+            var radians = Math.toRadians(i * 30);
+            var quarter = i % 3 == 0;
+            var size = quarter ? 14 : 8;
+            dc.setColor(quarter ? Theme.TEXT : Theme.FAINT, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(
+                (cx + radius * Math.sin(radians) - size / 2).toNumber(),
+                (cy - radius * Math.cos(radians) - size / 2).toNumber(),
+                size, size);
         }
     }
 
-    //! Minute/hour/second ticks around an analog dial.
-    function dialTicks(dc as Graphics.Dc, centerX as Number, centerY as Number,
-                       radius as Number) as Void {
-        for (var i = 0; i < 60; i += 1) {
-            var isHour = i % 5 == 0;
-            var radians = Math.toRadians(i * 6);
-            var sin = Math.sin(radians);
-            var cos = Math.cos(radians);
-            var inner = isHour ? radius - 22 : radius - 9;
-            dc.setPenWidth(isHour ? 4 : 2);
-            dc.setColor(isHour ? Theme.TEXT : Theme.FAINT, Graphics.COLOR_TRANSPARENT);
-            dc.drawLine(
-                (centerX + inner * sin).toNumber(),
-                (centerY - inner * cos).toNumber(),
-                (centerX + radius * sin).toNumber(),
-                (centerY - radius * cos).toNumber());
-        }
-    }
-
-    //! Tapered clock hand, angle measured in degrees clockwise from 12 o'clock.
-    function hand(dc as Graphics.Dc, centerX as Number, centerY as Number, degrees as Float,
-                  length as Number, tail as Number, baseWidth as Number, tipWidth as Number,
-                  color as Number) as Void {
+    //! Clock hand drawn as a staircase of blocks snapped to a grid, so it
+    //! steps like the rest of the face instead of laying a smooth diagonal
+    //! across it. Samples overlap deliberately - that is what closes the
+    //! gaps between cells on a steep angle.
+    function pixelHand(dc as Graphics.Dc, cx as Number, cy as Number, degrees as Float,
+                       length as Number, tail as Number, block as Number,
+                       color as Number) as Void {
         var radians = Math.toRadians(degrees);
         var sin = Math.sin(radians);
         var cos = Math.cos(radians);
-        // Along the hand is (sin, -cos); across it is (cos, sin).
-        var tipX = centerX + length * sin;
-        var tipY = centerY - length * cos;
-        var tailX = centerX - tail * sin;
-        var tailY = centerY + tail * cos;
-        var tipHalf = tipWidth / 2.0;
-        var baseHalf = baseWidth / 2.0;
+        var steps = (length + tail) * 2 / block + 1;
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon([
-            [(tipX + tipHalf * cos).toNumber(), (tipY + tipHalf * sin).toNumber()],
-            [(tipX - tipHalf * cos).toNumber(), (tipY - tipHalf * sin).toNumber()],
-            [(tailX - baseHalf * cos).toNumber(), (tailY - baseHalf * sin).toNumber()],
-            [(tailX + baseHalf * cos).toNumber(), (tailY + baseHalf * sin).toNumber()]
-        ]);
+        for (var i = 0; i < steps; i += 1) {
+            var distance = -tail + i * block / 2.0;
+            var px = cx + distance * sin;
+            var py = cy - distance * cos;
+            dc.fillRectangle((px / block).toNumber() * block,
+                             (py / block).toNumber() * block, block, block);
+        }
+    }
+
+    //! A value with a caption under it, both in pixel type, centred on x.
+    function field(dc as Graphics.Dc, centerX as Number, y as Number, value as String,
+                   label as String, color as Number, valueScale as Number,
+                   labelScale as Number) as Void {
+        PixelFont.drawCentered(dc, centerX, y, valueScale, value, color);
+        var labelY = y + PixelFont.height(valueScale) / 2 + 6
+                   + PixelFont.height(labelScale) / 2;
+        PixelFont.drawCentered(dc, centerX, labelY, labelScale, label, Theme.DIM);
     }
 }

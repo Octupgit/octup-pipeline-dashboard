@@ -33,6 +33,41 @@ module Solar {
         return formatMinutes(mSunset);
     }
 
+    function sunriseMinutes() as Number? {
+        refresh();
+        return mSunrise;
+    }
+
+    function sunsetMinutes() as Number? {
+        refresh();
+        return mSunset;
+    }
+
+    function nowMinutes() as Number {
+        var clock = System.getClockTime();
+        return clock.hour * 60 + clock.min;
+    }
+
+    //! Rough sun height: +1 at solar noon, 0 at sunrise and sunset, -1 in the
+    //! middle of the night. A sine between the known crossings rather than a
+    //! real elevation calculation - accurate enough to drive a horizon, and a
+    //! fraction of the arithmetic. Null when the sun times are unknown.
+    function altitudeFraction() as Float? {
+        refresh();
+        if (mSunrise == null || mSunset == null || mSunset <= mSunrise) {
+            return null;
+        }
+        var now = nowMinutes();
+        if (now >= mSunrise && now <= mSunset) {
+            var dayProgress = (now - mSunrise).toFloat() / (mSunset - mSunrise).toFloat();
+            return Math.sin(Math.PI * dayProgress).toFloat();
+        }
+        // Night wraps midnight, so measure forward from sunset.
+        var nightLength = 1440 - (mSunset - mSunrise);
+        var sinceSunset = now > mSunset ? now - mSunset : now + 1440 - mSunset;
+        return -Math.sin(Math.PI * sinceSunset.toFloat() / nightLength.toFloat()).toFloat();
+    }
+
     function refresh() as Void {
         var utc = Gregorian.utcInfo(Time.now(), Time.FORMAT_SHORT);
         var dateKey = utc.year * 10000 + utc.month * 100 + utc.day;

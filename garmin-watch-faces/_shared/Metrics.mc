@@ -174,6 +174,56 @@ module Metrics {
         return sample.data.toNumber();
     }
 
+    //! Up to `count` recent heart-rate samples, oldest first, invalid ones
+    //! dropped. Empty whenever the history is unavailable, which is the normal
+    //! state on a watch that has just been put on.
+    function heartRateSeries(count as Number) as Array<Number> {
+        var series = [] as Array<Number>;
+        if (!(ActivityMonitor has :getHeartRateHistory)) {
+            return series;
+        }
+        var iterator = ActivityMonitor.getHeartRateHistory(count, true);
+        if (iterator == null) {
+            return series;
+        }
+        // The iterator runs newest first, so collect then walk it backwards.
+        var newestFirst = [] as Array<Number>;
+        var sample = iterator.next();
+        while (sample != null && newestFirst.size() < count) {
+            if (sample.heartRate != null
+                    && sample.heartRate != ActivityMonitor.INVALID_HR_SAMPLE) {
+                newestFirst.add(sample.heartRate);
+            }
+            sample = iterator.next();
+        }
+        for (var i = newestFirst.size() - 1; i >= 0; i -= 1) {
+            series.add(newestFirst[i]);
+        }
+        return series;
+    }
+
+    function seriesLow(series as Array<Number>) as Number? {
+        if (series.size() == 0) {
+            return null;
+        }
+        var low = series[0];
+        for (var i = 1; i < series.size(); i += 1) {
+            if (series[i] < low) { low = series[i]; }
+        }
+        return low;
+    }
+
+    function seriesHigh(series as Array<Number>) as Number? {
+        if (series.size() == 0) {
+            return null;
+        }
+        var high = series[0];
+        for (var i = 1; i < series.size(); i += 1) {
+            if (series[i] > high) { high = series[i]; }
+        }
+        return high;
+    }
+
     // -------------------------------------------------------------- weather
 
     //! Temperature in the watch's own unit, e.g. "18 degrees" -> "18".
@@ -187,6 +237,12 @@ module Metrics {
             return (celsius * 9.0 / 5.0 + 32.0).toNumber().format("%d");
         }
         return celsius.toNumber().format("%d");
+    }
+
+    //! Temperature with the degree sign appended. The pixel font keys its
+    //! degree glyph to '*', because the glyph table is ASCII-only.
+    function temperatureGlyph() as String {
+        return temperature() + "*";
     }
 
     //! Today's forecast range, e.g. "12/21". Empty when the phone has not synced.
