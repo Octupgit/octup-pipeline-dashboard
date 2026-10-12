@@ -124,6 +124,39 @@ module Draw {
         }
     }
 
+    //! Blocky histogram, one bar per sample. Empty bars still draw a stub so
+    //! the strip reads as a full-width axis rather than a ragged gap.
+    function histogram(dc as Graphics.Dc, x as Number, y as Number, width as Number,
+                       height as Number, series as Array<Number>, color as Number) as Void {
+        var count = series.size();
+        if (count < 1) {
+            return;
+        }
+        var low = series[0];
+        var high = series[0];
+        for (var i = 1; i < count; i += 1) {
+            if (series[i] < low) { low = series[i]; }
+            if (series[i] > high) { high = series[i]; }
+        }
+        var span = high - low;
+        if (span < 1) {
+            span = 1;
+        }
+        var pitch = width / count;
+        var barWidth = pitch - 2;
+        if (barWidth < 1) {
+            barWidth = 1;
+        }
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < count; i += 1) {
+            var barHeight = (series[i] - low) * height / span;
+            if (barHeight < 2) {
+                barHeight = 2;
+            }
+            dc.fillRectangle(x + i * pitch, y + height - barHeight, barWidth, barHeight);
+        }
+    }
+
     //! CRT raster. Costs one fill per line, so keep the step coarse.
     function scanlines(dc as Graphics.Dc, step as Number, color as Number) as Void {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);

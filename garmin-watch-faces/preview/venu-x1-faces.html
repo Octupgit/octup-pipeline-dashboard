@@ -97,7 +97,7 @@
 
 <div class="wrap">
   <h1>Venu X1 Pixel Faces</h1>
-  <p class="lede">Eight watch faces for the Garmin Venu X1, drawn entirely in a 5&times;7 pixel font with
+  <p class="lede">Nine watch faces for the Garmin Venu X1, drawn entirely in a 5&times;7 pixel font with
     segmented bars and hard edges. Rendered here at the real 448&nbsp;&times;&nbsp;486 panel size from the
     same coordinates and the same glyph table as the Monkey&nbsp;C source &mdash; this is not an impression
     of the design, it is the design.</p>
@@ -291,6 +291,34 @@
         <li><i style="background:#FF3333"></i>Heart rate</li>
       </ul>
       <p class="file">caliper/source/CaliperView.mc</p>
+    </div>
+  </section>
+
+
+  <section class="face">
+    <div class="device">
+      <div class="bezel"><div class="panel"><canvas id="c-daily" aria-label="Daily face preview"></canvas></div></div>
+      <p class="caption">09 &nbsp;Daily</p>
+    </div>
+    <div class="notes">
+      <p class="eyebrow">Stock layout, rebuilt</p>
+      <h2>Daily</h2>
+      <p>The face you already wear, in blocks: the weekday strip with today inverted, the date beside it, a
+        Body Battery row, the activity histogram, a large gradient clock, then steps, battery hours and
+        temperature, and four ring complications along the bottom.</p>
+      <p class="why">Two departures from the original. The histogram plots recent heart rate, because
+        Connect&nbsp;IQ exposes no intraday step series to a watch face &mdash; the stock strip is drawing
+        something third-party apps cannot reach. And the rings are segmented rather than smooth, to match the
+        rest of the set.</p>
+      <ul class="legend">
+        <li><i style="background:#FFCC00"></i>Today <span>+ stress ring</span></li>
+        <li><i style="background:#44DD44"></i>Steps</li>
+        <li><i style="background:#33CCFF"></i>Body Battery</li>
+        <li><i style="background:#FF3333"></i>Heart rate <span>+ histogram</span></li>
+        <li><i style="background:#FF44AA"></i>Intensity minutes</li>
+        <li><i style="background:#FFFFFF"></i>Temperature</li>
+      </ul>
+      <p class="file">daily/source/DailyView.mc</p>
     </div>
   </section>
 
@@ -513,22 +541,22 @@
       hour: 14, min: 32, sec: 18, steps: 8420, stepGoal: 9000, hr: 62, body: 71, cals: 1840,
       floors: 9, intMin: 118, intGoal: 150, temp: 18, cond: "PART CLOUD",
       batt: 87, sunrise: "06:48", sunset: "18:22", notifications: 2, alarm: true, dnd: false,
-      phone: true, move: 0, date: "SUN 11 OCT" },
+      phone: true, move: 0, stress: 38, battHours: 10, date: "SUN 11 OCT" },
     { id: "morning", name: "Early morning", note: "06:58, nothing logged yet - the state most faces look worst in.",
       hour: 6, min: 58, sec: 42, steps: 340, stepGoal: 9000, hr: 54, body: 92, cals: 210,
       floors: 0, intMin: 46, intGoal: 150, temp: 7, cond: "FOG",
       batt: 96, sunrise: "06:48", sunset: "18:22", notifications: 0, alarm: true, dnd: false,
-      phone: true, move: 0, date: "SUN 11 OCT" },
+      phone: true, move: 0, stress: 22, battHours: 14, date: "SUN 11 OCT" },
     { id: "evening", name: "Evening", note: "Goals met and overshot: meters full, Body Battery spent, do-not-disturb on.",
       hour: 21, min: 7, sec: 5, steps: 12640, stepGoal: 9000, hr: 58, body: 34, cals: 2710,
       floors: 17, intMin: 163, intGoal: 150, temp: 11, cond: "CLEAR",
       batt: 62, sunrise: "06:48", sunset: "18:22", notifications: 5, alarm: true, dnd: true,
-      phone: true, move: 2, date: "SUN 11 OCT" },
+      phone: true, move: 2, stress: 61, battHours: 7, date: "SUN 11 OCT" },
     { id: "degraded", name: "No data", note: "Phone away, battery at 12%, no weather or sensor history - every field degrades instead of blanking the face.",
       hour: 16, min: 45, sec: 51, steps: 5120, stepGoal: 9000, hr: null, body: null, cals: 980,
       floors: null, intMin: null, intGoal: 150, temp: null, cond: "",
       batt: 12, sunrise: "--:--", sunset: "--:--", notifications: 0, alarm: false, dnd: false,
-      phone: false, move: 4, date: "SUN 11 OCT" }
+      phone: false, move: 4, stress: null, battHours: null, date: "SUN 11 OCT" }
   ];
 
   var ui = { state: STATES[0], live: true, h24: true };
@@ -547,6 +575,85 @@
   }
 
   // ---- faces ------------------------------------------------------------
+
+
+  function mixColor(from, to, pct) {
+    function parse(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+    var a = parse(from), b = parse(to);
+    return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * pct / 100) + ","
+                  + Math.round(a[1] + (b[1] - a[1]) * pct / 100) + ","
+                  + Math.round(a[2] + (b[2] - a[2]) * pct / 100) + ")";
+  }
+
+  function pfGradC(ctx, cx, y, scale, text, from, to) {
+    var x = cx - Math.floor(pfWidth(text, scale) / 2);
+    for (var i = 0; i < text.length; i++) {
+      var pct = text.length === 1 ? 0 : i * 100 / (text.length - 1);
+      pf(ctx, x, y, scale, text.charAt(i), mixColor(from, to, pct));
+      x += (PF_W + PF_GAP) * scale;
+    }
+  }
+
+  function histogram(ctx, x, y, w, h, series, color) {
+    var n = series.length;
+    if (!n) { return; }
+    var low = Math.min.apply(null, series), high = Math.max.apply(null, series);
+    var span = Math.max(1, high - low);
+    var pitch = Math.floor(w / n), bw = Math.max(1, pitch - 2);
+    ctx.fillStyle = color;
+    for (var i = 0; i < n; i++) {
+      var bh = Math.max(2, Math.floor((series[i] - low) * h / span));
+      ctx.fillRect(x + i * pitch, y + h - bh, bw, bh);
+    }
+  }
+
+
+  function renderDaily(ctx, s) {
+    // header: weekday strip with today inverted, date beside it
+    frame(ctx, LEFT, 32, 268, 34, 2, T.FAINT);
+    var cell = Math.floor(268 / 7), cy = 32 + 17, letters = "SMTWTFS";
+    var today = new Date(2026, 9, 11).getDay();
+    if (ui.live) { today = new Date().getDay(); }
+    for (var i = 0; i < 7; i++) {
+      var cx = LEFT + i * cell, color = T.DIM;
+      if (i === today) { rect(ctx, cx + 3, 35, cell - 6, 28, T.STRESS); color = T.BG; }
+      pfC(ctx, cx + Math.floor(cell / 2), cy, 2, letters.charAt(i), color);
+    }
+    frame(ctx, 298, 32, 128, 34, 2, T.FAINT);
+    pfC(ctx, 362, cy, 2, s.date.split(" ").slice(1).join(" "), T.TEXT);
+
+    // body battery row
+    frame(ctx, LEFT, 74, INNER_W, 34, 2, T.FAINT);
+    pf(ctx, LEFT + 12, 91, 2, "BODY BATT", T.DIM);
+    pfR(ctx, RIGHT - 12, 91, 3, num(s.body), T.BODY);
+    segBar(ctx, LEFT + 150, 86, 150, 10, 10, ratio(s.body, 100), T.BODY);
+
+    var hist = hrSeries(s);
+    if (hist.length > 0) { histogram(ctx, 24, 118, 400, 34, hist, T.HR); }
+    else { pfC(ctx, CX, 135, 2, "NO HR HISTORY", T.FAINT); }
+
+    pfGradC(ctx, CX, 210, 14, hoursText(s) + ":" + minsText(s), T.STRESS, T.STEPS);
+
+    // steps, battery hours, temperature
+    frame(ctx, LEFT, 272, 196, 60, 2, T.FAINT);
+    pf(ctx, LEFT + 12, 288, 2, "STEPS", T.DIM);
+    pfR(ctx, LEFT + 196 - 12, 312, 4, num(s.steps), T.STEPS);
+    pf(ctx, 240, 288, 2, "BATT", T.DIM);
+    pf(ctx, 240, 314, 3, s.battHours === null ? NO_VALUE : s.battHours + "H", battColor(s.batt));
+    pfR(ctx, RIGHT, 304, 6, tempGlyph(s), T.WEATHER);
+
+    // ring complications
+    function ring(x, frac, value, label, color) {
+      segRing(ctx, x, 400, 42, 16, frac, color, 8);
+      pfC(ctx, x, 400, 3, value, color);
+      pfC(ctx, x, 456, 2, label, T.DIM);
+    }
+    var hf = s.hr === null ? 0 : (s.hr - 40) / 140;
+    ring(70, ratio(s.body, 100), num(s.body), "BODY", T.BODY);
+    ring(172, ratio(s.stress, 100), num(s.stress), "STRESS", T.STRESS);
+    ring(274, ratio(s.intMin, s.intGoal), num(s.intMin), "MINS", T.INTENSITY);
+    ring(376, hf, num(s.hr), "HR", T.HR);
+  }
 
   function renderVanguard(ctx, s) {
     statusBlocks(ctx, CX, 36, 10, s);
@@ -730,7 +837,8 @@
     { id: "c-telemetry", draw: renderTelemetry },
     { id: "c-horizon", draw: renderHorizon },
     { id: "c-trace", draw: renderTrace },
-    { id: "c-caliper", draw: renderCaliper }
+    { id: "c-caliper", draw: renderCaliper },
+    { id: "c-daily", draw: renderDaily }
   ];
 
   function renderAll() {

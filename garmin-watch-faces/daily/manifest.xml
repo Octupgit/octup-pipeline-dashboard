@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+  Generated manifest. Target device is the Garmin Venu X1 only (448 x 486).
+-->
+<iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
+    <iq:application
+        id="ba0a2b1327694386bdce1f8dc4aa2342"
+        type="watchface"
+        name="@Strings.AppName"
+        entry="DailyApp"
+        launcherIcon="@Drawables.LauncherIcon"
+        minApiLevel="5.0.0">
+        <iq:products>
+            <iq:product id="venux1"/>
+        </iq:products>
+        <iq:permissions>
+            <iq:uses-permission id="SensorHistory"/>
+        </iq:permissions>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>

@@ -1,6 +1,6 @@
 # Venu X1 pixel watch faces
 
-Eight Connect IQ watch faces for the **Garmin Venu X1**, drawn entirely in a
+Nine Connect IQ watch faces for the **Garmin Venu X1**, drawn entirely in a
 5x7 pixel font with segmented bars and hard edges. Each is a separate app, so
 wear a few and keep whichever fits.
 
@@ -18,6 +18,15 @@ wrong for this watch and cost a 37 px dead band top and bottom.)
 | 06 | **Horizon** | attitude indicator | reading the time of day as a shape |
 | 07 | **Trace** | oscilloscope | the shape of your heart rate, not its value |
 | 08 | **Caliper** | bar meters | three goals side by side at one scale |
+| 09 | **Daily** | the stock layout, rebuilt | keeping the face you already use |
+
+**Daily** mirrors the layout Garmin ships on the X1 - weekday strip with today
+inverted, date, a Body Battery row, the activity histogram, a large gradient
+clock, then steps, battery hours and temperature, and four ring complications.
+Two departures from the original: the histogram plots recent heart rate,
+because Connect IQ exposes no intraday step series to a watch face (the stock
+strip draws something third-party apps cannot reach), and the rings are
+segmented rather than smooth.
 
 **Visual preview:** open `preview/venu-x1-faces.html` in a browser. It draws all
 eight on canvas at the real panel size, with four switchable day states
@@ -50,18 +59,19 @@ will draw.
 
 ## What each face shows
 
-| | 01 Van | 02 Flux | 03 Orbit | 04 Mer | 05 Tele | 06 Hor | 07 Trace | 08 Cal |
-|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| Steps + goal | bar | bar | **ring** | value | row | bar | bar | **meter** |
-| Heart rate | - | yes | yes | yes | row | **meter** | **trace** | yes |
-| Body Battery | - | yes | **ring** | **ring** | row | **meter** | - | **meter** |
-| Calories | - | yes | - | - | row | - | - | - |
-| Floors | - | yes | - | - | row | - | - | - |
-| Intensity min | - | yes | - | - | - | - | - | **meter** |
-| Temperature | yes | yes | yes | yes | - | - | - | yes |
-| Conditions | - | yes | - | - | - | - | - | - |
-| Sunrise / sunset | - | yes | - | - | **24h strip** | drives horizon | - | - |
-| Watch battery | yes | yes | yes | yes | yes | - | yes | yes |
+| | 01 Van | 02 Flux | 03 Orbit | 04 Mer | 05 Tele | 06 Hor | 07 Trace | 08 Cal | 09 Daily |
+|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| Steps + goal | bar | bar | **ring** | value | row | bar | bar | **meter** | value |
+| Heart rate | - | yes | yes | yes | row | **meter** | **trace** | yes | **ring + histogram** |
+| Body Battery | - | yes | **ring** | **ring** | row | **meter** | - | **meter** | row + **ring** |
+| Stress | - | - | - | - | - | - | - | - | **ring** |
+| Calories | - | yes | - | - | row | - | - | - | - |
+| Floors | - | yes | - | - | row | - | - | - | - |
+| Intensity min | - | yes | - | - | - | - | - | **meter** | **ring** |
+| Temperature | yes | yes | yes | yes | - | - | - | yes | yes |
+| Conditions | - | yes | - | - | - | - | - | - | - |
+| Sunrise / sunset | - | yes | - | - | **24h strip** | drives horizon | - | - | - |
+| Watch battery | yes | yes | yes | yes | yes | - | yes | yes | **hours** |
 
 Status squares appear on every face: **blue** unread notifications, **amber**
 alarm set, **purple** do not disturb, **red** phone disconnected. Nothing is
@@ -97,7 +107,7 @@ garmin-watch-faces/
                       step traces, scanlines, grids, status blocks,
                       dial blocks, staircase hands
   vanguard/  flux/  orbit/  meridian/
-  telemetry/  horizon/  trace/  caliper/
+  telemetry/  horizon/  trace/  caliper/  daily/
     manifest.xml      app id, venux1 target, SensorHistory permission
     monkey.jungle     adds ../_shared to the source path
     source/           the App and the View

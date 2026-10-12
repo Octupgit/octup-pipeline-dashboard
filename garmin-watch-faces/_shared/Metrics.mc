@@ -49,6 +49,17 @@ module Metrics {
         ]);
     }
 
+    //! 0 to 6 with Sunday first, matching an S M T W T F S strip.
+    function weekdayIndex() as Number {
+        return Gregorian.info(Time.now(), Time.FORMAT_SHORT).day_of_week - 1;
+    }
+
+    //! "12 OCT"
+    function dayAndMonth() as String {
+        var info = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+        return Lang.format("$1$ $2$", [info.day.format("%d"), info.month.toUpper()]);
+    }
+
     //! True when the watch is in 24h mode - layouts need the extra digit width.
     function is24Hour() as Boolean {
         return System.getDeviceSettings().is24Hour;
@@ -322,6 +333,16 @@ module Metrics {
 
     function batteryPercent() as Number {
         return System.getSystemStats().battery.toNumber();
+    }
+
+    //! Estimated battery life in hours, which is how the stock face reports
+    //! it. Null on devices that do not provide the estimate.
+    function batteryHours() as Number? {
+        var stats = System.getSystemStats();
+        if (!(stats has :batteryInDays) || stats.batteryInDays == null) {
+            return null;
+        }
+        return (stats.batteryInDays * 24).toNumber();
     }
 
     function notifications() as Number {

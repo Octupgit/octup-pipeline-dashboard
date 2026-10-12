@@ -88,6 +88,38 @@ module PixelFont {
         }
     }
 
+    //! Per-glyph colour ramp. A true gradient would mean a colour change per
+    //! column; stepping it once per character is far cheaper and, at this
+    //! glyph size, the stepping is the point.
+    function drawGradient(dc as Graphics.Dc, x as Number, y as Number, scale as Number,
+                          text as String, fromColor as Number, toColor as Number) as Void {
+        var count = text.length();
+        if (count == 0) {
+            return;
+        }
+        var glyphs = text.toCharArray();
+        var pen = x;
+        for (var i = 0; i < count; i += 1) {
+            var mixed = count == 1 ? fromColor : mix(fromColor, toColor, i * 100 / (count - 1));
+            draw(dc, pen, y, scale, glyphs[i].toString(), mixed);
+            pen += (CELL_W + GAP) * scale;
+        }
+    }
+
+    function drawGradientCentered(dc as Graphics.Dc, centerX as Number, y as Number,
+                                  scale as Number, text as String, fromColor as Number,
+                                  toColor as Number) as Void {
+        drawGradient(dc, centerX - width(text, scale) / 2, y, scale, text, fromColor, toColor);
+    }
+
+    //! Blend two packed RGB colours, with `percent` running 0 to 100.
+    function mix(from as Number, to as Number, percent as Number) as Number {
+        var red = ((from >> 16) & 0xFF) + ((((to >> 16) & 0xFF) - ((from >> 16) & 0xFF)) * percent) / 100;
+        var green = ((from >> 8) & 0xFF) + ((((to >> 8) & 0xFF) - ((from >> 8) & 0xFF)) * percent) / 100;
+        var blue = (from & 0xFF) + (((to & 0xFF) - (from & 0xFF)) * percent) / 100;
+        return (red << 16) | (green << 8) | blue;
+    }
+
     function drawCentered(dc as Graphics.Dc, centerX as Number, y as Number, scale as Number,
                           text as String, color as Number) as Void {
         draw(dc, centerX - width(text, scale) / 2, y, scale, text, color);
