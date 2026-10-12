@@ -15,6 +15,7 @@ class FluxView extends WatchUi.WatchFace {
     private const TEMP_Y = 90;
     private const COND_Y = 138;
     private const RULE_Y = 148;
+    private const TIME_SCALE = 7;
 
     private const ROW_1_Y = 214;
     private const ROW_2_Y = 306;
@@ -40,7 +41,7 @@ class FluxView extends WatchUi.WatchFace {
         Draw.statusBlocks(dc, Layout.CENTER_X, TOP_Y, 8);
 
         // Scale 7, not 8: at 8 the clock runs into the condition text.
-        PixelFont.drawShadowed(dc, Layout.LEFT, TIME_Y, 7,
+        PixelFont.drawShadowed(dc, Layout.LEFT, TIME_Y, TIME_SCALE,
             Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
         PixelFont.drawRight(dc, Layout.RIGHT, TEMP_Y, 4, Metrics.temperatureGlyph(),
             Theme.WEATHER);

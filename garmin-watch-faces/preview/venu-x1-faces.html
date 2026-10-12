@@ -87,6 +87,28 @@
   .file { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 18px;
           padding-top: 14px; border-top: 1px dashed var(--line); }
 
+  /* live editor */
+  .editor { margin-top: 16px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .editor summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .editor summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .knobs { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+           gap: 6px 18px; margin-top: 12px; }
+  .knob { display: grid; grid-template-columns: minmax(88px, 1.1fr) 1fr 58px; align-items: center;
+          gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 0; }
+  .knob.dirty { color: var(--accent); font-weight: 500; }
+  .knob > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .knob input[type="range"] { width: 100%; min-width: 0; accent-color: var(--accent); }
+  .knob input[type="number"] { width: 100%; min-width: 0; font: inherit; padding: 2px 4px;
+          background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; }
+  .knobbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .knobbar button { font: inherit; font-size: 12px; padding: 6px 13px; border-radius: 999px;
+          cursor: pointer; background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); }
+  .knobbar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .out { font-family: var(--mono); font-size: 11.5px; white-space: pre-wrap; margin: 10px 0 0;
+         padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--line);
+         border-radius: 8px; color: var(--muted); overflow-x: auto; }
+  .out.has { color: var(--fg); border-color: var(--accent); }
+
   .footnote { margin-top: 48px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
   .footnote h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
   .footnote p { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
@@ -100,7 +122,9 @@
   <p class="lede">Nine watch faces for the Garmin Venu X1, drawn entirely in a 6&times;8 pixel font with
     segmented bars and hard edges. Rendered here at the real 448&nbsp;&times;&nbsp;486 panel size from the
     same coordinates and the same glyph table as the Monkey&nbsp;C source &mdash; this is not an impression
-    of the design, it is the design.</p>
+    of the design, it is the design. Open <b>Adjust layout</b> under any face to move it: the controls are
+    that face's actual constants, the real renderer redraws as you drag, and the panel hands you the changed
+    lines to drop back into the Monkey&nbsp;C.</p>
 
   <div class="spec">
     <span><b>448 &times; 486</b> px, rectangular</span>
@@ -109,6 +133,7 @@
     <span>type: <b>6&times;8</b> blocks, no font resource</span>
     <span><b>9.8</b> rects per glyph</span>
     <span>always-on: <b>off</b></span>
+    <span>layout: <b>editable</b></span>
   </div>
 
   <div class="controls">
@@ -143,6 +168,7 @@
         <li><i style="background:#33CCFF"></i>Minutes accent</li>
       </ul>
       <p class="file">vanguard/source/VanguardView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-vanguard"></div></details>
     </div>
   </section>
 
@@ -167,6 +193,7 @@
         <li><i style="background:#FFCC00"></i>Sun times / move bar</li>
       </ul>
       <p class="file">flux/source/FluxView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-flux"></div></details>
     </div>
   </section>
 
@@ -187,6 +214,7 @@
         <li><i style="background:#FFFFFF"></i>Temperature</li>
       </ul>
       <p class="file">orbit/source/OrbitView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-orbit"></div></details>
     </div>
   </section>
 
@@ -207,6 +235,7 @@
         <li><i style="background:#FF3333"></i>Heart rate</li>
       </ul>
       <p class="file">meridian/source/MeridianView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-meridian"></div></details>
     </div>
   </section>
 
@@ -229,6 +258,7 @@
         <li><i style="background:#FFCC00"></i>24-hour daylight strip</li>
       </ul>
       <p class="file">telemetry/source/TelemetryView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-telemetry"></div></details>
     </div>
   </section>
 
@@ -251,6 +281,7 @@
         <li><i style="background:#FF3333"></i>Heart rate meter</li>
       </ul>
       <p class="file">horizon/source/HorizonView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-horizon"></div></details>
     </div>
   </section>
 
@@ -271,6 +302,7 @@
         <li><i style="background:#889099"></i>Watch battery</li>
       </ul>
       <p class="file">trace/source/TraceView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-trace"></div></details>
     </div>
   </section>
 
@@ -291,6 +323,7 @@
         <li><i style="background:#FF3333"></i>Heart rate</li>
       </ul>
       <p class="file">caliper/source/CaliperView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-caliper"></div></details>
     </div>
   </section>
 
@@ -319,10 +352,20 @@
         <li><i style="background:#FFFFFF"></i>Temperature</li>
       </ul>
       <p class="file">daily/source/DailyView.mc</p>
+      <details class="editor"><summary>Adjust layout</summary><div id="edit-daily"></div></details>
     </div>
   </section>
 
   <div class="footnote">
+    <h3>Editing a face</h3>
+    <p>Every control under <b>Adjust layout</b> is a <code>private const</code> from that face's
+      <code>View.mc</code>, carrying the same name and the same value. Dragging one re-runs the same drawing
+      code the watch runs, so what you see is what it will do. Changed controls turn blue and the panel below
+      them lists the lines to paste back; <b>Reset to source</b> returns the face to what is committed.</p>
+    <p>Edits are kept in this browser only &mdash; they do not reach the repository until those lines are
+      applied to the Monkey&nbsp;C. <code>tools/check.py</code> asserts the control defaults still match the
+      source, so a control cannot quietly drift from the code it edits.</p>
+
     <h3>How close this is to the real thing</h3>
     <p>Closer than the previous revision. Because the type is drawn as rectangles rather than typeset, the
       glyphs here are byte-for-byte the glyphs the watch will draw &mdash; the font table is generated into
@@ -587,49 +630,6 @@
     return out;
   }
 
-  // ---- states -----------------------------------------------------------
-
-  var STATES = [
-    { id: "afternoon", name: "Afternoon", note: "Mid-afternoon, goals in progress, everything reporting.",
-      hour: 14, min: 32, sec: 18, steps: 8420, stepGoal: 9000, hr: 62, body: 71, cals: 1840,
-      floors: 9, intMin: 118, intGoal: 150, temp: 18, cond: "PART CLOUD",
-      batt: 87, sunrise: "06:48", sunset: "18:22", notifications: 2, alarm: true, dnd: false,
-      phone: true, move: 0, stress: 38, battHours: 10, date: "SUN 11 OCT" },
-    { id: "morning", name: "Early morning", note: "06:58, nothing logged yet - the state most faces look worst in.",
-      hour: 6, min: 58, sec: 42, steps: 340, stepGoal: 9000, hr: 54, body: 92, cals: 210,
-      floors: 0, intMin: 46, intGoal: 150, temp: 7, cond: "FOG",
-      batt: 96, sunrise: "06:48", sunset: "18:22", notifications: 0, alarm: true, dnd: false,
-      phone: true, move: 0, stress: 22, battHours: 14, date: "SUN 11 OCT" },
-    { id: "evening", name: "Evening", note: "Goals met and overshot: meters full, Body Battery spent, do-not-disturb on.",
-      hour: 21, min: 7, sec: 5, steps: 12640, stepGoal: 9000, hr: 58, body: 34, cals: 2710,
-      floors: 17, intMin: 163, intGoal: 150, temp: 11, cond: "CLEAR",
-      batt: 62, sunrise: "06:48", sunset: "18:22", notifications: 5, alarm: true, dnd: true,
-      phone: true, move: 2, stress: 61, battHours: 7, date: "SUN 11 OCT" },
-    { id: "degraded", name: "No data", note: "Phone away, battery at 12%, no weather or sensor history - every field degrades instead of blanking the face.",
-      hour: 16, min: 45, sec: 51, steps: 5120, stepGoal: 9000, hr: null, body: null, cals: 980,
-      floors: null, intMin: null, intGoal: 150, temp: null, cond: "",
-      batt: 12, sunrise: "--:--", sunset: "--:--", notifications: 0, alarm: false, dnd: false,
-      phone: false, move: 4, stress: null, battHours: null, date: "SUN 11 OCT" }
-  ];
-
-  var ui = { state: STATES[0], live: true, h24: true };
-
-  function activeState() {
-    var s = ui.state;
-    if (!ui.live) { return s; }
-    var now = new Date();
-    var days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-    var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    var merged = {};
-    for (var k in s) { if (Object.prototype.hasOwnProperty.call(s, k)) { merged[k] = s[k]; } }
-    merged.hour = now.getHours(); merged.min = now.getMinutes(); merged.sec = now.getSeconds();
-    merged.date = days[now.getDay()] + " " + now.getDate() + " " + months[now.getMonth()];
-    return merged;
-  }
-
-  // ---- faces ------------------------------------------------------------
-
-
   function mixColor(from, to, pct) {
     function parse(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
     var a = parse(from), b = parse(to);
@@ -662,127 +662,975 @@
     }
   }
 
+  // ---- states -----------------------------------------------------------
 
-  function renderDaily(ctx, s) {
-    // header: weekday strip with today inverted, date beside it
-    frame(ctx, LEFT, 32, 268, 34, 2, T.FAINT);
-    var cell = Math.floor(268 / 7), cy = 32 + 17, letters = "SMTWTFS";
-    var today = new Date(2026, 9, 11).getDay();
-    if (ui.live) { today = new Date().getDay(); }
-    for (var i = 0; i < 7; i++) {
-      var cx = LEFT + i * cell, color = T.DIM;
-      if (i === today) { rect(ctx, cx + 3, 35, cell - 6, 28, T.STRESS); color = T.BG; }
-      pfC(ctx, cx + Math.floor(cell / 2), cy, 2, letters.charAt(i), color);
+  var STATES = [
+    { id: "afternoon", name: "Afternoon", note: "Mid-afternoon, goals in progress, everything reporting.",
+      hour: 14, min: 32, sec: 18, steps: 8420, stepGoal: 9000, hr: 62, body: 71, cals: 1840,
+      floors: 9, intMin: 118, intGoal: 150, temp: 18, cond: "PART CLOUD", stress: 38, battHours: 10,
+      batt: 87, sunrise: "06:48", sunset: "18:22", notifications: 2, alarm: true, dnd: false,
+      phone: true, move: 0, date: "SUN 11 OCT" },
+    { id: "morning", name: "Early morning", note: "06:58, nothing logged yet - the state most faces look worst in.",
+      hour: 6, min: 58, sec: 42, steps: 340, stepGoal: 9000, hr: 54, body: 92, cals: 210,
+      floors: 0, intMin: 46, intGoal: 150, temp: 7, cond: "FOG", stress: 22, battHours: 14,
+      batt: 96, sunrise: "06:48", sunset: "18:22", notifications: 0, alarm: true, dnd: false,
+      phone: true, move: 0, date: "SUN 11 OCT" },
+    { id: "evening", name: "Evening", note: "Goals met and overshot: meters full, Body Battery spent, do-not-disturb on.",
+      hour: 21, min: 7, sec: 5, steps: 12640, stepGoal: 9000, hr: 58, body: 34, cals: 2710,
+      floors: 17, intMin: 163, intGoal: 150, temp: 11, cond: "CLEAR", stress: 61, battHours: 7,
+      batt: 62, sunrise: "06:48", sunset: "18:22", notifications: 5, alarm: true, dnd: true,
+      phone: true, move: 2, date: "SUN 11 OCT" },
+    { id: "degraded", name: "No data", note: "Phone away, battery at 12%, no weather or sensor history - every field degrades instead of blanking the face.",
+      hour: 16, min: 45, sec: 51, steps: 5120, stepGoal: 9000, hr: null, body: null, cals: 980,
+      floors: null, intMin: null, intGoal: 150, temp: null, cond: "", stress: null, battHours: null,
+      batt: 12, sunrise: "--:--", sunset: "--:--", notifications: 0, alarm: false, dnd: false,
+      phone: false, move: 4, date: "SUN 11 OCT" }
+  ];
+
+  // ---- layout constants, generated from the Monkey C -------------------
+  // DEFAULTS mirror the `private const` values in each View.mc. tools/check.py
+  // asserts they still match, so a control cannot drift from the code it edits.
+  var DEFAULTS = {
+ "vanguard": {
+  "STATUS_Y": 36,
+  "DATE_Y": 66,
+  "HOUR_Y": 152,
+  "MINUTE_Y": 296,
+  "BAR_X": 92,
+  "BAR_Y": 380,
+  "BAR_W": 264,
+  "BAR_H": 10,
+  "BAR_CELLS": 12,
+  "FOOTER_Y": 418,
+  "FOOTER_X_LEFT": 84,
+  "FOOTER_X_CENTER": 224,
+  "FOOTER_X_RIGHT": 364,
+  "TIME_SCALE": 16
+ },
+ "flux": {
+  "TOP_Y": 44,
+  "TIME_Y": 104,
+  "TEMP_Y": 90,
+  "COND_Y": 138,
+  "RULE_Y": 148,
+  "TIME_SCALE": 7,
+  "ROW_1_Y": 214,
+  "ROW_2_Y": 306,
+  "COL_1": 97,
+  "COL_2": 224,
+  "COL_3": 351,
+  "STEP_BAR_Y": 378,
+  "SUN_Y": 422,
+  "MOVE_BAR_Y": 452
+ },
+ "orbit": {
+  "CENTER_Y": 228,
+  "RING_OUTER": 186,
+  "RING_INNER": 158,
+  "RING_PEN": 16,
+  "SEGMENTS": 48,
+  "STATUS_Y": 148,
+  "TIME_Y": 196,
+  "DATE_Y": 246,
+  "TIME_SCALE": 8,
+  "HR_Y": 280,
+  "FOOTER_Y": 436,
+  "FOOTER_X1": 78,
+  "FOOTER_X2": 176,
+  "FOOTER_X3": 272,
+  "FOOTER_X4": 370
+ },
+ "meridian": {
+  "CENTER_Y": 210,
+  "ARC_RADIUS": 192,
+  "ARC_PEN": 10,
+  "ARC_SEGMENTS": 32,
+  "DIAL_RADIUS": 168,
+  "HOUR_LENGTH": 104,
+  "MINUTE_LENGTH": 158,
+  "SECOND_LENGTH": 170,
+  "STATUS_Y": 76,
+  "DATE_Y": 424,
+  "STRIP_Y": 452,
+  "STRIP_X1": 78,
+  "STRIP_X2": 176,
+  "STRIP_X3": 272,
+  "STRIP_X4": 370
+ },
+ "telemetry": {
+  "FRAME_X": 22,
+  "FRAME_Y": 22,
+  "FRAME_W": 404,
+  "FRAME_H": 430,
+  "PAD_X": 18,
+  "HEADER_Y": 50,
+  "RULE_TOP_Y": 70,
+  "TIME_Y": 122,
+  "TIME_SCALE": 9,
+  "ROW_1_Y": 180,
+  "ROW_PITCH": 42,
+  "RULE_BOTTOM_Y": 376,
+  "SUN_Y": 398,
+  "BAR_Y": 420,
+  "BAR_H": 12,
+  "BAR_CELLS": 24
+ },
+ "horizon": {
+  "TIME_Y": 66,
+  "STEP_BAR_Y": 104,
+  "TIME_SCALE": 6,
+  "HORIZON_X": 60,
+  "HORIZON_W": 328,
+  "HORIZON_SWING": 110,
+  "LADDER_STEP": 48,
+  "LADDER_INSET": 50,
+  "TAPE_TOP": 152,
+  "TAPE_HEIGHT": 196,
+  "TAPE_WIDTH": 20,
+  "TAPE_CELLS": 12,
+  "TAPE_LEFT_X": 30,
+  "TAPE_RIGHT_X": 398,
+  "TAPE_LABEL_Y": 134,
+  "TAPE_VALUE_Y": 368,
+  "DATE_Y": 416,
+  "STATUS_Y": 450
+ },
+ "trace": {
+  "TIME_Y": 70,
+  "DATE_Y": 108,
+  "TIME_SCALE": 7,
+  "PLOT_X": 22,
+  "PLOT_Y": 140,
+  "PLOT_W": 404,
+  "PLOT_H": 180,
+  "PLOT_INSET": 6,
+  "GRID_STEP": 34,
+  "LABEL_TOP_Y": 126,
+  "LABEL_BOTTOM_Y": 336,
+  "FOOTER_Y": 376,
+  "FOOTER_X1": 90,
+  "FOOTER_X2": 224,
+  "FOOTER_X3": 358,
+  "BAR_Y": 428,
+  "STATUS_Y": 458
+ },
+ "caliper": {
+  "STATUS_Y": 46,
+  "TIME_Y": 92,
+  "DATE_Y": 144,
+  "TIME_SCALE": 8,
+  "METER_Y": 168,
+  "METER_H": 206,
+  "METER_W": 54,
+  "METER_CELLS": 14,
+  "METER_X1": 63,
+  "METER_X2": 197,
+  "METER_X3": 331,
+  "LABEL_Y": 394,
+  "VALUE_Y": 420,
+  "FOOTER_Y": 454,
+  "FOOTER_X1": 112,
+  "FOOTER_X2": 224,
+  "FOOTER_X3": 336
+ },
+ "daily": {
+  "STRIP_Y": 32,
+  "STRIP_H": 34,
+  "STRIP_W": 268,
+  "DATE_X": 298,
+  "DATE_W": 128,
+  "BODY_ROW_Y": 74,
+  "BODY_ROW_H": 34,
+  "HIST_X": 24,
+  "HIST_Y": 118,
+  "HIST_W": 400,
+  "HIST_H": 34,
+  "TIME_Y": 210,
+  "TIME_SCALE": 12,
+  "INFO_Y": 272,
+  "INFO_H": 60,
+  "INFO_LABEL_DY": 16,
+  "INFO_VALUE_DY": 40,
+  "STEPS_W": 196,
+  "BATT_X": 240,
+  "RING_Y": 400,
+  "RING_R": 42,
+  "RING_PEN": 8,
+  "RING_SEGMENTS": 16,
+  "RING_LABEL_Y": 456,
+  "RING_X1": 70,
+  "RING_X2": 172,
+  "RING_X3": 274,
+  "RING_X4": 376
+ }
+};
+  var RANGES = {
+ "vanguard": {
+  "STATUS_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "HOUR_Y": [
+   0,
+   486
+  ],
+  "MINUTE_Y": [
+   0,
+   486
+  ],
+  "BAR_X": [
+   0,
+   448
+  ],
+  "BAR_Y": [
+   0,
+   486
+  ],
+  "BAR_W": [
+   0,
+   448
+  ],
+  "BAR_H": [
+   0,
+   486
+  ],
+  "BAR_CELLS": [
+   3,
+   60
+  ],
+  "FOOTER_Y": [
+   0,
+   486
+  ],
+  "FOOTER_X_LEFT": [
+   0,
+   448
+  ],
+  "FOOTER_X_CENTER": [
+   0,
+   448
+  ],
+  "FOOTER_X_RIGHT": [
+   0,
+   448
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ]
+ },
+ "flux": {
+  "TOP_Y": [
+   0,
+   486
+  ],
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "TEMP_Y": [
+   0,
+   486
+  ],
+  "COND_Y": [
+   0,
+   486
+  ],
+  "RULE_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "ROW_1_Y": [
+   0,
+   486
+  ],
+  "ROW_2_Y": [
+   0,
+   486
+  ],
+  "COL_1": [
+   0,
+   486
+  ],
+  "COL_2": [
+   0,
+   486
+  ],
+  "COL_3": [
+   0,
+   486
+  ],
+  "STEP_BAR_Y": [
+   0,
+   200
+  ],
+  "SUN_Y": [
+   0,
+   486
+  ],
+  "MOVE_BAR_Y": [
+   0,
+   486
+  ]
+ },
+ "orbit": {
+  "CENTER_Y": [
+   0,
+   486
+  ],
+  "RING_OUTER": [
+   0,
+   486
+  ],
+  "RING_INNER": [
+   0,
+   486
+  ],
+  "RING_PEN": [
+   1,
+   40
+  ],
+  "SEGMENTS": [
+   3,
+   60
+  ],
+  "STATUS_Y": [
+   0,
+   486
+  ],
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "HR_Y": [
+   0,
+   486
+  ],
+  "FOOTER_Y": [
+   0,
+   486
+  ],
+  "FOOTER_X1": [
+   0,
+   448
+  ],
+  "FOOTER_X2": [
+   0,
+   448
+  ],
+  "FOOTER_X3": [
+   0,
+   448
+  ],
+  "FOOTER_X4": [
+   0,
+   448
+  ]
+ },
+ "meridian": {
+  "CENTER_Y": [
+   0,
+   486
+  ],
+  "ARC_RADIUS": [
+   0,
+   240
+  ],
+  "ARC_PEN": [
+   1,
+   40
+  ],
+  "ARC_SEGMENTS": [
+   3,
+   60
+  ],
+  "DIAL_RADIUS": [
+   0,
+   240
+  ],
+  "HOUR_LENGTH": [
+   0,
+   240
+  ],
+  "MINUTE_LENGTH": [
+   0,
+   240
+  ],
+  "SECOND_LENGTH": [
+   0,
+   240
+  ],
+  "STATUS_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "STRIP_Y": [
+   0,
+   486
+  ],
+  "STRIP_X1": [
+   0,
+   448
+  ],
+  "STRIP_X2": [
+   0,
+   448
+  ],
+  "STRIP_X3": [
+   0,
+   448
+  ],
+  "STRIP_X4": [
+   0,
+   448
+  ]
+ },
+ "telemetry": {
+  "FRAME_X": [
+   0,
+   448
+  ],
+  "FRAME_Y": [
+   0,
+   486
+  ],
+  "FRAME_W": [
+   0,
+   448
+  ],
+  "FRAME_H": [
+   0,
+   486
+  ],
+  "PAD_X": [
+   0,
+   448
+  ],
+  "HEADER_Y": [
+   0,
+   486
+  ],
+  "RULE_TOP_Y": [
+   0,
+   486
+  ],
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "ROW_1_Y": [
+   0,
+   486
+  ],
+  "ROW_PITCH": [
+   0,
+   200
+  ],
+  "RULE_BOTTOM_Y": [
+   0,
+   486
+  ],
+  "SUN_Y": [
+   0,
+   486
+  ],
+  "BAR_Y": [
+   0,
+   486
+  ],
+  "BAR_H": [
+   0,
+   486
+  ],
+  "BAR_CELLS": [
+   3,
+   60
+  ]
+ },
+ "horizon": {
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "STEP_BAR_Y": [
+   0,
+   200
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "HORIZON_X": [
+   0,
+   448
+  ],
+  "HORIZON_W": [
+   0,
+   448
+  ],
+  "HORIZON_SWING": [
+   0,
+   200
+  ],
+  "LADDER_STEP": [
+   0,
+   200
+  ],
+  "LADDER_INSET": [
+   0,
+   200
+  ],
+  "TAPE_TOP": [
+   0,
+   486
+  ],
+  "TAPE_HEIGHT": [
+   0,
+   486
+  ],
+  "TAPE_WIDTH": [
+   0,
+   448
+  ],
+  "TAPE_CELLS": [
+   3,
+   60
+  ],
+  "TAPE_LEFT_X": [
+   0,
+   448
+  ],
+  "TAPE_RIGHT_X": [
+   0,
+   448
+  ],
+  "TAPE_LABEL_Y": [
+   0,
+   486
+  ],
+  "TAPE_VALUE_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "STATUS_Y": [
+   0,
+   486
+  ]
+ },
+ "trace": {
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "PLOT_X": [
+   0,
+   448
+  ],
+  "PLOT_Y": [
+   0,
+   486
+  ],
+  "PLOT_W": [
+   0,
+   448
+  ],
+  "PLOT_H": [
+   0,
+   486
+  ],
+  "PLOT_INSET": [
+   0,
+   200
+  ],
+  "GRID_STEP": [
+   0,
+   200
+  ],
+  "LABEL_TOP_Y": [
+   0,
+   486
+  ],
+  "LABEL_BOTTOM_Y": [
+   0,
+   486
+  ],
+  "FOOTER_Y": [
+   0,
+   486
+  ],
+  "FOOTER_X1": [
+   0,
+   448
+  ],
+  "FOOTER_X2": [
+   0,
+   448
+  ],
+  "FOOTER_X3": [
+   0,
+   448
+  ],
+  "BAR_Y": [
+   0,
+   486
+  ],
+  "STATUS_Y": [
+   0,
+   486
+  ]
+ },
+ "caliper": {
+  "STATUS_Y": [
+   0,
+   486
+  ],
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "DATE_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "METER_Y": [
+   0,
+   486
+  ],
+  "METER_H": [
+   0,
+   486
+  ],
+  "METER_W": [
+   0,
+   448
+  ],
+  "METER_CELLS": [
+   3,
+   60
+  ],
+  "METER_X1": [
+   0,
+   448
+  ],
+  "METER_X2": [
+   0,
+   448
+  ],
+  "METER_X3": [
+   0,
+   448
+  ],
+  "LABEL_Y": [
+   0,
+   486
+  ],
+  "VALUE_Y": [
+   0,
+   486
+  ],
+  "FOOTER_Y": [
+   0,
+   486
+  ],
+  "FOOTER_X1": [
+   0,
+   448
+  ],
+  "FOOTER_X2": [
+   0,
+   448
+  ],
+  "FOOTER_X3": [
+   0,
+   448
+  ]
+ },
+ "daily": {
+  "STRIP_Y": [
+   0,
+   486
+  ],
+  "STRIP_H": [
+   0,
+   486
+  ],
+  "STRIP_W": [
+   0,
+   448
+  ],
+  "DATE_X": [
+   0,
+   448
+  ],
+  "DATE_W": [
+   0,
+   448
+  ],
+  "BODY_ROW_Y": [
+   0,
+   486
+  ],
+  "BODY_ROW_H": [
+   0,
+   486
+  ],
+  "HIST_X": [
+   0,
+   448
+  ],
+  "HIST_Y": [
+   0,
+   486
+  ],
+  "HIST_W": [
+   0,
+   448
+  ],
+  "HIST_H": [
+   0,
+   486
+  ],
+  "TIME_Y": [
+   0,
+   486
+  ],
+  "TIME_SCALE": [
+   2,
+   24
+  ],
+  "INFO_Y": [
+   0,
+   486
+  ],
+  "INFO_H": [
+   0,
+   486
+  ],
+  "INFO_LABEL_DY": [
+   0,
+   486
+  ],
+  "INFO_VALUE_DY": [
+   0,
+   486
+  ],
+  "STEPS_W": [
+   0,
+   200
+  ],
+  "BATT_X": [
+   0,
+   448
+  ],
+  "RING_Y": [
+   0,
+   486
+  ],
+  "RING_R": [
+   0,
+   240
+  ],
+  "RING_PEN": [
+   1,
+   40
+  ],
+  "RING_SEGMENTS": [
+   3,
+   60
+  ],
+  "RING_LABEL_Y": [
+   0,
+   486
+  ],
+  "RING_X1": [
+   0,
+   448
+  ],
+  "RING_X2": [
+   0,
+   448
+  ],
+  "RING_X3": [
+   0,
+   448
+  ],
+  "RING_X4": [
+   0,
+   448
+  ]
+ }
+};
+  var FILES = {
+ "vanguard": "vanguard/source/VanguardView.mc",
+ "flux": "flux/source/FluxView.mc",
+ "orbit": "orbit/source/OrbitView.mc",
+ "meridian": "meridian/source/MeridianView.mc",
+ "telemetry": "telemetry/source/TelemetryView.mc",
+ "horizon": "horizon/source/HorizonView.mc",
+ "trace": "trace/source/TraceView.mc",
+ "caliper": "caliper/source/CaliperView.mc",
+ "daily": "daily/source/DailyView.mc"
+};
+
+  var STORE_KEY = "venux1-face-params";
+  var overrides = {};
+  try {
+    var saved = localStorage.getItem(STORE_KEY);
+    if (saved) { overrides = JSON.parse(saved) || {}; }
+  } catch (e) { overrides = {}; }     // private window, blocked storage
+
+  function persist() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(overrides)); } catch (e) { /* fine */ }
+  }
+
+  //! Effective constants for a face: defaults with any edits laid over.
+  function paramsFor(face) {
+    var base = DEFAULTS[face], out = {}, k;
+    for (k in base) { if (Object.prototype.hasOwnProperty.call(base, k)) { out[k] = base[k]; } }
+    var over = overrides[face];
+    for (k in over) { if (Object.prototype.hasOwnProperty.call(over, k)) { out[k] = over[k]; } }
+    return out;
+  }
+
+  function changedFor(face) {
+    var base = DEFAULTS[face], over = overrides[face] || {}, out = [];
+    for (var k in over) {
+      if (Object.prototype.hasOwnProperty.call(over, k) && over[k] !== base[k]) {
+        out.push([k, base[k], over[k]]);
+      }
     }
-    frame(ctx, 298, 32, 128, 34, 2, T.FAINT);
-    pfC(ctx, 362, cy, 2, s.date.split(" ").slice(1).join(" "), T.TEXT);
-
-    // body battery row
-    frame(ctx, LEFT, 74, INNER_W, 34, 2, T.FAINT);
-    pf(ctx, LEFT + 12, 91, 2, "BODY BATT", T.DIM);
-    pfR(ctx, RIGHT - 12, 91, 3, num(s.body), T.BODY);
-    segBar(ctx, LEFT + 150, 86, 150, 10, 10, ratio(s.body, 100), T.BODY);
-
-    var hist = hrSeries(s);
-    if (hist.length > 0) { histogram(ctx, 24, 118, 400, 34, hist, T.HR); }
-    else { pfC(ctx, CX, 135, 2, "NO HR HISTORY", T.FAINT); }
-
-        var clock = hoursText(s) + ":" + minsText(s);
-    pfC(ctx, CX + 4, 214, 12, clock, T.SHADOW);
-    pfGradC(ctx, CX, 210, 12, clock, T.STRESS, T.STEPS);
-
-    // steps, battery hours, temperature
-    frame(ctx, LEFT, 272, 196, 60, 2, T.FAINT);
-    pf(ctx, LEFT + 12, 288, 2, "STEPS", T.DIM);
-    pfR(ctx, LEFT + 196 - 12, 312, 4, num(s.steps), T.STEPS);
-    pf(ctx, 240, 288, 2, "BATT", T.DIM);
-    pf(ctx, 240, 314, 3, s.battHours === null ? NO_VALUE : s.battHours + "H", battColor(s.batt));
-    pfR(ctx, RIGHT, 304, 5, tempGlyph(s), T.WEATHER);
-
-    // ring complications
-    function ring(x, frac, value, label, color) {
-      segRing(ctx, x, 400, 42, 16, frac, color, 8);
-      pfC(ctx, x, 400, 3, value, color);
-      pfC(ctx, x, 456, 2, label, T.DIM);
-    }
-    var hf = s.hr === null ? 0 : (s.hr - 40) / 140;
-    ring(70, ratio(s.body, 100), num(s.body), "BODY", T.BODY);
-    ring(172, ratio(s.stress, 100), num(s.stress), "STRESS", T.STRESS);
-    ring(274, ratio(s.intMin, s.intGoal), num(s.intMin), "MINS", T.INTENSITY);
-    ring(376, hf, num(s.hr), "HR", T.HR);
+    out.sort(function (a, b) { return a[0] < b[0] ? -1 : 1; });
+    return out;
   }
 
-  function renderVanguard(ctx, s) {
-    statusBlocks(ctx, CX, 36, 10, s);
-    pfC(ctx, CX, 66, 3, s.date, T.DIM);
-    pfSC(ctx, CX, 152, 16, hoursPadded(s), T.TEXT, 5);
-    pfSC(ctx, CX, 296, 16, minsText(s), T.BODY, 5);
-    segBar(ctx, 92, 380, 264, 10, 12, ratio(s.steps, s.stepGoal), T.STEPS);
-    field(ctx, 84, 418, compact(s.steps), "STEPS", T.STEPS, 4, 2);
-    field(ctx, 224, 418, tempGlyph(s), "TEMP", T.WEATHER, 4, 2);
-    field(ctx, 364, 418, String(s.batt), "BATT", battColor(s.batt), 4, 2);
+  var ui = { state: STATES[0], live: true, h24: true };
+
+  function activeState() {
+    var s = ui.state;
+    if (!ui.live) { return s; }
+    var now = new Date();
+    var days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    var merged = {};
+    for (var k in s) { if (Object.prototype.hasOwnProperty.call(s, k)) { merged[k] = s[k]; } }
+    merged.hour = now.getHours(); merged.min = now.getMinutes(); merged.sec = now.getSeconds();
+    merged.date = days[now.getDay()] + " " + now.getDate() + " " + months[now.getMonth()];
+    return merged;
   }
 
-  function renderFlux(ctx, s) {
-    pf(ctx, LEFT, 44, 2, s.date, T.DIM);
-    pfR(ctx, RIGHT, 44, 2, s.batt + "%", battColor(s.batt));
-    statusBlocks(ctx, CX, 44, 8, s);
-    pf(ctx, LEFT, 104, 8, hoursText(s) + ":" + minsText(s), T.TEXT);
-    pfR(ctx, RIGHT, 90, 4, tempGlyph(s), T.WEATHER);
-    pfR(ctx, RIGHT, 138, 2, s.cond, T.DIM);
-    rect(ctx, LEFT, 148, INNER_W, 2, T.FAINT);
-    field(ctx, 97, 214, compact(s.steps), "STEPS", T.STEPS, 4, 2);
-    field(ctx, 224, 214, num(s.hr), "HEART", T.HR, 4, 2);
-    field(ctx, 351, 214, num(s.body), "BODY", T.BODY, 4, 2);
-    field(ctx, 97, 306, compact(s.cals), "CALS", T.CALORIES, 4, 2);
-    field(ctx, 224, 306, num(s.floors), "FLOORS", T.FLOORS, 4, 2);
-    field(ctx, 351, 306, num(s.intMin), "INT MIN", T.INTENSITY, 4, 2);
-    segBar(ctx, LEFT, 378, INNER_W, 12, 20, ratio(s.steps, s.stepGoal), T.STEPS);
-    pf(ctx, LEFT, 422, 3, "^ " + s.sunrise, T.STRESS);
-    pfR(ctx, RIGHT, 422, 3, s.sunset + " v", T.BODY);
-    if (s.move > 0) { segBar(ctx, 152, 452, 144, 10, 5, s.move / 5, T.STRESS); }
+  // ---- faces ------------------------------------------------------------
+
+  function renderVanguard(ctx, s, p) {
+    statusBlocks(ctx, CX, p.STATUS_Y, 10, s);
+    pfC(ctx, CX, p.DATE_Y, 3, s.date, T.DIM);
+    pfSC(ctx, CX, p.HOUR_Y, p.TIME_SCALE, hoursPadded(s), T.TEXT, 5);
+    pfSC(ctx, CX, p.MINUTE_Y, p.TIME_SCALE, minsText(s), T.BODY, 5);
+    segBar(ctx, p.BAR_X, p.BAR_Y, p.BAR_W, p.BAR_H, p.BAR_CELLS, ratio(s.steps, s.stepGoal), T.STEPS);
+    field(ctx, p.FOOTER_X_LEFT, p.FOOTER_Y, compact(s.steps), "STEPS", T.STEPS, 4, 2);
+    field(ctx, p.FOOTER_X_CENTER, p.FOOTER_Y, tempGlyph(s), "TEMP", T.WEATHER, 4, 2);
+    field(ctx, p.FOOTER_X_RIGHT, p.FOOTER_Y, String(s.batt), "BATT", battColor(s.batt), 4, 2);
   }
 
-  function renderOrbit(ctx, s) {
-    segRing(ctx, CX, 228, 186, 48, ratio(s.steps, s.stepGoal), T.STEPS, 16);
-    segRing(ctx, CX, 228, 158, 48, ratio(s.body, 100), T.BODY, 16);
-    statusBlocks(ctx, CX, 148, 8, s);
-    pfSC(ctx, CX, 196, 8, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
-    pfC(ctx, CX, 246, 2, s.date, T.DIM);
-    field(ctx, CX, 280, num(s.hr), "BPM", T.HR, 4, 2);
-    field(ctx, 78, 436, compact(s.steps), "STEPS", T.STEPS, 3, 2);
-    field(ctx, 176, 436, num(s.body), "BODY", T.BODY, 3, 2);
-    field(ctx, 272, 436, tempGlyph(s), "TEMP", T.WEATHER, 3, 2);
-    field(ctx, 370, 436, String(s.batt), "BATT", battColor(s.batt), 3, 2);
+  function renderFlux(ctx, s, p) {
+    pf(ctx, LEFT, p.TOP_Y, 2, s.date, T.DIM);
+    pfR(ctx, RIGHT, p.TOP_Y, 2, s.batt + "%", battColor(s.batt));
+    statusBlocks(ctx, CX, p.TOP_Y, 8, s);
+    pfS(ctx, LEFT, p.TIME_Y, p.TIME_SCALE, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    pfR(ctx, RIGHT, p.TEMP_Y, 4, tempGlyph(s), T.WEATHER);
+    pfR(ctx, RIGHT, p.COND_Y, 2, s.cond, T.DIM);
+    rect(ctx, LEFT, p.RULE_Y, INNER_W, 2, T.FAINT);
+    field(ctx, p.COL_1, p.ROW_1_Y, compact(s.steps), "STEPS", T.STEPS, 4, 2);
+    field(ctx, p.COL_2, p.ROW_1_Y, num(s.hr), "HEART", T.HR, 4, 2);
+    field(ctx, p.COL_3, p.ROW_1_Y, num(s.body), "BODY", T.BODY, 4, 2);
+    field(ctx, p.COL_1, p.ROW_2_Y, compact(s.cals), "CALS", T.CALORIES, 4, 2);
+    field(ctx, p.COL_2, p.ROW_2_Y, num(s.floors), "FLOORS", T.FLOORS, 4, 2);
+    field(ctx, p.COL_3, p.ROW_2_Y, num(s.intMin), "INT MIN", T.INTENSITY, 4, 2);
+    segBar(ctx, LEFT, p.STEP_BAR_Y, INNER_W, 12, 20, ratio(s.steps, s.stepGoal), T.STEPS);
+    pf(ctx, LEFT, p.SUN_Y, 3, "^ " + s.sunrise, T.STRESS);
+    pfR(ctx, RIGHT, p.SUN_Y, 3, s.sunset + " v", T.BODY);
+    if (s.move > 0) { segBar(ctx, 152, p.MOVE_BAR_Y, 144, 10, 5, s.move / 5, T.STRESS); }
   }
 
-  function renderMeridian(ctx, s) {
-    segRing(ctx, CX, 210, 192, 32, ratio(s.body, 100), T.BODY, 10);
-    dialBlocks(ctx, CX, 210, 168);
-    statusBlocks(ctx, CX, 76, 8, s);
-    pfC(ctx, CX, 424, 2, s.date, T.DIM);
-    pfC(ctx, 78, 452, 3, compact(s.steps), T.STEPS);
-    pfC(ctx, 176, 452, 3, num(s.hr), T.HR);
-    pfC(ctx, 272, 452, 3, tempGlyph(s), T.WEATHER);
-    pfC(ctx, 370, 452, 3, s.batt + "%", battColor(s.batt));
-    pixelHand(ctx, CX, 210, ((s.hour % 12) + s.min / 60) * 30, 104, 30, 9, T.TEXT);
-    pixelHand(ctx, CX, 210, (s.min + s.sec / 60) * 6, 158, 36, 7, T.TEXT);
-    pixelHand(ctx, CX, 210, s.sec * 6, 170, 40, 3, T.BODY);
-    rect(ctx, CX - 8, 202, 16, 16, T.TEXT);
-    rect(ctx, CX - 3, 207, 6, 6, T.BG);
+  function renderOrbit(ctx, s, p) {
+    segRing(ctx, CX, p.CENTER_Y, p.RING_OUTER, p.SEGMENTS, ratio(s.steps, s.stepGoal), T.STEPS, p.RING_PEN);
+    segRing(ctx, CX, p.CENTER_Y, p.RING_INNER, p.SEGMENTS, ratio(s.body, 100), T.BODY, p.RING_PEN);
+    statusBlocks(ctx, CX, p.STATUS_Y, 8, s);
+    pfSC(ctx, CX, p.TIME_Y, p.TIME_SCALE, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    pfC(ctx, CX, p.DATE_Y, 2, s.date, T.DIM);
+    field(ctx, CX, p.HR_Y, num(s.hr), "BPM", T.HR, 4, 2);
+    field(ctx, p.FOOTER_X1, p.FOOTER_Y, compact(s.steps), "STEPS", T.STEPS, 3, 2);
+    field(ctx, p.FOOTER_X2, p.FOOTER_Y, num(s.body), "BODY", T.BODY, 3, 2);
+    field(ctx, p.FOOTER_X3, p.FOOTER_Y, tempGlyph(s), "TEMP", T.WEATHER, 3, 2);
+    field(ctx, p.FOOTER_X4, p.FOOTER_Y, String(s.batt), "BATT", battColor(s.batt), 3, 2);
   }
 
-  function renderTelemetry(ctx, s) {
+  function renderMeridian(ctx, s, p) {
+    segRing(ctx, CX, p.CENTER_Y, p.ARC_RADIUS, p.ARC_SEGMENTS, ratio(s.body, 100), T.BODY, p.ARC_PEN);
+    dialBlocks(ctx, CX, p.CENTER_Y, p.DIAL_RADIUS);
+    statusBlocks(ctx, CX, p.STATUS_Y, 8, s);
+    pfC(ctx, CX, p.DATE_Y, 2, s.date, T.DIM);
+    pfC(ctx, p.STRIP_X1, p.STRIP_Y, 3, compact(s.steps), T.STEPS);
+    pfC(ctx, p.STRIP_X2, p.STRIP_Y, 3, num(s.hr), T.HR);
+    pfC(ctx, p.STRIP_X3, p.STRIP_Y, 3, tempGlyph(s), T.WEATHER);
+    pfC(ctx, p.STRIP_X4, p.STRIP_Y, 3, s.batt + "%", battColor(s.batt));
+    pixelHand(ctx, CX, p.CENTER_Y, ((s.hour % 12) + s.min / 60) * 30, p.HOUR_LENGTH, 30, 9, T.TEXT);
+    pixelHand(ctx, CX, p.CENTER_Y, (s.min + s.sec / 60) * 6, p.MINUTE_LENGTH, 36, 7, T.TEXT);
+    pixelHand(ctx, CX, p.CENTER_Y, s.sec * 6, p.SECOND_LENGTH, 40, 3, T.BODY);
+    rect(ctx, CX - 8, p.CENTER_Y - 8, 16, 16, T.TEXT);
+    rect(ctx, CX - 3, p.CENTER_Y - 3, 6, 6, T.BG);
+  }
+
+  function renderTelemetry(ctx, s, p) {
     scanlines(ctx, 3, T.SCANLINE);
-    frame(ctx, 22, 22, 404, 430, 2, T.FAINT);
-    var left = 40, right = 408;
-    pf(ctx, left, 50, 2, s.date, T.DIM);
-    pfR(ctx, right, 50, 2, s.batt + "%", battColor(s.batt));
-    rect(ctx, left, 70, right - left, 1, T.FAINT);
-    pfSC(ctx, CX, 122, 9, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    frame(ctx, p.FRAME_X, p.FRAME_Y, p.FRAME_W, p.FRAME_H, 2, T.FAINT);
+    var left = p.FRAME_X + p.PAD_X, right = p.FRAME_X + p.FRAME_W - p.PAD_X;
+    pf(ctx, left, p.HEADER_Y, 2, s.date, T.DIM);
+    pfR(ctx, right, p.HEADER_Y, 2, s.batt + "%", battColor(s.batt));
+    rect(ctx, left, p.RULE_TOP_Y, right - left, 1, T.FAINT);
+    pfSC(ctx, CX, p.TIME_Y, p.TIME_SCALE, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
 
     function row(i, label, value, color) {
-      var y = 180 + i * 42;
+      var y = p.ROW_1_Y + i * p.ROW_PITCH;
       pf(ctx, left, y, 2, label, T.DIM);
       pfR(ctx, right, y, 4, value, color);
     }
@@ -792,11 +1640,11 @@
     row(3, "CALORIES", num(s.cals), T.CALORIES);
     row(4, "FLOORS", num(s.floors), T.FLOORS);
 
-    rect(ctx, left, 376, right - left, 1, T.FAINT);
-    pf(ctx, left, 398, 2, "^ " + s.sunrise, T.STRESS);
-    pfR(ctx, right, 398, 2, s.sunset + " v", T.BODY);
+    rect(ctx, left, p.RULE_BOTTOM_Y, right - left, 1, T.FAINT);
+    pf(ctx, left, p.SUN_Y, 2, "^ " + s.sunrise, T.STRESS);
+    pfR(ctx, right, p.SUN_Y, 2, s.sunset + " v", T.BODY);
 
-    var cells = 24, gap = 2, width = right - left;
+    var cells = p.BAR_CELLS, gap = 2, width = right - left;
     var base = Math.floor((width - gap * (cells - 1)) / cells);
     var extra = (width - gap * (cells - 1)) % cells;
     var rise = sunMinutes(s.sunrise), set = sunMinutes(s.sunset);
@@ -810,124 +1658,284 @@
       }
       if (hour === nowHour) { color = T.TEXT; }
       ctx.fillStyle = color;
-      ctx.fillRect(cursor, 420, cw, 12);
+      ctx.fillRect(cursor, p.BAR_Y, cw, p.BAR_H);
       cursor += cw + gap;
     }
   }
 
-  function renderHorizon(ctx, s) {
-    pfC(ctx, CX, 66, 6, "[" + hoursText(s) + ":" + minsText(s) + "]", T.TEXT);
-    segBar(ctx, LEFT, 104, INNER_W, 8, 20, ratio(s.steps, s.stepGoal), T.STEPS);
+  function renderHorizon(ctx, s, p) {
+    pfSC(ctx, CX, p.TIME_Y, p.TIME_SCALE, "[" + hoursText(s) + ":" + minsText(s) + "]", T.TEXT, 2);
+    segBar(ctx, LEFT, p.STEP_BAR_Y, INNER_W, 8, 20, ratio(s.steps, s.stepGoal), T.STEPS);
 
     var alt = altitudeFraction(s);
-    var hy = alt === null ? CY : CY + Math.round(alt * 110);
-    rect(ctx, 60, hy, 328, 3, T.TEXT);
+    var hy = alt === null ? CY : CY + Math.round(alt * p.HORIZON_SWING);
+    rect(ctx, p.HORIZON_X, hy, p.HORIZON_W, 3, T.TEXT);
 
     function rung(y, len, color) {
       if (y < 130 || y > 400) { return; }
-      rect(ctx, CX - 50 - len, y, len, 3, color);
-      rect(ctx, CX + 50, y, len, 3, color);
+      rect(ctx, CX - p.LADDER_INSET - len, y, len, 3, color);
+      rect(ctx, CX + p.LADDER_INSET, y, len, 3, color);
     }
-    rung(hy - 48, 50, T.SKY); rung(hy - 96, 34, T.SKY); rung(hy - 144, 24, T.SKY);
-    rung(hy + 48, 50, T.GROUND); rung(hy + 96, 34, T.GROUND); rung(hy + 144, 24, T.GROUND);
+    rung(hy - p.LADDER_STEP, 50, T.SKY);
+    rung(hy - 2 * p.LADDER_STEP, 34, T.SKY);
+    rung(hy - 3 * p.LADDER_STEP, 24, T.SKY);
+    rung(hy + p.LADDER_STEP, 50, T.GROUND);
+    rung(hy + 2 * p.LADDER_STEP, 34, T.GROUND);
+    rung(hy + 3 * p.LADDER_STEP, 24, T.GROUND);
     if (alt === null) { pfC(ctx, CX, hy - 30, 2, "NO FIX", T.FAINT); }
 
     rect(ctx, CX - 58, CY - 3, 34, 6, T.STRESS);
     rect(ctx, CX + 24, CY - 3, 34, 6, T.STRESS);
     rect(ctx, CX - 5, CY - 5, 10, 10, T.STRESS);
 
-    segMeter(ctx, 30, 152, 20, 196, 12, ratio(s.body, 100), T.BODY);
-    pfC(ctx, 40, 134, 2, "BB", T.DIM);
-    pfC(ctx, 40, 368, 3, num(s.body), T.BODY);
+    segMeter(ctx, p.TAPE_LEFT_X, p.TAPE_TOP, p.TAPE_WIDTH, p.TAPE_HEIGHT, p.TAPE_CELLS, ratio(s.body, 100), T.BODY);
+    pfC(ctx, p.TAPE_LEFT_X + p.TAPE_WIDTH / 2, p.TAPE_LABEL_Y, 2, "BB", T.DIM);
+    pfC(ctx, p.TAPE_LEFT_X + p.TAPE_WIDTH / 2, p.TAPE_VALUE_Y, 3, num(s.body), T.BODY);
     var hf = s.hr === null ? 0 : (s.hr - 40) / 140;
-    segMeter(ctx, 398, 152, 20, 196, 12, hf, T.HR);
-    pfC(ctx, 408, 134, 2, "HR", T.DIM);
-    pfC(ctx, 408, 368, 3, num(s.hr), T.HR);
+    segMeter(ctx, p.TAPE_RIGHT_X, p.TAPE_TOP, p.TAPE_WIDTH, p.TAPE_HEIGHT, p.TAPE_CELLS, hf, T.HR);
+    pfC(ctx, p.TAPE_RIGHT_X + p.TAPE_WIDTH / 2, p.TAPE_LABEL_Y, 2, "HR", T.DIM);
+    pfC(ctx, p.TAPE_RIGHT_X + p.TAPE_WIDTH / 2, p.TAPE_VALUE_Y, 3, num(s.hr), T.HR);
 
-    pfC(ctx, CX, 416, 2, s.date, T.DIM);
-    statusBlocks(ctx, CX, 450, 8, s);
+    pfC(ctx, CX, p.DATE_Y, 2, s.date, T.DIM);
+    statusBlocks(ctx, CX, p.STATUS_Y, 8, s);
   }
 
-  function renderTrace(ctx, s) {
-    pfC(ctx, CX, 70, 7, hoursText(s) + ":" + minsText(s), T.TEXT);
-    pfC(ctx, CX, 108, 2, s.date, T.DIM);
+  function renderTrace(ctx, s, p) {
+    pfSC(ctx, CX, p.TIME_Y, p.TIME_SCALE, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    pfC(ctx, CX, p.DATE_Y, 2, s.date, T.DIM);
 
-    grid(ctx, 22, 140, 404, 180, 34, T.TRACK);
-    frame(ctx, 22, 140, 404, 180, 2, T.FAINT);
+    grid(ctx, p.PLOT_X, p.PLOT_Y, p.PLOT_W, p.PLOT_H, p.GRID_STEP, T.TRACK);
+    frame(ctx, p.PLOT_X, p.PLOT_Y, p.PLOT_W, p.PLOT_H, 2, T.FAINT);
     var series = hrSeries(s);
-    pf(ctx, LEFT, 126, 2, "HR", T.DIM);
+    pf(ctx, LEFT, p.LABEL_TOP_Y, 2, "HR", T.DIM);
     if (series.length < 2) {
-      pfC(ctx, CX, 230, 3, "NO SIGNAL", T.FAINT);
+      pfC(ctx, CX, p.PLOT_Y + p.PLOT_H / 2, 3, "NO SIGNAL", T.FAINT);
     } else {
-      stepTrace(ctx, 28, 146, 392, 168, series, T.HR);
-      pfR(ctx, RIGHT, 126, 2, String(Math.max.apply(null, series)), T.DIM);
-      pfR(ctx, RIGHT, 336, 2, String(Math.min.apply(null, series)), T.DIM);
-      pf(ctx, LEFT, 336, 2, series.length + " SAMPLES", T.FAINT);
+      stepTrace(ctx, p.PLOT_X + p.PLOT_INSET, p.PLOT_Y + p.PLOT_INSET,
+                p.PLOT_W - 2 * p.PLOT_INSET, p.PLOT_H - 2 * p.PLOT_INSET, series, T.HR);
+      pfR(ctx, RIGHT, p.LABEL_TOP_Y, 2, String(Math.max.apply(null, series)), T.DIM);
+      pfR(ctx, RIGHT, p.LABEL_BOTTOM_Y, 2, String(Math.min.apply(null, series)), T.DIM);
+      pf(ctx, LEFT, p.LABEL_BOTTOM_Y, 2, series.length + " SAMPLES", T.FAINT);
     }
-    field(ctx, 90, 376, compact(s.steps), "STEPS", T.STEPS, 4, 2);
-    field(ctx, 224, 376, num(s.hr), "BPM", T.HR, 4, 2);
-    field(ctx, 358, 376, String(s.batt), "BATT", battColor(s.batt), 4, 2);
-    segBar(ctx, LEFT, 428, INNER_W, 10, 20, ratio(s.steps, s.stepGoal), T.STEPS);
-    statusBlocks(ctx, CX, 458, 8, s);
+    field(ctx, p.FOOTER_X1, p.FOOTER_Y, compact(s.steps), "STEPS", T.STEPS, 4, 2);
+    field(ctx, p.FOOTER_X2, p.FOOTER_Y, num(s.hr), "BPM", T.HR, 4, 2);
+    field(ctx, p.FOOTER_X3, p.FOOTER_Y, String(s.batt), "BATT", battColor(s.batt), 4, 2);
+    segBar(ctx, LEFT, p.BAR_Y, INNER_W, 10, 20, ratio(s.steps, s.stepGoal), T.STEPS);
+    statusBlocks(ctx, CX, p.STATUS_Y, 8, s);
   }
 
-  function renderCaliper(ctx, s) {
-    statusBlocks(ctx, CX, 46, 8, s);
-    pfSC(ctx, CX, 92, 8, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
-    pfC(ctx, CX, 144, 2, s.date, T.DIM);
+  function renderCaliper(ctx, s, p) {
+    statusBlocks(ctx, CX, p.STATUS_Y, 8, s);
+    pfSC(ctx, CX, p.TIME_Y, p.TIME_SCALE, hoursText(s) + ":" + minsText(s), T.TEXT, 3);
+    pfC(ctx, CX, p.DATE_Y, 2, s.date, T.DIM);
 
     function meter(x, frac, label, value, color) {
-      segMeter(ctx, x, 168, 54, 206, 14, frac, color);
-      pfC(ctx, x + 27, 394, 2, label, T.DIM);
-      pfC(ctx, x + 27, 420, 3, value, color);
+      segMeter(ctx, x, p.METER_Y, p.METER_W, p.METER_H, p.METER_CELLS, frac, color);
+      pfC(ctx, x + p.METER_W / 2, p.LABEL_Y, 2, label, T.DIM);
+      pfC(ctx, x + p.METER_W / 2, p.VALUE_Y, 3, value, color);
     }
-    meter(63, ratio(s.steps, s.stepGoal), "STEPS", compact(s.steps), T.STEPS);
-    meter(197, ratio(s.body, 100), "BODY", num(s.body), T.BODY);
-    meter(331, ratio(s.intMin, s.intGoal), "INT MIN", num(s.intMin), T.INTENSITY);
+    meter(p.METER_X1, ratio(s.steps, s.stepGoal), "STEPS", compact(s.steps), T.STEPS);
+    meter(p.METER_X2, ratio(s.body, 100), "BODY", num(s.body), T.BODY);
+    meter(p.METER_X3, ratio(s.intMin, s.intGoal), "INT MIN", num(s.intMin), T.INTENSITY);
 
-    pfC(ctx, 112, 454, 2, num(s.hr) + " BPM", T.HR);
-    pfC(ctx, 224, 454, 2, tempGlyph(s), T.WEATHER);
-    pfC(ctx, 336, 454, 2, s.batt + "%", battColor(s.batt));
+    pfC(ctx, p.FOOTER_X1, p.FOOTER_Y, 2, num(s.hr) + " BPM", T.HR);
+    pfC(ctx, p.FOOTER_X2, p.FOOTER_Y, 2, tempGlyph(s), T.WEATHER);
+    pfC(ctx, p.FOOTER_X3, p.FOOTER_Y, 2, s.batt + "%", battColor(s.batt));
+  }
+
+  function renderDaily(ctx, s, p) {
+    frame(ctx, LEFT, p.STRIP_Y, p.STRIP_W, p.STRIP_H, 2, T.FAINT);
+    var cell = Math.floor(p.STRIP_W / 7), cy = p.STRIP_Y + Math.floor(p.STRIP_H / 2), letters = "SMTWTFS";
+    var today = ui.live ? new Date().getDay() : 0;
+    for (var i = 0; i < 7; i++) {
+      var cx = LEFT + i * cell, color = T.DIM;
+      if (i === today) { rect(ctx, cx + 3, p.STRIP_Y + 3, cell - 6, p.STRIP_H - 6, T.STRESS); color = T.BG; }
+      pfC(ctx, cx + Math.floor(cell / 2), cy, 2, letters.charAt(i), color);
+    }
+    frame(ctx, p.DATE_X, p.STRIP_Y, p.DATE_W, p.STRIP_H, 2, T.FAINT);
+    pfC(ctx, p.DATE_X + Math.floor(p.DATE_W / 2), cy, 2, s.date.split(" ").slice(1).join(" "), T.TEXT);
+
+    frame(ctx, LEFT, p.BODY_ROW_Y, INNER_W, p.BODY_ROW_H, 2, T.FAINT);
+    var bodyY = p.BODY_ROW_Y + Math.floor(p.BODY_ROW_H / 2);
+    pf(ctx, LEFT + 12, bodyY, 2, "BODY BATT", T.DIM);
+    pfR(ctx, RIGHT - 12, bodyY, 3, num(s.body), T.BODY);
+    segBar(ctx, LEFT + 150, bodyY - 5, 150, 10, 10, ratio(s.body, 100), T.BODY);
+
+    var hist = hrSeries(s);
+    if (hist.length > 0) { histogram(ctx, p.HIST_X, p.HIST_Y, p.HIST_W, p.HIST_H, hist, T.HR); }
+    else { pfC(ctx, CX, p.HIST_Y + Math.floor(p.HIST_H / 2), 2, "NO HR HISTORY", T.FAINT); }
+
+    var clock = hoursText(s) + ":" + minsText(s);
+    pfC(ctx, CX + 4, p.TIME_Y + 4, p.TIME_SCALE, clock, T.SHADOW);
+    pfGradC(ctx, CX, p.TIME_Y, p.TIME_SCALE, clock, T.STRESS, T.STEPS);
+
+    frame(ctx, LEFT, p.INFO_Y, p.STEPS_W, p.INFO_H, 2, T.FAINT);
+    pf(ctx, LEFT + 12, p.INFO_Y + p.INFO_LABEL_DY, 2, "STEPS", T.DIM);
+    pfR(ctx, LEFT + p.STEPS_W - 12, p.INFO_Y + p.INFO_VALUE_DY, 4, num(s.steps), T.STEPS);
+    pf(ctx, p.BATT_X, p.INFO_Y + p.INFO_LABEL_DY, 2, "BATT", T.DIM);
+    pf(ctx, p.BATT_X, p.INFO_Y + p.INFO_VALUE_DY + 2, 3,
+       s.battHours === null ? NO_VALUE : s.battHours + "H", battColor(s.batt));
+    pfR(ctx, RIGHT, p.INFO_Y + 32, 6, tempGlyph(s), T.WEATHER);
+
+    function ring(x, frac, value, label, color) {
+      segRing(ctx, x, p.RING_Y, p.RING_R, p.RING_SEGMENTS, frac, color, p.RING_PEN);
+      pfC(ctx, x, p.RING_Y, 3, value, color);
+      pfC(ctx, x, p.RING_LABEL_Y, 2, label, T.DIM);
+    }
+    var hf = s.hr === null ? 0 : (s.hr - 40) / 140;
+    ring(p.RING_X1, ratio(s.body, 100), num(s.body), "BODY", T.BODY);
+    ring(p.RING_X2, ratio(s.stress, 100), num(s.stress), "STRESS", T.STRESS);
+    ring(p.RING_X3, ratio(s.intMin, s.intGoal), num(s.intMin), "MINS", T.INTENSITY);
+    ring(p.RING_X4, hf, num(s.hr), "HR", T.HR);
   }
 
   var FACES = [
-    { id: "c-vanguard", draw: renderVanguard },
-    { id: "c-flux", draw: renderFlux },
-    { id: "c-orbit", draw: renderOrbit },
-    { id: "c-meridian", draw: renderMeridian },
-    { id: "c-telemetry", draw: renderTelemetry },
-    { id: "c-horizon", draw: renderHorizon },
-    { id: "c-trace", draw: renderTrace },
-    { id: "c-caliper", draw: renderCaliper },
-    { id: "c-daily", draw: renderDaily }
+    { id: "vanguard", draw: renderVanguard }, { id: "flux", draw: renderFlux },
+    { id: "orbit", draw: renderOrbit }, { id: "meridian", draw: renderMeridian },
+    { id: "telemetry", draw: renderTelemetry }, { id: "horizon", draw: renderHorizon },
+    { id: "trace", draw: renderTrace }, { id: "caliper", draw: renderCaliper },
+    { id: "daily", draw: renderDaily }
   ];
 
-  function renderAll() {
-    var s = activeState();
-    var dpr = Math.min(window.devicePixelRatio || 1, 3);
-    for (var i = 0; i < FACES.length; i++) {
-      var canvas = document.getElementById(FACES[i].id);
-      if (!canvas) { continue; }
-      if (canvas.width !== Math.round(W * dpr)) {
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-      }
-      var ctx = canvas.getContext("2d");
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.imageSmoothingEnabled = false;
-      ctx.fillStyle = T.BG;
-      ctx.fillRect(0, 0, W, H);
-      FACES[i].draw(ctx, s);
+  function renderFace(entry, s, dpr) {
+    var canvas = document.getElementById("c-" + entry.id);
+    if (!canvas) { return; }
+    if (canvas.width !== Math.round(W * dpr)) {
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
     }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = T.BG;
+    ctx.fillRect(0, 0, W, H);
+    entry.draw(ctx, s, paramsFor(entry.id));
   }
+
+  function renderAll() {
+    var s = activeState(), dpr = Math.min(window.devicePixelRatio || 1, 3);
+    for (var i = 0; i < FACES.length; i++) { renderFace(FACES[i], s, dpr); }
+  }
+
+  function renderOne(id) {
+    var entry = null;
+    for (var i = 0; i < FACES.length; i++) { if (FACES[i].id === id) { entry = FACES[i]; } }
+    if (entry) { renderFace(entry, activeState(), Math.min(window.devicePixelRatio || 1, 3)); }
+  }
+
+  // ---- the editor -------------------------------------------------------
+
+  function buildEditor(face) {
+    var host = document.getElementById("edit-" + face);
+    if (!host) { return; }
+    var keys = Object.keys(DEFAULTS[face]).sort();
+    var grid = document.createElement("div");
+    grid.className = "knobs";
+
+    keys.forEach(function (key) {
+      var row = document.createElement("label");
+      row.className = "knob";
+      var name = document.createElement("span");
+      name.textContent = key;
+      var slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = RANGES[face][key][0];
+      slider.max = RANGES[face][key][1];
+      slider.id = "r-" + face + "-" + key;
+      var box = document.createElement("input");
+      box.type = "number";
+      box.id = "n-" + face + "-" + key;
+
+      function apply(value, from) {
+        value = parseInt(value, 10);
+        if (isNaN(value)) { return; }
+        overrides[face] = overrides[face] || {};
+        overrides[face][key] = value;
+        if (from !== "slider") { slider.value = value; }
+        if (from !== "box") { box.value = value; }
+        row.classList.toggle("dirty", value !== DEFAULTS[face][key]);
+        persist(); renderOne(face); refreshExport(face);
+      }
+      slider.addEventListener("input", function () { apply(slider.value, "slider"); });
+      box.addEventListener("input", function () { apply(box.value, "box"); });
+
+      var start = paramsFor(face)[key];
+      slider.value = start; box.value = start;
+      row.classList.toggle("dirty", start !== DEFAULTS[face][key]);
+      row.appendChild(name); row.appendChild(slider); row.appendChild(box);
+      grid.appendChild(row);
+    });
+
+    var bar = document.createElement("div");
+    bar.className = "knobbar";
+    var reset = document.createElement("button");
+    reset.type = "button"; reset.textContent = "Reset to source";
+    reset.addEventListener("click", function () {
+      delete overrides[face]; persist();
+      Object.keys(DEFAULTS[face]).forEach(function (k) {
+        var v = DEFAULTS[face][k];
+        document.getElementById("r-" + face + "-" + k).value = v;
+        document.getElementById("n-" + face + "-" + k).value = v;
+      });
+      Array.prototype.forEach.call(grid.querySelectorAll(".knob"), function (el) {
+        el.classList.remove("dirty");
+      });
+      renderOne(face); refreshExport(face);
+    });
+    var copy = document.createElement("button");
+    copy.type = "button"; copy.textContent = "Copy changes";
+    copy.addEventListener("click", function () {
+      var text = document.getElementById("out-" + face).textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          copy.textContent = "Copied";
+          setTimeout(function () { copy.textContent = "Copy changes"; }, 1400);
+        }, selectOutput);
+      } else { selectOutput(); }
+      function selectOutput() {
+        // Clipboard access is refused in some viewers; select it instead.
+        var node = document.getElementById("out-" + face);
+        var range = document.createRange();
+        range.selectNodeContents(node);
+        var sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+        copy.textContent = "Selected - press copy";
+        setTimeout(function () { copy.textContent = "Copy changes"; }, 2200);
+      }
+    });
+    bar.appendChild(reset); bar.appendChild(copy);
+
+    var out = document.createElement("pre");
+    out.className = "out"; out.id = "out-" + face;
+
+    host.appendChild(grid); host.appendChild(bar); host.appendChild(out);
+    refreshExport(face);
+  }
+
+  function refreshExport(face) {
+    var node = document.getElementById("out-" + face);
+    if (!node) { return; }
+    var changed = changedFor(face);
+    if (!changed.length) {
+      node.textContent = "// matches " + FILES[face];
+      node.classList.remove("has");
+      return;
+    }
+    var lines = ["// " + FILES[face]];
+    changed.forEach(function (c) {
+      lines.push("    private const " + c[0] + " = " + c[2] + ";   // was " + c[1]);
+    });
+    node.textContent = lines.join("\n");
+    node.classList.add("has");
+  }
+
+  // ---- wiring -----------------------------------------------------------
 
   var seg = document.getElementById("states");
   var note = document.getElementById("state-note");
   STATES.forEach(function (state) {
     var b = document.createElement("button");
-    b.type = "button";
-    b.textContent = state.name;
-    b.id = "state-" + state.id;
+    b.type = "button"; b.textContent = state.name; b.id = "state-" + state.id;
     b.setAttribute("aria-pressed", state === ui.state ? "true" : "false");
     b.addEventListener("click", function () {
       ui.state = state;
@@ -946,6 +1954,7 @@
     ui.h24 = e.target.checked; renderAll();
   });
 
+  FACES.forEach(function (f) { buildEditor(f.id); });
   syncNote();
   renderAll();
   window.addEventListener("resize", renderAll);

@@ -16,6 +16,7 @@ class TraceView extends WatchUi.WatchFace {
 
     private const TIME_Y = 70;
     private const DATE_Y = 108;
+    private const TIME_SCALE = 7;
 
     private const PLOT_X = 22;
     private const PLOT_Y = 140;
@@ -42,7 +43,7 @@ class TraceView extends WatchUi.WatchFace {
     function onUpdate(dc as Graphics.Dc) as Void {
         Draw.begin(dc);
 
-        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 7,
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, TIME_SCALE,
             Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
         PixelFont.drawCentered(dc, Layout.CENTER_X, DATE_Y, 2, Metrics.dateLine(), Theme.DIM);
 

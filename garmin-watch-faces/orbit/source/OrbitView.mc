@@ -18,6 +18,7 @@ class OrbitView extends WatchUi.WatchFace {
     private const STATUS_Y = 148;
     private const TIME_Y   = 196;
     private const DATE_Y   = 246;
+    private const TIME_SCALE = 8;
     private const HR_Y     = 280;
 
     private const FOOTER_Y = 436;
@@ -43,7 +44,7 @@ class OrbitView extends WatchUi.WatchFace {
             Metrics.ratio(bodyBattery, 100), Theme.BODY, RING_PEN);
 
         Draw.statusBlocks(dc, Layout.CENTER_X, STATUS_Y, 8);
-        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 8,
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, TIME_SCALE,
             Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
         PixelFont.drawCentered(dc, Layout.CENTER_X, DATE_Y, 2, Metrics.dateLine(), Theme.DIM);
         Draw.field(dc, Layout.CENTER_X, HR_Y, Metrics.text(Metrics.heartRate()),

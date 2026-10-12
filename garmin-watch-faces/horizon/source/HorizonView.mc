@@ -15,6 +15,7 @@ class HorizonView extends WatchUi.WatchFace {
 
     private const TIME_Y = 66;
     private const STEP_BAR_Y = 104;
+    private const TIME_SCALE = 6;
 
     // The horizon stops short of the side meters; running it edge to edge
     // puts a white line straight through both of them.
@@ -47,7 +48,7 @@ class HorizonView extends WatchUi.WatchFace {
     function onUpdate(dc as Graphics.Dc) as Void {
         Draw.begin(dc);
 
-        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 6,
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, TIME_SCALE,
             Lang.format("[$1$:$2$]", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 2);
         Draw.segBar(dc, Layout.LEFT, STEP_BAR_Y, Layout.INNER_W, 8, 20,
             Metrics.ratio(Metrics.steps(), Metrics.stepGoal()), Theme.STEPS);

@@ -18,6 +18,7 @@ class TelemetryView extends WatchUi.WatchFace {
     private const HEADER_Y = 50;
     private const RULE_TOP_Y = 70;
     private const TIME_Y = 122;
+    private const TIME_SCALE = 9;
 
     private const ROW_1_Y = 180;
     private const ROW_PITCH = 42;
@@ -46,7 +47,7 @@ class TelemetryView extends WatchUi.WatchFace {
             Theme.battery(battery));
         Draw.rect(dc, left, RULE_TOP_Y, right - left, 1, Theme.FAINT);
 
-        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, 9,
+        PixelFont.drawShadowedCentered(dc, Layout.CENTER_X, TIME_Y, TIME_SCALE,
             Lang.format("$1$:$2$", [Metrics.hours(), Metrics.minutes()]), Theme.TEXT, 3);
 
         row(dc, left, right, 0, "HR", Metrics.text(Metrics.heartRate()), Theme.HR);

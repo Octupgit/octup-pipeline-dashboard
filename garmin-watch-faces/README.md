@@ -29,9 +29,33 @@ because Connect IQ exposes no intraday step series to a watch face (the stock
 strip draws something third-party apps cannot reach), and the rings are
 segmented rather than smooth.
 
-**Visual preview:** open `preview/venu-x1-faces.html` in a browser. It draws all
-eight on canvas at the real panel size, with four switchable day states
-including one where no sensor or weather data is available.
+## The preview is the editor
+
+Open `preview/venu-x1-faces.html` in a browser. It draws all nine on canvas at
+the real panel size, with four switchable day states (including one where no
+sensor or weather data is available) and a 12/24-hour toggle.
+
+Under each face, **Adjust layout** opens that face's own constants as live
+controls:
+
+- Every control is a `private const` from that face's `View.mc`, with the same
+  name and the same value. There are 154 of them across the nine faces.
+- Dragging one re-runs the same drawing code the watch runs - the same glyph
+  table, the same segment maths - so what you see is what the device will do.
+- Changed controls turn blue, and the panel below lists the exact lines to
+  paste back into the Monkey C, each with the value it replaced.
+- **Reset to source** returns a face to what is committed.
+
+Edits live in that browser only; they reach the repository when those lines are
+applied to the source. `tools/check.py` asserts the control defaults still
+match the `View.mc` values, so a control cannot quietly edit a constant the
+source no longer has.
+
+This is deliberately not a drag-the-boxes canvas. These faces are drawn by a
+bitmap font renderer and a block kit, not composed from movable elements, so a
+canvas editor would have to be a third representation of the design - free to
+drift from both the code and the preview, which is exactly the class of bug
+that produced the lowercase `k`.
 
 ## The type
 
@@ -189,6 +213,8 @@ script pins the parts that must agree:
 - each manifest's `entry` names a class that exists;
 - every `Draw.`/`Metrics.`/`Solar.`/`Layout.`/`Theme.`/`PixelFont.` symbol
   referenced anywhere is defined;
+- the editor's control defaults match the `private const` values in each
+  `View.mc`, name for name and value for value;
 - no shared function is dead.
 
 ## Known risks on the first build

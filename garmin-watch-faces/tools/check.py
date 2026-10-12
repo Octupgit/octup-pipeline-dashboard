@@ -64,6 +64,46 @@ for ch, where in sorted(missing.items()):
     check(f"glyph {ch!r} exists", False, where[0])
 check("all literals renderable", not missing)
 
+print("editor control defaults")
+# The preview exposes each face's constants as live controls. Those defaults
+# are generated from the Monkey C; this asserts they still agree, so a knob
+# cannot quietly edit a value the source no longer has.
+import json
+def brace_block(text, marker):
+    """Extract the balanced {...} that follows `marker`."""
+    i = text.find(marker)
+    if i < 0:
+        return None
+    i = text.index("{", i)
+    depth, j = 0, i
+    while j < len(text):
+        if text[j] == "{":
+            depth += 1
+        elif text[j] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[i:j + 1]
+        j += 1
+    return None
+
+defaults_blob = brace_block(js, "var DEFAULTS =")
+if defaults_blob is None:
+    check("DEFAULTS block found", False)
+else:
+    defaults = json.loads(defaults_blob)
+    for face, knobs in sorted(defaults.items()):
+        view = next((ROOT / face / "source").glob("*View.mc"), None)
+        if view is None:
+            check(f"{face} view found", False)
+            continue
+        src = view.read_text()
+        actual = {k: int(v) for k, v in re.findall(r"private const (\w+)\s*=\s*(-?\d+);", src)}
+        actual.pop("SAMPLES", None)
+        drift = [f"{k} {knobs[k]}!={actual.get(k)}" for k in knobs if actual.get(k) != knobs[k]]
+        extra = [k for k in actual if k not in knobs]
+        check(f"{face} controls match source ({len(knobs)})", not drift and not extra,
+              ", ".join(drift + ["missing control: " + e for e in extra]))
+
 print("value formatting parity")
 mc_metrics = (SHARED / "Metrics.mc").read_text()
 mc_suffix = grab(mc_metrics, r'format\("%\.1f"\) \+ "(\w)"')
